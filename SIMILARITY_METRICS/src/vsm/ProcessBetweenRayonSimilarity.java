@@ -70,24 +70,36 @@ public class ProcessBetweenRayonSimilarity {
 		}
 	}
 
-	private static void fetch_distinct_rayon() throws SQLException{
+	private static void fetch_distinct_rayon() throws SQLException {
 		PreparedStatement local_pst = con.prepareStatement("SELECT distinct RAYON FROM CRAWL_RESULTS");
 		ResultSet local_rs = local_pst.executeQuery();
 		while (local_rs.next()) {
 			String rayon =local_rs.getString(1);
-			rayons.add(rayon);
-			List<String> field_list = rayons_field.get(rayon);
-			if (field_list==null){
-				field_list=new ArrayList<String>();
-				rayons_field.put(rayon,field_list);
-			}
-			System.out.println("Adding rayon : "+ rayon);		
-			// getting the URLs per rayon
-			PreparedStatement field_pst = con.prepareStatement("SELECT "+field_to_fetch+" FROM CRAWL_RESULTS WHERE RAYON='" +rayon+ "'");
-			ResultSet field_rs = field_pst.executeQuery();
-			while (field_rs.next()) {
-				String field =field_rs.getString(1);
-				field_list.add(field);
+			if ((!rayon.contains(".html"))&&(!rayon.contains("r-")&& (!rayon.contains("v-"))&& (!rayon.contains("sr")))){
+
+				System.out.println("Adding rayon :"+rayon);
+				rayons.add(rayon);
+				List<String> field_list = rayons_field.get(rayon);
+				if (field_list==null){
+					field_list=new ArrayList<String>();
+					rayons_field.put(rayon,field_list);
+				}
+				System.out.println("Adding rayon : "+ rayon);		
+				// getting the URLs per rayon
+				PreparedStatement field_pst;
+				try {
+					field_pst = con.prepareStatement("SELECT "+field_to_fetch+" FROM CRAWL_RESULTS WHERE RAYON='" +rayon+ "'");
+					ResultSet field_rs = field_pst.executeQuery();
+					while (field_rs.next()) {
+						String field =field_rs.getString(1);
+						field_list.add(field);
+					}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					System.out.println("Database trouble with the rayon :"+rayon);
+					e.printStackTrace();
+				}
+
 			}
 		}
 	}
@@ -96,77 +108,77 @@ public class ProcessBetweenRayonSimilarity {
 
 
 	public void saveResults(){
-//		System.out.println("writing files for rayon results");
-//		String rayon_file_output=properties.getProperty("data.rayon_output_file");
-//		BufferedWriter writer;
-//		try {
-//			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(rayon_file_output), "UTF-8"));
-//			// we write the header
-//			writer.write("RAYON1;RAYON2;SIMILARITY_AVG\n");
-//			//saving rayon results
-//			//			Iterator<String> iter = unique_rayons.iterator();
-//			//			while (iter.hasNext()) {
-//			//				String rayoni = iter.next();
-//			//				Iterator<String> riter = unique_rayons.iterator();
-//			//				while (riter.hasNext()) {
-//			//					String rayonj = riter.next();
-//			//					RayonComparison raycomp = my_rayon_results.get(rayoni+rayonj);
-//			//					if (raycomp == null){
-//			//						raycomp=my_rayon_results.get(rayonj+rayoni);
-//			//					}
-//			//					if (raycomp != null){
-//			//						double avg = raycomp.getTotal()/raycomp.getCounter();
-//			//						System.out.println(rayoni);					
-//			//						System.out.println(rayonj);					
-//			//						System.out.println(avg);
-//			//						writer.write(rayoni+";"+rayonj+";"+avg +"\n");
-//			//					}
-//			//				}
-//			//			}
-//			writer.close();	
-//		} catch (UnsupportedEncodingException | FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}	
-//		System.out.println("writing files for magasin results");
-//		String magasin_file_output=properties.getProperty("data.magasin_output_file");
-//		BufferedWriter magwriter;
-//		try {
-//			magwriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(magasin_file_output), "UTF-8"));
-//			// we write the header
-//			magwriter.write("MAGASIN1;MAGASIN2;SIMILARITY_AVG\n");
-//			//saving rayon results
-//			Iterator<String> iter = unique_magasins.iterator();
-//			while (iter.hasNext()) {
-//				String magasini = iter.next();
-//				Iterator<String> riter = unique_magasins.iterator();
-//				while (riter.hasNext()) {
-//					String magasinj = riter.next();
-//					MagasinComparison comp = my_magasin_results.get(magasini+magasinj);
-//					if (comp == null){
-//						comp=my_magasin_results.get(magasinj+magasini);
-//					}
-//					if (comp != null){
-//						double avg = comp.getTotal()/comp.getCounter();
-//						System.out.println(magasini);					
-//						System.out.println(magasinj);					
-//						System.out.println(avg);
-//						magwriter.write(magasini+";"+magasinj+";"+avg +"\n");
-//					}
-//				}
-//
-//			}
-//			magwriter.close();	
-//		} catch (UnsupportedEncodingException | FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}	
+		//		System.out.println("writing files for rayon results");
+		//		String rayon_file_output=properties.getProperty("data.rayon_output_file");
+		//		BufferedWriter writer;
+		//		try {
+		//			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(rayon_file_output), "UTF-8"));
+		//			// we write the header
+		//			writer.write("RAYON1;RAYON2;SIMILARITY_AVG\n");
+		//			//saving rayon results
+		//			//			Iterator<String> iter = unique_rayons.iterator();
+		//			//			while (iter.hasNext()) {
+		//			//				String rayoni = iter.next();
+		//			//				Iterator<String> riter = unique_rayons.iterator();
+		//			//				while (riter.hasNext()) {
+		//			//					String rayonj = riter.next();
+		//			//					RayonComparison raycomp = my_rayon_results.get(rayoni+rayonj);
+		//			//					if (raycomp == null){
+		//			//						raycomp=my_rayon_results.get(rayonj+rayoni);
+		//			//					}
+		//			//					if (raycomp != null){
+		//			//						double avg = raycomp.getTotal()/raycomp.getCounter();
+		//			//						System.out.println(rayoni);					
+		//			//						System.out.println(rayonj);					
+		//			//						System.out.println(avg);
+		//			//						writer.write(rayoni+";"+rayonj+";"+avg +"\n");
+		//			//					}
+		//			//				}
+		//			//			}
+		//			writer.close();	
+		//		} catch (UnsupportedEncodingException | FileNotFoundException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		} catch (IOException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		}	
+		//		System.out.println("writing files for magasin results");
+		//		String magasin_file_output=properties.getProperty("data.magasin_output_file");
+		//		BufferedWriter magwriter;
+		//		try {
+		//			magwriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(magasin_file_output), "UTF-8"));
+		//			// we write the header
+		//			magwriter.write("MAGASIN1;MAGASIN2;SIMILARITY_AVG\n");
+		//			//saving rayon results
+		//			Iterator<String> iter = unique_magasins.iterator();
+		//			while (iter.hasNext()) {
+		//				String magasini = iter.next();
+		//				Iterator<String> riter = unique_magasins.iterator();
+		//				while (riter.hasNext()) {
+		//					String magasinj = riter.next();
+		//					MagasinComparison comp = my_magasin_results.get(magasini+magasinj);
+		//					if (comp == null){
+		//						comp=my_magasin_results.get(magasinj+magasini);
+		//					}
+		//					if (comp != null){
+		//						double avg = comp.getTotal()/comp.getCounter();
+		//						System.out.println(magasini);					
+		//						System.out.println(magasinj);					
+		//						System.out.println(avg);
+		//						magwriter.write(magasini+";"+magasinj+";"+avg +"\n");
+		//					}
+		//				}
+		//
+		//			}
+		//			magwriter.close();	
+		//		} catch (UnsupportedEncodingException | FileNotFoundException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		} catch (IOException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		}	
 	}
 
 
