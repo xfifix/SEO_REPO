@@ -1,0 +1,1 @@
+select tofetch.URL, inrank.in_rank from URLS_TO_INRANK inrank, URLS_TO_FETCH tofetch where tofetch.URL=inrank.URL order by in_rank desc

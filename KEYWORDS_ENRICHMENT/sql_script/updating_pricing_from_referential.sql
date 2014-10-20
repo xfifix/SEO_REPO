@@ -1,0 +1,11 @@
+select ref.keyword, ref.magasin, ref.rayon, pric.search_position, pric.domain from referential_keywords ref, pricing_keywords pric where ref.keyword=pric.keyword
+
+UPDATE
+    pricing_keywords pri
+SET
+    magasin = ref.magasin,
+    rayon = ref.rayon,
+    produit = ref.produit
+FROM
+    referential_keywords ref
+WHERE ref.keyword=pri.keyword

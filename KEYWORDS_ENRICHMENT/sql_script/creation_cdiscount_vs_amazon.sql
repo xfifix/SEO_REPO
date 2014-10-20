@@ -1,0 +1,5 @@
+select CDISCOUNT_PRICING.keyword as cd_keyword, CDISCOUNT_PRICING.search_volume as cd_search_volume, CDISCOUNT_PRICING.search_position as cd_search_position, AMAZON_PRICING.keyword as am_keyword, AMAZON_PRICING.search_volume as am_search_volume, AMAZON_PRICING.search_position as am_search_position INTO CDISCOUNT_VS_AMAZON_PRICING from CDISCOUNT_PRICING LEFT OUTER JOIN AMAZON_PRICING  on( AMAZON_PRICING.keyword=CDISCOUNT_PRICING.keyword)
+select CDISCOUNT_PRICING.keyword as cd_keyword, CDISCOUNT_PRICING.search_volume as cd_search_volume, CDISCOUNT_PRICING.search_position as cd_search_position, AMAZON_PRICING.keyword as am_keyword, AMAZON_PRICING.search_volume as am_search_volume, AMAZON_PRICING.search_position as am_search_position INTO AMAZON_VS_CDISCOUNT_PRICING from AMAZON_PRICING LEFT OUTER JOIN CDISCOUNT_PRICING  on( AMAZON_PRICING.keyword=CDISCOUNT_PRICING.keyword)
+
+select * from AMAZON_VS_CDISCOUNT_PRICING where cd_keyword is null order by am_search_volume desc
+select * from CDISCOUNT_VS_AMAZON_PRICING where am_keyword is null order by cd_search_volume desc

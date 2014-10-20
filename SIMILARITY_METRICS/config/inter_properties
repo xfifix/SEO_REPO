@@ -1,0 +1,8 @@
+config.senses_log = true
+config.senses_log_dir = representations
+config.inter_save_path = dump
+config.stop_words_path = config/stopwords
+config.concept_level = synonyms
+config.wsd_type = adapted_lesk
+config.wsd_context = 3
+data.collection_path = docs

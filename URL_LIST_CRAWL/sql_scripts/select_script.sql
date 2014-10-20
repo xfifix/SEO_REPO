@@ -1,0 +1,1 @@
+SELECT status, COUNT(*) FROM status_list GROUP BY status;

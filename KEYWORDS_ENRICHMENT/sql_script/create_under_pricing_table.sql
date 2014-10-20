@@ -1,0 +1,4 @@
+select am.keyword, am.search_volume, am.search_position INTO AMAZON_WITHOUT_CDISCOUNT_PRICING from AMAZON_PRICING as am where am.keyword not in (select keyword from CDISCOUNT_PRICING) order by am.search_volume desc
+select cd.keyword, cd.search_volume, cd.search_position INTO CDISCOUNT_WITHOUT_AMAZON_PRICING from CDISCOUNT_PRICING as cd where cd.keyword not in (select keyword from AMAZON_PRICING) order by cd.search_volume desc
+
+select cd.keyword, cd.search_volume, cd.search_position, cd.url, cd.magasin, cd.rayon INTO CDISCOUNT_WITH_HIGH_TRAFIC from CDISCOUNT_PRICING as cd where cd.keyword not in (select keyword from HIGH_RANKING_KEYWORDS) order by cd.search_volume desc
