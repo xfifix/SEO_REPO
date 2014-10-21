@@ -99,7 +99,6 @@ public class ProcessBetweenRayonSimilarity {
 					System.out.println("Database trouble with the rayon :"+rayon);
 					e.printStackTrace();
 				}
-
 			}
 		}
 	}

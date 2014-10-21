@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -13,14 +14,16 @@ import java.util.logging.Logger;
 
 public class InsideMagasinWorkerThread implements Runnable {
 	private String magasin;
+	private List<String> rayons;
 	private String field_to_fetch;
 	private Connection con;
 	private ArrayList<URLContentInfo> my_infos = new ArrayList<URLContentInfo>();
 	private double total_sum=0;
 	private double total_exact_number=0;
 
-	public InsideMagasinWorkerThread(Connection con, String magasin, String field_to_fetch) throws SQLException{
+	public InsideMagasinWorkerThread(Connection con, String magasin,List<String> rayons, String field_to_fetch) throws SQLException{
 		this.magasin=magasin;
+		this.rayons=rayons;
 		this.field_to_fetch=field_to_fetch;
 		System.out.println("Computing metrics for magasin :"+ magasin);
 		this.con = con;
@@ -47,7 +50,7 @@ public class InsideMagasinWorkerThread implements Runnable {
 				my_infos.add(url_info);
 			}    
 		} catch (Exception ex) {
-			Logger lgr = Logger.getLogger(ProcessInsideMagasinSimilarity.class.getName());
+			Logger lgr = Logger.getLogger(ProcessInsideMagasinPerRayonSimilarity.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		} finally {
 			try {
@@ -58,7 +61,7 @@ public class InsideMagasinWorkerThread implements Runnable {
 					pst.close();
 				}
 			} catch (SQLException ex) {
-				Logger lgr = Logger.getLogger(ProcessInsideMagasinSimilarity.class.getName());
+				Logger lgr = Logger.getLogger(ProcessInsideMagasinPerRayonSimilarity.class.getName());
 				lgr.log(Level.WARNING, ex.getMessage(), ex);
 			}
 		}	

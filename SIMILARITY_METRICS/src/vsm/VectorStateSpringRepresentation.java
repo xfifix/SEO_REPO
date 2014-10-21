@@ -1,6 +1,5 @@
 package vsm;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
 
@@ -23,7 +22,7 @@ public class VectorStateSpringRepresentation {
 	public VectorStateSpringRepresentation(String ztd_content){
 		// TODO Auto-generated method stub
 		try{
-			StandardAnalyzer analyzer = new StandardAnalyzer(ProcessInsideMagasinSimilarity.stop_words);
+			StandardAnalyzer analyzer = new StandardAnalyzer(ProcessInsideMagasinPerRayonSimilarity.stop_words);
 			TokenStream stream = analyzer.tokenStream("text", new StringReader(ztd_content));
 			Token token = stream.next();
 			while ( token != null ){
@@ -40,7 +39,7 @@ public class VectorStateSpringRepresentation {
 			//		} catch (FileNotFoundException e) {
 			//			System.out.println("Failed to load document: " + file.getName());
 			//			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			System.out.println("Error tokenizing document");
 			e.printStackTrace();
 		}
