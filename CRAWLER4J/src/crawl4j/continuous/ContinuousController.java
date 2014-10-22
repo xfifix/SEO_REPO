@@ -9,14 +9,13 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
 public class ContinuousController {
-
 	public static void main(String[] args) throws Exception {
 		System.out.println("Starting the crawl configuration");
 		
 		String seed = "http://www.cdiscount.com/";
 		// downsizing to test
 		//int numberOfCrawlers =  1;	
-		int numberOfCrawlers =  200;
+		int numberOfCrawlers =  30;
 		if (args.length == 2) {
 			seed = args[0];
 			numberOfCrawlers=Integer.valueOf(args[1]);

@@ -26,5 +26,6 @@
 	<classpathentry kind="lib" path="lib/slf4j-jdk14-1.5.5.jar"/>
 	<classpathentry kind="lib" path="lib/supportWN.jar"/>
 	<classpathentry kind="lib" path="lib/wstx-asl-3.2.7.jar"/>
+	<classpathentry kind="lib" path="lib/postgresql-9.3-1102-jdbc41.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
