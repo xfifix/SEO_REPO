@@ -83,11 +83,25 @@ public class ContinuousCrawler extends WebCrawler {
 				}
 			}
 			String vendor = resellerBuilder.toString();
-			System.out.println(vendor);
+			info.setVendor(vendor);
+			
 			// finding the number of attributes
-			Elements attributes = doc.select(".fpDescTb tbody");
-			info.setAtt_number(attributes.size());
-			info.setAtt_desc((attributes==null? "":attributes.text()));
+			Elements attributes = doc.select(".fpDescTb tr");
+			int nb_arguments = 0 ;
+			StringBuilder arguments_text = new StringBuilder();
+			for (Element tr_element : attributes){
+				Elements td_elements = tr_element.select("td");
+				if (td_elements.size() == 2){
+					nb_arguments++;
+					String category = td_elements.get(0).text();
+					arguments_text.append(category+"|||");	
+					String description = td_elements.get(1).text();                                    
+					arguments_text.append(description);		
+					arguments_text.append("@@");
+				}
+			}
+			info.setAtt_number(nb_arguments);
+			info.setAtt_desc(arguments_text.toString());
 		}
 		
 		Header[] responseHeaders = page.getFetchResponseHeaders();

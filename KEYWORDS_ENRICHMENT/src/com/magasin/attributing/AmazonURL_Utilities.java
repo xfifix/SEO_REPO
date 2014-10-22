@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class URL_Utilities {
+public class AmazonURL_Utilities {
 	//	Voici le principe de hiérarchie pour les navid (première séquence de chiffres indiquée après identifiant type de page dansl’url ( ex : /v- , /l-, /f-)…
 	//	+ 2 chiffres pour chaque sous-strate ( car 99 nœuds max pourune même strate)
 	//	 
@@ -49,8 +49,7 @@ public class URL_Utilities {
 
 	public static String checkMagasin(String url){
 		String magasin = "Unknown";
-		String type = checkType(url);
-		if ("Vitrine".equals(type)||"ListeProduit".equals(type)||"FicheProduit".equals(type)||"SearchDexing".equals(type)){
+		if ("Vitrine".equals(checkType(url))||"ListeProduit".equals(checkType(url))||"FicheProduit".equals(checkType(url))||"SearchDexing".equals(checkType(url))){
 			url = url.replace("http://www.cdiscount.com/","");
 			StringTokenizer tokenize = new StringTokenizer(url,"/");
 			if (tokenize.hasMoreTokens()){
@@ -63,32 +62,9 @@ public class URL_Utilities {
 		return magasin;
 	}
 
-	public static String[] checkMagasinAndRayonAndProduct(String url){
-		String[] output = {"Unknown","Unknown","Unknown"};
-		String type = checkType(url);
-		if ("Vitrine".equals(type)||"ListeProduit".equals(type)||"FicheProduit".equals(type)||"SearchDexing".equals(type)){
-			url = url.replace("http://www.cdiscount.com/","");
-			StringTokenizer tokenize = new StringTokenizer(url,"/");
-			List<String> tokenList = new ArrayList<String>();
-			while (tokenize.hasMoreTokens()){
-				tokenList.add(tokenize.nextToken());
-			}
-			// magasin
-			output[0]=tokenList.get(0);
-			// rayon
-			if (!"SearchDexing".equals(type)){
-				output[1]=tokenList.get(1);
-			}
-		}
-
-		return output;
-
-	}
-
 	public static String checkRayon(String url){
 		String rayon = "Unknown";
-		String type = checkType(url);
-		if ("Vitrine".equals(type)||"ListeProduit".equals(type)||"FicheProduit".equals(type)){
+		if ("Vitrine".equals(checkType(url))||"ListeProduit".equals(checkType(url))||"FicheProduit".equals(checkType(url))){
 			//			int vitrine_index=url.indexOf("/v-");
 			//			int listeproduit_index=url.indexOf("/l-");
 			//			int ficheproduit_index=url.indexOf("/f-");

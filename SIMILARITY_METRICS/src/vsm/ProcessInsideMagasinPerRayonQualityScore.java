@@ -18,7 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class ProcessInsideMagasinPerRayonSimilarity {
+public class ProcessInsideMagasinPerRayonQualityScore {
 	private static String[] magasins ={
 		"animalerie",
 		"bijouterie",
@@ -73,7 +73,7 @@ public class ProcessInsideMagasinPerRayonSimilarity {
 	private static String config_path = "/home/sduprey/My_Code/My_Java_Workspace/SIMILARITY_METRICS/config/";
 	public static Properties properties;
 	public  static File stop_words;
-	private static String field_to_fetch;
+
 	// threshold above which we deem the content too much similar !!
 	//	private static double threshold = 0;
 	private static Connection con = null;
@@ -86,7 +86,6 @@ public class ProcessInsideMagasinPerRayonSimilarity {
 		loadProperties();
 		// getting the french stop words 
 		stop_words = new File(properties.getProperty("config.stop_words_path"));
-		field_to_fetch=properties.getProperty("data.fieldtofetch");
 		//magasin_to_filter=properties.getProperty("data.magasintofilter");
 		String url = properties.getProperty("db.url");
 		String user = properties.getProperty("db.user");
@@ -110,9 +109,9 @@ public class ProcessInsideMagasinPerRayonSimilarity {
 		for (int i=0;i<magasins.length;i++){
 			String magasin = magasins[i];
 			List<String> rayons = unique_rayons_per_magasin.get(magasin);
-			InsideMagasinBetweenRayonWorkerThread magasinWorker;
+			InsideMagasinBetweenRayonWorkerQualityThread magasinWorker;
 			try {
-				magasinWorker = new InsideMagasinBetweenRayonWorkerThread(con,magasin,rayons,field_to_fetch);
+				magasinWorker = new InsideMagasinBetweenRayonWorkerQualityThread(con,magasin,rayons);
 				executor.execute(magasinWorker);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block

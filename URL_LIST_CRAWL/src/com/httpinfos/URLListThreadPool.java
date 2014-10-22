@@ -20,7 +20,7 @@ public class URLListThreadPool {
 
 	public static void main(String[] args) {
 		String my_user_agent= "CdiscountBot-crawler";
-		String my_description = "";
+		String my_description = "all";
 		if (args.length>=1){
 			my_user_agent= args[0];
 		} else {
@@ -87,7 +87,7 @@ public class URLListThreadPool {
 		try {  
 			con = DriverManager.getConnection(url, user, passwd);
 			// getting the number of URLs to fetch
-			if ("".equals(my_description)){
+			if ("all".equals(my_description)){
 				pst = con.prepareStatement("SELECT ID FROM HTTPINFOS_LIST WHERE TO_FETCH = TRUE");
 			} else {
 				pst = con.prepareStatement("SELECT ID FROM HTTPINFOS_LIST WHERE TO_FETCH = TRUE and DESCRIPTION='"+my_description+"'");

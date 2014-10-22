@@ -49,7 +49,8 @@ public class URL_Utilities {
 
 	public static String checkMagasin(String url){
 		String magasin = "Unknown";
-		if ("Vitrine".equals(checkType(url))||"ListeProduit".equals(checkType(url))||"FicheProduit".equals(checkType(url))||"SearchDexing".equals(checkType(url))){
+		String type = checkType(url);
+		if ("Vitrine".equals(type)||"ListeProduit".equals(type)||"FicheProduit".equals(type)||"SearchDexing".equals(type)){
 			url = url.replace("http://www.cdiscount.com/","");
 			StringTokenizer tokenize = new StringTokenizer(url,"/");
 			if (tokenize.hasMoreTokens()){
@@ -62,9 +63,32 @@ public class URL_Utilities {
 		return magasin;
 	}
 
+	public static String[] checkMagasinAndRayonAndProduct(String url){
+		String[] output = {"Unknown","Unknown","Unknown"};
+		String type = checkType(url);
+		if ("Vitrine".equals(type)||"ListeProduit".equals(type)||"FicheProduit".equals(type)||"SearchDexing".equals(type)){
+			url = url.replace("http://www.cdiscount.com/","");
+			StringTokenizer tokenize = new StringTokenizer(url,"/");
+			List<String> tokenList = new ArrayList<String>();
+			while (tokenize.hasMoreTokens()){
+				tokenList.add(tokenize.nextToken());
+			}
+			// magasin
+			output[0]=tokenList.get(0);
+			// rayon
+			if (!"SearchDexing".equals(type)){
+				output[1]=tokenList.get(1);
+			}
+		}
+
+		return output;
+
+	}
+
 	public static String checkRayon(String url){
 		String rayon = "Unknown";
-		if ("Vitrine".equals(checkType(url))||"ListeProduit".equals(checkType(url))||"FicheProduit".equals(checkType(url))){
+		String type = checkType(url);
+		if ("Vitrine".equals(type)||"ListeProduit".equals(type)||"FicheProduit".equals(type)){
 			//			int vitrine_index=url.indexOf("/v-");
 			//			int listeproduit_index=url.indexOf("/l-");
 			//			int ficheproduit_index=url.indexOf("/f-");
@@ -105,17 +129,17 @@ public class URL_Utilities {
 
 	public static String checkProduit(String url){
 		String produit = "Unknown";
-		url = url.replace("http://www.cdiscount.com/","");
-		StringTokenizer tokenize = new StringTokenizer(url,"/");
-		if (tokenize.hasMoreTokens()){
-			tokenize.nextToken();
-		}
-		if (tokenize.hasMoreTokens()){
-			tokenize.nextToken();
-		}
-		if (tokenize.hasMoreTokens()){
-			produit = tokenize.nextToken();
-		}
+		//		url = url.replace("http://www.cdiscount.com/","");
+		//		StringTokenizer tokenize = new StringTokenizer(url,"/");
+		//		if (tokenize.hasMoreTokens()){
+		//			tokenize.nextToken();
+		//		}
+		//		if (tokenize.hasMoreTokens()){
+		//			tokenize.nextToken();
+		//		}
+		//		if (tokenize.hasMoreTokens()){
+		//			produit = tokenize.nextToken();
+		//		}
 		return produit;
 	}
 

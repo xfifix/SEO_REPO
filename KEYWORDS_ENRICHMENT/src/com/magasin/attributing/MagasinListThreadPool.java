@@ -1,7 +1,5 @@
 package com.magasin.attributing;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,40 +7,39 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MagasinListThreadPool {
-	private static int fixed_pool_size = 20;
+	private static int fixed_pool_size = 250;
 	
 	// size of keywords to manage for a thread
-	private static int size_bucket = 50000;
+	private static int size_bucket = 10000;
 	//private static int size_bucket = 100000;
 
 	public static void main(String[] args) {
 		// Getting the database property
-		Properties props = new Properties();
-		FileInputStream in = null;      
-		try {
-			in = new FileInputStream("database.properties");
-			props.load(in);
-		} catch (IOException ex) {
-			Logger lgr = Logger.getLogger(MagasinListThreadPool.class.getName());
-			lgr.log(Level.SEVERE, ex.getMessage(), ex);
-
-		} finally {
-			try {
-				if (in != null) {
-					in.close();
-				}
-			} catch (IOException ex) {
-				Logger lgr = Logger.getLogger(MagasinListThreadPool.class.getName());
-				lgr.log(Level.SEVERE, ex.getMessage(), ex);
-			}
-		}
+//		Properties props = new Properties();
+//		FileInputStream in = null;      
+//		try {
+//			in = new FileInputStream("database.properties");
+//			props.load(in);
+//		} catch (IOException ex) {
+//			Logger lgr = Logger.getLogger(MagasinListThreadPool.class.getName());
+//			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+//
+//		} finally {
+//			try {
+//				if (in != null) {
+//					in.close();
+//				}
+//			} catch (IOException ex) {
+//				Logger lgr = Logger.getLogger(MagasinListThreadPool.class.getName());
+//				lgr.log(Level.SEVERE, ex.getMessage(), ex);
+//			}
+//		}
 		// the following properties have been identified
 //		String url = props.getProperty("db.url");
 //		String user = props.getProperty("db.user");
@@ -80,7 +77,8 @@ public class MagasinListThreadPool {
 				if (local_counter == size_bucket){
 					// we reset the counter to the initial state
 					local_counter=0;
-					Runnable worker = new WorkerThread(con, tofetch);
+//					Runnable worker = new ScrapingWorkerThread(con, tofetch);
+					Runnable worker = new ArboWorkerThread(con, tofetch);
 					executor.execute(worker);
 					tofetch=new ArrayList<String>();
 					// one connection per thread
