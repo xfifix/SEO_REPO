@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;postgresql-9.3-1102-jdbc41.jar&apos; to &apos;lib&apos;&#x0A;- Original project: &apos;MP_PRODUITS_EN_LIGNE&apos;&#x0A;- Destination element: &apos;lib&apos;&#x0A;- Original element: &apos;postgresql-9.3-1102-jdbc41.jar&apos;" description="Copy file" element1="lib/postgresql-9.3-1102-jdbc41.jar" files="1" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1411466283808" target="/TITLE_DUPLICATION/lib" units="0" version="1.0"/>
+</session>

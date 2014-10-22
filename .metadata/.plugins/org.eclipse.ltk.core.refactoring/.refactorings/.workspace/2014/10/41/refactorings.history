@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename Java project &apos;HTTP_STATUS&apos; to &apos;URL_LIST_CRAWL&apos;&#x0A;- Original element: &apos;HTTP_STATUS&apos;&#x0A;- Renamed element: &apos;HTTP_STATUS&apos;&#x0A;- Update references to refactored element" description="Rename Java project &apos;HTTP_STATUS&apos;" flags="7" id="org.eclipse.jdt.ui.rename.java.project" input="=HTTP_STATUS" name="URL_LIST_CRAWL" references="true" stamp="1412685460188" version="1.0"/>
+</session>

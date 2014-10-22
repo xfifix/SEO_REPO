@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Move element &apos;HTTPStatusThreadPool.java&apos; to &apos;HTTP_STATUS/src/com.httpstatus&apos;&#x0A;- Original project: &apos;HTTP_STATUS&apos;&#x0A;- Destination element: &apos;HTTP_STATUS/src/com.httpstatus&apos;&#x0A;- Original element: &apos;HTTPStatusThreadPool.java&apos;&#x0A;- Update references to refactored element" description="Move compilation unit" destination="/src&lt;com.httpstatus" element1="/src&lt;{HTTPStatusThreadPool.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.move" policy="org.eclipse.jdt.ui.moveResources" qualified="false" references="true" stamp="1412331616338" units="1" version="1.0"/>
+</session>

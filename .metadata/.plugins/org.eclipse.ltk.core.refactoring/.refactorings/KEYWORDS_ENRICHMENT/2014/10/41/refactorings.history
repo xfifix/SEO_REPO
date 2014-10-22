@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;com.magasin.attributing.StatusListThreadPool&apos; to &apos;MagasinListThreadPool&apos;&#x0A;- Original project: &apos;KEYWORDS_ENRICHMENT&apos;&#x0A;- Original element: &apos;com.magasin.attributing.StatusListThreadPool&apos;&#x0A;- Renamed element: &apos;com.magasin.attributing.MagasinListThreadPool&apos;&#x0A;- Update references to refactored element&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;StatusListThreadPool&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;com.magasin.attributing{StatusListThreadPool.java[StatusListThreadPool" matchStrategy="1" name="MagasinListThreadPool" qualified="false" references="true" similarDeclarations="false" stamp="1412691728571" textual="false" version="1.0"/>
+</session>

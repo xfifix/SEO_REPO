@@ -1,0 +1,1 @@
+CREATE TABLE images (imgname text, img bytea);

@@ -1,0 +1,5 @@
+package crawler4j.benchmarking;
+
+public class BenchmarkingController {
+
+}

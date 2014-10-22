@@ -1,0 +1,20 @@
+package crawl4j.urlutilities;
+
+public class URLUtilitiesTest {
+	private static String[] totest = 
+{
+	"http://www.cdiscount.com/au-quotidien/alimentaire/whirlpool-eco306/f-12701-whirleco306.html",
+	"http://www.cdiscount.com/pret-a-porter/derniers-arrivages/waooh-tee-shirt-col-v-et-ecrit-bleu/f-11331-mp00857468.html?mpos=15%7Cmp",
+	"http://www.cdiscount.com/jardin/plantes/seaweed-xtract-alguamix-100-ml/f-16301-cul3700688517537.html?mpos=774%7Cmp",
+	"http://www.cdiscount.com/jeux-pc-video-console/ps4/nba-2k15-ps4/f-1030401-5026555417488.html?mpos=22%7Ccd",
+	"http://www.cdiscount.com/au-quotidien/droguerie/kit-de-nettoyage-pour-acier-inoxydable/f-127060302-wpr8015250283600.html",
+	"http://www.cdiscount.com/au-quotidien/alimentaire/tisane-bio-ange-gardien-en-sachet-anti-refroi/f-1270105-flo3560467790557.html",
+	"http://www.cdiscount.com/le-sport/soins-du-sportif/ceinture-lombaire-reglable-support-protection-9/f-1211401-auc6913280719026.html?mpos=11%7Cmp",
+	"http://www.cdiscount.com/electromenager/lavage-sechage/whirlpool-aws6213-lave-linge/f-11001040401-whiaws6213.html?mpos=21%7Ccd",
+	"http://www.cdiscount.com/juniors/r-cuisine+maya.html",
+	"http://www.cdiscount.com/pret-a-porter/vetements-femme/vetements-de-marque/little-marcel/l-113029560-4.html",
+	"http://www.cdiscount.com/au-quotidien/droguerie/balai/f-127060401-dom3466000044203.html",
+	"http://www.cdiscount.com/bijouterie/parure-en-calebasse-rhea/f-126-auc3663089010581.html?mpos=19%7Cmp",
+	"http://www.cdiscount.com/m-8089-vantage.html",
+	"http://www.cdiscount.com/lf-76901_6/produits-minceur_oenobiol.html"};
+};

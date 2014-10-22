@@ -1,0 +1,70 @@
+## getting all concurrents
+select distinct domain from pricing_keywords
+
+## getting search_position distribution
+select keyword, search_position from pricing_keywords where domain = 'cdiscount.com'
+select search_position from pricing_keywords where domain = 'cdiscount.com'
+
+## getting average search_position
+select avg(search_volume) from pricing_keywords where domain = 'cdiscount.com'
+
+## getting search_volume distribution
+select keyword, search_volume from pricing_keywords where domain = 'cdiscount.com'
+select search_volume from pricing_keywords where domain = 'cdiscount.com'
+
+## getting average search_position
+select avg(search_position) from pricing_keywords where domain = 'cdiscount.com'
+
+## number of distinct keywords
+select count(distinct keyword) from keywords
+select distinct keyword from keywords
+
+## ranking the keywords by position for a domain (cdiscount or a concurrent)
+select * from pricing_keywords where domain = 'cdiscount.com' order by search_position asc
+
+
+## getting the taux de couverture for a domain (cdiscount or a concurrent)
+select count(*) from pricing_keywords where domain = 'cdiscount.com'
+
+## counting the keywords and their magasin distribution for cdiscount
+select magasin, count(*) from pricing_keywords where domain='cdiscount.com' group by magasin
+
+## checking the average number of urls per keyword for an entity
+select count(*) from (select keyword, count(url) as nb_url from pricing_keywords where domain='cdiscount.com' group by keyword) as temp
+it gives the same number as :
+select count(distinct keyword) from pricing_keywords where domain='cdiscount.com'
+
+
+
+## checking the unknown keywords
+select * from pricing_keywords where magasin='Unknown'
+
+## checking the unknown keywords for cdiscount
+select keyword, search_position, search_volume from pricing_keywords where domain='cdiscount.com' and magasin='Unknown' order by search_volume desc
+
+## ranking keywords position by search volume for cdiscount
+select keyword, search_position, search_volume from pricing_keywords where domain='cdiscount.com' order by search_volume desc
+##keywords where we not rank 
+select keyword, search_position, search_volume from pricing_keywords where domain not like 'cdiscount.com' order by search_volume desc
+
+
+## ranking keywords position by search volume for cdiscount and by magasin
+select keyword, search_position, search_volume from pricing_keywords where domain='cdiscount.com' and magasin='informatique' order by search_volume desc
+##keywords where we not rank by magasin
+select keyword, search_position, search_volume from pricing_keywords where domain not like 'cdiscount.com' order by search_volume desc
+
+## getting all magasins
+select distinct magasin from PRICING_KEYWORDS
+
+## getting all rayons
+select distinct magasin from PRICING_KEYWORDS
+
+## getting all produits
+select distinct produit from PRICING_KEYWORDS
+
+## getting the discrepancies between cdiscount and amazon
+select cd.keyword, cd.search_volume, cd.search_position from CDISCOUNT_PRICING as cd where cd.keyword not in (select keyword from AMAZON_PRICING) order by cd.search_volume desc
+
+
+
+

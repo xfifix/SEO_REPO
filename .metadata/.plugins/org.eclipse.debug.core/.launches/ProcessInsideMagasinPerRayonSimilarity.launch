@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/SIMILARITY_METRICS/src/vsm/ProcessInsideMagasinPerRayonSimilarity.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="vsm.ProcessInsideMagasinPerRayonSimilarity"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="musique-cd-dvd"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="SIMILARITY_METRICS"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx100g -Xms20g"/>
+</launchConfiguration>

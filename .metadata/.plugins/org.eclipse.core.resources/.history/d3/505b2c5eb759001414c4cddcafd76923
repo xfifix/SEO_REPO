@@ -1,0 +1,223 @@
+package com.magasin.attributing;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
+public class CdiscountByURLMagasinMatching {
+	//www.cdiscount.com/sa-10/mot-cle.html
+	private static String request_url = "www.cdiscount.com/sa-10/";
+	private static int counter = 1;
+
+	public static void main(String[] args){
+		// Getting the database property
+
+		//		Properties props = new Properties();
+		//		FileInputStream in = null;      
+		//		try {
+		//			in = new FileInputStream("database.properties");
+		//			props.load(in);
+		//		} catch (IOException ex) {
+		//			Logger lgr = Logger.getLogger(MagasinListThreadPool.class.getName());
+		//			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		//
+		//		} finally {
+		//			try {
+		//				if (in != null) {
+		//					in.close();
+		//				}
+		//			} catch (IOException ex) {
+		//				Logger lgr = Logger.getLogger(MagasinListThreadPool.class.getName());
+		//				lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		//			}
+		//		}
+		// the following properties have been identified
+		//		String url = props.getProperty("db.url");
+		//		String user = props.getProperty("db.user");
+		//		String passwd = props.getProperty("db.passwd");
+		String url="jdbc:postgresql://localhost/KEYWORDSDB";
+		String user="postgres";
+		String passwd="mogette";
+
+
+		// The database connection
+		Connection con = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+
+		try {  
+			con = DriverManager.getConnection(url, user, passwd);
+			pst = con.prepareStatement("SELECT count(*) FROM REFERENTIAL_KEYWORDS");
+			rs = pst.executeQuery();
+			int size=0;
+			while (rs.next()) {
+				size=rs.getInt(1); 
+			}	
+			pst.close();
+			rs.close();
+			System.out.println("Numbers of keyword to manage : "+size);
+			pst = con.prepareStatement("SELECT KEYWORD FROM REFERENTIAL_KEYWORDS");
+			rs = pst.executeQuery();
+			//List<String> tofetch = new ArrayList<String>();
+			int local_counter=0;
+			while (rs.next()) {
+				local_counter++;					
+				String keyword = rs.getString(1);
+				System.out.println(local_counter+": dealing with keyboards : "+keyword);
+				// for each keyword we now fetch cdiscount and amazon results
+				try{
+					PreparedStatement keyword_st = con.prepareStatement("select url, domain from pricing_keywords where keyword='"+keyword+"' and domain in ('cdiscount.com','amazon.fr') order by search_position desc");
+					ResultSet keyword_rs = keyword_st.executeQuery();
+					while (keyword_rs.next()) {
+						String ranking_url = keyword_rs.getString(1);
+						System.out.println(ranking_url);
+						String domain = keyword_rs.getString(2);
+						System.out.println(domain);
+					}
+				}catch (SQLException e){
+
+					System.out.println("Trouble with the keyword : "+keyword);
+					e.printStackTrace();
+				}
+
+
+
+				//tofetch.add(rs.getString(1));
+
+				//					if (local_counter == size_bucket){
+				//						// we reset the counter to the initial state
+				//						local_counter=0;
+				//						Runnable worker = new WorkerThread(con, tofetch);
+				//						
+				//						tofetch=new ArrayList<String>();
+				//						// one connection per thread
+				//						con=DriverManager.getConnection(url, user, passwd);
+				//					}
+			}
+
+			//			int nb_bucket = size/size_bucket;
+			//
+			//			int size_for_connection=nb_bucket/nb_connection;
+			//			int connection_nb=1;
+			//			// Dispatching all threads with their work to do
+			//			for (int i = 0; i < nb_bucket+1; i++) {
+			//
+			//				Integer[] my_range = new Integer[2];
+			//				my_range[0]=i*size_bucket;
+			//				my_range[1]=(i+1)*size_bucket;
+			//				if (connection_nb*size_for_connection <= i){
+			//					con = DriverManager.getConnection(url, user, passwd);
+			//					connection_nb++;
+			//					System.out.println("Number of connections"+connection_nb);
+			//				}
+			//
+			//				Runnable worker = new WorkerThread(con, my_range,url, user, passwd);
+			//				executor.execute(worker);
+			//			}
+
+		} catch (SQLException ex) {
+			Logger lgr = Logger.getLogger(MagasinListThreadPool.class.getName());
+			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+
+		} finally {
+
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (pst != null) {
+					pst.close();
+				}
+				if (con != null) {
+					con.close();
+				}
+
+			} catch (SQLException ex) {
+				Logger lgr = Logger.getLogger(MagasinListThreadPool.class.getName());
+				lgr.log(Level.WARNING, ex.getMessage(), ex);
+			}
+		}
+
+
+	}
+
+}
+
+
+//	public static void main(String args[]){
+//		//Reading the property of our database
+//		Properties props = new Properties();
+//		FileInputStream in = null;      
+//		try {
+//			in = new FileInputStream("database.properties");
+//			props.load(in);
+//		} catch (IOException ex) {
+//			Logger lgr = Logger.getLogger(MergingReferential.class.getName());
+//			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+//		} finally {
+//			try {
+//				if (in != null) {
+//					in.close();
+//				}
+//			} catch (IOException ex) {
+//				Logger lgr = Logger.getLogger(MergingReferential.class.getName());
+//				lgr.log(Level.SEVERE, ex.getMessage(), ex);
+//			}
+//		}
+//		// the following properties have been identified
+//		String url = props.getProperty("db.url");
+//		String user = props.getProperty("db.user");
+//		String passwd = props.getProperty("db.passwd");
+//		// Instantiating the database
+//		Connection con = null;
+//		try{
+//			con = DriverManager.getConnection(url, user, passwd);
+//			// inserting the referential
+//			String select_from_referential = "SELECT keyword FROM REFERENTIAL_KEYWORDS";
+//			PreparedStatement pst = con.prepareStatement(select_from_referential);
+//			ResultSet rs = pst.executeQuery();
+//			while (rs.next()) {
+//				String keyword = rs.getString(1);
+//				System.out.println("Updating magasin for : "+counter +"  "+keyword);
+//				counter++;
+//				
+//// inserting the magasin data for our keyword				
+////				// Inserting the keyword in the referential
+////				String ref_stm = "INSERT INTO REFERENTIAL_KEYWORDS(KEYWORD,SOURCE,SEARCH_VOLUME,CDS_TREND)"
+////						+ " VALUES(?,?,?,?)";
+////				pst = con.prepareStatement(ref_stm);
+////				pst.setString(1,keyword);
+////				pst.setString(2,source);
+////				pst.setInt(3,-1);
+////				pst.setInt(4,-1);	
+////				try{
+////					pst.executeUpdate();
+////				}catch (Exception e){
+////					System.out.println(keyword + " already there");
+////					e.printStackTrace();
+////				}
+//			}
+//		} catch (Exception ex) {
+//			Logger lgr = Logger.getLogger(MergingReferential.class.getName());
+//			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+//		} finally {
+//			try {
+//				if (con != null) {
+//					con.close();
+//				}
+//			} catch (SQLException ex) {
+//				Logger lgr = Logger.getLogger(MergingReferential.class.getName());
+//				lgr.log(Level.WARNING, ex.getMessage(), ex);
+//			}
+//		}
+//
+//	}
+
+

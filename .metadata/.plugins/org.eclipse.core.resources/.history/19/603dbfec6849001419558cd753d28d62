@@ -1,0 +1,12 @@
+select ref.keyword, ref.magasin, ref.rayon, pric.search_position, pric.domain from referential_keywords ref, pricing_keywords pric where ref.keyword=pric.keyword
+
+UPDATE
+    pricing_keywords
+SET
+    pri.magasin = ref.magasin
+FROM
+    pricing_keywords pri
+INNER JOIN
+    referential_keywords ref
+ON 
+    pri.keyword = ref.keyword

@@ -1,0 +1,5 @@
+package com.cdiscount.fileparser;
+
+public class BatchMajesticFileParser {
+
+}

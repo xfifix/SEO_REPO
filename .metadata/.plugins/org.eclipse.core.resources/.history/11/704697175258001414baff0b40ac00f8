@@ -1,0 +1,41 @@
+package vsm;
+import java.util.ArrayList;
+import java.util.List;
+
+public class RayonLevelDoublon {
+	private String rayoni;
+	private String rayonj;
+	private int total_exact_number = 0;
+	private double similarity = 0;
+	public String getRayoni() {
+		return rayoni;
+	}
+	public void setRayoni(String rayoni) {
+		this.rayoni = rayoni;
+	}
+	public String getRayonj() {
+		return rayonj;
+	}
+	public void setRayonj(String rayonj) {
+		this.rayonj = rayonj;
+	}
+	public int getTotal_exact_number() {
+		return total_exact_number;
+	}
+	public void setTotal_exact_number(int total_exact_number) {
+		this.total_exact_number = total_exact_number;
+	}
+	public double getSimilarity() {
+		return similarity;
+	}
+	public void setSimilarity(double similarity) {
+		this.similarity = similarity;
+	}
+
+	
+	
+	
+}
+
+
+

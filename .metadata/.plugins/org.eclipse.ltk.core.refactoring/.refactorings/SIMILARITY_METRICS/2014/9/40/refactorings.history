@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;URL_Utilities.java&apos; to &apos;KEYWORDS_ENRICHMENT/src/com.magasin.attributing&apos;&#x0A;- Original project: &apos;SIMILARITY_METRICS&apos;&#x0A;- Destination element: &apos;KEYWORDS_ENRICHMENT/src/com.magasin.attributing&apos;&#x0A;- Original element: &apos;vsm.URL_Utilities.java&apos;" description="Copy compilation unit" destination="=KEYWORDS_ENRICHMENT/src&lt;com.magasin.attributing" element1="/src&lt;vsm{URL_Utilities.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1412072704992" units="1" version="1.0"/>
+</session>

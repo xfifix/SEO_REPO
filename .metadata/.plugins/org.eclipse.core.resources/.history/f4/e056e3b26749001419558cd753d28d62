@@ -1,0 +1,12 @@
+select ref.keyword, ref.magasin, ref.rayon, pric.search_position, pric.domain from referential_keywords ref, pricing_keywords pric where ref.keyword=pric.keyword
+
+UPDATE
+    Sales_Import
+SET
+    Sales_Import.AccountNumber = RAN.AccountNumber
+FROM
+    Sales_Import SI
+INNER JOIN
+    RetrieveAccountNumber RAN
+ON 
+    SI.LeadID = RAN.LeadID
