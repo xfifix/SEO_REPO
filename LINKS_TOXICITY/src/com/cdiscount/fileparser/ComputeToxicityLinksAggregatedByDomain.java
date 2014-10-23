@@ -12,11 +12,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-public class ComputeToxicity {
-	private static String insert_rate_string ="INSERT INTO TRUST_RATING(SOURCE_URL, SOURCE_DOMAIN, NB_LINKS, NB_DOMAIN_LINKS, LINK_TRUSTFLOW, COMPUTED_TRUST_RATE_LINK, COMPUTED_TRUST_RATE_DOMAIN) VALUES (?,?,?,?,?,?,?)";
+public class ComputeToxicityLinksAggregatedByDomain {
+	private static String insert_rate_string ="INSERT INTO TRUST_RATING(SOURCE_URL, SOURCE_DOMAIN, NB_LINKS, LINK_TRUSTFLOW, COMPUTED_TRUST_RATE_LINK, COMPUTED_TRUST_RATE_DOMAIN) VALUES (?,?,?,?,?,?)";
 	private static int batch_size = 50000;
 	private static Map<String, Integer> counting_map = new HashMap<String, Integer>();
-	private static Map<String, Integer> urlcounting_map = new HashMap<String, Integer>();
 	public static void main(String[] args) throws IOException {
 		String csvFile = "/home/sduprey/My_Data/My_Toxic_Links/cdiscount.csv";
 		BufferedReader br = null;
@@ -47,7 +46,7 @@ public class ComputeToxicity {
 				}
 				nb_line++;
 			}
-			//displayFoundLinks();
+			displayFoundLinks();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}finally{
@@ -91,8 +90,7 @@ public class ComputeToxicity {
 					//String targetURL = splitted_line[0];
 					String sourceURL = splitted_line[1];
 					String sourceDomain = getDomain(sourceURL);
-					Integer links_count = urlcounting_map.get(sourceURL);
-					Integer domain_links_count = counting_map.get(sourceDomain);
+					Integer links_count = counting_map.get(sourceDomain);
 					int SOURCE_TRUSTFLOW=Integer.valueOf(splitted_line[13]);
 					int COMPUTED_TRUST_RATE_LINK=compute_rate(links_count,SOURCE_TRUSTFLOW);
 					// INSERT INTO TRUST_RATING(SOURCE_URL, SOURCE_DOMAIN, NB_LINKS, LINK_TRUSTFLOW, COMPUTED_TRUST_RATE_LINK, COMPUTED_TRUST_RATE_DOMAIN) VALUES (?,?,?,?,?,?)
@@ -101,10 +99,9 @@ public class ComputeToxicity {
 					pst.setString(1,sourceURL);
 					pst.setString(2,sourceDomain);
 					pst.setInt(3, links_count);
-					pst.setInt(4,domain_links_count);
-					pst.setInt(5, SOURCE_TRUSTFLOW);
-					pst.setInt(6, COMPUTED_TRUST_RATE_LINK);
-					pst.setInt(7, -1);
+					pst.setInt(4, SOURCE_TRUSTFLOW);
+					pst.setInt(5, COMPUTED_TRUST_RATE_LINK);
+					pst.setInt(6, -1);
 					pst.addBatch();
 					//pst.executeUpdate();
 					if (nb_batch == batch_size){
@@ -167,16 +164,6 @@ public class ComputeToxicity {
 	}
 	
 	private static void populateLinksMap(String targetURL, String sourceURL){
-		Integer local_count = urlcounting_map.get(sourceURL);
-		if (local_count == null){
-			local_count = new Integer(1);
-			urlcounting_map.put(sourceURL, local_count);
-		} else {
-			local_count=local_count+1;
-			urlcounting_map.put(sourceURL,local_count);
-		}
-		
-		
 		//		System.out.println("Target URL : "+targetURL);
 		String target_domain=getDomain(targetURL);
 		//		System.out.println("Target domain : "+target_domain);
@@ -188,20 +175,19 @@ public class ComputeToxicity {
 			System.out.println("Target domain unknown : "+target_domain);
 			//	System.exit(0);
 		}	
-		Integer localdomain_count = counting_map.get(source_domain);
-		if (localdomain_count == null){
-			localdomain_count = new Integer(1);
-			counting_map.put(source_domain, localdomain_count);
+		Integer local_count = counting_map.get(source_domain);
+		if (local_count == null){
+			local_count = new Integer(1);
+			counting_map.put(source_domain, local_count);
 		} else {
-			localdomain_count=localdomain_count+1;
-			counting_map.put(source_domain,localdomain_count);
+			local_count=local_count+1;
+			counting_map.put(source_domain,local_count);
 		}
-		
 	}
 
 	private static void displayFoundLinks(){
 		System.out.println("Displaying domain links count");
-		Iterator it = urlcounting_map.entrySet().iterator();
+		Iterator it = counting_map.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry pairs = (Map.Entry)it.next();
 			String domain_name=(String)pairs.getKey();

@@ -29,7 +29,8 @@ public class ProcessOneMagasinQualityScore {
     private static int global_number_products_with_arguments = 0;
 	
 	public static void main(String[] args) {
-		String magasin_to_analyse ="musique-cd-dvd";
+		//String magasin_to_analyse ="musique-instruments";
+		String magasin_to_analyse ="dvd";
 		if (args.length == 1){
 			magasin_to_analyse = args[0];
 		}
@@ -76,6 +77,9 @@ public class ProcessOneMagasinQualityScore {
 							counter=counter+1;
 							rayon_argument_counting.put(argument_string,counter);
 						}
+//						if (counter >global_number_products_with_arguments){
+//							System.out.println("Trouble greater than 100%");
+//						}
 					}
 				}
 			}
@@ -112,7 +116,11 @@ public class ProcessOneMagasinQualityScore {
 			String argument_name=(String)pairs.getKey();
 			Integer count = (Integer)pairs.getValue();
 			System.out.println("Attribut name : " +argument_name);
-			System.out.println("Filled percentage : " +((double)count)/((double)global_number_products_with_arguments)*100 +"%");
+			double filled_percent =((double)count)/((double)global_number_products_with_arguments)*100;
+			System.out.println("Filled percentage : " +filled_percent +"%");
+//			if (filled_percent>= 100){
+//				System.out.println("Trouble greater than 100%");
+//			}
 		}	
 	}
 	
