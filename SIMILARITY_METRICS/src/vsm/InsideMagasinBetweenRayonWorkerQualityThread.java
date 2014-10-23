@@ -7,9 +7,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 public class InsideMagasinBetweenRayonWorkerQualityThread implements Runnable {
 	private static String insert_statement="INSERT INTO RAYON_SIMILARITIES (MAGASIN, RAYON1, RAYON2, PERCENTAGE_EXACT, AVG_SIMILARITY, SIMILARITIES, LAST_UPDATE) VALUES (?,?,?,?,?,?,?)";
@@ -34,17 +36,19 @@ public class InsideMagasinBetweenRayonWorkerQualityThread implements Runnable {
 			// getting the URLs infos for each rayon
 			PreparedStatement field_pst;
 			try {
-				field_pst  = this.con.prepareStatement("SELECT "+" , URL, VENDOR, MAGASIN, RAYON, PRODUIT FROM CRAWL_RESULTS WHERE RAYON='" +rayon+ "'");
+				field_pst  = this.con.prepareStatement("SELECT NB_ATTRIBUTES,ATTRIBUTES,URL,VENDOR,MAGASIN,RAYON,PRODUIT FROM CRAWL_RESULTS WHERE RAYON='" +rayon+ "'");
 				ResultSet field_rs = field_pst.executeQuery();
 				while (field_rs.next()) {
 					URLContentInfo url_info = new URLContentInfo();
-					String content = field_rs.getString(1);
-					String my_url = field_rs.getString(2);
-					String my_vendor = field_rs.getString(3);
-					String my_magasin = field_rs.getString(4);
-					String my_rayon = field_rs.getString(5);
-					String my_produit = field_rs.getString(6);
-					url_info.setContent(content);
+					int nb_attributes = field_rs.getInt(1);
+					String attributes = field_rs.getString(2);
+					String my_url = field_rs.getString(3);
+					String my_vendor = field_rs.getString(4);
+					String my_magasin = field_rs.getString(5);
+					String my_rayon = field_rs.getString(6);
+					String my_produit = field_rs.getString(7);
+					url_info.setNb_attributes(nb_attributes);
+					url_info.setAttributes(attributes);
 					url_info.setUrl(my_url);
 					url_info.setMagasin(my_magasin);
 					url_info.setRayon(my_rayon);
@@ -61,107 +65,68 @@ public class InsideMagasinBetweenRayonWorkerQualityThread implements Runnable {
 	}
 
 	public void run() {
-		for (String rayon1 : rayons){
-			for (String rayon2 : rayons){
-				System.out.println("Computing similarity metrics for rayons : "+ rayon1 + " and "+ rayon2);
-				RayonComparison tosave = buildComparisonMatrix(rayon1,rayon2);
-				save_database(tosave);
-			}	
+		// we here compute the filling percentage for each rayon
+		for (String rayon : rayons){
+			List<URLContentInfo> rayon_infos = rayons_datas.get(rayon);
+			Map<String, Integer> rayon_argument_counting = new HashMap<String, Integer>();
+			System.out.println("Assessing " +rayon_infos.size()  + " URLs" );
+			for (URLContentInfo rayon_info : rayon_infos){
+				String attributes_listing = rayon_info.getAttributes();
+				String url = rayon_info.getUrl();
+				String checkType = URL_Utilities.checkType(url);
+				if ("FicheProduit".equals(checkType)){
+					if (attributes_listing.contains("|||")){
+						System.out.println(attributes_listing);
+						List<String> arguments_list = parse_arguments(attributes_listing);
+						for (String argument_string : arguments_list){
+							Integer counter = rayon_argument_counting.get(argument_string);
+							if (counter == null){
+								counter = new Integer(1);
+								rayon_argument_counting.put(argument_string,counter);
+							} else {
+								counter=counter+1;
+								rayon_argument_counting.put(argument_string,counter);
+							}
+
+						}
+					}
+				}
+			}
+			// to do : save the results for the rayon
+			savingDataArguments(rayon_argument_counting);
 		}
 		System.out.println(Thread.currentThread().getName()+" End");
 	}
 
-	private RayonComparison buildComparisonMatrix(String rayoni, String rayonj){
-		System.out.println("Computing similarity metrics between rayons : "+rayoni+"/"+rayonj);
-		List<URLContentInfo> info_i = rayons_datas.get(rayoni);
-		List<URLContentInfo> info_j = rayons_datas.get(rayonj);
-		RayonComparison comp =cross_lists(info_i,info_j);
-		comp.setRayoni(rayoni);
-		comp.setRayonj(rayonj);		
-		System.out.println("First rayon size : " + comp.getRayon_i_size());
-		System.out.println("Second rayon size : " + comp.getRayon_j_size());
-		System.out.println("Percentage of exactly matching : " +comp.getPercent_exactly_matching());
-		System.out.println("Average similarity : " + comp.getAverage_similarity());
-		return comp;
+	private void savingDataArguments(Map<String, Integer> rayon_argument_counting ){
+		System.out.println("Displaying arguments counting results \n");
+		Iterator it = rayon_argument_counting.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry pairs = (Map.Entry)it.next();
+			String argument_name=(String)pairs.getKey();
+			Integer count = (Integer)pairs.getValue();
+			System.out.println(argument_name+" : "+count);
+		}	
 	}
-	private RayonComparison cross_lists(List<URLContentInfo> infos_i,List<URLContentInfo> infos_j){
-		int total_exact_number=0;
-		double total_sum = 0;
-		int rayon_i_size = infos_i.size();
-		int rayon_j_size = infos_j.size();
-		List<RayonLevelDoublon> inbetweendoublons = new ArrayList<RayonLevelDoublon>();
-		for (int k=0;k<rayon_i_size;k++){
-			URLContentInfo infok=infos_i.get(k);
-			String urlk=infok.getUrl();
-			int indexk = urlk.indexOf("?");
-			if (indexk>=0){
-				urlk=urlk.substring(0, indexk);
+
+	public static List<String> parse_arguments(String arguments_listing){
+		List<String> output = new ArrayList<String>();
+		StringTokenizer arguments_tokenizer = new StringTokenizer(arguments_listing,"@@");
+		while(arguments_tokenizer.hasMoreTokens()){
+			String argument_pair = arguments_tokenizer.nextToken();
+			StringTokenizer pair_tokenizer = new StringTokenizer(argument_pair,"|||");
+			String value = "";
+			if(pair_tokenizer.hasMoreTokens()){
+				value = pair_tokenizer.nextToken();
 			}
-			String contentk =infok.getContent() == null ? "" : infok.getContent();
-			for (int l=0;l<rayon_j_size;l++){
-				URLContentInfo infol=infos_j.get(l);
-				String urll= infol.getUrl();
-				int indexl = urll.indexOf("?");
-				if (indexl>=0){
-					urll=urll.substring(0, indexl);
-				}
-				String contentl =infol.getContent() == null ? "" : infol.getContent();
-				if (!(urll.equals(urlk))){
-					double similarity = 0;
-					boolean isexactlysimilar = contentk.equals(contentl);
-					if ("".equals(contentk) || "".equals(contentl)){
-						if (isexactlysimilar){
-							similarity=1;
-						}
-					} else {
-						similarity = computeSimilarity(contentk,contentl);
-					}
-					if (isexactlysimilar){
-						total_exact_number++;
-						RayonLevelDoublon doublon = new RayonLevelDoublon();
-						doublon.setURL1(infok.getUrl());
-						doublon.setURL2(infol.getUrl());
-						doublon.setIsexact(true);
-						doublon.setSimilarity(similarity);
-						inbetweendoublons.add(doublon);
-					}
-					total_sum=total_sum+similarity;
-					if(similarity>=threshold && !isexactlysimilar){
-						RayonLevelDoublon doublon = new RayonLevelDoublon();
-						doublon.setURL1(infok.getUrl());
-						doublon.setURL2(infol.getUrl());
-						doublon.setIsexact(false);
-						doublon.setSimilarity(similarity);
-						inbetweendoublons.add(doublon);
-					}
-				}
+			if(pair_tokenizer.hasMoreTokens()){
+				String description = pair_tokenizer.nextToken();
+				output.add(value);
+				output.add(description);
 			}
 		}
-		RayonComparison comp = new RayonComparison();
-		comp.setRayon_i_size(rayon_i_size);
-		comp.setRayon_j_size(rayon_j_size);
-		comp.setPercent_exactly_matching( ((double)total_exact_number)/(rayon_i_size*rayon_j_size));
-		comp.setAverage_similarity((total_sum)/(rayon_i_size*rayon_j_size));
-		comp.setDoublons(inbetweendoublons);
-		return comp;
+		return output;
 	}
-
-	private Double computeSimilarity(String text1, String text2) {
-		VectorStateSpringRepresentation vs1 =new VectorStateSpringRepresentation(text1);
-		VectorStateSpringRepresentation vs2 =new VectorStateSpringRepresentation(text2);
-		return cosine_similarity(vs1.getWordFrequencies() , vs2.getWordFrequencies());
-	}
-
-	private double cosine_similarity(Map<String, Integer> v1, Map<String, Integer> v2) {
-		Set<String> both = new HashSet<String>(v1.keySet());
-		both.retainAll(v2.keySet());
-		double sclar = 0, norm1 = 0, norm2 = 0;
-		for (String k : both) sclar += v1.get(k) * v2.get(k);
-		for (String k : v1.keySet()) norm1 += v1.get(k) * v1.get(k);
-		for (String k : v2.keySet()) norm2 += v2.get(k) * v2.get(k);
-		return sclar / Math.sqrt(norm1 * norm2);
-	}
-
 
 	private void save_database(RayonComparison comp){
 		String urls_to_insert = "";

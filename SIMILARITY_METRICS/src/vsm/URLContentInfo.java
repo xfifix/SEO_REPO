@@ -1,12 +1,27 @@
 package vsm;
 
 public class URLContentInfo {
+	private String attributes;
+	private int nb_attributes;
 	private String content;
 	private String url;
 	private String vendor;
 	private String magasin;
 	private String produit;
 	private String rayon;
+	
+	public String getAttributes() {
+		return attributes;
+	}
+	public void setAttributes(String attributes) {
+		this.attributes = attributes;
+	}
+	public int getNb_attributes() {
+		return nb_attributes;
+	}
+	public void setNb_attributes(int nb_attributes) {
+		this.nb_attributes = nb_attributes;
+	}
 	public String getContent() {
 		return content;
 	}

@@ -1,6 +1,7 @@
 package crawl4j.testing;
 
 import java.io.IOException;
+import java.util.StringTokenizer;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -37,12 +38,27 @@ public class AttributesParsingTestingClass {
 			}
 			System.out.println("Number of arguments "+ nb_arguments);
 			System.out.println("Arguments "+ arguments_text.toString());
-			
-			
+			parse_arguments(arguments_text.toString());
+
 		}
 		catch (IOException e) {
 			e.printStackTrace();
 		} 
+
+	}
+
+	public static void parse_arguments(String arguments_listing){
+		StringTokenizer arguments_tokenizer = new StringTokenizer(arguments_listing,"@@");
+		while(arguments_tokenizer.hasMoreTokens()){
+			String argument_pair = arguments_tokenizer.nextToken();
+			StringTokenizer pair_tokenizer = new StringTokenizer(argument_pair,"|||");
+			if(pair_tokenizer.hasMoreTokens()){
+				String value = pair_tokenizer.nextToken();
+				String description = pair_tokenizer.nextToken();
+				System.out.println("Value : "+value+"\n");
+				System.out.println("Description : "+description+"\n");
+			}
+		}
 
 	}
 }

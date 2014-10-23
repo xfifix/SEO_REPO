@@ -14,40 +14,40 @@ import java.util.logging.Logger;
 
 public class MagasinListThreadPool {
 	private static int fixed_pool_size = 250;
-	
+
 	// size of keywords to manage for a thread
-	private static int size_bucket = 10000;
+	private static int size_bucket = 5000;
 	//private static int size_bucket = 100000;
 
 	public static void main(String[] args) {
 		// Getting the database property
-//		Properties props = new Properties();
-//		FileInputStream in = null;      
-//		try {
-//			in = new FileInputStream("database.properties");
-//			props.load(in);
-//		} catch (IOException ex) {
-//			Logger lgr = Logger.getLogger(MagasinListThreadPool.class.getName());
-//			lgr.log(Level.SEVERE, ex.getMessage(), ex);
-//
-//		} finally {
-//			try {
-//				if (in != null) {
-//					in.close();
-//				}
-//			} catch (IOException ex) {
-//				Logger lgr = Logger.getLogger(MagasinListThreadPool.class.getName());
-//				lgr.log(Level.SEVERE, ex.getMessage(), ex);
-//			}
-//		}
+		//		Properties props = new Properties();
+		//		FileInputStream in = null;      
+		//		try {
+		//			in = new FileInputStream("database.properties");
+		//			props.load(in);
+		//		} catch (IOException ex) {
+		//			Logger lgr = Logger.getLogger(MagasinListThreadPool.class.getName());
+		//			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		//
+		//		} finally {
+		//			try {
+		//				if (in != null) {
+		//					in.close();
+		//				}
+		//			} catch (IOException ex) {
+		//				Logger lgr = Logger.getLogger(MagasinListThreadPool.class.getName());
+		//				lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		//			}
+		//		}
 		// the following properties have been identified
-//		String url = props.getProperty("db.url");
-//		String user = props.getProperty("db.user");
-//		String passwd = props.getProperty("db.passwd");
+		//		String url = props.getProperty("db.url");
+		//		String user = props.getProperty("db.user");
+		//		String passwd = props.getProperty("db.passwd");
 		String url="jdbc:postgresql://localhost/KEYWORDSDB";
 		String user="postgres";
 		String passwd="mogette";
-		
+
 		// Instantiating the pool thread
 		ExecutorService executor = Executors.newFixedThreadPool(fixed_pool_size);
 
@@ -77,7 +77,7 @@ public class MagasinListThreadPool {
 				if (local_counter == size_bucket){
 					// we reset the counter to the initial state
 					local_counter=0;
-//					Runnable worker = new ScrapingWorkerThread(con, tofetch);
+					//					Runnable worker = new ScrapingWorkerThread(con, tofetch);
 					Runnable worker = new ArboWorkerThread(con, tofetch);
 					executor.execute(worker);
 					tofetch=new ArrayList<String>();
@@ -85,26 +85,26 @@ public class MagasinListThreadPool {
 					con=DriverManager.getConnection(url, user, passwd);
 				}
 			}
-			
-//			int nb_bucket = size/size_bucket;
-//
-//			int size_for_connection=nb_bucket/nb_connection;
-//			int connection_nb=1;
-//			// Dispatching all threads with their work to do
-//			for (int i = 0; i < nb_bucket+1; i++) {
-//
-//				Integer[] my_range = new Integer[2];
-//				my_range[0]=i*size_bucket;
-//				my_range[1]=(i+1)*size_bucket;
-//				if (connection_nb*size_for_connection <= i){
-//					con = DriverManager.getConnection(url, user, passwd);
-//					connection_nb++;
-//					System.out.println("Number of connections"+connection_nb);
-//				}
-//
-//				Runnable worker = new WorkerThread(con, my_range,url, user, passwd);
-//				executor.execute(worker);
-//			}
+
+			//			int nb_bucket = size/size_bucket;
+			//
+			//			int size_for_connection=nb_bucket/nb_connection;
+			//			int connection_nb=1;
+			//			// Dispatching all threads with their work to do
+			//			for (int i = 0; i < nb_bucket+1; i++) {
+			//
+			//				Integer[] my_range = new Integer[2];
+			//				my_range[0]=i*size_bucket;
+			//				my_range[1]=(i+1)*size_bucket;
+			//				if (connection_nb*size_for_connection <= i){
+			//					con = DriverManager.getConnection(url, user, passwd);
+			//					connection_nb++;
+			//					System.out.println("Number of connections"+connection_nb);
+			//				}
+			//
+			//				Runnable worker = new WorkerThread(con, my_range,url, user, passwd);
+			//				executor.execute(worker);
+			//			}
 
 		} catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(MagasinListThreadPool.class.getName());
