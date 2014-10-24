@@ -53,13 +53,13 @@ public class ArboWorkerThread implements Runnable {
 		st.close();
 		
 		
-		PreparedStatement update_pricing_keyword_st = con.prepareStatement(update_pricing_statement);
-		// preparing the statement
-		update_pricing_keyword_st.setString(1,info.getMagasin());
-		update_pricing_keyword_st.setString(2,info.getRayon());
-		update_pricing_keyword_st.setString(3,keyword);
-		update_pricing_keyword_st.executeUpdate();
-		update_pricing_keyword_st.close();
+//		PreparedStatement update_pricing_keyword_st = con.prepareStatement(update_pricing_statement);
+//		// preparing the statement
+//		update_pricing_keyword_st.setString(1,info.getMagasin());
+//		update_pricing_keyword_st.setString(2,info.getRayon());
+//		update_pricing_keyword_st.setString(3,keyword);
+//		update_pricing_keyword_st.executeUpdate();
+//		update_pricing_keyword_st.close();
 		// if the row has not been updated, we have to insert it !
 	}
 
@@ -85,7 +85,7 @@ public class ArboWorkerThread implements Runnable {
 						cdiscount_magasin=results[0];
 						info.setMagasin(cdiscount_magasin);
 						cdiscount_rayon=results[1];			
-						info.setMagasin(cdiscount_rayon);
+						info.setRayon(cdiscount_rayon);
 						System.out.println(Thread.currentThread()+"Ranking URL : "+ranking_url);
 						System.out.println(Thread.currentThread()+"Keyword : "+keyword);
 						System.out.println(Thread.currentThread()+"Inserting Cdiscount magasin : "+cdiscount_magasin);

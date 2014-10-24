@@ -1,7 +1,13 @@
 package vsm;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -17,7 +23,7 @@ import java.util.StringTokenizer;
 
 
 public class ProcessOneMagasinQualityScore {
-	
+
 	private static String config_path = "/home/sduprey/My_Code/My_Java_Workspace/SIMILARITY_METRICS/config/";
 	public static Properties properties;
 	public  static File stop_words;
@@ -26,14 +32,28 @@ public class ProcessOneMagasinQualityScore {
 	//	private static double threshold = 0;
 	private static Connection con = null;
 	private static List<URLContentInfo> magasins_datas = new ArrayList<URLContentInfo>();
-    private static int global_number_products_with_arguments = 0;
-	
+	private static int global_number_products_with_arguments = 0;
+
 	public static void main(String[] args) {
-		//String magasin_to_analyse ="musique-instruments";
-		String magasin_to_analyse ="dvd";
-		if (args.length == 1){
+		String magasin_to_analyse ="musique-instruments";
+		//String magasin_to_analyse ="dvd";
+		String output_directory="/home/sduprey/My_Data/My_Outgoing_Data/My_Attributes_Filling";
+		if (args.length >= 1){
 			magasin_to_analyse = args[0];
+		} 
+		
+		if (args.length == 0) {
+			System.out.println("No magasin specified : choosing "+magasin_to_analyse);
 		}
+		
+		if (args.length == 2){
+			output_directory = args[1];
+		}
+		
+		if (args.length == 1){
+			System.out.println("No output directory specified : choosing "+output_directory);
+		}
+
 		loadProperties();
 		// getting the french stop words 
 		stop_words = new File(properties.getProperty("config.stop_words_path"));
@@ -52,10 +72,10 @@ public class ProcessOneMagasinQualityScore {
 			System.out.println("Trouble with the database");
 			System.exit(0);
 		}
-		analyse_magasin(magasin_to_analyse);
+		analyse_magasin(magasin_to_analyse,output_directory);
 	}
 
-	private static void analyse_magasin(String magasin_to_analyse){
+	private static void analyse_magasin(String magasin_to_analyse, String output_directory){
 		Map<String, Integer> rayon_argument_counting = new HashMap<String, Integer>();
 		System.out.println("Assessing " +magasins_datas.size()  + " URLs" );
 		for (URLContentInfo rayon_info : magasins_datas){
@@ -68,7 +88,7 @@ public class ProcessOneMagasinQualityScore {
 					//System.out.println(attributes_listing);
 					List<String> arguments_list = parse_arguments(attributes_listing);
 					for (String argument_string : arguments_list){
-						
+
 						Integer counter = rayon_argument_counting.get(argument_string);
 						if (counter == null){
 							counter = new Integer(1);
@@ -77,17 +97,17 @@ public class ProcessOneMagasinQualityScore {
 							counter=counter+1;
 							rayon_argument_counting.put(argument_string,counter);
 						}
-//						if (counter >global_number_products_with_arguments){
-//							System.out.println("Trouble greater than 100%");
-//						}
+						//						if (counter >global_number_products_with_arguments){
+						//							System.out.println("Trouble greater than 100%");
+						//						}
 					}
 				}
 			}
 		}
 		// to do : save the results for the rayon
-		savingDataArguments(rayon_argument_counting,magasin_to_analyse);
+		savingDataArguments(rayon_argument_counting,magasin_to_analyse,output_directory);
 	}
-	
+
 	private static List<String> parse_arguments(String arguments_listing){
 		List<String> output = new ArrayList<String>();
 		StringTokenizer arguments_tokenizer = new StringTokenizer(arguments_listing,"@@");
@@ -108,22 +128,37 @@ public class ProcessOneMagasinQualityScore {
 		return output;
 	}
 
-	private static void savingDataArguments(Map<String, Integer> rayon_argument_counting,String magasin_to_analyse ){
-		System.out.println("Displaying attributs counting results for magasin : "+magasin_to_analyse+ "\n");
-		Iterator it = rayon_argument_counting.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry pairs = (Map.Entry)it.next();
-			String argument_name=(String)pairs.getKey();
-			Integer count = (Integer)pairs.getValue();
-			System.out.println("Attribut name : " +argument_name);
-			double filled_percent =((double)count)/((double)global_number_products_with_arguments)*100;
-			System.out.println("Filled percentage : " +filled_percent +"%");
-//			if (filled_percent>= 100){
-//				System.out.println("Trouble greater than 100%");
-//			}
+	private static void savingDataArguments(Map<String, Integer> rayon_argument_counting,String magasin_to_analyse, String output_directory){
+		System.out.println("Displaying attributs counting results for magasin : "+magasin_to_analyse+ "\n");	
+		BufferedWriter writer;
+		try {
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_directory+"/"+magasin_to_analyse+".csv"), "UTF-8"));
+			// we write the header
+			writer.write("ATTRIBUTE_NAME;FILLED_PERCENTAGE\n");
+			Iterator it = rayon_argument_counting.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry pairs = (Map.Entry)it.next();
+				String argument_name=(String)pairs.getKey();
+				Integer count = (Integer)pairs.getValue();
+				System.out.println("Attribut name : " +argument_name);
+				double filled_percent =((double)count)/((double)global_number_products_with_arguments)*100;
+				System.out.println("Filled percentage : " +filled_percent +"%");
+				if (filled_percent>= 100){
+					System.out.println("Trouble greater than 100%");
+					filled_percent=100;
+				}
+				writer.write(argument_name+";"+Double.toString(filled_percent)+"\n");
+			}	
+			writer.close();	
+		} catch (UnsupportedEncodingException | FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}	
 	}
-	
+
 	private static void fetch_magasin_info(String magasin_to_analyse){
 		// getting the URLs infos for each rayon
 		PreparedStatement field_pst;
