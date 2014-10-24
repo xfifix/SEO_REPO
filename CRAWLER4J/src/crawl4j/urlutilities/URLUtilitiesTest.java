@@ -14,6 +14,7 @@ public class URLUtilitiesTest {
 //			Root-5 : 1XXXXXXXXXX
 	private static String[] totest = 
 		{
+		"http://www.cdiscount.com/juniors/peluches/plush-company-15726-peluche-karola-vache/f-1206506-plu8029956157264.html",
 		"http://www.cdiscount.com/au-quotidien/alimentaire/whirlpool-eco306/f-12701-whirleco306.html",
 		"http://www.cdiscount.com/pret-a-porter/derniers-arrivages/waooh-tee-shirt-col-v-et-ecrit-bleu/f-11331-mp00857468.html?mpos=15%7Cmp",
 		"http://www.cdiscount.com/jardin/plantes/seaweed-xtract-alguamix-100-ml/f-16301-cul3700688517537.html?mpos=774%7Cmp",
