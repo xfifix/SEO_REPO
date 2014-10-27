@@ -50,10 +50,9 @@ public class TitlePopulatingClass {
 		String url = props.getProperty("db.url");
 		String user = props.getProperty("db.user");
 		String passwd = props.getProperty("db.passwd");
-
 		// the following properties have been identified for our files to parse 
 		// and insert into a database
-		String csvFile = "/home/sduprey/My_Data/My_GWT_Extracts/20140923-duplis-titles-GWT.csv";
+		String csvFile = "/home/sduprey/My_Data/My_GWT_Extracts/extract_dupli_20_oct.csv";
 		// Instantiating the database
 		Connection con = null;
 		PreparedStatement pst = null;

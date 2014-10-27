@@ -59,8 +59,10 @@ public class ContinuousCrawler extends WebCrawler {
 			myCrawlDataManager.incTotalTextSize(htmlParseData.getText().length());	
 			info.setLinks_size(links.size());
 			info.setOut_links(links.toString());
-			info.setTitle(htmlParseData.getTitle());
+			
 			Document doc = Jsoup.parse(html);
+			Elements titleel = doc.select("title");
+			info.setTitle(titleel.text());
 			// fetching the H1 element
 			Elements h1el = doc.select("h1");
 			info.setH1(h1el.text());

@@ -12,6 +12,70 @@ import java.util.List;
 import com.ranks.CdiscountInformation;
 
 public class ArboWorkerThread implements Runnable {
+	
+	private static String[] real_magasin = {
+		"informatique",
+		"musique-cd-dvd",
+		"musique-instruments",
+		//"9782818308318",
+		"bricolage-chauffage",
+		"culture-multimedia",
+		//"traitement-de-l-air-de-l-eau",
+		//"grues-treuils-palans",
+		//"cdiscount-pro",
+		"dvd",
+		"livres-bd",
+		//"cdiscount",
+		"jeux-educatifs",
+		//"t-shirts-manches-courtes",//http://www.cdiscount.com/t-shirts-manches-courtes/l-113011101.html
+		"cadeaux-noel",
+		//"apple-at-md826zm-a",
+		//"point-de-vente",
+		"juniors",
+		"jeux-pc-video-console",
+		"high-tech",
+		//"sac-porte-travers-mandarina-duck-reference-j6t0",
+		"vin-champagne",
+		"photo-numerique",
+		"animalerie",
+		//"scarificateur-%C3%A9lectrique-combi-care-38-e-+-bac",
+		"tout-a-moins-de-10-euros",
+		//"lit-enfant-mi-hauteur-90-x-200-cm",
+		//"op",
+		//"9782918653400",
+		//"fl%C3%A9chettes-ergo-soft",
+		"bagages",
+		"jardin-animalerie",
+		"electromenager",
+		"le-sport",
+		"vin-alimentaire",
+		"cosmetique",
+		"telephonie",
+		"arts-loisirs",
+		//"filtration-de-l-eau-boissons-glacons",
+		//"babygro-doudoune-doublee-polaire-bebe",
+		"pret-a-porter",
+		"soldes-promotions",
+		"outillage",
+		"chaussures",
+		"destockage",
+		//"jean-diesel-safado-8u9-homme",http://www.cdiscount.com/jean-diesel-safado-8u9-homme/f-1133018-mp00040255.html
+		"auto",
+		"Unknown",
+		"maison",
+		"boutique-cadeaux",
+		"salon-complet",
+		"bijouterie",
+		"au-quotidien",
+		//"disques-durs",
+		"jardin",
+		"personnalisation-3d"
+		//"mammouth---d%C3%A9terre-ton-dinosaure---dig-a-dino"
+		};
+	
+	
+	
+	
 	private static String request_url = "http://www.cdiscount.com/sa-10/";
 	private static String update_statement ="UPDATE REFERENTIAL_KEYWORDS SET MAGASIN=?,RAYON=? WHERE KEYWORD=?";
 	private static String update_pricing_statement ="UPDATE PRICING_KEYWORDS SET MAGASIN=?,RAYON=? WHERE KEYWORD=?";
@@ -83,6 +147,7 @@ public class ArboWorkerThread implements Runnable {
 					if ("Unknown".equals(cdiscount_magasin)||"Unknown".equals(cdiscount_rayon)){
 						String[] results=URL_Utilities.checkMagasinAndRayonAndProduct(ranking_url);
 						cdiscount_magasin=results[0];
+						check_proper_magasin(cdiscount_magasin);				
 						info.setMagasin(cdiscount_magasin);
 						cdiscount_rayon=results[1];			
 						info.setRayon(cdiscount_rayon);
@@ -102,7 +167,19 @@ public class ArboWorkerThread implements Runnable {
 		}
 		return info;
 	}
-
+	
+	// the arborescence is not always reliable
+	private void check_proper_magasin(String totest){
+		boolean found = false;
+		for (int l=0;l<real_magasin.length;l++){
+			if (real_magasin[l].equals(totest)){
+				found=true;
+			}
+		}
+		if (!found){
+			System.out.println("We here got a little problem");
+		}
+	}
 	private CdiscountInformation getScrapingKeywordInfo(String keyword) throws IOException{
 		keyword=keyword.replace(" ", "+");
 		String my_url = request_url+keyword+".html";

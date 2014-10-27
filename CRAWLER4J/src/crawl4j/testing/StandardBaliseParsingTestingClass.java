@@ -1,16 +1,18 @@
 package crawl4j.testing;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class ParsingTestingClass {
+public class StandardBaliseParsingTestingClass {
 	public static void main(String[] args){
 
 		//String my_url_to_fetch = "http://www.cdiscount.com/electromenager/tous-nos-accessoires/joint-hublot-d-30-30-cm/f-11029-ind3662734065501.html#mpos=2|mp";
-		//String my_url_to_fetch = "http://www.cdiscount.com/le-sport/vetements-de-sport/kappa-survetement-armor-homme/f-121020526-3025ej0005.html#mpos=1|cd";
-		String my_url_to_fetch = "http://www.cdiscount.com/animalerie/chiens/lot-de-3-sofas-pour-chien/f-1621004-ifd19945rouge.html";
+		String my_url_to_fetch = "http://www.cdiscount.com/le-sport/vetements-de-sport/kappa-survetement-armor-homme/f-121020526-3025ej0005.html#mpos=1|cd";
+
 		// fetching data using jQuery
 		org.jsoup.nodes.Document doc;
 		try{
@@ -21,9 +23,17 @@ public class ParsingTestingClass {
 					.ignoreHttpErrors(true)
 					.timeout(0)
 					.get();
-			
-			Elements titleel = doc.select("title");
-			System.out.println(titleel.text());
+			Elements resellers = doc.select(".fpSellBy");
+			StringBuilder resellerBuilder = new StringBuilder();
+			for (Element reseller : resellers){
+				if(reseller.getElementsByTag("a") != null){
+					resellerBuilder.append(reseller.getElementsByTag("a").text());
+				}
+			}
+			String vendor = resellerBuilder.toString();
+			System.out.println(vendor);
+
+
 		}
 		catch (IOException e) {
 			e.printStackTrace();

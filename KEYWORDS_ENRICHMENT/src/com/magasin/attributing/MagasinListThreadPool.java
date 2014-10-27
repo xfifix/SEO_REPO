@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MagasinListThreadPool {
-	private static int fixed_pool_size = 150;
+	private static int fixed_pool_size = 250;
 
 	// size of keywords to manage for a thread
 	private static int size_bucket = 5000;
