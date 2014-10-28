@@ -23,7 +23,7 @@ public class StatusListWorkerThread implements Runnable {
 		this.thread_fetch_ids=to_fetch;
 		this.con = con;
 		PreparedStatement pst  = null;
-		if ("".equals(my_description)){
+		if ("all".equals(my_description)){
 			String my_url="SELECT URL FROM HTTPSTATUS_LIST WHERE TO_FETCH = TRUE and ID in "+to_fetch.toString();
 			my_url=my_url.replace("[", "(");
 			my_url=my_url.replace("]", ")");

@@ -30,40 +30,43 @@ public class URLListWorkerThread implements Runnable {
 		this.description=my_description;
 		this.thread_fetch_ids=to_fetch;
 		this.con = con;
-		PreparedStatement pst  = null;
-		if ("".equals(my_description)){
-			String my_url="SELECT URL FROM HTTPINFOS_LIST WHERE TO_FETCH = TRUE and ID in "+to_fetch.toString();
-			my_url=my_url.replace("[", "(");
-			my_url=my_url.replace("]", ")");
-			pst = con.prepareStatement(my_url);
-		} else {
-			String my_url="SELECT URL FROM HTTPINFOS_LIST WHERE TO_FETCH = TRUE and DESCRIPTION='"+description+"' and ID in "+to_fetch.toString();
-			my_url=my_url.replace("[", "(");
-			my_url=my_url.replace("]", ")");
-			pst = con.prepareStatement(my_url);
-		};
-		ResultSet rs = null;
-		rs = pst.executeQuery();
-		while (rs.next()) {
-			my_urls_to_fetch.add(rs.getString(1)); 
+		String my_url="";
+		if (to_fetch.size()>0){
+			try {
+				PreparedStatement pst  = null;
+				if ("all".equals(my_description)){
+					my_url="SELECT URL FROM HTTPINFOS_LIST WHERE TO_FETCH = TRUE and ID in "+to_fetch.toString();
+					my_url=my_url.replace("[", "(");
+					my_url=my_url.replace("]", ")");
+					pst = con.prepareStatement(my_url);
+				} else {
+					my_url="SELECT URL FROM HTTPINFOS_LIST WHERE TO_FETCH = TRUE and DESCRIPTION='"+description+"' and ID in "+to_fetch.toString();
+					my_url=my_url.replace("[", "(");
+					my_url=my_url.replace("]", ")");
+					pst = con.prepareStatement(my_url);
+				};
+				ResultSet rs = null;
+				rs = pst.executeQuery();
+				while (rs.next()) {
+					my_urls_to_fetch.add(rs.getString(1)); 
+				}
+			}
+			catch(SQLException e){
+				e.printStackTrace();
+				System.out.println("Trouble with thread"+Thread.currentThread()+" and URL : "+my_url);
+			}
 		}
 	}
 
 	public void run() {
 		List<URLInfo> infos=processCommand();
-
-		try {
-			updateStatus(infos);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		updateStatus(infos);
 		System.out.println(Thread.currentThread().getName()+" End");
 	}
 
 	// batched update
-		private void updateStatus(List<URLInfo> infos) throws SQLException{
+	private void updateStatus(List<URLInfo> infos){
+		try {
 			Statement st = con.createStatement();       
 			con.setAutoCommit(false);      
 			for (int i=0;i<infos.size();i++){
@@ -76,25 +79,29 @@ public class URLListWorkerThread implements Runnable {
 			st.executeBatch();
 			con.commit();
 			System.out.println("Inserting : " + infos.size() + "ULRs into database");
+		} catch (SQLException e){
+			e.printStackTrace();
+			System.out.println("Trouble inserting batch ");
 		}
+	}
 
 	// update step by step
-//	private void updateStatus(List<URLInfo> infos){
-//		for (int i=0;i<infos.size();i++){
-//			String H1= infos.get(i).getH1().replace("'", "");
-//			String TITLE = infos.get(i).getTitle().replace("'", "");
-//			String batch ="UPDATE HTTPINFOS_LIST SET STATUS="+infos.get(i).getStatus()+", H1='"+H1+"', TITLE='"+TITLE+ "',TO_FETCH=FALSE WHERE ID="+thread_fetch_ids.get(i);
-//			try{
-//				PreparedStatement insert_st = con.prepareStatement(batch);
-//				insert_st.executeUpdate();
-//			} catch (SQLException e){
-//				System.out.println("Trouble inserting : "+batch);
-//				e.printStackTrace();
-//			}
-//
-//		}      
-//		System.out.println("Inserting : " + infos.size() + "ULRs into database");
-//	}
+	//	private void updateStatus(List<URLInfo> infos){
+	//		for (int i=0;i<infos.size();i++){
+	//			String H1= infos.get(i).getH1().replace("'", "");
+	//			String TITLE = infos.get(i).getTitle().replace("'", "");
+	//			String batch ="UPDATE HTTPINFOS_LIST SET STATUS="+infos.get(i).getStatus()+", H1='"+H1+"', TITLE='"+TITLE+ "',TO_FETCH=FALSE WHERE ID="+thread_fetch_ids.get(i);
+	//			try{
+	//				PreparedStatement insert_st = con.prepareStatement(batch);
+	//				insert_st.executeUpdate();
+	//			} catch (SQLException e){
+	//				System.out.println("Trouble inserting : "+batch);
+	//				e.printStackTrace();
+	//			}
+	//
+	//		}      
+	//		System.out.println("Inserting : " + infos.size() + "ULRs into database");
+	//	}
 
 	private List<URLInfo> processCommand() {
 		List<URLInfo> my_fetched_infos = new ArrayList<URLInfo>();

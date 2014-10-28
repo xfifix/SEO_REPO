@@ -1,7 +1,5 @@
 package com.populating;
 
-
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -17,13 +15,13 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+public class CurrentBatchTitlePopulatingClass {
 
-public class TitlePopulatingClass {
-
-	private static int counter = 147728;
-
+	private static int counter = 0;
+	private static int batch_size = 10000;
+	private static String insert_statement = "INSERT INTO CURRENT_DUPLICATES(TITLE,NB_URLS,URLS,DUPLICATE_TIME,MAGAZIN,RAYON,PRODUCT)"
+			+ " VALUES(?,?,?,?,?,?,?)";
 	public static void main(String[] args) {
-
 		// Reading the property of our database
 		Properties props = new Properties();
 		FileInputStream in = null;      
@@ -33,7 +31,7 @@ public class TitlePopulatingClass {
 
 		} catch (IOException ex) {
 
-			Logger lgr = Logger.getLogger(TitlePopulatingClass.class.getName());
+			Logger lgr = Logger.getLogger(CurrentBatchTitlePopulatingClass.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 
 		} finally {
@@ -43,7 +41,7 @@ public class TitlePopulatingClass {
 					in.close();
 				}
 			} catch (IOException ex) {
-				Logger lgr = Logger.getLogger(TitlePopulatingClass.class.getName());
+				Logger lgr = Logger.getLogger(CurrentBatchTitlePopulatingClass.class.getName());
 				lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -66,9 +64,14 @@ public class TitlePopulatingClass {
 		String[] column_names = null;
 		String cvsSplitBy = ",|;";
 		int nb_line=1;
+		int batch_current_size=1;
 		// last error
 		try {
 			con = DriverManager.getConnection(url, user, passwd);
+
+			con.setAutoCommit(false);
+			pst = con.prepareStatement(insert_statement);
+
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(csvFile), "UTF-8"));	
 			// we skip the first line : the headers
 			header = br.readLine();
@@ -112,10 +115,7 @@ public class TitlePopulatingClass {
 
 						}
 
-						String stm = "INSERT INTO DUPLICATES(TITLE,NB_URLS,URLS,DUPLICATE_TIME,MAGAZIN,RAYON,PRODUCT)"
-								+ " VALUES(?,?,?,?,?,?,?)";
 
-						pst = con.prepareStatement(stm);
 						pst.setString(1,title);
 						pst.setInt(2,counter);
 						pst.setString(3,splitted_line[1]);
@@ -125,14 +125,22 @@ public class TitlePopulatingClass {
 						pst.setString(5,magasin);
 						pst.setString(6,rayon);
 						pst.setString(7,produit);
-						pst.executeUpdate();
+						pst.addBatch();
+						batch_current_size++;
+						if (batch_current_size == batch_size){
+							System.out.println("Inserting a batch");
+							pst.executeBatch();		 
+							con.commit();
+							batch_current_size=0;
+						}
 					}					
 				}
 				nb_line++;
+	
 			}
 
 		} catch (Exception ex) {
-			Logger lgr = Logger.getLogger(TitlePopulatingClass.class.getName());
+			Logger lgr = Logger.getLogger(CurrentBatchTitlePopulatingClass.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 
 		} finally {
@@ -152,7 +160,7 @@ public class TitlePopulatingClass {
 				}
 
 			} catch (SQLException | IOException ex) {
-				Logger lgr = Logger.getLogger(TitlePopulatingClass.class.getName());
+				Logger lgr = Logger.getLogger(CurrentBatchTitlePopulatingClass.class.getName());
 				lgr.log(Level.WARNING, ex.getMessage(), ex);
 			}
 		}
