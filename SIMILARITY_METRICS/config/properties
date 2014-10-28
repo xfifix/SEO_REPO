@@ -1,5 +1,6 @@
 config.senses_log = falseconfig.senses_log_dir = data/reuters21578/test_results/Representations
 config.stop_words_path = /home/sduprey/My_Code/My_Java_Workspace/SIMILARITY_METRICS/config/stopwords
+config.properties_path = /home/sduprey/My_Data/My_Conf/ID_properties.csv
 # to get synonyms in frech you do need a word net database
 #config.concept_level = synonyms
 config.concept_level = nosynonyms

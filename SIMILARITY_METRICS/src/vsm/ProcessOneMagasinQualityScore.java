@@ -1,11 +1,14 @@
 package vsm;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
@@ -27,12 +30,14 @@ public class ProcessOneMagasinQualityScore {
 	private static String config_path = "/home/sduprey/My_Code/My_Java_Workspace/SIMILARITY_METRICS/config/";
 	public static Properties properties;
 	public  static File stop_words;
+	public  static String properties_file_path;
 
 	// threshold above which we deem the content too much similar !!
 	//	private static double threshold = 0;
 	private static Connection con = null;
 	private static List<URLContentInfo> magasins_datas = new ArrayList<URLContentInfo>();
 	private static int global_number_products_with_arguments = 0;
+	private static Map<String, String> properties_map = new HashMap<String, String>();
 
 	public static void main(String[] args) {
 		String magasin_to_analyse ="musique-instruments";
@@ -41,15 +46,15 @@ public class ProcessOneMagasinQualityScore {
 		if (args.length >= 1){
 			magasin_to_analyse = args[0];
 		} 
-		
+
 		if (args.length == 0) {
 			System.out.println("No magasin specified : choosing "+magasin_to_analyse);
 		}
-		
+
 		if (args.length == 2){
 			output_directory = args[1];
 		}
-		
+
 		if (args.length == 1){
 			System.out.println("No output directory specified : choosing "+output_directory);
 		}
@@ -57,11 +62,15 @@ public class ProcessOneMagasinQualityScore {
 		loadProperties();
 		// getting the french stop words 
 		stop_words = new File(properties.getProperty("config.stop_words_path"));
+		properties_file_path = properties.getProperty("config.properties_path");
 		//magasin_to_filter=properties.getProperty("data.magasintofilter");
 		String url = properties.getProperty("db.url");
 		String user = properties.getProperty("db.user");
 		String mdp = properties.getProperty("db.passwd");    
 		// database variables
+
+		parse_model_properties(properties_file_path);
+
 		try {
 			con = DriverManager.getConnection(url, user, mdp);
 			fetch_magasin_info(magasin_to_analyse);
@@ -73,6 +82,42 @@ public class ProcessOneMagasinQualityScore {
 			System.exit(0);
 		}
 		analyse_magasin(magasin_to_analyse,output_directory);
+	}
+
+	private static void parse_model_properties(String property_path_file){
+
+		FileInputStream in = null;     
+		BufferedReader br = null;
+		String line = "";
+		String header = null;
+		String[] column_names = null;
+		String cvsSplitBy = ";";
+		int nb_line=1;
+		try {
+			in = new FileInputStream(property_path_file);
+			br = new BufferedReader(new InputStreamReader(in, "UTF-8"));	
+			// we skip the first line : the headers
+			header = br.readLine();
+			column_names = header.split(cvsSplitBy);
+			while ((line = br.readLine()) != null) {
+				nb_line++;
+				String[] fields = line.split(cvsSplitBy);
+				System.out.println(fields[0]+fields[1]+fields[2]+fields[3]);
+				
+			} 
+		}catch (IOException ex) {
+			ex.printStackTrace();
+			System.out.println("Trouble reading the property file : "+property_path_file);
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException ex) {
+				ex.printStackTrace();
+				System.out.println("Trouble reading the property file : "+property_path_file);		
+			}
+		}
 	}
 
 	private static void analyse_magasin(String magasin_to_analyse, String output_directory){

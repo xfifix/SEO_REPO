@@ -21,7 +21,7 @@ public class URLListWorkerThread implements Runnable {
 	private String user_agent;
 	private String description;
 	private List<Integer> thread_fetch_ids = new ArrayList<Integer>();
-	private List<String> my_urls_to_fetch = new ArrayList<String>();
+	private List<ULRId> my_urls_to_fetch = new ArrayList<ULRId>();
 	private Connection con;
 
 
@@ -35,12 +35,12 @@ public class URLListWorkerThread implements Runnable {
 			try {
 				PreparedStatement pst  = null;
 				if ("all".equals(my_description)){
-					my_url="SELECT URL FROM HTTPINFOS_LIST WHERE TO_FETCH = TRUE and ID in "+to_fetch.toString();
+					my_url="SELECT URL, ID FROM HTTPINFOS_LIST WHERE TO_FETCH = TRUE and ID in "+to_fetch.toString();
 					my_url=my_url.replace("[", "(");
 					my_url=my_url.replace("]", ")");
 					pst = con.prepareStatement(my_url);
 				} else {
-					my_url="SELECT URL FROM HTTPINFOS_LIST WHERE TO_FETCH = TRUE and DESCRIPTION='"+description+"' and ID in "+to_fetch.toString();
+					my_url="SELECT URL, ID FROM HTTPINFOS_LIST WHERE TO_FETCH = TRUE and DESCRIPTION='"+description+"' and ID in "+to_fetch.toString();
 					my_url=my_url.replace("[", "(");
 					my_url=my_url.replace("]", ")");
 					pst = con.prepareStatement(my_url);
@@ -48,7 +48,12 @@ public class URLListWorkerThread implements Runnable {
 				ResultSet rs = null;
 				rs = pst.executeQuery();
 				while (rs.next()) {
-					my_urls_to_fetch.add(rs.getString(1)); 
+					String loc_url = rs.getString(1);
+					int id = rs.getInt(2);
+					ULRId toadd = new ULRId();
+					toadd.setId(id);
+					toadd.setUrl(loc_url);
+					my_urls_to_fetch.add(toadd); 
 				}
 			}
 			catch(SQLException e){
@@ -72,7 +77,7 @@ public class URLListWorkerThread implements Runnable {
 			for (int i=0;i<infos.size();i++){
 				String H1= infos.get(i).getH1().replace("'", "");
 				String TITLE = infos.get(i).getTitle().replace("'", "");
-				String batch ="UPDATE HTTPINFOS_LIST SET STATUS="+infos.get(i).getStatus()+", H1='"+H1+"', TITLE='"+TITLE+ "',TO_FETCH=FALSE WHERE ID="+thread_fetch_ids.get(i);
+				String batch ="UPDATE HTTPINFOS_LIST SET STATUS="+infos.get(i).getStatus()+", H1='"+H1+"', TITLE='"+TITLE+ "',TO_FETCH=FALSE WHERE ID="+infos.get(i).getId();
 				st.addBatch(batch);
 			}      
 			//int counts[] = st.executeBatch();
@@ -106,13 +111,13 @@ public class URLListWorkerThread implements Runnable {
 	private List<URLInfo> processCommand() {
 		List<URLInfo> my_fetched_infos = new ArrayList<URLInfo>();
 		for (int i=0;i<my_urls_to_fetch.size();i++){
-			String line=my_urls_to_fetch.get(i);
+			ULRId line_info=my_urls_to_fetch.get(i);
 			// second method
 			URLInfo my_info = new URLInfo();
 			HttpURLConnection connection = null;
 			try{
-				System.out.println(Thread.currentThread().getName()+" fetching URL : "+line);
-				URL url = new URL(line);
+				System.out.println(Thread.currentThread().getName()+" fetching URL : "+line_info.getUrl());
+				URL url = new URL(line_info.getUrl());
 				connection = (HttpURLConnection)url.openConnection();
 				connection.setRequestMethod("GET");
 				connection.setRequestProperty("User-Agent",this.user_agent);
@@ -144,8 +149,9 @@ public class URLListWorkerThread implements Runnable {
 					conc_title=conc_title+title.text();
 				}				
 				my_info.setTitle(conc_title);
+				my_info.setId(line_info.getId());
 			} catch (Exception e){
-				System.out.println("Error with "+line);
+				System.out.println("Error with "+line_info);
 				e.printStackTrace();
 			}
 
@@ -158,7 +164,32 @@ public class URLListWorkerThread implements Runnable {
 	}
 
 
+	class ULRId{
+		private String url="";
+		private int id;
+		public String getUrl() {
+			return url;
+		}
+		public void setUrl(String url) {
+			this.url = url;
+		}
+		public int getId() {
+			return id;
+		}
+		public void setId(int id) {
+			this.id = id;
+		}
+	}
+	
+	
 	class URLInfo{
+		private int id;
+		public int getId() {
+			return id;
+		}
+		public void setId(int id) {
+			this.id = id;
+		}
 		private String h1="";
 		private String title="";
 		private int status=-1;
