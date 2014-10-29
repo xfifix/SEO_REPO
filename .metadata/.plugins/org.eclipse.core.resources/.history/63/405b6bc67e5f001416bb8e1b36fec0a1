@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 public class URLListThreadPool {
 	private static int fixed_pool_size = 50;
-	private static int size_bucket = 1000;
+	private static int size_bucket = 10;
 	private static List<Integer> tofetch_list = new ArrayList<Integer>();
 
 	public static void main(String[] args) {
