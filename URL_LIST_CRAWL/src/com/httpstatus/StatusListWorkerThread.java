@@ -71,11 +71,12 @@ public class StatusListWorkerThread implements Runnable {
 		System.out.println("Inserting : " + status.size() + "ULRs into database");
 	}
 
-
 	private List<StatusInfo> processCommand() {
 		List<StatusInfo> my_fetched_status = new ArrayList<StatusInfo>();
 		for (int i=0;i<my_urls_to_fetch.size();i++){
 			ULRId line_info=my_urls_to_fetch.get(i);
+			StatusInfo info = new StatusInfo();
+			info.setId(line_info.getId());
 			// second method
 			int status=-1;
 			HttpURLConnection connection = null;
@@ -99,9 +100,9 @@ public class StatusListWorkerThread implements Runnable {
 			if (connection != null){
 				connection.disconnect();
 			}
-			StatusInfo info = new StatusInfo();
+
 			info.setStatus_info(status);
-			info.setId(line_info.getId());
+
 			my_fetched_status.add(info);
 		}
 		return my_fetched_status;

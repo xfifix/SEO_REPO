@@ -71,6 +71,7 @@ public class URLListWorkerThread implements Runnable {
 
 	// batched update
 	private void updateStatus(List<URLInfo> infos){
+		System.out.println("Adding to batch : " + infos.size() + "ULRs into database");
 		try {
 			Statement st = con.createStatement();       
 			con.setAutoCommit(false);      
@@ -81,9 +82,10 @@ public class URLListWorkerThread implements Runnable {
 				st.addBatch(batch);
 			}      
 			//int counts[] = st.executeBatch();
+			System.out.println("Beginning to insert : " + infos.size() + "ULRs into database");
 			st.executeBatch();
 			con.commit();
-			System.out.println("Inserting : " + infos.size() + "ULRs into database");
+			System.out.println("Having inserted : " + infos.size() + "ULRs into database");
 		} catch (SQLException e){
 			e.printStackTrace();
 			System.out.println("Trouble inserting batch ");
@@ -114,6 +116,7 @@ public class URLListWorkerThread implements Runnable {
 			ULRId line_info=my_urls_to_fetch.get(i);
 			// second method
 			URLInfo my_info = new URLInfo();
+			my_info.setId(line_info.getId());
 			HttpURLConnection connection = null;
 			try{
 				System.out.println(Thread.currentThread().getName()+" fetching URL : "+line_info.getUrl());
@@ -149,7 +152,7 @@ public class URLListWorkerThread implements Runnable {
 					conc_title=conc_title+title.text();
 				}				
 				my_info.setTitle(conc_title);
-				my_info.setId(line_info.getId());
+
 			} catch (Exception e){
 				System.out.println("Error with "+line_info);
 				e.printStackTrace();

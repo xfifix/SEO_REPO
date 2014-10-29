@@ -11,6 +11,8 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.httpinfos.URLListWorkerThread;
+
 
 public class StatusListThreadPool {
 	private static int fixed_pool_size = 50;
@@ -31,54 +33,54 @@ public class StatusListThreadPool {
 		} else {
 			System.out.println("You didn't specify any description, none will be used");
 		}
-		
+
 		if (args.length==3){
 			fixed_pool_size= Integer.valueOf(args[2]);
 			System.out.println("You specified "+fixed_pool_size + " threads");
 		}
-		
+
 		if (args.length==4){
 			fixed_pool_size= Integer.valueOf(args[3]);
 			System.out.println("You specified a "+size_bucket + " bucket size");
 		} else {
 			System.out.println("You didn't specify a bucket size, default will be "+size_bucket);
 		}
-		
+
 		System.out.println("User agent selected : "+my_user_agent);
 		System.out.println("Description chosen : "+my_description);
-		
+
 		// it would be best to use a property file to store MD5 password
-//		// Getting the database property
-//		Properties props = new Properties();
-//		FileInputStream in = null;      
-//		try {
-//			in = new FileInputStream("database.properties");
-//			props.load(in);
-//		} catch (IOException ex) {
-//			Logger lgr = Logger.getLogger(HTTPStatusThreadPool.class.getName());
-//			lgr.log(Level.SEVERE, ex.getMessage(), ex);
-//
-//		} finally {
-//			try {
-//				if (in != null) {
-//					in.close();
-//				}
-//			} catch (IOException ex) {
-//				Logger lgr = Logger.getLogger(HTTPStatusThreadPool.class.getName());
-//				lgr.log(Level.SEVERE, ex.getMessage(), ex);
-//			}
-//		}
+		//		// Getting the database property
+		//		Properties props = new Properties();
+		//		FileInputStream in = null;      
+		//		try {
+		//			in = new FileInputStream("database.properties");
+		//			props.load(in);
+		//		} catch (IOException ex) {
+		//			Logger lgr = Logger.getLogger(HTTPStatusThreadPool.class.getName());
+		//			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		//
+		//		} finally {
+		//			try {
+		//				if (in != null) {
+		//					in.close();
+		//				}
+		//			} catch (IOException ex) {
+		//				Logger lgr = Logger.getLogger(HTTPStatusThreadPool.class.getName());
+		//				lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		//			}
+		//		}
 		// the following properties have been identified
 		//		String url = props.getProperty("db.url");
 		//		String user = props.getProperty("db.user");
 		//		String passwd = props.getProperty("db.passwd");
-		
+
 		String url="jdbc:postgresql://localhost/HTTPSTATUSDB";
 		String user="postgres";
 		String passwd="mogette";
-        System.out.println("You are connected to the postgresql HTTPSTATUS_LIST database as "+user);
+		System.out.println("You are connected to the postgresql HTTPSTATUS_LIST database as "+user);
 		// Instantiating the pool thread
-        System.out.println("You'll be using "+fixed_pool_size+" threads ");
+		System.out.println("You'll be using "+fixed_pool_size+" threads ");
 		ExecutorService executor = Executors.newFixedThreadPool(fixed_pool_size);
 
 		// The database connection
@@ -99,32 +101,57 @@ public class StatusListThreadPool {
 				tofetch_list.add(rs.getInt(1));
 			}
 			int size=tofetch_list.size();
-            System.out.println(size + " URL status to fetch according to the database \n");
+			System.out.println(size + " URL status to fetch according to the database \n");
 			// we add one for the euclidean remainder
-			int nb_bucket = size/size_bucket+1;
-			// we add one for the euclidean remainder
-			int nbbucket_per_connection=nb_bucket/nb_connection+1;
-			Connection local_con = DriverManager.getConnection(url, user, passwd);
-			int connection_nb=1;
-			// Dispatching all threads with their work to do
-			int global_counter=0;
-			for (int i = 0; i < nb_bucket; i++) {
-				List<Integer> thread_list = new ArrayList<Integer>();
-				int local_count=0;
-				while (local_count<=size_bucket && global_counter<size){
-					thread_list.add(tofetch_list.get(global_counter));
+			int local_count=0;
+			List<Integer> thread_list = new ArrayList<Integer>();
+			for (int size_counter=0; size_counter<size;size_counter ++){
+				if(local_count<size_bucket ){
+					thread_list.add(tofetch_list.get(size_counter));
 					local_count++;
-					global_counter++;
 				}
-				if (connection_nb*nbbucket_per_connection <= i){
-					local_con = DriverManager.getConnection(url, user, passwd);
-					connection_nb++;
-					System.out.println("Number of connections"+connection_nb);
+				if (local_count==size_bucket){
+					Connection local_con = DriverManager.getConnection(url, user, passwd);
+					System.out.println("Launching another thread with "+local_count+ " URLs to fetch");
+					Runnable worker = new StatusListWorkerThread(local_con,thread_list,my_user_agent,my_description);
+					executor.execute(worker);		
+					local_count=0;
+					thread_list = new ArrayList<Integer>();
 				}
+			}
+			if (thread_list.size()>0){
+				Connection local_con = DriverManager.getConnection(url, user, passwd);
 				System.out.println("Launching another thread with "+local_count+ " URLs to fetch");
 				Runnable worker = new StatusListWorkerThread(local_con,thread_list,my_user_agent,my_description);
 				executor.execute(worker);
-			}
+			}      
+			//            
+			//            
+			//			// we add one for the euclidean remainder
+			//			int nb_bucket = size/size_bucket+1;
+			//			// we add one for the euclidean remainder
+			//			int nbbucket_per_connection=nb_bucket/nb_connection+1;
+			//			Connection local_con = DriverManager.getConnection(url, user, passwd);
+			//			int connection_nb=1;
+			//			// Dispatching all threads with their work to do
+			//			int global_counter=0;
+			//			for (int i = 0; i < nb_bucket; i++) {
+			//				List<Integer> thread_list = new ArrayList<Integer>();
+			//				int local_count=0;
+			//				while (local_count<=size_bucket && global_counter<size){
+			//					thread_list.add(tofetch_list.get(global_counter));
+			//					local_count++;
+			//					global_counter++;
+			//				}
+			//				if (connection_nb*nbbucket_per_connection <= i){
+			//					local_con = DriverManager.getConnection(url, user, passwd);
+			//					connection_nb++;
+			//					System.out.println("Number of connections"+connection_nb);
+			//				}
+			//				System.out.println("Launching another thread with "+local_count+ " URLs to fetch");
+			//				Runnable worker = new StatusListWorkerThread(local_con,thread_list,my_user_agent,my_description);
+			//				executor.execute(worker);
+			//			}
 		} catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(StatusListThreadPool.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
