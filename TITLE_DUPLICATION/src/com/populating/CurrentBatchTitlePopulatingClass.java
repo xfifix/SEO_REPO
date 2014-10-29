@@ -94,7 +94,8 @@ public class CurrentBatchTitlePopulatingClass {
     					String produit = "";
 						String current_url="";
 						// we have at least two couples
-						if (splitted_line.length>=2){
+						int nb_urls = splitted_line.length;
+						if (nb_urls>=2){
 							current_url = splitted_line[0];
 							magasin = URL_Utilities.checkMagasin(current_url);
 							rayon = URL_Utilities.checkRayon(current_url);
@@ -106,7 +107,7 @@ public class CurrentBatchTitlePopulatingClass {
 							//							System.out.println("Rayon : "+rayon);
 							//							System.out.println("Produit : "+produit);
 							pst.setString(1,title);
-							pst.setInt(2,counter);
+							pst.setInt(2,nb_urls);
 							pst.setString(3,remaining);
 							Date current_date = new Date();
 							java.sql.Date sqlDate = new java.sql.Date(current_date.getTime());

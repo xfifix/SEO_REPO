@@ -85,14 +85,12 @@ public class ProcessOneMagasinQualityScore {
 	}
 
 	private static void parse_model_properties(String property_path_file){
-
 		FileInputStream in = null;     
 		BufferedReader br = null;
 		String line = "";
 		String header = null;
 		String[] column_names = null;
 		String cvsSplitBy = ";";
-		int nb_line=1;
 		try {
 			in = new FileInputStream(property_path_file);
 			br = new BufferedReader(new InputStreamReader(in, "UTF-8"));	
@@ -100,10 +98,9 @@ public class ProcessOneMagasinQualityScore {
 			header = br.readLine();
 			column_names = header.split(cvsSplitBy);
 			while ((line = br.readLine()) != null) {
-				nb_line++;
 				String[] fields = line.split(cvsSplitBy);
-				System.out.println(fields[0]+fields[1]+fields[2]+fields[3]);
-				
+				//System.out.println(fields[0]+fields[1]+fields[2]+fields[3]);
+				properties_map.put(fields[3], column_names[0]+" : "+fields[0]+"/"+column_names[1]+" : "+fields[1]+"/"+column_names[2]+" : "+fields[2]);
 			} 
 		}catch (IOException ex) {
 			ex.printStackTrace();
@@ -130,7 +127,7 @@ public class ProcessOneMagasinQualityScore {
 			if ("FicheProduit".equals(checkType)){
 				if (attributes_listing.contains("|||")){
 					global_number_products_with_arguments++;
-					//System.out.println(attributes_listing);
+					System.out.println(attributes_listing);
 					List<String> arguments_list = parse_arguments(attributes_listing);
 					for (String argument_string : arguments_list){
 
@@ -150,6 +147,7 @@ public class ProcessOneMagasinQualityScore {
 			}
 		}
 		// to do : save the results for the rayon
+		System.out.println("Saving the results as a csv file in : ");
 		savingDataArguments(rayon_argument_counting,magasin_to_analyse,output_directory);
 	}
 
@@ -192,7 +190,8 @@ public class ProcessOneMagasinQualityScore {
 					System.out.println("Trouble greater than 100%");
 					filled_percent=100;
 				}
-				writer.write(argument_name+";"+Double.toString(filled_percent)+"\n");
+				String associated_properties = properties_map.get(argument_name);
+				writer.write(argument_name+";"+Double.toString(filled_percent)+";"+associated_properties+"\n");
 			}	
 			writer.close();	
 		} catch (UnsupportedEncodingException | FileNotFoundException e) {

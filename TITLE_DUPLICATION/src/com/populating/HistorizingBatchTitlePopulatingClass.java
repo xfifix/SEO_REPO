@@ -80,7 +80,6 @@ public class HistorizingBatchTitlePopulatingClass {
 			while ((line = br.readLine()) != null) {
 				// System.out.println(line);
 				// use comma as separator
-
 				if (nb_line >= counter){
 					try{
 						System.out.println("Inserting line number :"+nb_line);
