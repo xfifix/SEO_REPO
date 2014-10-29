@@ -14,8 +14,8 @@ public class ContinuousController {
 		
 		String seed = "http://www.cdiscount.com/";
 		// downsizing to test
-		//int numberOfCrawlers =  250;	
-		int numberOfCrawlers =  15;
+		int numberOfCrawlers =  200;	
+		//int numberOfCrawlers =  15;
 		if (args.length == 2) {
 			seed = args[0];
 			numberOfCrawlers=Integer.valueOf(args[1]);
