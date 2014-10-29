@@ -11,17 +11,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Properties;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.urlutilities.URL_Utilities;
 
-public class CurrentBatchTitlePopulatingClass {
+public class HistorizingBatchTitlePopulatingClass {
 
 	private static int counter = 0;
 	private static int batch_size = 10000;
-	private static String insert_statement = "INSERT INTO CURRENT_DUPLICATES(TITLE,NB_URLS,URLS,DUPLICATE_TIME,MAGASIN,RAYON,PRODUCT)"
+	private static String insert_statement = "INSERT INTO DUPLICATES(TITLE,NB_URLS,URLS,DUPLICATE_TIME,MAGASIN,RAYON,PRODUCT)"
 			+ " VALUES(?,?,?,?,?,?,?)";
 	public static void main(String[] args) {
 		// Reading the property of our database
@@ -33,7 +32,7 @@ public class CurrentBatchTitlePopulatingClass {
 
 		} catch (IOException ex) {
 
-			Logger lgr = Logger.getLogger(CurrentBatchTitlePopulatingClass.class.getName());
+			Logger lgr = Logger.getLogger(HistorizingBatchTitlePopulatingClass.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 
 		} finally {
@@ -43,7 +42,7 @@ public class CurrentBatchTitlePopulatingClass {
 					in.close();
 				}
 			} catch (IOException ex) {
-				Logger lgr = Logger.getLogger(CurrentBatchTitlePopulatingClass.class.getName());
+				Logger lgr = Logger.getLogger(HistorizingBatchTitlePopulatingClass.class.getName());
 				lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -131,7 +130,7 @@ public class CurrentBatchTitlePopulatingClass {
 				}
 			}
 		} catch (Exception ex) {
-			Logger lgr = Logger.getLogger(CurrentBatchTitlePopulatingClass.class.getName());
+			Logger lgr = Logger.getLogger(HistorizingBatchTitlePopulatingClass.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 
 		} finally {
@@ -151,7 +150,7 @@ public class CurrentBatchTitlePopulatingClass {
 				}
 
 			} catch (SQLException | IOException ex) {
-				Logger lgr = Logger.getLogger(CurrentBatchTitlePopulatingClass.class.getName());
+				Logger lgr = Logger.getLogger(HistorizingBatchTitlePopulatingClass.class.getName());
 				lgr.log(Level.WARNING, ex.getMessage(), ex);
 			}
 		}
