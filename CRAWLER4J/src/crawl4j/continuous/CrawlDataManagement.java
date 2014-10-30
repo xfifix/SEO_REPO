@@ -62,7 +62,6 @@ public class CrawlDataManagement {
 			System.out.println("Error instantiating either database or solr server");
 			e.printStackTrace();
 		}
-
 	}
 
 	public int getTotalProcessedPages() {

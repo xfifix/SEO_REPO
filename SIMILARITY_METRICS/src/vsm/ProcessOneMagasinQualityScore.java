@@ -69,8 +69,8 @@ public class ProcessOneMagasinQualityScore {
 		String mdp = properties.getProperty("db.passwd");    
 		// database variables
 
+		System.out.println("Parsing the ID Model/Property referential file");
 		parse_model_properties(properties_file_path);
-
 		try {
 			con = DriverManager.getConnection(url, user, mdp);
 			fetch_magasin_info(magasin_to_analyse);
@@ -100,7 +100,12 @@ public class ProcessOneMagasinQualityScore {
 			while ((line = br.readLine()) != null) {
 				String[] fields = line.split(cvsSplitBy);
 				//System.out.println(fields[0]+fields[1]+fields[2]+fields[3]);
-				properties_map.put(fields[3], column_names[0]+" : "+fields[0]+"/"+column_names[1]+" : "+fields[1]+"/"+column_names[2]+" : "+fields[2]);
+				String alreadythere = properties_map.get(fields[3]);
+				String value_to_put = column_names[0]+" : "+fields[0]+"/"+column_names[1]+" : "+fields[1]+"/"+column_names[2]+" : "+fields[2];
+				if (alreadythere != null){
+					value_to_put=value_to_put+alreadythere;
+				}
+				properties_map.put(fields[3],value_to_put);
 			} 
 		}catch (IOException ex) {
 			ex.printStackTrace();
@@ -208,11 +213,13 @@ public class ProcessOneMagasinQualityScore {
 		PreparedStatement field_pst;
 		try {
 			field_pst  = con.prepareStatement("SELECT NB_ATTRIBUTES,ATTRIBUTES,URL,VENDOR,MAGASIN,RAYON,PRODUIT FROM CRAWL_RESULTS WHERE MAGASIN='" +magasin_to_analyse+ "'");
+			System.out.println("I am requesting the database, please wait a few seconds");
 			ResultSet field_rs = field_pst.executeQuery();
 			while (field_rs.next()) {
 				URLContentInfo url_info = new URLContentInfo();
 				int nb_attributes = field_rs.getInt(1);
 				String attributes = field_rs.getString(2);
+				System.out.println("Adding attributes "+attributes);
 				String my_url = field_rs.getString(3);
 				String my_vendor = field_rs.getString(4);
 				String my_magasin = field_rs.getString(5);

@@ -12,7 +12,7 @@ import java.util.List;
 import com.ranks.CdiscountInformation;
 
 public class ArboWorkerThread implements Runnable {
-	
+
 	private static String[] real_magasin = {
 		"informatique",
 		"musique-cd-dvd",
@@ -71,11 +71,11 @@ public class ArboWorkerThread implements Runnable {
 		"jardin",
 		"personnalisation-3d"
 		//"mammouth---d%C3%A9terre-ton-dinosaure---dig-a-dino"
-		};
-	
-	
-	
-	
+	};
+
+
+
+
 	private static String request_url = "http://www.cdiscount.com/sa-10/";
 	private static String update_statement ="UPDATE REFERENTIAL_KEYWORDS SET MAGASIN=?,RAYON=? WHERE KEYWORD=?";
 	private static String update_pricing_statement ="UPDATE PRICING_KEYWORDS SET MAGASIN=?,RAYON=? WHERE KEYWORD=?";
@@ -115,15 +115,15 @@ public class ArboWorkerThread implements Runnable {
 
 		st.executeUpdate();
 		st.close();
-		
-		
-//		PreparedStatement update_pricing_keyword_st = con.prepareStatement(update_pricing_statement);
-//		// preparing the statement
-//		update_pricing_keyword_st.setString(1,info.getMagasin());
-//		update_pricing_keyword_st.setString(2,info.getRayon());
-//		update_pricing_keyword_st.setString(3,keyword);
-//		update_pricing_keyword_st.executeUpdate();
-//		update_pricing_keyword_st.close();
+
+
+		//		PreparedStatement update_pricing_keyword_st = con.prepareStatement(update_pricing_statement);
+		//		// preparing the statement
+		//		update_pricing_keyword_st.setString(1,info.getMagasin());
+		//		update_pricing_keyword_st.setString(2,info.getRayon());
+		//		update_pricing_keyword_st.setString(3,keyword);
+		//		update_pricing_keyword_st.executeUpdate();
+		//		update_pricing_keyword_st.close();
 		// if the row has not been updated, we have to insert it !
 	}
 
@@ -131,12 +131,12 @@ public class ArboWorkerThread implements Runnable {
 		CdiscountInformation info =new CdiscountInformation();
 		try{
 			keyword=keyword.replace("'", "''");
-//			PreparedStatement keyword_st = con.prepareStatement("select url, domain from pricing_keywords where keyword='"+keyword+"' and domain in ('cdiscount.com','amazon.fr') order by search_position desc");
+			//			PreparedStatement keyword_st = con.prepareStatement("select url, domain from pricing_keywords where keyword='"+keyword+"' and domain in ('cdiscount.com','amazon.fr') order by search_position desc");
 			PreparedStatement keyword_st = con.prepareStatement("select url, domain from pricing_keywords where keyword='"+keyword+"' and domain in ('cdiscount.com') order by search_position desc");
 			ResultSet keyword_rs = keyword_st.executeQuery();
 			String cdiscount_magasin = "Unknown";
 			String cdiscount_rayon = "Unknown";
-//			String amazon_magasin = "Unknown";
+			//			String amazon_magasin = "Unknown";
 			while (keyword_rs.next()) {
 				String ranking_url = keyword_rs.getString(1);
 				//System.out.println(ranking_url);
@@ -147,7 +147,9 @@ public class ArboWorkerThread implements Runnable {
 					if ("Unknown".equals(cdiscount_magasin)||"Unknown".equals(cdiscount_rayon)){
 						String[] results=URL_Utilities.checkMagasinAndRayonAndProduct(ranking_url);
 						cdiscount_magasin=results[0];
-						check_proper_magasin(cdiscount_magasin);				
+						if (!check_proper_magasin(cdiscount_magasin)){
+							cdiscount_magasin="Unknown";
+						};				
 						info.setMagasin(cdiscount_magasin);
 						cdiscount_rayon=results[1];			
 						info.setRayon(cdiscount_rayon);
@@ -157,19 +159,19 @@ public class ArboWorkerThread implements Runnable {
 						System.out.println(Thread.currentThread()+"Inserting Cdiscount rayon : "+cdiscount_rayon);
 					}
 				}
-//				if ("amazon.fr".equals(amazon_magasin)){
-//					// cdiscount is ranking, we extract the magasin
-//					amazon_magasin=URL_Utilities.checkMagasin(ranking_url);
-//				}	
+				//				if ("amazon.fr".equals(amazon_magasin)){
+				//					// cdiscount is ranking, we extract the magasin
+				//					amazon_magasin=URL_Utilities.checkMagasin(ranking_url);
+				//				}	
 			}
 		} catch (SQLException e){
 			e.printStackTrace();
 		}
 		return info;
 	}
-	
+
 	// the arborescence is not always reliable
-	private void check_proper_magasin(String totest){
+	private boolean check_proper_magasin(String totest){
 		boolean found = false;
 		for (int l=0;l<real_magasin.length;l++){
 			if (real_magasin[l].equals(totest)){
@@ -179,6 +181,7 @@ public class ArboWorkerThread implements Runnable {
 		if (!found){
 			System.out.println("We here got a little problem");
 		}
+		return found;
 	}
 	private CdiscountInformation getScrapingKeywordInfo(String keyword) throws IOException{
 		keyword=keyword.replace(" ", "+");
