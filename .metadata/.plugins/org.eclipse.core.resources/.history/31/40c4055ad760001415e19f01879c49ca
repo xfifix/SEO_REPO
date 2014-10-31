@@ -16,7 +16,8 @@ public class MagasinListThreadPool {
 	private static int fixed_pool_size = 1;
 
 	// size of keywords to manage for a thread
-	private static int size_bucket = 100000;
+	private static int size_bucket = 10;
+	//private static int size_bucket = 100000;
 
 	public static void main(String[] args) {
 		// Getting the database property

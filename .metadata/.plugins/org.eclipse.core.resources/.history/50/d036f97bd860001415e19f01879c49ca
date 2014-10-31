@@ -16,7 +16,8 @@ public class MagasinListThreadPool {
 	private static int fixed_pool_size = 1;
 
 	// size of keywords to manage for a thread
-	private static int size_bucket = 100000;
+	private static int size_bucket = 10;
+	//private static int size_bucket = 100000;
 
 	public static void main(String[] args) {
 		// Getting the database property
@@ -66,7 +67,7 @@ public class MagasinListThreadPool {
 			pst.close();
 			rs.close();
 			System.out.println("Numbers of keyword to manage : "+size);
-			pst = con.prepareStatement("SELECT KEYWORD FROM REFERENTIAL_KEYWORDS");
+			pst = con.prepareStatement("SELECT KEYWORD FROM REFERENTIAL_KEYWORDS limit 100");
 			rs = pst.executeQuery();
 			List<String> tofetch = new ArrayList<String>();
 			int local_counter=0;
