@@ -117,13 +117,13 @@ public class ArboWorkerThread implements Runnable {
 		st.close();
 
 
-		//		PreparedStatement update_pricing_keyword_st = con.prepareStatement(update_pricing_statement);
-		//		// preparing the statement
-		//		update_pricing_keyword_st.setString(1,info.getMagasin());
-		//		update_pricing_keyword_st.setString(2,info.getRayon());
-		//		update_pricing_keyword_st.setString(3,keyword);
-		//		update_pricing_keyword_st.executeUpdate();
-		//		update_pricing_keyword_st.close();
+		PreparedStatement update_pricing_keyword_st = con.prepareStatement(update_pricing_statement);
+		// preparing the statement
+		update_pricing_keyword_st.setString(1,info.getMagasin());
+		update_pricing_keyword_st.setString(2,info.getRayon());
+		update_pricing_keyword_st.setString(3,keyword);
+		update_pricing_keyword_st.executeUpdate();
+		update_pricing_keyword_st.close();
 		// if the row has not been updated, we have to insert it !
 	}
 

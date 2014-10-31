@@ -78,12 +78,17 @@ public class MagasinListThreadPool {
 					// we reset the counter to the initial state
 					local_counter=0;
 					//					Runnable worker = new ScrapingWorkerThread(con, tofetch);
-					Runnable worker = new ArboWorkerThread(con, tofetch);
+					Runnable worker = new BatchedArboWorkerThread(con, tofetch);
 					executor.execute(worker);
 					tofetch=new ArrayList<String>();
 					// one connection per thread
 					con=DriverManager.getConnection(url, user, passwd);
 				}
+			}
+			
+			if (tofetch.size() > 0){
+				Runnable worker = new BatchedArboWorkerThread(con, tofetch);
+				executor.execute(worker);
 			}
 
 			//			int nb_bucket = size/size_bucket;
