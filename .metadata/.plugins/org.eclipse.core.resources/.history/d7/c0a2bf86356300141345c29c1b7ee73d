@@ -193,7 +193,7 @@ public class BatchedArboWorkerThread implements Runnable {
 						cdiscount_rayon=results[1];			
 						info.setRayon(cdiscount_rayon);
 						System.out.println(Thread.currentThread()+"Ranking URL : "+ranking_url);
-						System.out.println(Thread.currentThread()+"Keyword number : "+counter + "@@@" + keyword);
+						System.out.println(Thread.currentThread()+"Keyword number : "+counter + keyword);
 						System.out.println(Thread.currentThread()+"Inserting Cdiscount magasin : "+cdiscount_magasin);
 						System.out.println(Thread.currentThread()+"Inserting Cdiscount rayon : "+cdiscount_rayon);
 					}

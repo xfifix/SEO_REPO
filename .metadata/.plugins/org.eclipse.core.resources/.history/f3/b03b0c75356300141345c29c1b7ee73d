@@ -97,7 +97,6 @@ public class BatchedArboWorkerThread implements Runnable {
 		int batch_counter = 0;
 		for (int i =0;i<my_keywords_to_fetch.size();i++){		
 			String keyword_to_fetch = my_keywords_to_fetch.get(i);
-			counter++;
 			try{
 				//CdiscountInformation info = getScrapingKeywordInfo(keyword_to_fetch);
 				CdiscountInformation info = getArboKeywordInfo(keyword_to_fetch);
@@ -193,7 +192,7 @@ public class BatchedArboWorkerThread implements Runnable {
 						cdiscount_rayon=results[1];			
 						info.setRayon(cdiscount_rayon);
 						System.out.println(Thread.currentThread()+"Ranking URL : "+ranking_url);
-						System.out.println(Thread.currentThread()+"Keyword number : "+counter + "@@@" + keyword);
+						System.out.println(Thread.currentThread()+"Keyword : "+keyword);
 						System.out.println(Thread.currentThread()+"Inserting Cdiscount magasin : "+cdiscount_magasin);
 						System.out.println(Thread.currentThread()+"Inserting Cdiscount rayon : "+cdiscount_rayon);
 					}
