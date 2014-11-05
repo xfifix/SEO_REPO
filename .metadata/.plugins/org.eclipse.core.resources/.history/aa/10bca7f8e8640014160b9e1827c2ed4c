@@ -1,0 +1,83 @@
+package crawl4j.daemon.links;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+public class LinksDaemon {
+
+
+	private static Map<String, Set<String>> output_links_map = new HashMap<String, Set<String>>();
+
+	public static void main(String[] args){
+		//we here empty the Neo4j database
+		
+		
+		try{
+			// fetching data from the Postgresql data base and looping over
+			looping_over_urls();
+		} catch (SQLException e){
+			System.out.println("Trouble with the database");
+			System.exit(0);
+		}
+	}
+
+	public static void looping_over_urls() throws SQLException{
+		// here is the links daemon starting point
+		String url="jdbc:postgresql://localhost/CRAWL4J";
+		String user="postgres";
+		String passwd="mogette";
+
+		Connection con = DriverManager.getConnection(url, user, passwd);
+		// getting all URLS and out.println links for each URL
+		System.out.println("Getting all URLs and outside links from the crawl results database");
+		PreparedStatement pst = con.prepareStatement("SELECT URL, LINKS FROM CRAWL_RESULTS LIMIT 10000");
+		ResultSet rs = pst.executeQuery();
+		while (rs.next()) {
+			String url_node = rs.getString(1);
+			String output_links = rs.getString(2);
+			manage_input(url_node,output_links);
+		}
+	}
+
+	public static void manage_input(String url_node, String output_links){
+		// we here create the node for the URL row
+		// hence we are sure the node is created once and for all
+
+		//URI neo4jURI = createNode();
+		//addProperty(urlNode, "url", url_node);
+
+		URLNode node = new URLNode();
+		node.setNode_url(url_node);
+		//node.setNeo4jURI(neo4jURI);
+
+		populate_out_links(url_node, output_links);
+
+
+
+	}
+
+	private static void populate_out_links(String url_node, String output_links){
+		// we here compute the output links
+		output_links = output_links.replace("[", "");
+		output_links = output_links.replace("]", "");
+		String[] url_outs = output_links.split(",");
+		for (String url_out : url_outs){
+			Set<String> outputSet = output_links_map.get(url_out);
+			if ( outputSet == null){
+				// we don't have any entries yes
+				outputSet  = new HashSet<String>();
+				output_links_map.put(url_out, outputSet);
+			}
+			// we add the currently parsed URL
+			outputSet.add(url_node);
+		}
+	}
+
+}

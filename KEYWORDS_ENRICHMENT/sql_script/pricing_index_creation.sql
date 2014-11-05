@@ -15,3 +15,6 @@ CREATE INDEX ON keywords (domain);
 CREATE INDEX ON amazon_pricing (keyword);
 CREATE INDEX ON cdiscount_pricing (keyword);
 CREATE INDEX ON searchdexing_keywords (keyword);
+
+
+CREATE INDEX ON pricing_keywords (magasin);

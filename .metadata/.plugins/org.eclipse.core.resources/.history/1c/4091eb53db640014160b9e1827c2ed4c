@@ -1,0 +1,38 @@
+package crawl4j.daemon.links;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class LinksDaemon {
+
+	public static void main(String[] args){
+		try{
+		looping_over_urls();
+		} catch (SQLException e){
+			System.out.println("Trouble with the database");
+			System.exit(0);
+		}
+	}
+
+	public static void looping_over_urls() throws SQLException{
+		// here is the links daemon starting point
+		String url="jdbc:postgresql://localhost/CRAWL4J";
+		String user="postgres";
+		String passwd="mogette";
+
+		Connection con = DriverManager.getConnection(url, user, passwd);
+		// getting all URLS and out.println links for each URL
+		System.out.println("Getting all URLs and outside links from the crawl results database");
+		PreparedStatement pst = con.prepareStatement("SELECT URL, LINKS FROM CRAWL_RESULTS");
+		ResultSet rs = pst.executeQuery();
+		while (rs.next()) {
+			String url_node = rs.getString(1);
+			String output_links = rs.getString(2);
+			System.out.println("ULR  : "+url_node);
+			System.out.println("OUTPUTS : "+output_links);
+		}
+	}
+}

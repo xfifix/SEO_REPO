@@ -29,5 +29,6 @@
 	<classpathentry kind="lib" path="lib/postgresql-9.3-1102-jdbc41.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.7.6.jar"/>
 	<classpathentry kind="lib" path="lib/solr-solrj-4.9.0.jar"/>
+	<classpathentry kind="lib" path="lib/jersey-bundle-1.18.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
