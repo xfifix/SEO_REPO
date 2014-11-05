@@ -99,12 +99,11 @@ public class LinksDaemon {
 		st.executeUpdate();
 	}
 
-
 	public static void looping_over_urls() throws SQLException{
 		// here is the links daemon starting point
 		// getting all URLS and out.println links for each URL
 		System.out.println("Getting all URLs and outside links from the crawl results database");
-		PreparedStatement pst = con.prepareStatement("SELECT URL, LINKS FROM CRAWL_RESULTS LIMIT 1000");
+		PreparedStatement pst = con.prepareStatement("SELECT URL, LINKS FROM CRAWL_RESULTS");
 		ResultSet rs = pst.executeQuery();
 		while (rs.next()) {
 			counter++;
