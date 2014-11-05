@@ -1,4 +1,9 @@
-CREATE TABLE IF NOT EXISTS URLS_TO_FETCH (
+## 
+ALTER TABLE distributors ADD COLUMN address varchar(30);
+
+
+## the new creation script to use
+CREATE TABLE IF NOT EXISTS CRAWL_RESULTS (
     URL TEXT,
     WHOLE_TEXT TEXT,
     TITLE TEXT,
