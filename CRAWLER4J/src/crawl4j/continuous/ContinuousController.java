@@ -23,10 +23,10 @@ public class ContinuousController {
 
 		String rootFolder = "/home/sduprey/My_Data/My_Crawl4j";
 		int maxDepthOfCrawling = 200;
-
+        String user_agent_name = "CdiscountBot-crawler";
 		CrawlConfig config = new CrawlConfig();
 		config.setCrawlStorageFolder(rootFolder);
-		config.setUserAgentString("CdiscountBot-crawler");
+		config.setUserAgentString(user_agent_name);
 		// Politeness delay : none by default
 		config.setPolitenessDelay(0);
 		// Unlimited number of pages can be crawled.
@@ -37,6 +37,8 @@ public class ContinuousController {
 		config.setResumableCrawling(false);
 		PageFetcher pageFetcher = new PageFetcher(config);
 		RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
+		robotstxtConfig.setUserAgentName(user_agent_name);
+		robotstxtConfig.setEnabled(true);
 		RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
 		CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
 

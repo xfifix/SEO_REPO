@@ -16,8 +16,8 @@ import com.httpinfos.URLListWorkerThread;
 
 public class StatusListThreadPool {
 	private static int fixed_pool_size = 50;
-	private static int size_bucket = 1000;
-	private static int nb_connection =50;
+	private static int size_bucket = 20;
+
 	private static List<Integer> tofetch_list = new ArrayList<Integer>();
 
 	public static void main(String[] args) {
