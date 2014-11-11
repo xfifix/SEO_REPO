@@ -1,7 +1,9 @@
 package crawl4j.continuous;
 
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.http.Header;
@@ -21,8 +23,8 @@ public class ContinuousCrawler extends WebCrawler {
 	// size of the in memory cache per thread (200 default value)
 	private static int bulk_size = 200;
 
-	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpe?g" + "|png|tiff?|mid|mp2|mp3|mp4"
-			+ "|wav|avi|mov|mpeg|ram|m4v|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
+	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg" + "|png|tiff?|mid|mp2|mp3|mp4"
+			+ "|wav|avi|mov|mpeg|ram|m4v|ico|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 
 	CrawlDataManagement myCrawlDataManager;
 
@@ -57,8 +59,11 @@ public class ContinuousCrawler extends WebCrawler {
 			links = htmlParseData.getOutgoingUrls();
 			myCrawlDataManager.incTotalLinks(links.size());
 			myCrawlDataManager.incTotalTextSize(htmlParseData.getText().length());	
-			info.setLinks_size(links.size());
-			info.setOut_links(links.toString());
+		
+			
+			Set<String> filtered_links = filter_out_links(links);
+			info.setLinks_size(filtered_links.size());
+			info.setOut_links(filtered_links.toString());
 			
 			Document doc = Jsoup.parse(html);
 			Elements titleel = doc.select("title");
@@ -121,6 +126,16 @@ public class ContinuousCrawler extends WebCrawler {
 		if (myCrawlDataManager.getTotalProcessedPages() % bulk_size == 0) {
 			saveData();
 		}
+	}
+	
+	public Set<String> filter_out_links(List<WebURL> links){
+		Set<String> outputSet = new HashSet<String>();
+		for (WebURL url_out : links){
+			if ((shouldVisit(url_out)) && (getMyController().getRobotstxtServer().allows(url_out))){
+				outputSet.add(url_out.getURL());
+			}
+		}
+		return outputSet;
 	}
 
 	// This function is called by controller to get the local data of this

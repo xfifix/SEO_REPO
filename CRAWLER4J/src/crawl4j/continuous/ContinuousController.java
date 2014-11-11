@@ -20,7 +20,6 @@ public class ContinuousController {
 			seed = args[0];
 			numberOfCrawlers=Integer.valueOf(args[1]);
 		} 
-
 		String rootFolder = "/home/sduprey/My_Data/My_Crawl4j";
 		int maxDepthOfCrawling = 200;
         String user_agent_name = "CdiscountBot-crawler";
