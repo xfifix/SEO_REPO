@@ -10,6 +10,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class CronJob {
+	private static int min_number_of_wait_times = 80;
+	private static int max_number_of_wait_times = 120;
 	public static void main(String[] args){
 		try{	
 			DataBaseManagement.instantiante_connection();
@@ -92,8 +94,8 @@ public class CronJob {
 		boolean found = false;
 		while (depth<nb_depth && !found){
 			try{
-				// we wait between 30 and 70 seconds
-				Thread.sleep(randInt(30,50)*1000);
+				// we wait between x and xx seconds
+				Thread.sleep(randInt(min_number_of_wait_times,max_number_of_wait_times)*1000);
 				System.out.println("Fetching a new page");
 				doc =  Jsoup.connect(
 						"https://www.google.fr/search?q="+keyword+"&start="+Integer.toString(depth*10))
@@ -101,7 +103,6 @@ public class CronJob {
 						.ignoreHttpErrors(true)
 						.timeout(0)
 						.get();
-
 				Elements serps = doc.select("h3[class=r]");
 				for (Element serp : serps) {
 					Element link = serp.getElementsByTag("a").first();

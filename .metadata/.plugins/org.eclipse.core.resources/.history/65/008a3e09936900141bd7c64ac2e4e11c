@@ -1,0 +1,14 @@
+// CHECK TABLE
+
+select * from SERPOSCOPE.check 
+select * from SERPOSCOPE.check limit 100
+
+
+// EVENT TABLE
+select * from SERPOSCOPE.event 
+
+// GROUP TABLE
+select * from SERPOSCOPE.group
+
+// Keyword table
+select * from SERPOSCOPE.keyword
