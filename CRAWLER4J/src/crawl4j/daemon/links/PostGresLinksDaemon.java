@@ -31,14 +31,14 @@ public class PostGresLinksDaemon {
 	private static String fetching_request = "SELECT URL, LINKS FROM CRAWL_RESULTS WHERE DEPTH >0 ORDER BY DEPTH LIMIT 1000000";
 	private static String update_statement ="UPDATE CRAWL_RESULTS SET IN_LINKS_SIZE=?, IN_LINKS=? WHERE URL=?";
 
-	private static Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|ico|jpeg" + "|png|tiff|mid|mp2|mp3|mp4"
+	private static Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpe?g" + "|png|tiff?|mid|mp2|mp3|mp4"
 			+ "|wav|avi|mov|mpeg|ram|m4v|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
-
 	private static String find_node_statement ="SELECT ID FROM NODES WHERE URL=?";
 	private static String insert_node_statement ="INSERT INTO NODES (LABEL, URL)"
 			+ " VALUES(?,?)";
 	private static String insert_relation_statement ="INSERT INTO EDGES (SOURCE, TARGET)"
 			+ " VALUES(?,?)";
+	private static String beginning_string = "^\\s*http://([a-z0-9]*\\.)*www.cdiscount.com.*";
 
 	private static Connection con; 
 
@@ -164,6 +164,7 @@ public class PostGresLinksDaemon {
 			WebURL web_url = new WebURL();
 			web_url.setURL(url_out);
 			if ((shouldVisit(url_out)) && (robotstxtServer.allows(web_url))){
+				url_out=url_out.trim();
 				create_node(url_out);
 				outputSet.add(url_out);
 			}
@@ -173,7 +174,7 @@ public class PostGresLinksDaemon {
 
 	private static boolean shouldVisit(String url_out) {
 		String href = url_out.toLowerCase();
-		return !filters.matcher(href).matches() && href.startsWith("http://www.cdiscount.com/");
+		return !filters.matcher(href).matches() && href.matches(beginning_string);
 	}
 
 	private static void building_relationships() throws SQLException{
@@ -191,7 +192,8 @@ public class PostGresLinksDaemon {
 	}
 
 	private static void relations_insertion(String url,Set<String> outgoing_links) throws SQLException{
-
+		int total_size = outgoing_links.size();
+		int local_counter = 0;
 		Integer beginningNode = node_locator.get(url);
 		for (String ending_Node_URL : outgoing_links){
 			Integer endingNode = node_locator.get(ending_Node_URL);
@@ -201,12 +203,13 @@ public class PostGresLinksDaemon {
 				//URI relationshipUri = addRelationship( beginningNode, endingNode, "link","{}");
 				//System.out.println("First relationship URI : "+relationshipUri);
 				createRelationShip(beginningNode, endingNode);
-
+				local_counter++;
 			} else {
 				System.out.println("Trouble with url : "+url);
-				System.out.println("One node has not been found : "+url);
+				System.out.println("One node has not been found : "+url+total_size);
 			}
 		}
+		System.out.println("Having inserted "+local_counter+" over "+total_size);
 	}
 
 	private static void createRelationShip(Integer beginningNode, Integer endingNode) throws SQLException{

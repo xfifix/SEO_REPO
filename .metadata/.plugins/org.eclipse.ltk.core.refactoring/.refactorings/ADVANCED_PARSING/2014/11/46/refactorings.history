@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Encapsulate field &apos;cms.ztd.AdvancedZTDCMSExtractParser.LineItem.occurences&apos; in &apos;cms.ztd.AdvancedZTDCMSExtractParser.LineItem&apos;&#x0A;- Original project: &apos;ADVANCED_PARSING&apos;&#x0A;- Original element: &apos;cms.ztd.AdvancedZTDCMSExtractParser.LineItem.occurences&apos;&#x0A;- Getter method name: &apos;getOccurences&apos;&#x0A;- Setter method name: &apos;setOccurences&apos;&#x0A;- Field visibility: &apos;public&apos;&#x0A;- Use getter and setter methods in declaring type" comments="false" declaring="true" description="Encapsulate field &apos;occurences&apos;" flags="589830" getter="getOccurences" id="org.eclipse.jdt.ui.self.encapsulate" input="/src&lt;cms.ztd{AdvancedZTDCMSExtractParser.java[AdvancedZTDCMSExtractParser[LineItem^occurences" insertion="14" setter="setOccurences" stamp="1415694462981" version="1.0" visibility="1"/>
+</session>
