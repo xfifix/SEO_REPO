@@ -16,6 +16,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class GeolocGoogleJQueryScraping {
+	// following : http://moz.com/ugc/geolocation-the-ultimate-tip-to-emulate-local-search
 	public static void main(String[] args) throws UnsupportedEncodingException, IOException{
 		String[] seeds = {"d%E9guisement","guitare", "smartphone","ordinateur%20portable","cigarette%20%E9lectronique"};
 		for (String seed : seeds){

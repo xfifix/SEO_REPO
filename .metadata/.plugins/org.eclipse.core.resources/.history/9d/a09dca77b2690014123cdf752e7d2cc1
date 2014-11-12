@@ -1,0 +1,40 @@
+package proxy.testing;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.URL;
+
+public class ProxyTesting {
+	// testing the following ips
+	// iface	5.39.42.23				N/A
+	// iface	5.39.42.20				N/A
+	// iface	5.39.42.21				N/A
+	// iface	5.39.42.22              N/A
+	public static void main(String[] args) throws IOException{
+		String[] ips = {
+				"5.39.42.23",
+				"5.39.42.20",
+				"5.39.42.21",
+				"5.39.42.22"				
+		};
+		
+		//Proxy instance, proxy ip = 123.0.0.1 with port 8080
+		Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("5.39.42.20", 8080));
+		URL url = new URL("http://www.yahoo.com");
+		HttpURLConnection uc = (HttpURLConnection)url.openConnection(proxy);
+		uc.connect();
+		String line;
+		StringBuilder page = new StringBuilder();
+		StringBuffer tmp = new StringBuffer();
+		BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()));
+		while ((line = in.readLine()) != null){
+		   page.append(line + "\n");
+		}
+		System.out.println(page);
+	}
+
+}

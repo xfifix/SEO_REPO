@@ -42,6 +42,9 @@ public class MarketPlaceCrawler {
 	private static List<CrawlInformation> ajax_results = new ArrayList<CrawlInformation>();
 
 	public static void main(String[] args){	
+		String phantomJSPath = "/home/sduprey/My_Programs/phantomjs-1.9.8-linux-x86_64/bin/phantomjs";
+		System.setProperty("phantomjs.binary.path",phantomJSPath);
+		System.out.println("We have set the path to PhantomJS executable here : "+phantomJSPath);
 		if (args.length != 2){
 			System.out.println("You must specify the input xls file and then the output csv file\n");
 			System.out.println("Example : java MarketPlaceCrawler.java /home/sduprey/My_Data/FULFILLMENT/sku_list.xlsx /home/sduprey/My_Data/FULFILLMENT/sku_list_results.csv");

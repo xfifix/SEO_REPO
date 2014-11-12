@@ -1,0 +1,100 @@
+package proxy.testing;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
+import java.net.Proxy;
+import java.net.SocketException;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.regex.Pattern;
+
+public class ProxyTesting {
+	// testing the following ips
+	// iface	5.39.42.23				N/A
+	// iface	5.39.42.20				N/A
+	// iface	5.39.42.21				N/A
+	// iface	5.39.42.22              N/A
+	public static void main(String[] args) throws IOException{
+		tellMyIP();
+		tellMyIP();
+		tellMyIP();
+		tellMyIP();
+		tellMyIP();
+		tellMyIP();
+		tellMyIP();
+		tellMyIP();
+		tellMyIP();
+		tellMyIP();
+		
+//		System.out.println("Tell my IP :"+ tellMyIP());
+//		System.out.println("Tell my IP :"+ tellMyIP());
+//		System.out.println("Tell my IP :"+ tellMyIP());
+//		System.out.println("Tell my IP :"+ tellMyIP());
+//		System.out.println("Tell my IP :"+ tellMyIP());
+//		System.out.println("Tell my IP :"+ tellMyIP());
+//		System.out.println("Tell my IP :"+ tellMyIP());
+//		System.out.println("Tell my IP :"+ tellMyIP());
+		String[] ips = {
+				"5.39.42.23",
+				"5.39.42.20",
+				"5.39.42.21",
+				"5.39.42.22"				
+		};
+
+		//Proxy instance, proxy ip = 123.0.0.1 with port 8080
+		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("5.39.42.20", 8080));
+		URL url = new URL("http://www.yahoo.com");
+		HttpURLConnection uc = (HttpURLConnection)url.openConnection(proxy);
+		uc.connect();
+		String line;
+		StringBuilder page = new StringBuilder();
+		StringBuffer tmp = new StringBuffer();
+		BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()));
+		while ((line = in.readLine()) != null){
+			page.append(line + "\n");
+		}
+		System.out.println(page);
+	}
+
+
+
+
+	public static void tellMyIP()
+	{
+		NetworkInterface iface = null;
+		String ethr;
+		String myip = "";
+		String regex = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +        "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+		try
+		{
+			for(Enumeration ifaces = NetworkInterface.getNetworkInterfaces();ifaces.hasMoreElements();)
+			{
+				iface = (NetworkInterface)ifaces.nextElement();
+				ethr = iface.getDisplayName();
+//
+//				if (Pattern.matches("eth[0-9]", ethr))
+//				{
+					System.out.println("Interface:" + ethr);
+					InetAddress ia = null;
+					for(Enumeration ips = iface.getInetAddresses();ips.hasMoreElements();)
+					{
+						ia = (InetAddress)ips.nextElement();
+						System.out.println( ia.getCanonicalHostName());
+//						if (Pattern.matches(regex, ia.getCanonicalHostName()))
+//						{
+//							myip = ia.getCanonicalHostName();
+//							return myip;
+//						}
+					}
+				//}
+			}
+		}
+		catch (SocketException e){}
+		//return myip;
+	}
+}

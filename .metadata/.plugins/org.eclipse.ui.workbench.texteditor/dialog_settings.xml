@@ -13,12 +13,15 @@
 		<item value="false" key="isRegEx"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="nb_attributes" key="selection"/>
+		<item value="PHANTO" key="selection"/>
 		<list key="findhistory">
+			<item value="PHANTO"/>
+			<item value="&#x09;private static String"/>
 			<item value="nb_attributes"/>
 			<item value="SERP_DATABASE"/>
 		</list>
 		<list key="replacehistory">
+			<item value=""/>
 			<item value="SERPOSCOPE"/>
 		</list>
 	</section>

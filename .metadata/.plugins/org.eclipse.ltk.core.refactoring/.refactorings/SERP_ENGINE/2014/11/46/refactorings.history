@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;RankInfo.java&apos; to &apos;MARKET_PLACE_CRAWLER/src/com.marketplace&apos;&#x0A;- Original project: &apos;SERP_ENGINE&apos;&#x0A;- Destination element: &apos;MARKET_PLACE_CRAWLER/src/com.marketplace&apos;&#x0A;- Original element: &apos;cron.analytics.RankInfo.java&apos;" description="Copy compilation unit" destination="=MARKET_PLACE_CRAWLER/src&lt;com.marketplace" element1="/src&lt;cron.analytics{RankInfo.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1415808153662" units="1" version="1.0"/>
+</session>

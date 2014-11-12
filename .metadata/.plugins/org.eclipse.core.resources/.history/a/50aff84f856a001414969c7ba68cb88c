@@ -1,0 +1,74 @@
+package com.marketplace;
+
+import java.util.concurrent.TimeUnit;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.crawljax.browser.EmbeddedBrowser.BrowserType;
+import com.crawljax.core.CrawlerContext;
+import com.crawljax.core.configuration.BrowserConfiguration;
+import com.crawljax.core.configuration.CrawljaxConfiguration;
+import com.crawljax.core.configuration.CrawljaxConfiguration.CrawljaxConfigurationBuilder;
+import com.crawljax.core.plugin.OnNewStatePlugin;
+import com.crawljax.core.state.StateVertex;
+
+public class GoogleNavigatorCrawler {
+
+
+	public static void ajax_crawler_for_pagination(String skuid, int waiting_times){		
+		String my_url ="bite my shiny metal ass.html";
+
+
+
+		CrawljaxConfigurationBuilder builder = CrawljaxConfiguration.builderFor(my_url);
+		// we just follow the pagination
+		builder.crawlRules().click("a").withAttribute("class","mpNext");
+		builder.setBrowserConfig(new BrowserConfiguration(BrowserType.PHANTOMJS, 1));
+		// we give ourselves time (fetching additional resellers might be long)
+		builder.crawlRules().waitAfterReloadUrl(waiting_times, TimeUnit.SECONDS);
+		//builder.crawlRules().waitAfterEvent(WAIT_TIME_AFTER_EVENT, TimeUnit.MILLISECONDS);
+		// adding our in-house parser plugin which will be used to fetch our resellers data
+		builder.addPlugin(new OnNewStatePlugin() {
+			@Override
+			public void onNewState(CrawlerContext context, StateVertex newState) {
+				// This will print the DOM when a new state is detected. You should see it in your
+				// console.
+				String content_to_parse = context.getBrowser().getStrippedDom();
+
+				org.jsoup.nodes.Document doc = Jsoup.parse(content_to_parse);
+				Elements resellers = doc.select(".slrName");
+				Elements prices = doc.select("p.price");
+
+
+				// converting the elements to String[]
+				String[] reseller_names = new String[resellers.size()];
+				int index=0;
+				for (Element reseller : resellers) {
+					reseller_names[index]=reseller.text();
+					index++;
+				}
+				Double[] price_values = new Double[prices.size()];
+				index=0;
+				for (Element price : prices) {
+					String matching_price = price.text();
+					matching_price=matching_price.replace("\u20ac",".");
+					try {
+						price_values[index]=Double.valueOf(matching_price);
+					} catch (NumberFormatException e){
+						System.out.println("Trouble converting : "+matching_price);
+						price_values[index]=new Double(0);
+					}
+					index++;
+				}
+				// filling now the prices map with the found values
+			}
+			@Override
+			public String toString() {
+				return "Market Place Plugin";
+			}
+		});
+	}
+
+}
