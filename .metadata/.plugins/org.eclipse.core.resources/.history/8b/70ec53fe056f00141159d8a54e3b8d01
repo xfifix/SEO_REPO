@@ -89,7 +89,6 @@ public class DataBaseManagement {
 		return  target_statement
 				.executeQuery(target_query);
 	}
-	
 	public static ResultSet search_group(String[] groups) throws SQLException{
 		// getting our groups
 		Statement group_statement = connect.createStatement();
