@@ -115,9 +115,9 @@ public class GoogleNavigatorCrawler {
 		CrawljaxConfigurationBuilder builder = CrawljaxConfiguration.builderFor(my_url);
 		// we will follow some of the results
 		builder.crawlRules().click("h3").withAttribute("class","r");
-		builder.crawlRules().insertRandomDataInInputForms(true);
+		builder.crawlRules().insertRandomDataInInputForms(false);
 		builder.setMaximumDepth(1);
-		BrowserConfiguration browserConf = new BrowserConfiguration(BrowserType.PHANTOMJS, 1);
+		BrowserConfiguration browserConf = new BrowserConfiguration(BrowserType.FIREFOX, 1);
 		builder.setBrowserConfig(browserConf);
 		// we give ourselves time (fetching additional resellers might be long)
 		//builder.crawlRules().waitAfterReloadUrl(waiting_times, TimeUnit.SECONDS);

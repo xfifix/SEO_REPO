@@ -109,7 +109,7 @@ public class AjaxCronJob {
 			builder.crawlRules().click("h3").withAttribute("class","r");
 			builder.crawlRules().insertRandomDataInInputForms(true);
 			builder.setMaximumDepth(1);
-			BrowserConfiguration browserConf = new BrowserConfiguration(BrowserType.PHANTOMJS, 1);
+			BrowserConfiguration browserConf = new BrowserConfiguration(BrowserType.FIREFOX, 1);
 			builder.setBrowserConfig(browserConf);
 			// we give ourselves time (fetching additional resellers might be long)
 			//builder.crawlRules().waitAfterReloadUrl(waiting_times, TimeUnit.SECONDS);

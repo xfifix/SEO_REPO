@@ -107,7 +107,7 @@ public class AjaxCronJob {
 			CrawljaxConfigurationBuilder builder = CrawljaxConfiguration.builderFor(my_url);
 			// we will follow some of the results
 			builder.crawlRules().click("h3").withAttribute("class","r");
-			builder.crawlRules().insertRandomDataInInputForms(true);
+			builder.crawlRules().insertRandomDataInInputForms(false);
 			builder.setMaximumDepth(1);
 			BrowserConfiguration browserConf = new BrowserConfiguration(BrowserType.PHANTOMJS, 1);
 			builder.setBrowserConfig(browserConf);
@@ -145,7 +145,10 @@ public class AjaxCronJob {
 					return "Market Place Plugin";
 				}
 			});
-			crawljax = new CrawljaxRunner(builder.build());
+			if (crawljax != null){
+				crawljax.stop();
+				crawljax = new CrawljaxRunner(builder.build());
+			}
 			crawljax.call();
 		} catch (Exception e){
 			e.printStackTrace();
