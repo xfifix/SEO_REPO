@@ -11,7 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Properties;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,7 +53,8 @@ public class CurrentBatchTitlePopulatingClass {
 		String passwd = props.getProperty("db.passwd");
 		// the following properties have been identified for our files to parse 
 		// and insert into a database
-		String csvFile = "/home/sduprey/My_Data/My_GWT_Extracts/extract_dupli_20_oct.csv";
+		String csvFile = "/home/sduprey/My_Data/My_GWT_Extracts/2014_11_17_extract-gwt-duplis-titles.csv";
+		
 		// Instantiating the database
 		Connection con = null;
 		PreparedStatement pst = null;

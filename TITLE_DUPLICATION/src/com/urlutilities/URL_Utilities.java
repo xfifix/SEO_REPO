@@ -14,13 +14,13 @@ public class URL_Utilities {
 	//	Root-3/Sous-rayon : 1XXXXXX
 	//	Root-4 : Sous-sous rayon : 1XXXXXXXX
 	//	Root-5 : 1XXXXXXXXXX
-	private static String Vitrine = "^http://([a-z0-9]*\\.)*www.cdiscount.com.*/v-.*";
-	private static String FicheProduit  ="^http://([a-z0-9]*\\.)*www.cdiscount.com.*/f-.*";
-	private static String ListeProduit = "^http://([a-z0-9]*\\.)*www.cdiscount.com.*/l-.*";
-	private static String ListeProduitFiltre = "^http://([a-z0-9]*\\.)*www.cdiscount.com.*/lf-.*";
-	private static String PageMarque = "^http://([a-z0-9]*\\.)*www.cdiscount.com.*/m-.*";
-	private static String PageConcept = "^http://([a-z0-9]*\\.)*www.cdiscount.com.*/ct-.*";
-	private static String SearchDexing = "^http://([a-z0-9]*\\.)*www.cdiscount.com.*/r-.*";
+	private static String Vitrine = "^\\s*http://([a-z0-9]*\\.)*www.cdiscount.com.*/v-.*";
+	private static String FicheProduit  ="^\\s*http://([a-z0-9]*\\.)*www.cdiscount.com.*/f-.*";
+	private static String ListeProduit = "^\\s*http://([a-z0-9]*\\.)*www.cdiscount.com.*/l-.*";
+	private static String ListeProduitFiltre = "^\\s*http://([a-z0-9]*\\.)*www.cdiscount.com.*/lf-.*";
+	private static String PageMarque = "^\\s*http://([a-z0-9]*\\.)*www.cdiscount.com.*/m-.*";
+	private static String PageConcept = "^\\s*http://([a-z0-9]*\\.)*www.cdiscount.com.*/ct-.*";
+	private static String SearchDexing = "^\\s*http://([a-z0-9]*\\.)*www.cdiscount.com.*/r-.*";
 
 	public static String checkType(String url){
 		if (url.matches(Vitrine)){
@@ -107,7 +107,9 @@ public class URL_Utilities {
 			while (tokenize.hasMoreTokens()){
 				tokenList.add(tokenize.nextToken());
 			}
-			rayon=tokenList.get(1);
+			if (tokenList.size()>= 2){
+				rayon=tokenList.get(1);
+			}
 		}
 		return rayon;
 	}

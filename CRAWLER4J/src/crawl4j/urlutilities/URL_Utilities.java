@@ -107,7 +107,9 @@ public class URL_Utilities {
 			while (tokenize.hasMoreTokens()){
 				tokenList.add(tokenize.nextToken());
 			}
-			rayon=tokenList.get(1);
+			if (tokenList.size()>= 2){
+				rayon=tokenList.get(1);
+			}
 		}
 		return rayon;
 	}
