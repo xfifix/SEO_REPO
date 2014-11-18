@@ -1,0 +1,2 @@
+ProcessOneMagasinQualityScore : taux de duplication à l'intérieur d'un magasin
+sudo java -jar *** vsm.ProcessOneMagasinQualityScore dvd

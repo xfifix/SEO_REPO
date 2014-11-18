@@ -17,8 +17,15 @@ import org.apache.http.util.EntityUtils;
 
 public class ExaleadPostExample {
 
-	
+
 	public static void main(String[] args) throws ClientProtocolException, IOException{
+		// rajouter &applicationId=FT-PERTINENCE pour le tracking interne
+		//				Par ailleurs vous pouvez vous adresser au load balancer plutôt quà un serveur :
+		//			http://exasearchv6.gslb.cdweb.biz:10010/search-api/search
+		//			Vous aurez ainsi le failover et si les serveurs viennent à changer cest transparent pour vous.
+		//			soit ajouter loption streaming=true, ce qui désactive le sort
+		//			soit paginer en mettant nresults=100 et utilisation de start= pour les offset.
+
 		String query = "tablette";
 		String number = "10";
 		CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -50,20 +57,21 @@ public class ExaleadPostExample {
 		nvps.add(new BasicNameValuePair("output_format", "csv"));
 		nvps.add(new BasicNameValuePair("nresults",number));
 		nvps.add(new BasicNameValuePair("q", query));
+		nvps.add(new BasicNameValuePair("applicationId", "FT-PERTINENCE"));
 		//http://ldc-exa6-search01.cdweb.biz:10010/search-api/search?lang=fr&sl=sl0&use_logic_facets=false&use_logic_hit_metas=false&add_hit_meta=offer_product_id&add_hit_meta=offer_price:&&hit_meta.proximity.expr=@proximity&hit_meta.categoryweight.expr=100000*offer_category_weight&hit_meta.ca14.expr=offer_stats_income14_global&hit_meta.ca7.expr=offer_stats_income7_global&hit_meta.ca1.expr=offer_stats_income1_global&output_format=csv&nresults=2500&q=canape+angle AND offer_is_best_offer=1
 		UrlEncodedFormEntity url_encoding = new UrlEncodedFormEntity(nvps);
 		httpPost.setEntity(url_encoding);
 		CloseableHttpResponse response2 = httpclient.execute(httpPost);
 
 		try {
-		    System.out.println(response2.getStatusLine());
-		    HttpEntity entity2 = response2.getEntity();
-		    // do something useful with the response body
-		    // and ensure it is fully consumed
-		    System.out.println(EntityUtils.toString(response2.getEntity()));
-		    EntityUtils.consume(entity2);
+			System.out.println(response2.getStatusLine());
+			HttpEntity entity2 = response2.getEntity();
+			// do something useful with the response body
+			// and ensure it is fully consumed
+			System.out.println(EntityUtils.toString(response2.getEntity()));
+			EntityUtils.consume(entity2);
 		} finally {
-		    response2.close();
+			response2.close();
 		}
 	}
 }

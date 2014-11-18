@@ -18,10 +18,10 @@ public class VendorParsingTestingClass {
 			// we wait between 30 and 70 seconds
 			doc =  Jsoup.connect(my_url_to_fetch)
 					.userAgent("Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)")
-					.referrer("accounterlive.com")
 					.ignoreHttpErrors(true)
 					.timeout(0)
 					.get();
+			System.out.println(doc.toString());
 			Elements resellers = doc.select(".fpSellBy");
 			StringBuilder resellerBuilder = new StringBuilder();
 			for (Element reseller : resellers){
