@@ -99,58 +99,54 @@ public class AjaxCronJob {
 		// we must set the geolocalisation for phantomJS
 		keyword=keyword.replace(" ","%20");
 		String my_url = "https://www.google.fr/search?q="+keyword+"&num=15&hl=FR&lr=lang_FR";
+
 		// if you choose not to get geolocalized
 		//String my_url = "https://www.google.fr/search?q="+keyword+"&num=15";
 		// if you choose to get less results 
 		//String my_url = "https://www.google.fr/search?q="+keyword;
-		try {
-			CrawljaxConfigurationBuilder builder = CrawljaxConfiguration.builderFor(my_url);
-			// we will follow some of the results
-			builder.crawlRules().click("h3").withAttribute("class","r");
-			builder.crawlRules().insertRandomDataInInputForms(false);
-			builder.setMaximumDepth(1);
-			BrowserConfiguration browserConf = new BrowserConfiguration(BrowserType.PHANTOMJS, 1);
-			builder.setBrowserConfig(browserConf);
-			// we give ourselves time (fetching additional resellers might be long)
-			//builder.crawlRules().waitAfterReloadUrl(waiting_times, TimeUnit.SECONDS);
-			builder.addPlugin(new OnUrlLoadPlugin() {
-				@Override
-				public void onUrlLoad(CrawlerContext context) {
-					// TODO Auto-generated method stub
-					String content_to_parse = context.getBrowser().getStrippedDom();
-					org.jsoup.nodes.Document doc = Jsoup.parse(content_to_parse);
-					int nb_results = 0;
-					int my_rank = 0;
-					String my_url="";
-					// we do that if the page is a google page
-					Elements serps = doc.select("h3[class=r]");
-					for (Element serp : serps) {
-						Element link = serp.getElementsByTag("a").first();
-						//String refclass = link.attr("data-href");
-						String linkref = link.attr("href");
-						String lclass = link.attr("class");
-						if ((!( lclass.equals("l")))&& (!( lclass.equals("sla")))){				
-							nb_results++;
-							if (linkref.contains(target)){		
-								my_rank=nb_results;
-								my_url=linkref;
-								info.setPosition(my_rank);
-								info.setUrl(my_url);
-							}			
-						}
+		CrawljaxConfigurationBuilder builder = CrawljaxConfiguration.builderFor(my_url);
+		// we will follow some of the results
+		builder.crawlRules().click("h3").withAttribute("class","r");
+		builder.crawlRules().insertRandomDataInInputForms(false);
+		builder.setMaximumDepth(1);
+		BrowserConfiguration browserConf = new BrowserConfiguration(BrowserType.PHANTOMJS, 1);
+		builder.setBrowserConfig(browserConf);
+		// we give ourselves time (fetching additional resellers might be long)
+		//builder.crawlRules().waitAfterReloadUrl(waiting_times, TimeUnit.SECONDS);
+		builder.addPlugin(new OnUrlLoadPlugin() {
+			@Override
+			public void onUrlLoad(CrawlerContext context) {
+				// TODO Auto-generated method stub
+				String content_to_parse = context.getBrowser().getStrippedDom();
+				org.jsoup.nodes.Document doc = Jsoup.parse(content_to_parse);
+				int nb_results = 0;
+				int my_rank = 0;
+				String my_url="";
+				// we do that if the page is a google page
+				Elements serps = doc.select("h3[class=r]");
+				for (Element serp : serps) {
+					Element link = serp.getElementsByTag("a").first();
+					//String refclass = link.attr("data-href");
+					String linkref = link.attr("href");
+					String lclass = link.attr("class");
+					if ((!( lclass.equals("l")))&& (!( lclass.equals("sla")))){				
+						nb_results++;
+						if (linkref.contains(target)){		
+							my_rank=nb_results;
+							my_url=linkref;
+							info.setPosition(my_rank);
+							info.setUrl(my_url);
+						}			
 					}
 				}
-				@Override
-				public String toString() {
-					return "Market Place Plugin";
-				}
-			});
-			crawljax = new CrawljaxRunner(builder.build());
-			crawljax.call();
-		} catch (Exception e){
-			e.printStackTrace();
-			System.out.println("Trouble fetching URL : "+my_url);
-		}
+			}
+			@Override
+			public String toString() {
+				return "Market Place Plugin";
+			}
+		});
+		crawljax = new CrawljaxRunner(builder.build());
+		crawljax.call();
 		return info;	
 	}
 

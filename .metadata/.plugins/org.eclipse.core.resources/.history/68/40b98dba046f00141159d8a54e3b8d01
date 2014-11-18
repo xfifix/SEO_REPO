@@ -99,6 +99,7 @@ public class AjaxCronJob {
 		// we must set the geolocalisation for phantomJS
 		keyword=keyword.replace(" ","%20");
 		String my_url = "https://www.google.fr/search?q="+keyword+"&num=15&hl=FR&lr=lang_FR";
+
 		// if you choose not to get geolocalized
 		//String my_url = "https://www.google.fr/search?q="+keyword+"&num=15";
 		// if you choose to get less results 
@@ -148,8 +149,7 @@ public class AjaxCronJob {
 			crawljax = new CrawljaxRunner(builder.build());
 			crawljax.call();
 		} catch (Exception e){
-			e.printStackTrace();
-			System.out.println("Trouble fetching URL : "+my_url);
+
 		}
 		return info;	
 	}
