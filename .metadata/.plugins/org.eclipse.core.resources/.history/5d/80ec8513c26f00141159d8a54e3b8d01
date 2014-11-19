@@ -92,6 +92,7 @@ public class TitleCrawler {
 		int cdiscount_index = contentbuilder.toString().indexOf("<p class='fpSellBy'>Vendu et expédié par <span class='logoCDS'>");
 		if (cdiscount_index >0){
 			return "Cdiscount";
+
 		}else{
 			return "Market Place";
 		}

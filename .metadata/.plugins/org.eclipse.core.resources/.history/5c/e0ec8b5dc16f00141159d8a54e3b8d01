@@ -18,6 +18,7 @@ public class TitleCrawler {
 
 	private static List<LineItem> items = new ArrayList<LineItem>();
 
+
 	public static void main(String[] args)  {
 		String fileName="/home/sduprey/My_Data/My_GWT_Extracts/My_Title_To_Fetch/title_to_fetch.csv";
 		String outputPathFileName = "/home/sduprey/My_Data/My_Outgoing_Data/My_Title_MP_Extract/results_title_to_fetch.csv";
@@ -77,7 +78,6 @@ public class TitleCrawler {
 
 
 	private static String fetch_url(String my_url_to_fetch) throws IOException{
-		my_url_to_fetch=my_url_to_fetch.trim();
 		URL page = new URL(my_url_to_fetch);
 		HttpURLConnection conn = (HttpURLConnection) page.openConnection();
 		conn.connect();
@@ -92,6 +92,7 @@ public class TitleCrawler {
 		int cdiscount_index = contentbuilder.toString().indexOf("<p class='fpSellBy'>Vendu et expédié par <span class='logoCDS'>");
 		if (cdiscount_index >0){
 			return "Cdiscount";
+
 		}else{
 			return "Market Place";
 		}

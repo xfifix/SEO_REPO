@@ -77,7 +77,6 @@ public class TitleCrawler {
 
 
 	private static String fetch_url(String my_url_to_fetch) throws IOException{
-		my_url_to_fetch=my_url_to_fetch.trim();
 		URL page = new URL(my_url_to_fetch);
 		HttpURLConnection conn = (HttpURLConnection) page.openConnection();
 		conn.connect();
@@ -92,6 +91,7 @@ public class TitleCrawler {
 		int cdiscount_index = contentbuilder.toString().indexOf("<p class='fpSellBy'>Vendu et expédié par <span class='logoCDS'>");
 		if (cdiscount_index >0){
 			return "Cdiscount";
+
 		}else{
 			return "Market Place";
 		}
