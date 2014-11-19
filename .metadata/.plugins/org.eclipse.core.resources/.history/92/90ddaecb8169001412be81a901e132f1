@@ -1,5 +1,0 @@
-package crawl4j.daemon.links;
-
-public class FastBatchPostGresLinksDaemon {
-
-}

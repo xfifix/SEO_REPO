@@ -29,8 +29,8 @@
 <fullyQualifiedTypeName name="edu.uci.ics.crawler4j.url.WebURL"/>
 <fullyQualifiedTypeName name="java.net.Proxy"/>
 <fullyQualifiedTypeName name="java.lang.StringBuilder"/>
-<fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="java.net.Proxy.Type"/>
 <fullyQualifiedTypeName name="java.net.ProxySelector"/>
+<fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="java.io.InputStream"/>
 </qualifiedTypeNameHistroy>

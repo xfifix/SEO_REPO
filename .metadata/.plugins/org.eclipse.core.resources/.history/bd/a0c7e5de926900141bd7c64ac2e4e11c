@@ -1,8 +1,0 @@
-// CHECK TABLE
-
-select * from SERPOSCOPE.check 
-select * from SERPOSCOPE.check limit 100
-
-
-// EVENT TABLE
-select * from event 

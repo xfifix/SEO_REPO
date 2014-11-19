@@ -1,6 +1,0 @@
-# x y size not created (optional), Label URL (optional)
-CREATE TABLE IF NOT EXISTS DAEMON_LINKSNODES_RESULTS (
-    ID SERIAL PRIMARY KEY NOT NULL,
-    LABEL VARCHAR(100),
-    URL TEXT
-) TABLESPACE mydbspace;
