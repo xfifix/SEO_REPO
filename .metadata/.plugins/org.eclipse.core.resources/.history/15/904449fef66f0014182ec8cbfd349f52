@@ -19,10 +19,12 @@ public class FastBatchPostGresLinksDaemon {
 
 	private static int counter = 0;
 	private static String fetching_request = "SELECT URL, STATUS_CODE, MAGASIN, PAGE_TYPE, LINKS FROM CRAWL_RESULTS WHERE DEPTH >0 ORDER BY DEPTH LIMIT 1000000";
+
 	private static String insert_node_statement ="INSERT INTO NODES (LABEL, MAGASIN, PAGE_TYPE, STATUS_CODE, URL)"
 			+ " VALUES(?,?,?,?,?)";
 	private static String insert_relation_statement ="INSERT INTO EDGES (SOURCE, TARGET)"
 			+ " VALUES(?,?)";
+	
 	private static Connection con; 
 
 	public static void main(String[] args){
