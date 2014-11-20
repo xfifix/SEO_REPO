@@ -1,0 +1,27 @@
+
+# methodology for an entity
+select keyword, url, search_position, search_volume, magasin, rayon, produit into 'radical_for_base'_pricing from pricing_keywords where domain=''current_ent''];
+CREATE INDEX ON 'radical_for_base'_pricing (keyword);
+select CDISCOUNT_PRICING.keyword as cd_keyword, CDISCOUNT_PRICING.url as cd_url, CDISCOUNT_PRICING.search_volume as cd_search_volume, CDISCOUNT_PRICING.search_position as cd_search_position,' radical_for_base '_PRICING.magasin as magasin, ' radical_for_base '_PRICING.rayon as rayon, ' radical_for_base '_PRICING.produit as produit, ' radical_for_base '_PRICING.keyword as am_keyword, ' radical_for_base '_PRICING.url as am_url, ' radical_for_base '_PRICING.search_volume as am_search_volume, ' radical_for_base '_PRICING.search_position as am_search_position INTO ' radical_for_base '_VS_CDISCOUNT_PRICING from ' radical_for_base '_PRICING LEFT OUTER JOIN CDISCOUNT_PRICING  on( 'radical_for_base'_PRICING.keyword=CDISCOUNT_PRICING.keyword);
+
+
+# we must first do Cdiscount 
+# entity cdiscount.com
+radical_for_base=cdiscount
+current_ent=cdiscount.com
+select keyword, url, search_position, search_volume, magasin, rayon, produit into cdiscount_pricing from pricing_keywords where domain='cdiscount.com';
+CREATE INDEX ON cdiscount_pricing (keyword);
+# we don't do cdiscount vs cdiscount 
+# select CDISCOUNT_PRICING.keyword as cd_keyword, CDISCOUNT_PRICING.url as cd_url, CDISCOUNT_PRICING.search_volume as cd_search_volume, CDISCOUNT_PRICING.search_position as cd_search_position,amazon_PRICING.magasin as magasin, amazon_PRICING.rayon as rayon, amazon_PRICING.produit as produit, amazon_PRICING.keyword as am_keyword, amazon_PRICING.url as am_url, amazon_PRICING.search_volume as am_search_volume, amazon_PRICING.search_position as am_search_position INTO amazon_VS_CDISCOUNT_PRICING from amazon_PRICING LEFT OUTER JOIN CDISCOUNT_PRICING  on( amazon_PRICING.keyword=CDISCOUNT_PRICING.keyword);
+
+# entity amazon.fr
+radical_for_base=amazon
+current_ent=amazon.fr
+select keyword, url, search_position, search_volume, magasin, rayon, produit into amazon_pricing from pricing_keywords where domain='amazon.fr';
+CREATE INDEX ON amazon_pricing (keyword);
+select CDISCOUNT_PRICING.keyword as cd_keyword, CDISCOUNT_PRICING.url as cd_url, CDISCOUNT_PRICING.search_volume as cd_search_volume, CDISCOUNT_PRICING.search_position as cd_search_position,amazon_PRICING.magasin as magasin, amazon_PRICING.rayon as rayon, amazon_PRICING.produit as produit, amazon_PRICING.keyword as am_keyword, amazon_PRICING.url as am_url, amazon_PRICING.search_volume as am_search_volume, amazon_PRICING.search_position as am_search_position INTO amazon_VS_CDISCOUNT_PRICING from amazon_PRICING LEFT OUTER JOIN CDISCOUNT_PRICING  on( amazon_PRICING.keyword=CDISCOUNT_PRICING.keyword);
+
+
+my_entity = {'cdiscount.com';'aubert.com';'autourdebebe.com';'king-jouet.com';'toysrus.fr';'materiel.net';'pearl.fr';'amazon.fr';'ebay.fr';'rueducommerce.fr';'conforama.fr';'darty.com';'fnac.com';'priceminister.com';'zalando.fr';'ldlc.com';'boulanger.fr';'french.alibaba.com';'pixmania.fr'}; %#ok<NASGU>
+
+
