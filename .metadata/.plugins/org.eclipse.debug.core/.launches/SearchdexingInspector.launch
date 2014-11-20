@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/INDEXATION_INSPECTOR/src/SearchdexingInspector.java"/>
+<listEntry value="/INDEXATION_INSPECTOR/src/com/searchdexing/SearchdexingInspector.java"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="1"/>
 </listAttribute>
-<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="SearchdexingInspector"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.searchdexing.SearchdexingInspector"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="INDEXATION_INSPECTOR"/>
 </launchConfiguration>

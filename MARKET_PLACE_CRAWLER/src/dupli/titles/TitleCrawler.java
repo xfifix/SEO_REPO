@@ -88,13 +88,15 @@ public class TitleCrawler {
 		conn.connect();
 		InputStreamReader in = new InputStreamReader((InputStream) conn.getContent());
 		BufferedReader buff = new BufferedReader(in);
-		String line;
-		StringBuilder contentbuilder = new StringBuilder();
-		do {
-			line = buff.readLine();
-			contentbuilder.append(line);
-		} while (line != null);
-		int cdiscount_index = contentbuilder.toString().indexOf("<p class='fpSellBy'>Vendu et expédié par <span class='logoCDS'>");
+		String line="";
+		int cdiscount_index=0;
+		while ((line = buff.readLine()) != null) {
+			int global_index = line.indexOf("<p class='fpSellBy'>");
+			if (global_index >0){
+				cdiscount_index = line.indexOf("<p class='fpSellBy'>Vendu et expédié par <span class='logoCDS'>");
+				break;
+			}
+		};
 		if (cdiscount_index >0){
 			return "Cd";
 		}else{
