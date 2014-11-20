@@ -68,7 +68,6 @@ INDEX VERSION 1.127+/home/sduprey/My_Code/My_Java_Workspace/.metadata/.plugins/o
 713035805.index
 2952930718.index
 2387337361.index
-1022003584.index
 3444976625.index
 1517318228.index
 3172359090.index
@@ -82,7 +81,6 @@ INDEX VERSION 1.127+/home/sduprey/My_Code/My_Java_Workspace/.metadata/.plugins/o
 1967782940.index
 3710448033.index
 3800230104.index
-1514218975.index
 4145056111.index
 296803820.index
 100257319.index
@@ -90,7 +88,6 @@ INDEX VERSION 1.127+/home/sduprey/My_Code/My_Java_Workspace/.metadata/.plugins/o
 2756547370.index
 3077815180.index
 2864134388.index
-1928036885.index
 592875456.index
 2251605400.index
 1862771797.index
@@ -107,7 +104,6 @@ INDEX VERSION 1.127+/home/sduprey/My_Code/My_Java_Workspace/.metadata/.plugins/o
 1849404035.index
 3110688548.index
 3781967748.index
-1714592054.index
 129249619.index
 2106858897.index
 1210937214.index
@@ -148,7 +144,6 @@ INDEX VERSION 1.127+/home/sduprey/My_Code/My_Java_Workspace/.metadata/.plugins/o
 167031881.index
 230316598.index
 227579918.index
-1198206356.index
 1383950844.index
 489777680.index
 3595080677.index
@@ -161,7 +156,6 @@ INDEX VERSION 1.127+/home/sduprey/My_Code/My_Java_Workspace/.metadata/.plugins/o
 928971486.index
 2965430178.index
 783965484.index
-3829351191.index
 3401551983.index
 4112374951.index
 2180083276.index
@@ -196,13 +190,10 @@ INDEX VERSION 1.127+/home/sduprey/My_Code/My_Java_Workspace/.metadata/.plugins/o
 120616383.index
 3924460921.index
 1023575425.index
-1989682271.index
 1443224130.index
-664202523.index
 184399991.index
 2199628821.index
 2115710715.index
-1737441395.index
 2644847345.index
 1249960153.index
 2213248043.index
@@ -221,21 +212,19 @@ INDEX VERSION 1.127+/home/sduprey/My_Code/My_Java_Workspace/.metadata/.plugins/o
 467148254.index
 468026901.index
 704931711.index
-1791498496.index
 2341245467.index
 3699690619.index
 906255846.index
 3948751133.index
-4267884898.index
 4125943529.index
 2540230559.index
 1140475504.index
 216648690.index
-2409005450.index
 3878020898.index
 4068595120.index
 2583832751.index
 4013833114.index
+68174371.index
 2148672527.index
 399842552.index
 3500937274.index
@@ -281,5 +270,6 @@ INDEX VERSION 1.127+/home/sduprey/My_Code/My_Java_Workspace/.metadata/.plugins/o
 887854302.index
 1698432576.index
 1129805451.index
+3568598595.index
 382720128.index
 2741999804.index

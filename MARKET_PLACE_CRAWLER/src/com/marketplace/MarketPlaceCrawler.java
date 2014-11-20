@@ -42,6 +42,7 @@ public class MarketPlaceCrawler {
 	private static List<CrawlInformation> ajax_results = new ArrayList<CrawlInformation>();
 
 	public static void main(String[] args){	
+		System.setProperty("http.agent", "");
 		String phantomJSPath = "/home/sduprey/My_Programs/phantomjs-1.9.8-linux-x86_64/bin/phantomjs";
 		System.setProperty("phantomjs.binary.path",phantomJSPath);
 		System.out.println("We have set the path to PhantomJS executable here : "+phantomJSPath);
@@ -130,8 +131,9 @@ public class MarketPlaceCrawler {
 		org.jsoup.nodes.Document doc = null;
 		try {
 			doc =  Jsoup.connect(my_url)
-					.userAgent("Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)")
-					.referrer("accounterlive.com")
+					//.userAgent("Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)")
+					.userAgent("CdiscountBot-crawler")
+					//.referrer("accounterlive.com")
 					.ignoreHttpErrors(true)
 					.timeout(0)
 					.get();

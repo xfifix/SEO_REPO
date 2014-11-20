@@ -10,8 +10,8 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
 public class ContinuousController {
 	public static void main(String[] args) throws Exception {
-		System.out.println("Starting the crawl configuration");
-		
+		System.setProperty("http.agent", "");
+		System.out.println("Starting the crawl configuration");		
 		String seed = "http://www.cdiscount.com/";
 		// downsizing to test
 		int numberOfCrawlers =  250;	

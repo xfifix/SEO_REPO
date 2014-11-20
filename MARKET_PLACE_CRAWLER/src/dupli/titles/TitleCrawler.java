@@ -17,8 +17,11 @@ public class TitleCrawler {
 	// we here just want to get every URL from the input file and get if the SKU is sold by market place/cdiscount and so on
 
 	private static List<LineItem> items = new ArrayList<LineItem>();
+	private static int nb_lines = 0;
+	private static int nb_fetched_lines = 0;
 
 	public static void main(String[] args)  {
+		System.setProperty("http.agent", "");
 		String fileName="/home/sduprey/My_Data/My_GWT_Extracts/My_Title_To_Fetch/title_to_fetch.csv";
 		String outputPathFileName = "/home/sduprey/My_Data/My_Outgoing_Data/My_Title_MP_Extract/results_title_to_fetch.csv";
 		try{
@@ -44,7 +47,6 @@ public class TitleCrawler {
 		writer.write("Title;url_1;offer_1;url_2;offer_2;url_3;offer_3;url_4;offer_4;url_5;offer_5;url_6;offer_6;url_7;offer_7;url_8;offer_8;url_9;offer_9;url_10;offer_10;url_11;offer_11;url_12;offer_12;url_13;offer_13;url_14;offer_14;url_15;offer_15;url_16;offer_16;url_17;offer_17;url_18;offer_18;url_19;offer_19;url_20;offer_20;url_21;offer_21;url_22;offer_22;url_23;offer_23;url_24;offer_24;url_25;offer_25;url_26;offer_26;url_27;offer_27;url_28;offer_28;url_29;offer_29;url_30;offer_30\n");
 		// we open the database
 		for (LineItem item_to_write : items){
-
 			String to_write = item_to_write.getTitle();
 			List<DiscriminedURL> urls = item_to_write.getUrls();
 			for (DiscriminedURL url : urls){
@@ -57,6 +59,7 @@ public class TitleCrawler {
 
 	private static void make_your_job(){
 		for (LineItem item : items){
+			nb_fetched_lines++;
 			List<DiscriminedURL> urls_to_fetch = item.getUrls();
 			for (DiscriminedURL url : urls_to_fetch){
 				try {
@@ -71,6 +74,7 @@ public class TitleCrawler {
 					e.printStackTrace();
 					System.out.println("Trouble fetching URL : "+url);
 				}
+				System.out.println("Fetched URLs number "+nb_fetched_lines+" over "+nb_lines);
 			}
 		}
 	}
@@ -80,6 +84,7 @@ public class TitleCrawler {
 		my_url_to_fetch=my_url_to_fetch.trim();
 		URL page = new URL(my_url_to_fetch);
 		HttpURLConnection conn = (HttpURLConnection) page.openConnection();
+		conn.setRequestProperty("User-Agent","CdiscountBot-crawler");
 		conn.connect();
 		InputStreamReader in = new InputStreamReader((InputStream) conn.getContent());
 		BufferedReader buff = new BufferedReader(in);
@@ -91,9 +96,9 @@ public class TitleCrawler {
 		} while (line != null);
 		int cdiscount_index = contentbuilder.toString().indexOf("<p class='fpSellBy'>Vendu et expédié par <span class='logoCDS'>");
 		if (cdiscount_index >0){
-			return "Cdiscount";
+			return "Cd";
 		}else{
-			return "Market Place";
+			return "MP";
 		}
 	}
 
@@ -111,6 +116,7 @@ public class TitleCrawler {
 				if (i==0){
 					item.setTitle(pieces[i]);
 				} else {
+
 					DiscriminedURL url = new DiscriminedURL();
 					url.setUrl(pieces[i]);
 					url_to_fetch.add(url);
@@ -118,6 +124,7 @@ public class TitleCrawler {
 			}
 			item.setUrls(url_to_fetch);
 			items.add(item);
+			nb_lines++;
 		}
 	}
 

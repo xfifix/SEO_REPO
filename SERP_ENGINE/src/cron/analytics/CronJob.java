@@ -13,6 +13,7 @@ public class CronJob {
 	private static int min_number_of_wait_times = 80;
 	private static int max_number_of_wait_times = 120;
 	public static void main(String[] args){
+		System.setProperty("http.agent", "");
 		try{	
 			DataBaseManagement.instantiante_connection();
 			int counter = DataBaseManagement.check_alive_run();

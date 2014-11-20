@@ -24,6 +24,7 @@ public class AjaxCronJob {
 
 	public static void main(String[] args){
 		// setting the path to our phantomjs executable
+		System.setProperty("http.agent", "");
 		Properties props = System.getProperties();
 		props.setProperty("phantomjs.binary.path", "/home/sduprey/My_Programs/phantomjs-1.9.8-linux-x86_64/bin/phantomjs");
 		try{	

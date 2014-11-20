@@ -1,0 +1,24 @@
+
+public class SearchdexingInspector {
+
+public static String[] to_follow =	{
+	"site:www.cdiscount.com/sa-10/",
+	"site:www.cdiscount.com/le-sport/r-",
+	"site:www.cdiscount.com/telephonie/r-",
+	"site:www.cdiscount.com/photo-numerique/r-",
+	"site:www.cdiscount.com/high-tech/r-",
+	"site:www.cdiscount.com/chaussures/r-",
+	"site:www.cdiscount.com/bagages/r-",
+	"site:www.cdiscount.com/bijouterie/r-",
+	"site:www.cdiscount.com/vin-champagne/r-",
+	"site:www.cdiscount.com/au-quotidien/r-",
+	"site:www.cdiscount.com/maison/r-",
+	"site:www.cdiscount.com/electromenager/r-",
+	"site:www.cdiscount.com/juniors/r-",
+	"site:www.cdiscount.com/informatique/r-",
+	"site:www.cdiscount.com/dvd/r-",
+	"site:www.cdiscount.com/auto/r-",
+	"site:www.cdiscount.com/livres-bd/r-"};
+
+	
+}
