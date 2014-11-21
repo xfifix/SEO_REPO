@@ -89,7 +89,6 @@ public class TitleCrawler {
 			for (DiscriminedURL url : urls){
 				to_write=to_write+";"+url.getUrl()+";"+url.getOffer();
 			}
-			System.out.println("Writing line : "+nb_fetched_lines);
 			writer.write(to_write+"\n");
 		}
 		writer.close();
