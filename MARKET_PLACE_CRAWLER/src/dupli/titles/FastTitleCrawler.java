@@ -13,26 +13,18 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TitleCrawler {
+public class FastTitleCrawler {
 	// we here just want to get every URL from the input file and get if the SKU is sold by market place/cdiscount and so on
 
-	private static List<LineItem> items = new ArrayList<LineItem>();
 	private static int nb_lines = 0;
-	private static int nb_fetched_lines = 0;
 
 	public static void main(String[] args)  {
 		System.setProperty("http.agent", "");
 		String fileName="/home/sduprey/My_Data/My_GWT_Extracts/My_Title_To_Fetch/title_to_fetch.csv";
 		String outputPathFileName = "/home/sduprey/My_Data/My_Outgoing_Data/My_Title_MP_Extract/results_title_to_fetch.csv";
-		try{
-			parsing_file(fileName);
-		} catch (IOException e){
-			e.printStackTrace();
-		}
-		make_your_job();
 		try {
 			// we print the file just after we crawled the web site
-	        print_results(outputPathFileName);
+			make_your_job_and_fast(fileName,outputPathFileName);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.out.println("Trouble saving result flat file : "+outputPathFileName);
@@ -40,27 +32,33 @@ public class TitleCrawler {
 		}
 	}
 
-	private static void print_results(String outputPathFileName) throws IOException{
+	private static void make_your_job_and_fast(String fileName,String outputPathFileName) throws IOException{
+		BufferedReader br = new BufferedReader(new FileReader(fileName));
 		BufferedWriter writer = null;
 		// we open the file
 		writer=  new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputPathFileName), "UTF-8"));	
 		// we write the header
 		writer.write("Title;url_1;offer_1;url_2;offer_2;url_3;offer_3;url_4;offer_4;url_5;offer_5;url_6;offer_6;url_7;offer_7;url_8;offer_8;url_9;offer_9;url_10;offer_10;url_11;offer_11;url_12;offer_12;url_13;offer_13;url_14;offer_14;url_15;offer_15;url_16;offer_16;url_17;offer_17;url_18;offer_18;url_19;offer_19;url_20;offer_20;url_21;offer_21;url_22;offer_22;url_23;offer_23;url_24;offer_24;url_25;offer_25;url_26;offer_26;url_27;offer_27;url_28;offer_28;url_29;offer_29;url_30;offer_30\n");
-		// we open the database
-		for (LineItem item_to_write : items){
-			String to_write = item_to_write.getTitle();
-			List<DiscriminedURL> urls = item_to_write.getUrls();
-			for (DiscriminedURL url : urls){
-				to_write=to_write+";"+url.getUrl()+";"+url.getOffer();
-			}
-			writer.write(to_write+"\n");
-		}
-		writer.close();
-	}
+		String header = br.readLine();
+		System.out.println(header);
+		String line="";
+		while ((line = br.readLine()) != null) {
+			String[] pieces=line.split(";");
+			LineItem item = new LineItem();
+			List<DiscriminedURL> url_to_fetch = new ArrayList<DiscriminedURL>();
 
-	private static void make_your_job(){
-		for (LineItem item : items){
-			nb_fetched_lines++;
+			for (int i=0;i<pieces.length;i++){
+				if (i==0){
+					item.setTitle(pieces[i]);
+				} else {
+
+					DiscriminedURL url = new DiscriminedURL();
+					url.setUrl(pieces[i]);
+					url_to_fetch.add(url);
+				}
+			}
+			item.setUrls(url_to_fetch);
+			
 			List<DiscriminedURL> urls_to_fetch = item.getUrls();
 			for (DiscriminedURL url : urls_to_fetch){
 				try {
@@ -75,9 +73,47 @@ public class TitleCrawler {
 					e.printStackTrace();
 					System.out.println("Trouble fetching URL : "+url);
 				}
-				System.out.println("Fetched URLs number "+nb_fetched_lines+" over "+nb_lines);
+				System.out.println("Fetched URLs number "+nb_lines);
 			}
+			// writing the results
+			String to_write = item.getTitle();
+			List<DiscriminedURL> urls = item.getUrls();
+			for (DiscriminedURL url : urls){
+				to_write=to_write+";"+url.getUrl()+";"+url.getOffer();
+			}
+			System.out.println("Writing line : "+nb_lines);
+			writer.write(to_write+"\n");
+			nb_lines++;
 		}
+//
+//		for (LineItem item : items){
+//			nb_fetched_lines++;
+//			List<DiscriminedURL> urls_to_fetch = item.getUrls();
+//			for (DiscriminedURL url : urls_to_fetch){
+//				try {
+//					if (!"".equals(url.getUrl())){
+//						System.out.println("Fetching url : "+url.getUrl());
+//						String type =fetch_url(url.getUrl());
+//						url.setOffer(type);
+//						System.out.println("Type : "+type);
+//					}
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//					System.out.println("Trouble fetching URL : "+url);
+//				}
+//				System.out.println("Fetched URLs number "+nb_fetched_lines+" over "+nb_lines);
+//			}
+//			// writing the results
+//			String to_write = item.getTitle();
+//			List<DiscriminedURL> urls = item.getUrls();
+//			for (DiscriminedURL url : urls){
+//				to_write=to_write+";"+url.getUrl()+";"+url.getOffer();
+//			}
+//			System.out.println("Writing line : "+nb_fetched_lines);
+//			writer.write(to_write+"\n");
+//		}
+		writer.close();
 	}
 
 
@@ -102,32 +138,6 @@ public class TitleCrawler {
 			return "Cd";
 		}else{
 			return "MP";
-		}
-	}
-
-	private static void parsing_file(String fileName) throws IOException{
-		BufferedReader br = new BufferedReader(new FileReader(fileName));
-		String header = br.readLine();
-		System.out.println(header);
-		String line="";
-		while ((line = br.readLine()) != null) {
-			String[] pieces=line.split(";");
-			LineItem item = new LineItem();
-			List<DiscriminedURL> url_to_fetch = new ArrayList<DiscriminedURL>();
-
-			for (int i=0;i<pieces.length;i++){
-				if (i==0){
-					item.setTitle(pieces[i]);
-				} else {
-
-					DiscriminedURL url = new DiscriminedURL();
-					url.setUrl(pieces[i]);
-					url_to_fetch.add(url);
-				}
-			}
-			item.setUrls(url_to_fetch);
-			items.add(item);
-			nb_lines++;
 		}
 	}
 

@@ -29,10 +29,11 @@ public class TitleCrawler {
 		} catch (IOException e){
 			e.printStackTrace();
 		}
-		make_your_job();
+
 		try {
 			// we print the file just after we crawled the web site
-	        print_results(outputPathFileName);
+			make_your_job(outputPathFileName);
+			//			print_results(outputPathFileName);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.out.println("Trouble saving result flat file : "+outputPathFileName);
@@ -58,7 +59,12 @@ public class TitleCrawler {
 		writer.close();
 	}
 
-	private static void make_your_job(){
+	private static void make_your_job(String outputPathFileName) throws IOException{
+		BufferedWriter writer = null;
+		// we open the file
+		writer=  new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputPathFileName), "UTF-8"));	
+		// we write the header
+		writer.write("Title;url_1;offer_1;url_2;offer_2;url_3;offer_3;url_4;offer_4;url_5;offer_5;url_6;offer_6;url_7;offer_7;url_8;offer_8;url_9;offer_9;url_10;offer_10;url_11;offer_11;url_12;offer_12;url_13;offer_13;url_14;offer_14;url_15;offer_15;url_16;offer_16;url_17;offer_17;url_18;offer_18;url_19;offer_19;url_20;offer_20;url_21;offer_21;url_22;offer_22;url_23;offer_23;url_24;offer_24;url_25;offer_25;url_26;offer_26;url_27;offer_27;url_28;offer_28;url_29;offer_29;url_30;offer_30\n");
 		for (LineItem item : items){
 			nb_fetched_lines++;
 			List<DiscriminedURL> urls_to_fetch = item.getUrls();
@@ -77,7 +83,16 @@ public class TitleCrawler {
 				}
 				System.out.println("Fetched URLs number "+nb_fetched_lines+" over "+nb_lines);
 			}
+			// writing the results
+			String to_write = item.getTitle();
+			List<DiscriminedURL> urls = item.getUrls();
+			for (DiscriminedURL url : urls){
+				to_write=to_write+";"+url.getUrl()+";"+url.getOffer();
+			}
+			System.out.println("Writing line : "+nb_fetched_lines);
+			writer.write(to_write+"\n");
 		}
+		writer.close();
 	}
 
 
