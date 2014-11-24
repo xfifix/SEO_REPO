@@ -17,6 +17,8 @@ public class FastTitleCrawler {
 	// we here just want to get every URL from the input file and get if the SKU is sold by market place/cdiscount and so on
 
 	private static int nb_lines = 0;
+	private static int threshold=1000;
+	private static int timeout_milliseconds =10000;
 
 	public static void main(String[] args)  {
 		System.setProperty("http.agent", "");
@@ -33,6 +35,7 @@ public class FastTitleCrawler {
 	}
 
 	private static void make_your_job_and_fast(String fileName,String outputPathFileName) throws IOException{
+		System.out.println("Reading line number : "+nb_lines);
 		BufferedReader br = new BufferedReader(new FileReader(fileName));
 		BufferedWriter writer = null;
 		// we open the file
@@ -63,7 +66,7 @@ public class FastTitleCrawler {
 			for (DiscriminedURL url : urls_to_fetch){
 				try {
 					if (!"".equals(url.getUrl())){
-						System.out.println("Fetching url : "+url.getUrl());
+						System.out.println("Beginning to fetch url : "+url.getUrl());
 						String type =fetch_url(url.getUrl());
 						url.setOffer(type);
 						System.out.println("Type : "+type);
@@ -120,20 +123,27 @@ public class FastTitleCrawler {
 	private static String fetch_url(String my_url_to_fetch) throws IOException{
 		my_url_to_fetch=my_url_to_fetch.trim();
 		URL page = new URL(my_url_to_fetch);
+		System.out.println("Opening connection  \n");
 		HttpURLConnection conn = (HttpURLConnection) page.openConnection();
 		conn.setRequestProperty("User-Agent","CdiscountBot-crawler");
+		conn.setReadTimeout(timeout_milliseconds);
 		conn.connect();
 		InputStreamReader in = new InputStreamReader((InputStream) conn.getContent());
 		BufferedReader buff = new BufferedReader(in);
 		String line="";
 		int cdiscount_index=0;
-		while ((line = buff.readLine()) != null) {
+		System.out.println("Reading page  \n");
+		int nb_doc_lines = 0;
+		while ((line = buff.readLine()) != null && nb_doc_lines<threshold) {
+			nb_doc_lines++;
 			int global_index = line.indexOf("<p class='fpSellBy'>");
 			if (global_index >0){
 				cdiscount_index = line.indexOf("<p class='fpSellBy'>Vendu et expédié par <span class='logoCDS'>");
 				break;
 			}
 		};
+		conn.disconnect();
+		System.out.println("Connection disconnected  \n");
 		if (cdiscount_index >0){
 			return "Cd";
 		}else{

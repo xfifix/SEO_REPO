@@ -1,0 +1,11 @@
+package crawl4j.vsm;
+
+public class TfIdfTest {
+	
+	public static void main(String[] args){
+		
+	}
+	
+	
+
+}
