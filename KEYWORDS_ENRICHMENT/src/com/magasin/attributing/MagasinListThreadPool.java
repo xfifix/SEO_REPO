@@ -18,7 +18,6 @@ public class MagasinListThreadPool {
 	// size of keywords to manage for a thread
 	private static int size_bucket = 10000;
 	
-	private static int debugging_limit = 50;
 
 	public static void main(String[] args) {
 		// Getting the database property
@@ -79,11 +78,12 @@ public class MagasinListThreadPool {
 					// we reset the counter to the initial state
 					local_counter=0;
 					//					Runnable worker = new ScrapingWorkerThread(con, tofetch);
+					// one connection per thread
+					con=DriverManager.getConnection(url, user, passwd);
 					Runnable worker = new BatchedArboWorkerThread(con, tofetch);
 					executor.execute(worker);
 					tofetch=new ArrayList<String>();
-					// one connection per thread
-					con=DriverManager.getConnection(url, user, passwd);
+					
 				}
 			}
 			
@@ -125,9 +125,9 @@ public class MagasinListThreadPool {
 				if (pst != null) {
 					pst.close();
 				}
-				if (con != null) {
-					con.close();
-				}
+//				if (con != null) {
+//					con.close();
+//				}
 
 			} catch (SQLException ex) {
 				Logger lgr = Logger.getLogger(MagasinListThreadPool.class.getName());

@@ -11,9 +11,6 @@ import com.ranks.CdiscountInformation;
 
 public class BatchedArboWorkerThread implements Runnable {
 
-//	private static int bucket_size = 10000;
-//	private static int bucket_size = 50;
-
 	private static String[] real_magasin = {
 		"informatique",
 		"musique-cd-dvd",
@@ -52,7 +49,6 @@ public class BatchedArboWorkerThread implements Runnable {
 		"jardin"
 	};
 
-	private static String request_url = "http://www.cdiscount.com/sa-10/";
 	private static String update_statement ="UPDATE REFERENTIAL_KEYWORDS SET MAGASIN=?,RAYON=? WHERE KEYWORD=?";
 	private static String update_pricing_statement ="UPDATE PRICING_KEYWORDS SET MAGASIN=?,RAYON=? WHERE KEYWORD=?";
 
@@ -66,20 +62,19 @@ public class BatchedArboWorkerThread implements Runnable {
 
 	public void run() {
 		List<CdiscountInformation> batch_list = new ArrayList<CdiscountInformation>();
-	
+
 		for (int i =0;i<my_keywords_to_fetch.size();i++){		
 			String keyword_to_fetch = my_keywords_to_fetch.get(i);
 			counter++;
-
 			//CdiscountInformation info = getScrapingKeywordInfo(keyword_to_fetch);
 			CdiscountInformation info = getArboKeywordInfo(keyword_to_fetch);
 			batch_list.add(info);
-//			batch_counter++;
-//			if (batch_counter == bucket_size){
-//				batch_insertInfo(batch_list);
-//				batch_counter=0;
-//				batch_list = new ArrayList<CdiscountInformation>();
-//			}			
+			//			batch_counter++;
+			//			if (batch_counter == bucket_size){
+			//				batch_insertInfo(batch_list);
+			//				batch_counter=0;
+			//				batch_list = new ArrayList<CdiscountInformation>();
+			//			}			
 		}
 
 		if (batch_list.size() > 0){
@@ -87,7 +82,16 @@ public class BatchedArboWorkerThread implements Runnable {
 			//batch_counter=0;
 			//batch_list = new ArrayList<CdiscountInformation>();
 		}
+
 		System.out.println(Thread.currentThread().getName()+" End");
+		if (con != null) {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private void batch_insertInfo(List<CdiscountInformation> info_list){
@@ -149,23 +153,23 @@ public class BatchedArboWorkerThread implements Runnable {
 				String ranking_url = keyword_rs.getString(1);
 				//System.out.println(ranking_url);
 
-	
-					// cdiscount is ranking, we extract the magasin
-					if ("Unknown".equals(cdiscount_magasin)||"Unknown".equals(cdiscount_rayon)){
-						String[] results=URL_Utilities.checkMagasinAndRayonAndProduct(ranking_url);
-						cdiscount_magasin=results[0];
-						if (!check_proper_magasin(cdiscount_magasin)){
-							cdiscount_magasin="Unknown";
-						};				
-						info.setMagasin(cdiscount_magasin);
-						cdiscount_rayon=results[1];			
-						info.setRayon(cdiscount_rayon);
-						System.out.println(Thread.currentThread()+"Ranking URL : "+ranking_url);
-						System.out.println(Thread.currentThread()+"Keyword number : "+counter + "@@@" + keyword);
-						System.out.println(Thread.currentThread()+"Inserting Cdiscount magasin : "+cdiscount_magasin);
-						System.out.println(Thread.currentThread()+"Inserting Cdiscount rayon : "+cdiscount_rayon);
-					}
-				
+
+				// cdiscount is ranking, we extract the magasin
+				if ("Unknown".equals(cdiscount_magasin)||"Unknown".equals(cdiscount_rayon)){
+					String[] results=URL_Utilities.checkMagasinAndRayonAndProduct(ranking_url);
+					cdiscount_magasin=results[0];
+					if (!check_proper_magasin(cdiscount_magasin)){
+						cdiscount_magasin="Unknown";
+					};				
+					info.setMagasin(cdiscount_magasin);
+					cdiscount_rayon=results[1];			
+					info.setRayon(cdiscount_rayon);
+					System.out.println(Thread.currentThread()+"Ranking URL : "+ranking_url);
+					System.out.println(Thread.currentThread()+"Keyword number : "+counter + "@@@" + keyword);
+					System.out.println(Thread.currentThread()+"Inserting Cdiscount magasin : "+cdiscount_magasin);
+					System.out.println(Thread.currentThread()+"Inserting Cdiscount rayon : "+cdiscount_rayon);
+				}
+
 				//				if ("amazon.fr".equals(amazon_magasin)){
 				//					// cdiscount is ranking, we extract the magasin
 				//					amazon_magasin=URL_Utilities.checkMagasin(ranking_url);
@@ -190,26 +194,26 @@ public class BatchedArboWorkerThread implements Runnable {
 		}
 		return found;
 	}
-//	private CdiscountInformation getScrapingKeywordInfo(String keyword) throws IOException{
-//		keyword=keyword.replace(" ", "+");
-//		String my_url = request_url+keyword+".html";
-//		URL url = new URL(my_url);
-//		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-//		connection.setRequestMethod("GET");
-//		connection.setRequestProperty("User-Agent","Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)");
-//		// we here want to be redirected to the proper magasin
-//		connection.setInstanceFollowRedirects(true);
-//		connection.connect();	
-//		System.out.println(connection.getResponseCode());	
-//		String redirected_url =connection.getURL().toString(); 
-//		System.out.println(redirected_url);
-//		CdiscountInformation info =new CdiscountInformation();
-//		String magasin =URL_Utilities.checkMagasin(redirected_url);
-//		info.setMagasin(magasin);
-//		String rayon =URL_Utilities.checkRayon(redirected_url);
-//		info.setRayon(rayon);
-//		String produit =URL_Utilities.checkProduit(redirected_url);
-//		info.setProduit(produit);
-//		return info;
-//	}
+	//	private CdiscountInformation getScrapingKeywordInfo(String keyword) throws IOException{
+	//		keyword=keyword.replace(" ", "+");
+	//		String my_url = request_url+keyword+".html";
+	//		URL url = new URL(my_url);
+	//		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+	//		connection.setRequestMethod("GET");
+	//		connection.setRequestProperty("User-Agent","Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)");
+	//		// we here want to be redirected to the proper magasin
+	//		connection.setInstanceFollowRedirects(true);
+	//		connection.connect();	
+	//		System.out.println(connection.getResponseCode());	
+	//		String redirected_url =connection.getURL().toString(); 
+	//		System.out.println(redirected_url);
+	//		CdiscountInformation info =new CdiscountInformation();
+	//		String magasin =URL_Utilities.checkMagasin(redirected_url);
+	//		info.setMagasin(magasin);
+	//		String rayon =URL_Utilities.checkRayon(redirected_url);
+	//		info.setRayon(rayon);
+	//		String produit =URL_Utilities.checkProduit(redirected_url);
+	//		info.setProduit(produit);
+	//		return info;
+	//	}
 }
