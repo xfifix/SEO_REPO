@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import crawl4j.corpus.URLinfo;
+import crawl4j.corpus.CORPUSinfo;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
@@ -35,27 +35,27 @@ public class ContinuousCrawler extends WebCrawler {
 		System.out.println(url);
 
 		System.out.println(Thread.currentThread()+": Visiting URL : "+url);
-		URLinfo info =myCrawlDataManager.getCrawledContent().get(url);
+		CORPUSinfo info =myCrawlDataManager.getCrawledContent().get(url);
 		if (info == null){
-			info =new URLinfo();
+			info =new CORPUSinfo();
 		}		
 		info.setUrl(url);
-		info.setDepth((int)page.getWebURL().getDepth());
+//		info.setDepth((int)page.getWebURL().getDepth());
 		myCrawlDataManager.incProcessedPages();	
 
 		List<WebURL> links = null;
 
 		if (page.getParseData() instanceof HtmlParseData) {
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
-			info.setText(htmlParseData.getText());
+	//		info.setText(htmlParseData.getText());
 			String html = htmlParseData.getHtml();
 			links = htmlParseData.getOutgoingUrls();
 			myCrawlDataManager.incTotalLinks(links.size());
 			myCrawlDataManager.incTotalTextSize(htmlParseData.getText().length());	
 
 			Set<String> filtered_links = filter_out_links(links);
-			info.setLinks_size(filtered_links.size());
-			info.setOut_links(filtered_links.toString());
+//			info.setLinks_size(filtered_links.size());
+//			info.setOut_links(filtered_links.toString());
 
 			// we here do our own parsing
 
@@ -153,23 +153,26 @@ public class ContinuousCrawler extends WebCrawler {
 		//		}
 	}
 
-	@Override
-	protected void handlePageStatusCode(WebURL webUrl, int statusCode, String statusDescription) {
-		String url = webUrl.getURL();
-		URLinfo info =myCrawlDataManager.getCrawledContent().get(url);
-		if (info == null){
-			info =new URLinfo();
-		}	
-		info.setStatus_code(statusCode);
-		myCrawlDataManager.getCrawledContent().put(url,info);
-		//		if (statusCode != HttpStatus.SC_OK) {
-		//			if (statusCode == HttpStatus.SC_NOT_FOUND) {
-		//				System.out.println("Broken link: " + webUrl.getURL() + ", this link was found in page with docid: " + webUrl.getParentDocid());
-		//			} else {
-		//				System.out.println("Non success status for link: " + webUrl.getURL() + ", status code: " + statusCode + ", description: " + statusDescription);
-		//			}
-		//		}
-	}
+	
+	
+	// we just don't care about the status code
+//	@Override
+//	protected void handlePageStatusCode(WebURL webUrl, int statusCode, String statusDescription) {
+//		String url = webUrl.getURL();
+//		CORPUSinfo info =myCrawlDataManager.getCrawledContent().get(url);
+//		if (info == null){
+//			info =new CORPUSinfo();
+//		}	
+//		//info.setStatus_code(statusCode);
+//		myCrawlDataManager.getCrawledContent().put(url,info);
+//		//		if (statusCode != HttpStatus.SC_OK) {
+//		//			if (statusCode == HttpStatus.SC_NOT_FOUND) {
+//		//				System.out.println("Broken link: " + webUrl.getURL() + ", this link was found in page with docid: " + webUrl.getParentDocid());
+//		//			} else {
+//		//				System.out.println("Non success status for link: " + webUrl.getURL() + ", status code: " + statusCode + ", description: " + statusDescription);
+//		//			}
+//		//		}
+//	}
 
 	public void saveData(){
 		int id = getMyId();

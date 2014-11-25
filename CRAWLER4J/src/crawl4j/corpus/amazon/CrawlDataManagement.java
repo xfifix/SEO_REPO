@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.common.SolrInputDocument;
 
-import crawl4j.corpus.URLinfo;
+import crawl4j.corpus.CORPUSinfo;
 
 public class CrawlDataManagement {
 
@@ -15,7 +15,7 @@ public class CrawlDataManagement {
 	private long totalLinks;
 	private long totalTextSize;
 	private HttpSolrServer solr_server;
-	private Map<String, URLinfo> crawledContent = new HashMap<String, URLinfo>();
+	private Map<String, CORPUSinfo> crawledContent = new HashMap<String, CORPUSinfo>();
 
 	public CrawlDataManagement() {
 		//		Properties props = new Properties();
@@ -88,28 +88,28 @@ public class CrawlDataManagement {
 
 	public void updateSolrData() {
 		try{
-			Iterator<Entry<String, URLinfo>> it = crawledContent.entrySet().iterator();
+			Iterator<Entry<String, CORPUSinfo>> it = crawledContent.entrySet().iterator();
 			int local_counter = 0;
 			if (it.hasNext()){
 				local_counter++;
 				do {
 					local_counter ++;
-					Map.Entry<String, URLinfo> pairs = it.next();
+					Map.Entry<String, CORPUSinfo> pairs = it.next();
 					String url=(String)pairs.getKey();
-					URLinfo info = (URLinfo)pairs.getValue();
+					CORPUSinfo info = (CORPUSinfo)pairs.getValue();
 					SolrInputDocument doc = new SolrInputDocument();
 					doc.addField("id",url.replace("http://www-history.mcs.st-andrews.ac.uk/",""));
 					doc.addField("url",url);
-					doc.addField("whole_text",info.getText());
-					doc.addField("title",info.getTitle());
-					doc.addField("links_size",info.getLinks_size());
-					doc.addField("links",info.getOut_links());
-					doc.addField("h1",info.getH1());
-					doc.addField("short_description",info.getShort_description());
-					doc.addField("birth_date",info.getBirth_date());
-					doc.addField("birth_place",info.getBirth_location());
-					doc.addField("death_date",info.getDeath_date());
-					doc.addField("death_place",info.getDeath_location());
+//					doc.addField("whole_text",info.getText());
+//					doc.addField("title",info.getTitle());
+//					doc.addField("links_size",info.getLinks_size());
+//					doc.addField("links",info.getOut_links());
+//					doc.addField("h1",info.getH1());
+//					doc.addField("short_description",info.getShort_description());
+//					doc.addField("birth_date",info.getBirth_date());
+//					doc.addField("birth_place",info.getBirth_location());
+//					doc.addField("death_date",info.getDeath_date());
+//					doc.addField("death_place",info.getDeath_location());
 					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
 					doc.addField("last_update", sqlDate.toString());	
 					try{
@@ -135,11 +135,11 @@ public class CrawlDataManagement {
 		crawledContent.clear();
 	}
 
-	public Map<String, URLinfo> getCrawledContent() {
+	public Map<String, CORPUSinfo> getCrawledContent() {
 		return crawledContent;
 	}
 
-	public void setCrawledContent(Map<String, URLinfo> crawledContent) {
+	public void setCrawledContent(Map<String, CORPUSinfo> crawledContent) {
 		this.crawledContent = crawledContent;
 	}
 }
