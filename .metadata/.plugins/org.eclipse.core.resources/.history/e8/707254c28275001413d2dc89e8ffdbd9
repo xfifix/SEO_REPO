@@ -64,6 +64,7 @@ public class CorpusCrawler extends WebCrawler {
 			while (it.hasNext()) {
 				Map.Entry<String, Integer> pairs = (Map.Entry<String, Integer>)it.next();
 				String word=pairs.getKey();
+
 				// we here don't want any number
 				if (!word.matches(".*\\d+.*")){
 					word.replace("l'", "");
@@ -72,6 +73,7 @@ public class CorpusCrawler extends WebCrawler {
 					System.out.println("Word to add to the corpus : "+word);
 				}
 			}	
+
 		}
 	}
 

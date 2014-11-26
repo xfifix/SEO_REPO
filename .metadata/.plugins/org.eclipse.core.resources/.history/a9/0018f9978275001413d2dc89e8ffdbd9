@@ -1,7 +1,9 @@
 package crawl4j.corpus.amazon;
 
 import java.io.File;
+import java.io.FileReader;
 import java.util.List;
+import java.util.Properties;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
@@ -17,7 +19,7 @@ public class CorpusController {
 	
 	public static void main(String[] args) throws Exception {
 		System.setProperty("http.agent", "");
-		System.out.println("Starting the crawl configuration");
+		System.out.println("Starting the crawl configuration")
 		// getting the french stop words 
 		stop_words = new File(stopword_path);
 

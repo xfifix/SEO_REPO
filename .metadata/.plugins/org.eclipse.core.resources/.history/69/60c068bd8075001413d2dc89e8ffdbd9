@@ -33,6 +33,7 @@ public class VectorStateSpringRepresentation {
 	public VectorStateSpringRepresentation(String ztd_content){
 		// TODO Auto-generated method stub
 		try{
+
 			TokenStream stream = analyzer.tokenStream("text", new StringReader(ztd_content));
 			Token token = stream.next();
 			while ( token != null ){

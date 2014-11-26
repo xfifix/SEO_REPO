@@ -1,6 +1,5 @@
 package crawl4j.vsm;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
 
@@ -13,14 +12,6 @@ import crawl4j.corpus.amazon.CorpusController;
 public class VectorStateSpringRepresentation {
 
 	private HashMap<String, Integer>  wordFrequencies =  new HashMap<String, Integer>() ;
-	private static StandardAnalyzer analyzer;
-	static{
-		try{
-			analyzer = new StandardAnalyzer(CorpusController.stop_words);
-		} catch (IOException e){
-			e.printStackTrace();
-		}
-	}
 
 	public HashMap<String, Integer> getWordFrequencies() {
 		return wordFrequencies;
@@ -33,6 +24,7 @@ public class VectorStateSpringRepresentation {
 	public VectorStateSpringRepresentation(String ztd_content){
 		// TODO Auto-generated method stub
 		try{
+			StandardAnalyzer analyzer = new StandardAnalyzer(CorpusController.stop_words);
 			TokenStream stream = analyzer.tokenStream("text", new StringReader(ztd_content));
 			Token token = stream.next();
 			while ( token != null ){
