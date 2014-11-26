@@ -1,0 +1,125 @@
+package com.processing;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ReversingListCrawler {
+	// we here just want to get every URL from the input file and get if the SKU is sold by market place/cdiscount and so on
+
+	private static int nb_lines = 0;
+	private static List<IPInfo> resultsList = new ArrayList<IPInfo>();
+	
+
+	public static void main(String[] args)  {
+
+		String fileName="/home/sduprey/My_Data/My_Logs_IPs/IP_23_11.csv";
+	    try {
+			// we print the file just after we crawled the web site
+			reverse_dns_the_list(fileName);
+			update_database();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Trouble saving result flat file ");
+			e.printStackTrace();
+		}
+	}
+
+	private static void reverse_dns_the_list(String fileName) throws IOException{
+		System.out.println("Reading line number : "+nb_lines);
+		BufferedReader br = new BufferedReader(new FileReader(fileName));
+//		BufferedWriter writer = null;
+//		// we open the file
+//		writer=  new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputPathFileName), "UTF-8"));	
+//		// we write the header
+//		writer.write("Title;url_1;offer_1;url_2;offer_2;url_3;offer_3;url_4;offer_4;url_5;offer_5;url_6;offer_6;url_7;offer_7;url_8;offer_8;url_9;offer_9;url_10;offer_10;url_11;offer_11;url_12;offer_12;url_13;offer_13;url_14;offer_14;url_15;offer_15;url_16;offer_16;url_17;offer_17;url_18;offer_18;url_19;offer_19;url_20;offer_20;url_21;offer_21;url_22;offer_22;url_23;offer_23;url_24;offer_24;url_25;offer_25;url_26;offer_26;url_27;offer_27;url_28;offer_28;url_29;offer_29;url_30;offer_30\n");
+		String header = br.readLine();
+		System.out.println(header);
+		String line="";
+		while ((line = br.readLine()) != null) {
+			String[] pieces=line.split(",");
+			String currentIP = pieces[0];
+			String currentCount = pieces[1];
+			String current_hostname = fetch_dns(currentIP);
+			IPInfo ifInfo = new IPInfo();
+			ifInfo.setCount(Integer.valueOf(currentCount));
+			ifInfo.setHostname(current_hostname);
+			ifInfo.setIp(currentIP);				
+			System.out.println(" Reading lines number " + nb_lines);
+			System.out.println(" Current IP : " + currentIP);
+			System.out.println(" Current count : " + currentCount);
+			System.out.println(" Current hostname : " + current_hostname);
+			resultsList.add(ifInfo);
+			nb_lines++;
+		}
+//
+//		for (LineItem item : items){
+//			nb_fetched_lines++;
+//			List<DiscriminedURL> urls_to_fetch = item.getUrls();
+//			for (DiscriminedURL url : urls_to_fetch){
+//				try {
+//					if (!"".equals(url.getUrl())){
+//						System.out.println("Fetching url : "+url.getUrl());
+//						String type =fetch_url(url.getUrl());
+//						url.setOffer(type);
+//						System.out.println("Type : "+type);
+//					}
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//					System.out.println("Trouble fetching URL : "+url);
+//				}
+//				System.out.println("Fetched URLs number "+nb_fetched_lines+" over "+nb_lines);
+//			}
+//			// writing the results
+//			String to_write = item.getTitle();
+//			List<DiscriminedURL> urls = item.getUrls();
+//			for (DiscriminedURL url : urls){
+//				to_write=to_write+";"+url.getUrl()+";"+url.getOffer();
+//			}
+//			System.out.println("Writing line : "+nb_fetched_lines);
+//			writer.write(to_write+"\n");
+//		}
+//		writer.close();
+	}
+
+	private static String fetch_dns(String ip_adresse) throws UnknownHostException{
+		long before = System.currentTimeMillis();
+		InetAddress addr = InetAddress.getByName(ip_adresse);
+		String hostname = addr.getHostName();
+		long after = System.currentTimeMillis();
+		System.out.println((after - before) + " ms");
+		return hostname;
+	}
+	
+	private static class IPInfo {
+		private String ip;
+		private String hostname;
+		public String getIp() {
+			return ip;
+		}
+		public void setIp(String ip) {
+			this.ip = ip;
+		}
+		public String getHostname() {
+			return hostname;
+		}
+		public void setHostname(String hostname) {
+			this.hostname = hostname;
+		}
+		public int getCount() {
+			return count;
+		}
+		public void setCount(int count) {
+			this.count = count;
+		}
+		private int count;
+	}
+
+
+
+}

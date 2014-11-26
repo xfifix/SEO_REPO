@@ -1,0 +1,152 @@
+package com.processing;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+	
+public class ReversingListCrawler {
+	// we here just want to get every URL from the input file and get if the SKU is sold by market place/cdiscount and so on
+
+	private static int nb_lines = 0;
+	private static List<IPInfo> resultsList = new ArrayList<IPInfo>();
+	private static Connection con;
+
+	public static void main(String[] args)  {
+		String fileName="/home/sduprey/My_Data/My_Logs_IPs/IP_23_11.csv";
+		// instantiating the database connection
+		String url="jdbc:postgresql://localhost/HOSTNAMEDB";
+		String user="postgres";
+		String passwd="mogette";
+		try {  
+			con = DriverManager.getConnection(url, user, passwd);
+		}catch (SQLException ex) {
+			ex.printStackTrace();
+			System.out.println("Trouble instantiating the database connection");
+		} finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (pst != null) {
+					pst.close();
+				}
+				if (con != null) {
+					con.close();
+				}
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
+		}
+		try {
+			reverse_dns_the_list(fileName);
+			update_database();
+		} catch (IOException e) {
+			System.out.println("Trouble saving result flat file ");
+			e.printStackTrace();
+		}
+	}
+
+	private static void reverse_dns_the_list(String fileName) throws IOException{
+		System.out.println("Reading line number : "+nb_lines);
+		BufferedReader br = new BufferedReader(new FileReader(fileName));
+		String header = br.readLine();
+		System.out.println(header);
+		String line="";
+		while ((line = br.readLine()) != null) {
+			String[] pieces=line.split(",");
+			String currentIP = pieces[0];
+			String currentCount = pieces[1];
+			String current_hostname = fetch_dns(currentIP);
+			IPInfo ifInfo = new IPInfo();
+			ifInfo.setCount(Integer.valueOf(currentCount));
+			ifInfo.setHostname(current_hostname);
+			ifInfo.setIp(currentIP);				
+			System.out.println(" Reading lines number " + nb_lines);
+			System.out.println(" Current IP : " + currentIP);
+			System.out.println(" Current count : " + currentCount);
+			System.out.println(" Current hostname : " + current_hostname);
+			resultsList.add(ifInfo);
+			nb_lines++;
+		}
+	}
+
+	private static void update_database(){
+		String url="jdbc:postgresql://localhost/HTTPSTATUSDB";
+		String user="postgres";
+		String passwd="mogette";
+		System.out.println("You are connected to the postgresql HTTPSTATUS_LIST database as "+user);
+		// Instantiating the pool thread
+
+		// The database connection
+
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+
+		try {  
+			con = DriverManager.getConnection(url, user, passwd);
+		}catch (SQLException ex) {
+			ex.printStackTrace();
+			System.out.println("Trouble instantiating the database connection");
+		} finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (pst != null) {
+					pst.close();
+				}
+				if (con != null) {
+					con.close();
+				}
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
+		}
+
+	}
+
+	private static String fetch_dns(String ip_adresse) throws UnknownHostException{
+		long before = System.currentTimeMillis();
+		InetAddress addr = InetAddress.getByName(ip_adresse);
+		String hostname = addr.getHostName();
+		long after = System.currentTimeMillis();
+		System.out.println((after - before) + " ms");
+		return hostname;
+	}
+
+	private static class IPInfo {
+		private String ip;
+		private String hostname;
+		public String getIp() {
+			return ip;
+		}
+		public void setIp(String ip) {
+			this.ip = ip;
+		}
+		public String getHostname() {
+			return hostname;
+		}
+		public void setHostname(String hostname) {
+			this.hostname = hostname;
+		}
+		public int getCount() {
+			return count;
+		}
+		public void setCount(int count) {
+			this.count = count;
+		}
+		private int count;
+	}
+
+
+
+}
