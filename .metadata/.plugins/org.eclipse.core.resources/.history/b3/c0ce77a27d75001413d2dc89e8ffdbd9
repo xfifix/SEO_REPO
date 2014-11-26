@@ -12,10 +12,8 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
 public class CorpusController {
-	
-	private static String config_path = "/home/sduprey/My_Code/My_Java_Workspace/CRAWLER4J/similarity_config/";
+
 	public static String crawler_seed = "http://www.amazon.fr";
-	public static Properties properties;
 	public  static File stop_words;
 	
 	public static void main(String[] args) throws Exception {
@@ -51,7 +49,7 @@ public class CorpusController {
 		PageFetcher pageFetcher = new PageFetcher(config);
 		RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
 		robotstxtConfig.setUserAgentName(user_agent_name);
-		robotstxtConfig.setEnabled(true);
+		robotstxtConfig.setEnabled(false);
 		RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
 		CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
 

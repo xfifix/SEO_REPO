@@ -1,9 +1,6 @@
 package crawl4j.corpus.amazon;
 
-import java.io.File;
-import java.io.FileReader;
 import java.util.List;
-import java.util.Properties;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
@@ -12,19 +9,12 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
 public class CorpusController {
-	
-	private static String config_path = "/home/sduprey/My_Code/My_Java_Workspace/CRAWLER4J/similarity_config/";
+
 	public static String crawler_seed = "http://www.amazon.fr";
-	public static Properties properties;
-	public  static File stop_words;
-	
+
 	public static void main(String[] args) throws Exception {
 		System.setProperty("http.agent", "");
 		System.out.println("Starting the crawl configuration");
-		loadProperties();
-		// getting the french stop words 
-		stop_words = new File(properties.getProperty("config.stop_words_path"));
-
 		// localized seed
 		String seed = crawler_seed;
 		// downsizing to test
@@ -51,7 +41,7 @@ public class CorpusController {
 		PageFetcher pageFetcher = new PageFetcher(config);
 		RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
 		robotstxtConfig.setUserAgentName(user_agent_name);
-		robotstxtConfig.setEnabled(true);
+		robotstxtConfig.setEnabled(false);
 		RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
 		CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
 
@@ -77,15 +67,4 @@ public class CorpusController {
 		System.out.println("   Total Text Size: " + totalTextSize);
 		System.out.println("   Estimated time (ms): " + estimatedTime);
 	}
-	
-	private static void loadProperties(){
-		properties = new Properties();
-		try {
-			properties.load(new FileReader(new File(config_path+"properties")));
-		} catch (Exception e) {
-			System.out.println("Failed to load properties file!!");
-			e.printStackTrace();
-		}
-	}
-	
 }
