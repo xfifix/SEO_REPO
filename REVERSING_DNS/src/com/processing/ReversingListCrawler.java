@@ -8,17 +8,18 @@ import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReversingListCrawler {
 	// we here just want to get every URL from the input file and get if the SKU is sold by market place/cdiscount and so on
-
+	private static String insert_statement="INSERT INTO IP_HOSTNAME(IP,HOSTNAME,COUNT)"
+			+ " VALUES(?,?,?)";
 	private static int nb_lines = 0;
 	private static List<IPInfo> resultsList = new ArrayList<IPInfo>();
 	private static Connection con;
+	private static int batch_size = 10000;
 
 	public static void main(String[] args)  {
 		String fileName="/home/sduprey/My_Data/My_Logs_IPs/IP_23_11.csv";
@@ -31,7 +32,14 @@ public class ReversingListCrawler {
 		}catch (SQLException ex) {
 			ex.printStackTrace();
 			System.out.println("Trouble instantiating the database connection");
-		} finally {
+		} 
+		try {
+			reverse_dns_the_list(fileName);
+			update_database();
+		} catch (IOException e) {
+			System.out.println("Trouble saving result flat file ");
+			e.printStackTrace();
+		}finally {
 			try {
 				if (con != null) {
 					con.close();
@@ -39,13 +47,6 @@ public class ReversingListCrawler {
 			} catch (SQLException ex) {
 				ex.printStackTrace();
 			}
-		}
-		try {
-			reverse_dns_the_list(fileName);
-			update_database();
-		} catch (IOException e) {
-			System.out.println("Trouble saving result flat file ");
-			e.printStackTrace();
 		}
 	}
 
@@ -55,7 +56,9 @@ public class ReversingListCrawler {
 		String header = br.readLine();
 		System.out.println(header);
 		String line="";
+		int counter = 0;
 		while ((line = br.readLine()) != null) {
+			counter++;
 			String[] pieces=line.split(",");
 			String currentIP = pieces[0];
 			String currentCount = pieces[1];
@@ -74,8 +77,39 @@ public class ReversingListCrawler {
 	}
 
 	private static void update_database(){
-	
-
+		try{
+			con.setAutoCommit(false);
+			PreparedStatement st = con.prepareStatement(insert_statement);		
+			int local_counter=0;
+			for ( IPInfo ipinfo : resultsList){
+				local_counter++;
+				st.setString(1,ipinfo.getIp());
+				st.setString(2,ipinfo.getHostname());
+				st.setInt(3,ipinfo.getCount());
+				st.addBatch();			
+				if(local_counter == batch_size){
+					System.out.println(" Inserting batch ");
+					st.executeBatch();		 
+					con.commit();
+					st.close();
+					st = con.prepareStatement(insert_statement);	
+				}
+			}
+			st.executeBatch();		 
+			con.commit();
+			System.out.println(Thread.currentThread()+"Committed " + local_counter + " updates");
+		} catch (SQLException e){
+			//System.out.println("Line already inserted : "+nb_lines);
+			e.printStackTrace();  
+			if (con != null) {
+				try {
+					con.rollback();
+				} catch (SQLException ex1) {
+					ex1.printStackTrace();
+					System.out.println("Trouble inserting batch");
+				}
+			}
+		}	
 	}
 
 	private static String fetch_dns(String ip_adresse) throws UnknownHostException{

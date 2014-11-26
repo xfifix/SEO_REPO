@@ -1,0 +1,188 @@
+package com.processing;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+
+
+public class ReversingListCrawler {
+	// we here just want to get every URL from the input file and get if the SKU is sold by market place/cdiscount and so on
+	private static String insert_statement="INSERT INTO IP_HOSTNAME(IP,HOSTNAME,COUNT)"
+			+ " VALUES(?,?,?)";
+	private static int nb_lines = 0;
+	private static List<IPInfo> resultsList = new ArrayList<IPInfo>();
+	private static Connection con;
+
+	public static void main(String[] args)  {
+		String fileName="/home/sduprey/My_Data/My_Logs_IPs/IP_23_11.csv";
+		// instantiating the database connection
+		String url="jdbc:postgresql://localhost/HOSTNAMEDB";
+		String user="postgres";
+		String passwd="mogette";
+		try {  
+			con = DriverManager.getConnection(url, user, passwd);
+		}catch (SQLException ex) {
+			ex.printStackTrace();
+			System.out.println("Trouble instantiating the database connection");
+		} finally {
+			try {
+				if (con != null) {
+					con.close();
+				}
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
+		}
+		try {
+			reverse_dns_the_list(fileName);
+			update_database();
+		} catch (IOException e) {
+			System.out.println("Trouble saving result flat file ");
+			e.printStackTrace();
+		}
+	}
+
+	private static void reverse_dns_the_list(String fileName) throws IOException{
+		System.out.println("Reading line number : "+nb_lines);
+		BufferedReader br = new BufferedReader(new FileReader(fileName));
+		String header = br.readLine();
+		System.out.println(header);
+		String line="";
+		while ((line = br.readLine()) != null) {
+			String[] pieces=line.split(",");
+			String currentIP = pieces[0];
+			String currentCount = pieces[1];
+			String current_hostname = fetch_dns(currentIP);
+			IPInfo ifInfo = new IPInfo();
+			ifInfo.setCount(Integer.valueOf(currentCount));
+			ifInfo.setHostname(current_hostname);
+			ifInfo.setIp(currentIP);				
+			System.out.println(" Reading lines number " + nb_lines);
+			System.out.println(" Current IP : " + currentIP);
+			System.out.println(" Current count : " + currentCount);
+			System.out.println(" Current hostname : " + current_hostname);
+			resultsList.add(ifInfo);
+			nb_lines++;
+		}
+	}
+
+	private static void update_database(){
+		try{
+		
+				int local_counter=0;
+				for ( IPInfo ipinfo : resultsList){
+				local_counter++;
+				con.setAutoCommit(false);
+				PreparedStatement st = con.prepareStatement(insert_statement);
+
+				do {
+					local_counter ++;
+					Map.Entry pairs = (Map.Entry)it.next();
+					String url=(String)pairs.getKey();
+					URLinfo info = (URLinfo)pairs.getValue();
+					//					String prepared_string = "("+url+","
+					//					                            +(String)list_values[0]+","
+					//					                            +(String)list_values[1]+","
+					//             					                +(String)list_values[1]+","
+					//             					                +(int)list_values[2]+","
+					//					                            +(String)list_values[3]+","
+					//             					                +(String)list_values[4]+","
+					//             					                +(String)list_values[5]+","
+					//					                            +(String)list_values[6]+","
+					//             					                +(String)list_values[7]+","
+					//             					                +(String)list_values[8]+","
+					//					                            +(String)list_values[9]+","
+					//             					                +(int)list_values[10]+","
+					//               					                +(int)list_values[11]+","
+					//   					                            +(String)list_values[12]+")";
+					st.setString(1,url);
+					st.setString(2,info.getText());
+					st.setString(3,info.getTitle());
+					st.setInt(4,info.getLinks_size());
+					st.setString(5,info.getOut_links());
+					st.setString(6,info.getH1());
+					st.setString(7,info.getFooter());
+					st.setString(8,info.getZtd());
+					st.setString(9,info.getShort_desc());
+					st.setString(10,info.getVendor());
+					st.setString(11,info.getAtt_desc());
+					st.setInt(12,info.getAtt_number());
+					st.setInt(13,info.getStatus_code());
+					st.setString(14,info.getResponse_headers());		
+					st.setInt(15,info.getDepth());
+					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
+					st.setDate(16,sqlDate);
+					st.addBatch();
+				}while (it.hasNext());	
+				st.executeBatch();		 
+				con.commit();
+				System.out.println(Thread.currentThread()+"Committed " + local_counter + " updates");
+			}
+		} catch (SQLException e){
+			//System.out.println("Line already inserted : "+nb_lines);
+			e.printStackTrace();  
+			if (con != null) {
+				try {
+					con.rollback();
+				} catch (SQLException ex1) {
+					Logger lgr = Logger.getLogger(CrawlDataManagement.class.getName());
+					lgr.log(Level.ERROR, ex1.getMessage(), ex1);
+				}
+			}
+
+			Logger lgr = Logger.getLogger(CrawlDataManagement.class.getName());
+			lgr.log(Level.ERROR, e.getMessage(), e);
+		}	
+		crawledContent.clear();
+
+	}
+
+	private static String fetch_dns(String ip_adresse) throws UnknownHostException{
+		long before = System.currentTimeMillis();
+		InetAddress addr = InetAddress.getByName(ip_adresse);
+		String hostname = addr.getHostName();
+		long after = System.currentTimeMillis();
+		System.out.println((after - before) + " ms");
+		return hostname;
+	}
+
+	private static class IPInfo {
+		private String ip;
+		private String hostname;
+		public String getIp() {
+			return ip;
+		}
+		public void setIp(String ip) {
+			this.ip = ip;
+		}
+		public String getHostname() {
+			return hostname;
+		}
+		public void setHostname(String hostname) {
+			this.hostname = hostname;
+		}
+		public int getCount() {
+			return count;
+		}
+		public void setCount(int count) {
+			this.count = count;
+		}
+		private int count;
+	}
+
+
+
+}

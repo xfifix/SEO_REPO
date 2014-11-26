@@ -4,3 +4,7 @@
 1416818325607	Delete elements
 1416822465237	Rename resource 'config'
 1416905809502	Rename type 'URLinfo'
+1417001338571	Copy file
+1417006893249	Rename type 'ContinuousController'
+1417006910497	Rename type 'ContinuousCrawler'
+1417006926680	Rename type 'CrawlDataManagement'

@@ -31,6 +31,6 @@
 <fullyQualifiedTypeName name="java.net.Proxy.Type"/>
 <fullyQualifiedTypeName name="java.net.ProxySelector"/>
 <fullyQualifiedTypeName name="java.io.InputStream"/>
-<fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="java.util.Date"/>
+<fullyQualifiedTypeName name="java.util.List"/>
 </qualifiedTypeNameHistroy>
