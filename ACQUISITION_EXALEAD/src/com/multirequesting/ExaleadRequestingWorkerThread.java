@@ -110,6 +110,7 @@ public class ExaleadRequestingWorkerThread implements Runnable {
 				nvps.add(new BasicNameValuePair("add_hit_meta", "offer_product_id"));
 				nvps.add(new BasicNameValuePair("add_hit_meta", "offer_price"));
 				nvps.add(new BasicNameValuePair("add_hit_meta", "offer_seller_id"));
+				nvps.add(new BasicNameValuePair("add_hit_meta", "title"));
 				nvps.add(new BasicNameValuePair("hit_meta.termscore.expr", "100000*@term.score"));
 				nvps.add(new BasicNameValuePair("hit_meta.proximity.expr", "@proximity"));
 				nvps.add(new BasicNameValuePair("hit_meta.categoryweight.expr", "100000*offer_category_weight"));

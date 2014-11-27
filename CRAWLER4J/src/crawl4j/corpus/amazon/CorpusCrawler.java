@@ -42,13 +42,16 @@ public class CorpusCrawler extends WebCrawler {
 		System.out.println(url);
 
 		System.out.println(Thread.currentThread()+": Visiting URL : "+url);
-		CORPUSinfo info =myCrawlDataManager.getCrawledContent().get(url);
-		if (info == null){
-			info =new CORPUSinfo();
-		}		
-		info.setUrl(url);
-		myCrawlDataManager.incProcessedPages();	
+		
+//		CORPUSinfo info =myCrawlDataManager.getCrawledContent().get(url);
+//		if (info == null){
+//			info =new CORPUSinfo();
+//		}		
+//		info.setUrl(url);
+//		myCrawlDataManager.incProcessedPages();	
 
+		
+		
 		if (page.getParseData() instanceof HtmlParseData) {
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();			
 			String html = htmlParseData.getHtml();
@@ -70,6 +73,10 @@ public class CorpusCrawler extends WebCrawler {
 					word.replace("n'", "");
 					word.replace("d'", "");
 					System.out.println("Word to add to the corpus : "+word);
+					
+					//getMyLocalData().
+					
+					
 				}
 			}	
 		}
@@ -131,9 +138,8 @@ public class CorpusCrawler extends WebCrawler {
 		// This is just an example. Therefore I print on screen. You may
 		// probably want to write in a text file.
 		System.out.println("Crawler " + id + "> Processed Pages: " + myCrawlDataManager.getTotalProcessedPages());
-		System.out.println("Crawler " + id + "> Total Links Found: " + myCrawlDataManager.getTotalLinks());
 		System.out.println("Crawler " + id + "> Total Text Size: " + myCrawlDataManager.getTotalTextSize());
-		myCrawlDataManager.updateData();	
+	//	myCrawlDataManager.updateData();	
 	}
 
 }

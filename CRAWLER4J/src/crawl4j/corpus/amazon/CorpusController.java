@@ -57,19 +57,15 @@ public class CorpusController {
 		controller.start(CorpusCrawler.class, numberOfCrawlers);
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		List<Object> crawlersLocalData = controller.getCrawlersLocalData();
-		long totalLinks = 0;
 		long totalTextSize = 0;
 		int totalProcessedPages = 0;
 		for (Object localData : crawlersLocalData) {
 			CorpusCrawlDataManagement stat = (CorpusCrawlDataManagement) localData;
-			totalLinks += stat.getTotalLinks();
 			totalTextSize += stat.getTotalTextSize();
 			totalProcessedPages += stat.getTotalProcessedPages();
 		}
-
 		System.out.println("Aggregated Statistics:");
 		System.out.println("   Processed Pages: " + totalProcessedPages);
-		System.out.println("   Total Links found: " + totalLinks);
 		System.out.println("   Total Text Size: " + totalTextSize);
 		System.out.println("   Estimated time (ms): " + estimatedTime);
 	}
