@@ -359,6 +359,7 @@ revoici
 revoilà
 rien
 s
+s'est
 sa
 sacrebleu
 sans

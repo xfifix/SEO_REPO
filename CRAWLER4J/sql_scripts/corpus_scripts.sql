@@ -1,11 +1,11 @@
 CREATE TABLE IF NOT EXISTS CORPUS_WORDS(
-    WORD TEXT,
+    WORD TEXT UNIQUE NOT NULL,
     NB_DOCUMENTS INT,
     DOC_LIST TEXT,
     LAST_UPDATE DATE
 ) TABLESPACE mydbspace;
 
-CREATE INDEX ON CORPUS(CORPUS_TERM);
+CREATE INDEX ON CORPUS_WORDS(WORD);
 # the table which will contain the number of occurences (document containing the specified word)
 # we've found in our documents corpus
 # SQL requests from the CorpusDataController

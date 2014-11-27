@@ -8,7 +8,7 @@ import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 
-import crawl4j.corpus.amazon.CorpusController;
+import crawl4j.corpus.amazon.AmazonCorpusController;
 
 public class VectorStateSpringRepresentation {
 
@@ -16,7 +16,7 @@ public class VectorStateSpringRepresentation {
 	private static StandardAnalyzer analyzer;
 	static{
 		try{
-			analyzer = new StandardAnalyzer(CorpusController.stop_words);
+			analyzer = new StandardAnalyzer(AmazonCorpusController.stop_words);
 		} catch (IOException e){
 			e.printStackTrace();
 		}

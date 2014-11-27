@@ -11,7 +11,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import crawl4j.corpus.CORPUSinfo;
 import crawl4j.vsm.VectorStateSpringRepresentation;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
@@ -33,25 +32,15 @@ public class CorpusCrawler extends WebCrawler {
 	@Override
 	public boolean shouldVisit(WebURL url) {
 		String href = url.getURL().toLowerCase();
-		return !filters.matcher(href).matches() && href.startsWith(CorpusController.crawler_seed);
+		return !filters.matcher(href).matches() && href.startsWith(AmazonCorpusController.crawler_seed);
 	}
 
 	@Override
 	public void visit(Page page) {
 		String url = page.getWebURL().getURL();
 		System.out.println(url);
-
 		System.out.println(Thread.currentThread()+": Visiting URL : "+url);
-		
-//		CORPUSinfo info =myCrawlDataManager.getCrawledContent().get(url);
-//		if (info == null){
-//			info =new CORPUSinfo();
-//		}		
-//		info.setUrl(url);
-//		myCrawlDataManager.incProcessedPages();	
 
-		
-		
 		if (page.getParseData() instanceof HtmlParseData) {
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();			
 			String html = htmlParseData.getHtml();
@@ -69,14 +58,11 @@ public class CorpusCrawler extends WebCrawler {
 				String word=pairs.getKey();
 				// we here don't want any number
 				if (!word.matches(".*\\d+.*")){
-					word.replace("l'", "");
-					word.replace("n'", "");
-					word.replace("d'", "");
+					word=word.replace("l'", "");
+					word=word.replace("n'", "");
+					word=word.replace("d'", "");
 					System.out.println("Word to add to the corpus : "+word);
-					
-					//getMyLocalData().
-					
-					
+					myCrawlDataManager.updateWord(word, url);
 				}
 			}	
 		}
