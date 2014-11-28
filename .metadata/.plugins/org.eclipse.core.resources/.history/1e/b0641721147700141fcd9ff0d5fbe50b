@@ -56,7 +56,9 @@ public class ReversingListCrawler {
 		String header = br.readLine();
 		System.out.println(header);
 		String line="";
+		int counter = 0;
 		while ((line = br.readLine()) != null) {
+			counter++;
 			String[] pieces=line.split(",");
 			String currentIP = pieces[0];
 			String currentCount = pieces[1];
