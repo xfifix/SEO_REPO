@@ -1,16 +1,19 @@
 # x y size not created (optional), Label URL (optional)
 
-CREATE INDEX ON NODES (url);
-ALTER SEQUENCE nodes_pkey RESTART WITH 1
+
 
 CREATE TABLE IF NOT EXISTS NODES (
     ID SERIAL PRIMARY KEY NOT NULL,
-    LABEL VARCHAR(100),
+    LABEL TEXT,
     MAGASIN VARCHAR(100),
     STATUS_CODE INT,
-    PAGE_TYPE VARCHAR(50),
-    URL TEXT
+    PAGE_TYPE VARCHAR(50)
 ) TABLESPACE mydbspace;
+
+
+CREATE INDEX ON NODES (label);
+ALTER SEQUENCE nodes_pkey RESTART WITH 1
+
 
 # name weight not created (optional)
 CREATE TABLE IF NOT EXISTS EDGES (

@@ -37,9 +37,9 @@ public class FastBatchPostGresLinksDaemon {
 	private static Map<String, Integer> node_locator = new HashMap<String, Integer>(); 
 
 	private static int counter = 0;
-	private static String fetching_request = "SELECT URL, STATUS_CODE, MAGASIN, PAGE_TYPE, LINKS FROM CRAWL_RESULTS WHERE DEPTH >0 ORDER BY DEPTH LIMIT 1000000";
-	private static String insert_node_statement ="INSERT INTO NODES (LABEL, MAGASIN, PAGE_TYPE, STATUS_CODE, URL)"
-			+ " VALUES(?,?,?,?,?)";
+	private static String fetching_request = "SELECT URL, STATUS_CODE, MAGASIN, PAGE_TYPE, LINKS FROM CRAWL_RESULTS WHERE DEPTH >0 ORDER BY DEPTH LIMIT 8000000";
+	private static String insert_node_statement ="INSERT INTO NODES (LABEL, MAGASIN, PAGE_TYPE, STATUS_CODE)"
+			+ " VALUES(?,?,?,?)";
 	private static String insert_relation_statement ="INSERT INTO EDGES (SOURCE, TARGET)"
 			+ " VALUES(?,?)";
 	private static Connection con; 
@@ -61,10 +61,11 @@ public class FastBatchPostGresLinksDaemon {
 			System.exit(0);
 		}
 
-		building_database();
-
-		// computing page rank
-
+		building_database();		
+		// we don't do it here as the computation might be heavy
+		// we delegate to another subcrawler
+        //		// computing page rank
+        //		compute_page_rank();
 	}
 
 	private static void building_database(){
@@ -143,11 +144,10 @@ public class FastBatchPostGresLinksDaemon {
 	private static void create_node_without_finding(NodeInfos infos) throws SQLException{
 		PreparedStatement insert_st = con.prepareStatement(insert_node_statement,Statement.RETURN_GENERATED_KEYS);
 		//(LABEL, MAGASIN, PAGE_TYPE, STATUS_CODE, URL)
-		insert_st.setString(1,infos.getMagasin());
+		insert_st.setString(1,infos.getUrl());
 		insert_st.setString(2,infos.getMagasin());
 		insert_st.setString(3,infos.getType());
 		insert_st.setInt(4,infos.getStatus());
-		insert_st.setString(5,infos.getUrl());
 		insert_st.executeUpdate();
 		ResultSet rs = insert_st.getGeneratedKeys();
 		int inserted_keys=0;

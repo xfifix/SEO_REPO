@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import crawl4j.urlutilities.URL_Utilities;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
@@ -34,8 +33,8 @@ public class PostGresLinksDaemon {
 	private static Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpe?g" + "|png|tiff?|mid|mp2|mp3|mp4"
 			+ "|wav|avi|mov|mpeg|ram|m4v|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 	private static String find_node_statement ="SELECT ID FROM NODES WHERE URL=?";
-	private static String insert_node_statement ="INSERT INTO NODES (LABEL, URL)"
-			+ " VALUES(?,?)";
+	private static String insert_node_statement ="INSERT INTO NODES (LABEL)"
+			+ " VALUES(?)";
 	private static String insert_relation_statement ="INSERT INTO EDGES (SOURCE, TARGET)"
 			+ " VALUES(?,?)";
 	private static String beginning_string = "^\\s*http://([a-z0-9]*\\.)*www.cdiscount.com.*";
@@ -271,8 +270,8 @@ public class PostGresLinksDaemon {
 		// the node is not present in the database, we create it
 		if (potential_id == null){
 			PreparedStatement insert_st = con.prepareStatement(insert_node_statement,Statement.RETURN_GENERATED_KEYS);
-			insert_st.setString(1,URL_Utilities.checkMagasin(url_node));
-			insert_st.setString(2,url_node);
+			//insert_st.setString(1,URL_Utilities.checkMagasin(url_node));
+			insert_st.setString(1,url_node);
 			insert_st.executeUpdate();
 			ResultSet rs = insert_st.getGeneratedKeys();
 			int inserted_keys=0;
