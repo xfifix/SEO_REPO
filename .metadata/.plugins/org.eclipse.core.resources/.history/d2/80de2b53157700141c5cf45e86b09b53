@@ -13,7 +13,7 @@ public class CorpusCrawlDataManagement {
 	private Connection con;
 	private static String find_statement="select DOC_LIST from CORPUS_WORDS where WORD=?";
 	private static String insert_statement="INSERT INTO CORPUS_WORDS(WORD,NB_DOCUMENTS,DOC_LIST) values(?,?,?)";
-	private static String update_statement="UPDATE CORPUS_WORDS SET NB_DOCUMENTS=?,DOC_LIST=? WHERE WORD=?";
+	private static String update_statement="UPDATE CORPUS_WORDSSET NB_DOCUMENTS=?,DOC_LIST=? WHERE WORD=?";
 	private int totalProcessedPages;
 	private long totalTextSize;
 
