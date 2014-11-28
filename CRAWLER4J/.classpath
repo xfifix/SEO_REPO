@@ -51,5 +51,6 @@
 	<classpathentry kind="lib" path="lib/ritaWN.jar"/>
 	<classpathentry kind="lib" path="lib/supportWN.jar"/>
 	<classpathentry kind="lib" path="lib/wstx-asl-3.2.7.jar"/>
+	<classpathentry kind="lib" path="lib/gephi-toolkit.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

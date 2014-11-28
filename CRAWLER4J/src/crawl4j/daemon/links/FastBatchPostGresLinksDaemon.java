@@ -12,10 +12,29 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.gephi.data.attributes.api.AttributeColumn;
+import org.gephi.data.attributes.api.AttributeController;
+import org.gephi.data.attributes.api.AttributeModel;
+import org.gephi.graph.api.GraphController;
+import org.gephi.graph.api.GraphModel;
+import org.gephi.graph.api.Node;
+import org.gephi.graph.api.UndirectedGraph;
+import org.gephi.io.database.drivers.PostgreSQLDriver;
+import org.gephi.io.importer.api.Container;
+import org.gephi.io.importer.api.EdgeDefault;
+import org.gephi.io.importer.api.ImportController;
+import org.gephi.io.importer.plugin.database.EdgeListDatabaseImpl;
+import org.gephi.io.importer.plugin.database.ImporterEdgeList;
+import org.gephi.io.processor.plugin.DefaultProcessor;
+import org.gephi.project.api.ProjectController;
+import org.gephi.project.api.Workspace;
+import org.gephi.statistics.plugin.PageRank;
+import org.openide.util.Lookup;
+
 public class FastBatchPostGresLinksDaemon {
 
 	private static Map<NodeInfos,Set<String>> nodes_infos = new HashMap<NodeInfos,Set<String>>();
-    private static Map<String, Integer> node_locator = new HashMap<String, Integer>(); 
+	private static Map<String, Integer> node_locator = new HashMap<String, Integer>(); 
 
 	private static int counter = 0;
 	private static String fetching_request = "SELECT URL, STATUS_CODE, MAGASIN, PAGE_TYPE, LINKS FROM CRAWL_RESULTS WHERE DEPTH >0 ORDER BY DEPTH LIMIT 1000000";
@@ -43,6 +62,9 @@ public class FastBatchPostGresLinksDaemon {
 		}
 
 		building_database();
+
+		// computing page rank
+
 	}
 
 	private static void building_database(){
@@ -90,7 +112,7 @@ public class FastBatchPostGresLinksDaemon {
 		}
 		System.out.println("Having inserted "+local_counter+" over "+total_size);
 	}
-	
+
 	private static void all_relations_creation(){
 		Iterator it = nodes_infos.entrySet().iterator();
 		while (it.hasNext()) {
@@ -177,12 +199,68 @@ public class FastBatchPostGresLinksDaemon {
 		insert_st.executeUpdate();
 	}
 
+	private static void compute_page_rank() {
+		//Init a project - and therefore a workspace
+		ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
+		pc.newProject();
+		Workspace workspace = pc.getCurrentWorkspace();
+
+		//Get controllers and models
+		ImportController importController = Lookup.getDefault().lookup(ImportController.class);
+		GraphModel graphModel = Lookup.getDefault().lookup(GraphController.class).getModel();
+		AttributeModel attributeModel = Lookup.getDefault().lookup(AttributeController.class).getModel();
+
+		//Import database
+		EdgeListDatabaseImpl db = new EdgeListDatabaseImpl();
+		db.setDBName("CRAWL4J");
+		db.setHost("localhost");
+		db.setUsername("postgres");
+		db.setPasswd("mogette");
+		//        db.setSQLDriver(new MySQLDriver());
+		db.setSQLDriver(new PostgreSQLDriver());
+		//db.setSQLDriver(new SQLServerDriver());
+		db.setPort(5432);
+		db.setNodeQuery("SELECT nodes.id AS id, nodes.label AS label, nodes.url FROM nodes");
+		//       db.setEdgeQuery("SELECT edges.source AS source, edges.target AS target, edges.name AS label, edges.weight AS weight FROM edges");
+		db.setEdgeQuery("SELECT edges.source AS source, edges.target AS target FROM edges");
+		ImporterEdgeList edgeListImporter = new ImporterEdgeList();
+		Container container = importController.importDatabase(db, edgeListImporter);
+		container.setAllowAutoNode(false);      //Don't create missing nodes
+		container.getLoader().setEdgeDefault(EdgeDefault.DIRECTED);   //Force UNDIRECTED
+
+		//Append imported data to GraphAPI
+		importController.process(container, new DefaultProcessor(), workspace);
+
+		//See if graph is well imported
+		UndirectedGraph graph = graphModel.getUndirectedGraph();
+		System.out.println("Nodes: " + graph.getNodeCount());
+		System.out.println("Edges: " + graph.getEdgeCount());
+
+		// Computing the page rank
+
+		PageRank pageRank = new PageRank();
+		pageRank.setDirected(true);
+		pageRank.execute(graphModel, attributeModel);
+
+
+		System.out.println("Page rank computed !!! ! !");
+
+		//Get Centrality column created
+		AttributeColumn col = attributeModel.getNodeTable().getColumn(PageRank.PAGERANK);
+
+		//Iterate over values
+		for (Node n : graph.getNodes()) {
+			Double nodePageRank = (Double)n.getNodeData().getAttributes().getValue(col.getIndex());
+			System.out.println("Page rank for node : "+nodePageRank);
+		}
+	}
+
 	private static class NodeInfos{	
 		private String url;
 		private String magasin;
 		private Integer status;
 		private String type;
-	
+
 		public String getUrl() {
 			return url;
 		}
