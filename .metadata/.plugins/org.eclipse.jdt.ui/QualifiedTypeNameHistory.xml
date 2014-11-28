@@ -19,7 +19,6 @@
 <fullyQualifiedTypeName name="vsm.URL_Utilities"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="com.urlutilities.URL_Utilities"/>
-<fullyQualifiedTypeName name="java.sql.Connection"/>
 <fullyQualifiedTypeName name="crawl4j.daemon.links.URLNode"/>
 <fullyQualifiedTypeName name="crawl4j.urlutilities.URL_Utilities"/>
 <fullyQualifiedTypeName name="java.sql.Statement"/>
@@ -35,4 +34,6 @@
 <fullyQualifiedTypeName name="org.jsoup.nodes.Element"/>
 <fullyQualifiedTypeName name="org.jsoup.select.Elements"/>
 <fullyQualifiedTypeName name="java.io.IOException"/>
+<fullyQualifiedTypeName name="org.gephi.project.api.ProjectController"/>
+<fullyQualifiedTypeName name="java.sql.Connection"/>
 </qualifiedTypeNameHistroy>

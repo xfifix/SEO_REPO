@@ -17,6 +17,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+
 public class ExaleadKeywordsRequestingWorkerThread implements Runnable {
 	
 	private static String insert_statement="INSERT INTO EXALEAD_RESULTS(REQUEST, DID, URL, SCORE, OFFER_PRODUCT_ID, OFFER_PRICE, OFFER_SELLER_ID, PROXIMITY, CA1, CATEGORYWEIGHT, CA14, CA7, TERMSCORE)"
@@ -160,7 +161,7 @@ public class ExaleadKeywordsRequestingWorkerThread implements Runnable {
 			//# did,url,buildGroup,source,slice,score,mask,sort,offer_product_id,offer_price,offer_seller_id,proximity,ca1,categoryweight,ca14,ca7,termscore
 			//   1   2   3         4       5     6     7    8        9                10          11             12    13      14          15  16     17
 			String[] fields = lines[i].split(",");
-			if (fields.length != 18){
+			if (fields.length != 17){
 				System.out.println("Trouble with request : "+request);
 			} else {
 				ULRLineToInsert toinsert = new ULRLineToInsert();
@@ -179,25 +180,22 @@ public class ExaleadKeywordsRequestingWorkerThread implements Runnable {
 				String offer_seller_id = fields[10];
 				offer_seller_id=offer_seller_id.replace("\"","");
 				toinsert.setOffer_seller_id(Integer.valueOf(offer_seller_id));
-				String title = fields[11];
-				title=title.replace("\"","");
-				toinsert.setTitle(title);
-				String proximity = fields[12];
+				String proximity = fields[11];
 				proximity=proximity.replace("\"","");			
 				toinsert.setProximity(Double.valueOf(proximity));
-				String ca1 = fields[13];
+				String ca1 = fields[12];
 				ca1=ca1.replace("\"","");
 				toinsert.setCa1(Double.valueOf(ca1));
-				String categoryWeight = fields[14];
+				String categoryWeight = fields[13];
 				categoryWeight=categoryWeight.replace("\"","");
 				toinsert.setCategoryweight(Double.valueOf(categoryWeight));
-				String ca14 = fields[15];
+				String ca14 = fields[14];
 				ca14=ca14.replace("\"","");
 				toinsert.setCa14(Double.valueOf(ca14));
-				String ca7 = fields[16];
+				String ca7 = fields[15];
 				ca7=ca7.replace("\"","");
 				toinsert.setCa7(Double.valueOf(ca7));
-				String termscore = fields[17];
+				String termscore = fields[16];
 				termscore=termscore.replace("\"","");
 				toinsert.setTermscore(Integer.valueOf(termscore));
 				all_parsed_results.add(toinsert);
@@ -285,13 +283,6 @@ public class ExaleadKeywordsRequestingWorkerThread implements Runnable {
 		public void setTermscore(int termscore) {
 			this.termscore = termscore;
 		}
-		public String getTitle() {
-			return title;
-		}
-		public void setTitle(String title) {
-			this.title = title;
-		}
-		private String title;
 		private String request;
 		private int did;
 		private String url;
