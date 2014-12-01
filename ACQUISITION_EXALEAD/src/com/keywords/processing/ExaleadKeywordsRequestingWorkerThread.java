@@ -3,6 +3,7 @@ package com.keywords.processing;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.apache.http.util.EntityUtils;
 
 public class ExaleadKeywordsRequestingWorkerThread implements Runnable {
 	
+	private static String find_statement="select distinct keywords from ";
 	private static String insert_statement="INSERT INTO EXALEAD_RESULTS(REQUEST, DID, URL, SCORE, OFFER_PRODUCT_ID, OFFER_PRICE, OFFER_SELLER_ID, PROXIMITY, CA1, CATEGORYWEIGHT, CA14, CA7, TERMSCORE)"
 			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
@@ -26,9 +28,16 @@ public class ExaleadKeywordsRequestingWorkerThread implements Runnable {
 	private int total_tofetch=0;
 	private Connection con;
 
-	public ExaleadKeywordsRequestingWorkerThread(Connection con ,List<String> to_fetch) {
-		this.thread_fetch_ids=to_fetch;
-		this.total_tofetch=to_fetch.size();
+	public ExaleadKeywordsRequestingWorkerThread(Connection con ,String tablename) {
+		this.con=con;
+		try {
+			fetch_data_from_database(tablename);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("Trouble with table name "+tablename+" when fetching data");
+		}
+		this.total_tofetch=thread_fetch_ids.size();
 		this.con = con;	
 	}
 
@@ -206,6 +215,19 @@ public class ExaleadKeywordsRequestingWorkerThread implements Runnable {
 		return all_parsed_results;
 	}
 
+	public void fetch_data_from_database(String tablename) throws SQLException{		
+
+		
+		PreparedStatement select_st = con.prepareStatement(find_statement+tablename);;
+		ResultSet rs = select_st.executeQuery();
+		while(rs.next()) {
+			String keyword=rs.getString(1);
+			thread_fetch_ids.add(keyword);
+		}
+		select_st.close();
+		con.close();
+	}
+	
 	class ULRLineToInsert{
 		public String getRequest() {
 			return request;

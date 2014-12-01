@@ -29,11 +29,9 @@ public class ExaleadKeywordsPostExample {
 		String query = "raspberry pi";
 		String number = "10";
 		RequestResults result = new RequestResults();
-
 		int volume=10;
 		result.setRequest(query);
 		result.setVolume(volume);
-
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		String url_string = "http://exasearchv6.gslb.cdweb.biz:10010/search-api/search";
 		HttpPost httpPost = new HttpPost(url_string);		
