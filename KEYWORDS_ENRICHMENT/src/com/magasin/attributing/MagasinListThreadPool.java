@@ -88,6 +88,7 @@ public class MagasinListThreadPool {
 			}
 			
 			if (tofetch.size() > 0){
+				con=DriverManager.getConnection(url, user, passwd);
 				Runnable worker = new BatchedArboWorkerThread(con, tofetch);
 				executor.execute(worker);
 			}
