@@ -26,7 +26,9 @@ public class ExaleadKeywordsPostExample {
 		//					soit ajouter l’option streaming=true, ce qui désactive le sort
 		//					soit paginer en mettant nresults=100 et utilisation de start= pour les offset.
 
-		String query = "raspberry pi";
+		//String query = "raspberry pi";
+		// bad encoding request
+		String query = "Zylkene";
 		String number = "10";
 		KeywordRequestResults result = new KeywordRequestResults();
 		int volume=10;
@@ -80,9 +82,10 @@ public class ExaleadKeywordsPostExample {
 			//System.out.println(Thread.currentThread() +response2.getStatusLine());
 			HttpEntity entity2=response2.getEntity();
 			String to_parse = EntityUtils.toString(entity2);
+			String utf_8_value = new String(to_parse.getBytes(), "UTF-8");
 			// do something useful with the response body
 			// and ensure it is fully consumed
-			List<ULRLineToInsert> toresult = parse_results(to_parse,result.getRequest());
+			List<ULRLineToInsert> toresult = parse_results(utf_8_value,result.getRequest());
 			if (isOfferRelevant(toresult,result.getRequest())){
 				System.out.println("Yes, keyword : "+result.getRequest()+" is present in the title of one of our products requested from Exalead");
 			}

@@ -21,6 +21,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+import com.keywords.processing.ExaleadKeywordsPostExample.ULRLineToInsert;
+
 public class ExaleadKeywordsRequestingWorkerThread implements Runnable {
 
 	private static String find_statement="select am_keyword, am_search_position, am_search_volume from ";
@@ -124,10 +126,10 @@ public class ExaleadKeywordsRequestingWorkerThread implements Runnable {
 				//System.out.println(Thread.currentThread() +response2.getStatusLine());
 				HttpEntity entity2=response2.getEntity();
 				String to_parse = EntityUtils.toString(entity2);
+				String utf_8_value = new String(to_parse.getBytes(), "UTF-8");
 				// do something useful with the response body
 				// and ensure it is fully consumed
-				List<ULRLineToInsert> toresult = parse_results(to_parse,result.getRequest());
-
+				List<ULRLineToInsert> toresult = parse_results(utf_8_value,result.getRequest());
 				// we just check if the keyword is contained in one of the titles of the results
 				boolean isRelevant = isOfferRelevant(toresult,result.getRequest());
 				if (isRelevant){
