@@ -28,7 +28,7 @@ public class ExaleadKeywordsPostExample {
 
 		String query = "raspberry pi";
 		String number = "10";
-		KeywordRequestResults result = new KeywordRequestResults();
+		RequestResults result = new RequestResults();
 		int volume=10;
 		result.setRequest(query);
 		result.setVolume(volume);
