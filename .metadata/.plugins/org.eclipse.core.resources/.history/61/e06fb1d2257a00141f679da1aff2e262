@@ -1,0 +1,10 @@
+package proxy.testing;
+
+public class CallingSystemInterfaceConfiguration {
+	
+	public static void main(String[] args){
+	
+		
+		
+	}
+}
