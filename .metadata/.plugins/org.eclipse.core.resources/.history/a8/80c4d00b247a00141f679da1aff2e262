@@ -29,6 +29,7 @@ public class ExaleadKeywordsRequestingWorkerThread implements Runnable {
 	private Connection con;
 
 	public ExaleadKeywordsRequestingWorkerThread(Connection con ,String tablename) {
+		this.con=con;
 		try {
 			fetch_data_from_database(tablename);
 		} catch (SQLException e) {

@@ -15,7 +15,7 @@ public class ExaleadKeywordsThreadPool {
 		// database parameters
 		String url="jdbc:postgresql://localhost/KEYWORDSDB";
 		String user="postgres";
-		String passwd="root";
+		String passwd="mogette";
 
 		System.out.println("You'll be using "+fixed_pool_size+" threads ");
 		ExecutorService executor = Executors.newFixedThreadPool(fixed_pool_size);
