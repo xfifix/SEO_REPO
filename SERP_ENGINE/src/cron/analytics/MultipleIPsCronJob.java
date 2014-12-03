@@ -20,17 +20,14 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class MultipleIPsCronJob {
-	private static int min_number_of_wait_times = 40;
-	private static int max_number_of_wait_times = 60;
+	private static int min_number_of_wait_times = 25;
+	private static int max_number_of_wait_times = 50;
 	private static List<String> user_agents = new ArrayList<String>();
 	private static String user_agent_path = "/home/sduprey/My_Data/My_User_Agents/user-agent.txt";
 	public static void main(String[] args){
 		System.setProperty("http.agent", "");
 		try {
 			loadUserAgents();
-			for (int i=0;i<1000;i++){
-				System.out.println(randomUserAgent());
-			}
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -113,18 +110,18 @@ public class MultipleIPsCronJob {
 			user_agents.add(line);
 		}
 	}
-	
+
 	private static String randomUserAgent(){
 		int list_size = user_agents.size();
 		return user_agents.get(randInt(0,list_size-1));
 	}
-	
 
 	public static RankInfo proxy_ranking_keyword(String keyword, String targe_name){
 		RankInfo info= new RankInfo();
+		keyword=keyword.replace(" ","%20");
 		info.setKeyword(keyword);
-		// we here fetch up to five paginations
-		int nb_depth = 5;
+		// we here fetch up to three paginations
+		int nb_depth = 2;
 		long startTimeMs = System.currentTimeMillis( );
 		org.jsoup.nodes.Document doc;
 		int depth=0;
@@ -136,9 +133,10 @@ public class MultipleIPsCronJob {
 			try{
 				// we wait between x and xx seconds
 				Thread.sleep(randInt(min_number_of_wait_times,max_number_of_wait_times)*1000);
+
 				System.out.println("Fetching a new page");
 				String constructed_url ="https://www.google.fr/search?q="+keyword+"&start="+Integer.toString(depth*10);
-				// going through Squid
+
 				Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", 3128));
 				URL url = new URL(constructed_url);
 				HttpURLConnection connection = (HttpURLConnection)url.openConnection(proxy);
@@ -160,16 +158,24 @@ public class MultipleIPsCronJob {
 				Elements serps = doc.select("h3[class=r]");
 				for (Element serp : serps) {
 					Element link = serp.getElementsByTag("a").first();
-					String linkref = link.attr("href");
-					if (linkref.startsWith("/url?q=")){
-						nb_results++;
-						linkref = linkref.substring(7,linkref.indexOf("&"));
+					if (link != null){
+						String linkref = link.attr("href");
+						if (linkref.startsWith("/url?q=") || linkref.startsWith("http://")){
+							nb_results++;
+							if (linkref.startsWith("/url?q=")){
+								linkref = linkref.substring(7,linkref.indexOf("&"));
+							} else {
+								if (linkref.indexOf("&") != -1){
+									linkref = linkref.substring(0,linkref.indexOf("&"));
+								}
+							}
+						}
+						if (linkref.contains(targe_name) && !found){
+							my_rank=nb_results;
+							my_url=linkref;
+							found=true;
+						}			
 					}
-					if (linkref.contains(targe_name)){
-						my_rank=nb_results;
-						my_url=linkref;
-						found=true;
-					}			
 				}
 				if (nb_results == 0){
 					System.out.println("Warning captcha");
@@ -178,8 +184,7 @@ public class MultipleIPsCronJob {
 			}
 			catch (IOException e) {
 				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+			}catch (InterruptedException e){
 				e.printStackTrace();
 			}
 		}
@@ -190,13 +195,12 @@ public class MultipleIPsCronJob {
 		if (nb_results == 0){
 			System.out.println("Warning captcha");
 		}else {
-			System.out.println("Number of links : "+nb_results);
+			System.out.println("Number of links read in the pages : "+nb_results);
 		}
 		System.out.println("My rank : "+my_rank+" for keyword : "+keyword);
 		System.out.println("My URL : "+my_url+" for keyword : "+keyword);
 		return info;
 	}
-
 
 	public static int randInt(int min, int max) {
 		// NOTE: Usually this should be a field rather than a method
