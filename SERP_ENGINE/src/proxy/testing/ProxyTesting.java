@@ -1,7 +1,9 @@
 package proxy.testing;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -12,11 +14,9 @@ import java.net.SocketException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 
 public class ProxyTesting {
 
@@ -25,51 +25,37 @@ public class ProxyTesting {
 	//			"5.39.42.23",
 	//			"5.39.42.20",
 	//			"5.39.42.21",
-	//			"5.39.42.22"				
+	//			"5.39.42.22",
+	//          "178.33.123.238"
 	//	};
 
-	public static void main(String[] args) throws IOException{
+	public static void main(String[] args) throws IOException, InterruptedException{
 
 
 		// getting all my ips
 		tellAllMyIPs();
-
-
+        // getting all the configured Proxies
 		tellAllMyProxies();
 
+		for (int i=0;i<1000;i++){
+			Thread.sleep(500);
+			//Squid proxy instance, proxy ip = 123.0.0.1 with port 8080
+			Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", 3128));
+			URL url = new URL("http://www.cdiscount.com");
+			HttpURLConnection connection = (HttpURLConnection)url.openConnection(proxy);
+			connection.connect();
 
-		String url = "http://www.google.com/";
-		String proxy = "proxy.mydomain.com";
-		String port = "8080";
-		URL server = new URL(url);
-		Properties systemProperties = System.getProperties();
-		systemProperties.setProperty("http.proxyHost",proxy);
-		systemProperties.setProperty("http.proxyPort",port);
-		//systemProperties.setProperty("net.useSystemProxies",true);
-
-		HttpURLConnection connection = (HttpURLConnection)server.openConnection();
-		connection.connect();
-		InputStream in = connection.getInputStream();
-		//readResponse(in);
-
-		// bypassing the proxy
-		URL urlone = new URL("http://www.yahoo.com");
-		URLConnection conn = urlone.openConnection(Proxy.NO_PROXY);
-
-
-//		//Proxy instance, proxy ip = 123.0.0.1 with port 8080
-//		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("5.39.42.20", 8080));
-//		URL url = new URL("http://www.yahoo.com");
-//		HttpURLConnection uc = (HttpURLConnection)url.openConnection(proxy);
-//		uc.connect();
-//		String line;
-//		StringBuilder page = new StringBuilder();
-//		StringBuffer tmp = new StringBuffer();
-//		BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()));
-//		while ((line = in.readLine()) != null){
-//			page.append(line + "\n");
-//		}
-//		System.out.println(page);
+			InputStreamReader in = new InputStreamReader((InputStream) connection.getContent());
+			BufferedReader buff = new BufferedReader(in);
+			StringBuilder builder = new StringBuilder();
+			String line;
+			do {
+				line = buff.readLine();
+				builder.append(line);
+			} while (line != null);
+			String pageString = builder.toString();
+			System.out.println(pageString);
+		}
 	}
 
 	public static void tellAllMyProxies(){
