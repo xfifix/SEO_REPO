@@ -2,6 +2,7 @@
 <section name="Workbench">
 	<item value="2" key="TypeHierarchyViewPart.hierarchyview"/>
 	<item value="500" key="CallHierarchyViewPart.ratio3"/>
+	<item value="500" key="CallHierarchyViewPart.ratio0"/>
 	<item value="500" key="CallHierarchyViewPart.ratio1"/>
 	<item value="3" key="TypeHierarchyViewPart.orientation"/>
 	<item value="false" key="TypeHierarchyViewPart.qualifiednames"/>
@@ -22,15 +23,15 @@
 		<item value="3" key="pageIndex"/>
 	</section>
 	<section name="FatJarPackageWizard">
-		<item value="/home/sduprey/My_Executable/my_magasin_attribution.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
-		<item value="MagasinListThreadPool - KEYWORDS_ENRICHMENT" key="FatJarPackageWizardPage.LAUNCH_CONFIGURATION_SELECTION_NAME"/>
+		<item value="/home/sduprey/My_Executable/my_links_daemon.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
+		<item value="PostGresLinksByLevelDaemon - CRAWLER4J" key="FatJarPackageWizardPage.LAUNCH_CONFIGURATION_SELECTION_NAME"/>
 		<item value="/home/sduprey/My_Code/My_Java_Workspace" key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION"/>
 		<item value="false" key="FatJarPackageWizardPage.ANTSCRIPT_SAVE"/>
 		<item value="1" key="FatJarPackageWizardPage.LIBRARY_HANDLING"/>
 		<list key="FatJarPackageWizardPage.DESTINATION_NAMES_ID">
+			<item value="/home/sduprey/My_Executable/my_links_daemon.jar"/>
 			<item value="/home/sduprey/My_Executable/my_magasin_attribution.jar"/>
 			<item value="/home/sduprey/My_Executable/my_amazon_corpus.jar"/>
-			<item value="/home/sduprey/My_Executable/my_links_daemon.jar"/>
 			<item value="/home/sduprey/My_Executable/my_reverse_dns.jar"/>
 			<item value="/home/sduprey/My_Executable/my_title_duplication_crawler.jar"/>
 		</list>

@@ -31,12 +31,14 @@ import org.gephi.project.api.Workspace;
 import org.gephi.statistics.plugin.PageRank;
 import org.openide.util.Lookup;
 
-public class FastBatchPostGresLinksDaemon {
+public class FastBatchByLevelPostGresLinksDaemon {
 
 	private static Map<NodeInfos,Set<String>> nodes_infos = new HashMap<NodeInfos,Set<String>>();
 	private static Map<String, Integer> node_locator = new HashMap<String, Integer>(); 
 
 	private static int counter = 0;
+	private static String fetching_by_level_request= "SELECT URL, STATUS_CODE, MAGASIN, PAGE_TYPE, LINKS FROM CRAWL_RESULTS WHERE DEPTH BETWEEN ";
+	private static String order_by_default = " ORDER BY DEPTH ";
 	private static String whole_fetching_request = "SELECT URL, STATUS_CODE, MAGASIN, PAGE_TYPE, LINKS FROM CRAWL_RESULTS WHERE DEPTH >0 ORDER BY DEPTH LIMIT 8000000";
 	private static String insert_node_statement ="INSERT INTO NODES (LABEL, MAGASIN, PAGE_TYPE, STATUS_CODE)"
 			+ " VALUES(?,?,?,?)";
@@ -52,18 +54,20 @@ public class FastBatchPostGresLinksDaemon {
 			System.out.println("Trouble with the POSTGRESQL database");
 			System.exit(0);
 		}
-		// we here loop over depths
-		try{
-			// fetching data from the Postgresql data base and looping over
-			looping_over_urls();
-		} catch (SQLException e){
-			e.printStackTrace();
-			System.out.println("Trouble with the POSTGRESQL database");
-			System.exit(0);
+		// we loop over the depth
+		for (int depth=1;depth<10;depth ++){
+			try{
+				// fetching data from the Postgresql data base and looping over
+				looping_over_urls(depth);
+			} catch (SQLException e){
+				e.printStackTrace();
+				System.out.println("Trouble with the POSTGRESQL database");
+				System.exit(0);
+			}
+			building_database();
+		
 		}
 
-
-		building_database();		
 		// we don't do it here as the computation might be heavy
 		// we delegate to another subcrawler
 		//		// computing page rank
@@ -170,11 +174,12 @@ public class FastBatchPostGresLinksDaemon {
 		return outputSet;
 	}
 
-	public static void looping_over_urls() throws SQLException{
+	public static void looping_over_urls(int depth) throws SQLException{
 		// here is the links daemon starting point
 		// getting all URLS and out.println links for each URL
-		System.out.println("Getting all URLs and outside links from the crawl results database");
-		PreparedStatement pst = con.prepareStatement(whole_fetching_request);
+		System.out.println("Getting all URLs between depth "+depth +" and "+(depth +1));
+		String level_statement = fetching_by_level_request + depth + " and "+(depth +1)+order_by_default;
+		PreparedStatement pst = con.prepareStatement(level_statement);
 		ResultSet rs = pst.executeQuery();
 		while (rs.next()) {
 			counter++;
@@ -289,3 +294,4 @@ public class FastBatchPostGresLinksDaemon {
 		}
 	}
 }
+
