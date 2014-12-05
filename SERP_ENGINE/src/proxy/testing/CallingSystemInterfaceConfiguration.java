@@ -24,8 +24,8 @@ public class CallingSystemInterfaceConfiguration {
 				line = reader.readLine();
 			}
 		}
-		catch(IOException e1) {}
-		catch(InterruptedException e2) {}
+		catch(IOException e1) {e1.printStackTrace();}
+		catch(InterruptedException e2) {e2.printStackTrace();}
 		try {
 			Process p = Runtime.getRuntime().exec(show_command2);
 			p.waitFor();
@@ -38,8 +38,8 @@ public class CallingSystemInterfaceConfiguration {
 			}
 
 		}
-		catch(IOException e1) {}
-		catch(InterruptedException e2) {}
+		catch(IOException e1) {e1.printStackTrace();}
+		catch(InterruptedException e2) {e2.printStackTrace();}
 
 		System.out.println("finished.");
 	}

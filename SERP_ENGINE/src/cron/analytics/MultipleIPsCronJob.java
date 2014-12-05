@@ -20,7 +20,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class MultipleIPsCronJob {
-	private static int min_number_of_wait_times = 25;
+//	private static int min_number_of_wait_times = 40;
+//	private static int max_number_of_wait_times = 60;
+	private static int min_number_of_wait_times = 30;
 	private static int max_number_of_wait_times = 50;
 	private static List<String> user_agents = new ArrayList<String>();
 	private static String user_agent_path = "/home/sduprey/My_Data/My_User_Agents/user-agent.txt";
@@ -121,12 +123,12 @@ public class MultipleIPsCronJob {
 		keyword=keyword.replace(" ","%20");
 		info.setKeyword(keyword);
 		// we here fetch up to three paginations
-		int nb_depth = 2;
+		int nb_depth = 3;
 		long startTimeMs = System.currentTimeMillis( );
 		org.jsoup.nodes.Document doc;
 		int depth=0;
 		int nb_results=0;
-		int my_rank=50;
+		int my_rank=30;
 		String my_url = "";
 		boolean found = false;
 		while (depth<nb_depth && !found){

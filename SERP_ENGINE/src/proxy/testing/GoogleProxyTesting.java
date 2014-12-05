@@ -21,8 +21,6 @@ import cron.analytics.RankInfo;
 
 public class GoogleProxyTesting {
 
-	private static int max_number_of_wait_times = 50;
-
 	private static List<String> user_agents = new ArrayList<String>();
 	private static String user_agent_path = "/home/sduprey/My_Data/My_User_Agents/user-agent.txt";
 	public static void main(String[] args){
@@ -39,8 +37,8 @@ public class GoogleProxyTesting {
 		//RankInfo info=ranking_keyword("sportswear", "cdiscount.com");
 		RankInfo info=proxy_ranking_keyword("accessoires lumia 625 pas cher", "cdiscount.com");
 		System.out.println("Keyword : "+info.getKeyword());
-		System.out.println("Keyword : "+info.getPosition());
-		System.out.println("Keyword : "+info.getUrl());
+		System.out.println("Position : "+info.getPosition());
+		System.out.println("URL : "+info.getUrl());
 	}
 
 	private static void loadUserAgents() throws IOException{
@@ -61,7 +59,7 @@ public class GoogleProxyTesting {
 		org.jsoup.nodes.Document doc;
 		int depth=0;
 		int nb_results=0;
-		int my_rank=50;
+		int my_rank=30;
 		String my_url = "";
 		boolean found = false;
 		while (depth<nb_depth && !found){
