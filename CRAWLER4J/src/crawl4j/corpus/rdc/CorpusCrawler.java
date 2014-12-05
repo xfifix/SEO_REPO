@@ -1,4 +1,4 @@
-package crawl4j.corpus.amazon;
+package crawl4j.corpus.rdc;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,7 +32,7 @@ public class CorpusCrawler extends WebCrawler {
 	@Override
 	public boolean shouldVisit(WebURL url) {
 		String href = url.getURL().toLowerCase();
-		return !filters.matcher(href).matches() && href.startsWith(AmazonCorpusController.crawler_seed);
+		return !filters.matcher(href).matches() && href.startsWith(RDCCorpusController.crawler_seed);
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package crawl4j.vsm;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
@@ -8,15 +9,17 @@ import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 
-import crawl4j.corpus.amazon.AmazonCorpusController;
-
 public class VectorStateSpringRepresentation {
 
 	private HashMap<String, Integer>  wordFrequencies =  new HashMap<String, Integer>() ;
 	private static StandardAnalyzer analyzer;
+	private  static File stop_words;
+	private static String stopword_path = "/home/sduprey/My_Data/My_Semantics_Data/stopwords_fr.txt";
+
 	static{
 		try{
-			analyzer = new StandardAnalyzer(AmazonCorpusController.stop_words);
+			stop_words = new File(stopword_path);
+			analyzer = new StandardAnalyzer(stop_words);
 		} catch (IOException e){
 			e.printStackTrace();
 		}

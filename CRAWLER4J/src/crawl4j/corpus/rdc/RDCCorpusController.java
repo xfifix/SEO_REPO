@@ -1,4 +1,4 @@
-package crawl4j.corpus.amazon;
+package crawl4j.corpus.rdc;
 
 import java.util.List;
 
@@ -8,9 +8,9 @@ import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
-public class AmazonCorpusController {
+public class RDCCorpusController {
 
-	public static String crawler_seed = "http://www.amazon.fr";
+	public static String crawler_seed = "http://www.rueducommerce.fr";
 
 	public static void main(String[] args) throws Exception {
 		System.setProperty("http.agent", "");
@@ -25,7 +25,7 @@ public class AmazonCorpusController {
 			seed = args[0];
 			numberOfCrawlers=Integer.valueOf(args[1]);
 		} 
-		String rootFolder = "/home/sduprey/My_Data/My_Corpus_Crawl4j";
+		String rootFolder = "/home/sduprey/My_Data/My_RDC_Corpus_Crawl4j";
 		int maxDepthOfCrawling = 200;
 		String user_agent_name ="Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
 		CrawlConfig config = new CrawlConfig();
