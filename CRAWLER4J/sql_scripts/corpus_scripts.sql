@@ -5,6 +5,12 @@ CREATE TABLE IF NOT EXISTS CORPUS_WORDS(
     LAST_UPDATE DATE
 ) TABLESPACE mydbspace;
 
+CREATE TABLE IF NOT EXISTS CORPUS_WORDS_METADATA(
+    THEMA TEXT,
+    NB_TOTAL_DOCUMENTS INT
+) TABLESPACE mydbspace;
+
+
 CREATE INDEX ON CORPUS_WORDS(WORD);
 # the table which will contain the number of occurences (document containing the specified word)
 # we've found in our documents corpus
@@ -18,7 +24,13 @@ if not found, we insert a row with the word, the url and the number of documents
 # insert statement 
 INSERT INTO CORPUS_WORDS(WORD,NB_DOCUMENTS,DOC_LIST) values(?,?,?)
 
+INSERT INTO CORPUS_WORDS_METADATA(THEMA,NB_TOTAL_DOCUMENTS) values('TOTAL_NUMBER_DOCUMENTS',1000000)
+
+# UPDATE
+UPDATE CORPUS_WORDS_METADATA SET NB_TOTAL_DOCUMENTS=? WHERE THEMA='TOTAL_NUMBER_DOCUMENTS'
+
+
 # if found, we check if the document is not already present in our list
 # if the document is already present we do nothing
 # if the document is not present we just update the row by incrementing nb_documents and appending the current URL to the documents
-UPDATE CORPUS_WORDSSET WORD=?,NB_DOCUMENTS=?,DOC_LIST=?,LAST_UPDATE=? WHERE WORD=?";
+UPDATE CORPUS_WORDS WORD=?,NB_DOCUMENTS=?,DOC_LIST=? WHERE WORD=?";
