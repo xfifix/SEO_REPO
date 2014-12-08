@@ -5,10 +5,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,18 +33,26 @@ import org.openide.util.Lookup;
 import crawl4j.urlutilities.URL_Utilities;
 
 public class FastBatchByLevelPostGresLinksDaemon {
+	// global cache which is never flushed until insertion of all relations for all depths
+	private static Map<String,Integer> url_id_mapping = new HashMap<String,Integer>();
 
-	private static Map<NodeInfos,Set<String>> nodes_infos = new HashMap<NodeInfos,Set<String>>();
-	private static Map<String, Integer> node_locator = new HashMap<String, Integer>(); 
+	// local cache for each depth which is flushed after each depth completion
+	private static List<NodeInfos> nodes_infos = new ArrayList<NodeInfos>();
 
 	private static int counter = 0;
-	private static String fetching_by_level_request= "SELECT URL, STATUS_CODE, MAGASIN, PAGE_TYPE, LINKS FROM CRAWL_RESULTS WHERE DEPTH BETWEEN ";
-	private static String order_by_default = " ORDER BY DEPTH ";
-	private static String whole_fetching_request = "SELECT URL, STATUS_CODE, MAGASIN, PAGE_TYPE, LINKS FROM CRAWL_RESULTS WHERE DEPTH >0 ORDER BY DEPTH LIMIT 8000000";
-	private static String insert_node_statement ="INSERT INTO NODES (LABEL, MAGASIN, PAGE_TYPE, STATUS_CODE)"
-			+ " VALUES(?,?,?,?)";
+	private static int node_id_counter = 0;
+	private static String fetching_nodes_by_level_request= "SELECT URL, STATUS_CODE, MAGASIN, PAGE_TYPE FROM CRAWL_RESULTS WHERE DEPTH BETWEEN ";
+	private static String order_by_depth = " ORDER BY DEPTH ";
+	private static String insert_node_statement ="INSERT INTO NODES (ID,LABEL, MAGASIN, PAGE_TYPE, STATUS_CODE)"
+			+ " VALUES(?,?,?,?,?)";	
+
+	// local cache for each depth which is flushed after each depth completion
+	private static List<EdgeInfos> edges_infos = new ArrayList<EdgeInfos>();
+
+	private static String fetching_relations_by_level_request= "SELECT URL, LINKS FROM CRAWL_RESULTS WHERE DEPTH BETWEEN ";
 	private static String insert_relation_statement ="INSERT INTO EDGES (SOURCE, TARGET)"
 			+ " VALUES(?,?)";
+
 	private static Connection con; 
 
 	public static void main(String[] args){
@@ -56,18 +63,37 @@ public class FastBatchByLevelPostGresLinksDaemon {
 			System.out.println("Trouble with the POSTGRESQL database");
 			System.exit(0);
 		}
-		// we loop over the depth
+		// we create all nodes by levels looping over the depth
 		for (int depth=1;depth<10;depth ++){
 			try{
 				// fetching data from the Postgresql data base and looping over
-				looping_over_urls(depth);
+				looping_over_urls_for_node_creation(depth);
+				// creating all nodes for the specified depth
+				all_nodes_batch_creation(depth);
+				clearing_nodes();
 			} catch (SQLException e){
 				e.printStackTrace();
 				System.out.println("Trouble with the POSTGRESQL database");
 				System.exit(0);
 			}
-			building_database();
-		
+		}
+
+		// we reset our counter and start again
+		counter =0;
+
+		// to do to be done to do to be done to do
+		// we create all nodes by levels looping over the depth
+		for (int depth=1;depth<10;depth ++){
+			try{
+				// fetching data from the Postgresql data base and looping over
+				looping_over_urls_for_relations_creation(depth);
+				all_edges_batch_creation(depth);
+				clearing_edges();
+			} catch (SQLException e){
+				e.printStackTrace();
+				System.out.println("Trouble with the POSTGRESQL database");
+				System.exit(0);
+			}
 		}
 
 		// we don't do it here as the computation might be heavy
@@ -76,69 +102,63 @@ public class FastBatchByLevelPostGresLinksDaemon {
 		//		compute_page_rank();
 	}
 
-	private static void building_database(){
-		// we create all nodes at once
-		all_nodes_creation();
-		// we create all relations at once
-		all_relations_creation();
+
+
+	private static void clearing_nodes(){
+		nodes_infos.clear();
 	}
 
-	private static void all_nodes_creation(){
-		Iterator<Map.Entry<NodeInfos,Set<String>>> it = nodes_infos.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<NodeInfos,Set<String>> pairs = (Map.Entry<NodeInfos,Set<String>>)it.next();
-			NodeInfos url_infos =pairs.getKey();
-			//Set<String> outgoing_links = (Set<String>)pairs.getValue();
-			System.out.println("Creating node : "+url_infos.getUrl());
-			// we create the node and we put its id into the cache
-			try {
-				create_node_without_finding(url_infos);
-				System.out.println("Node created : "+url_infos.getUrl());
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				System.out.println("Trouble creating node : "+url_infos.getUrl());
-				e.printStackTrace();
-			}
-		}
-	}
-	private static void relations_insertion(String url,Set<String> outgoing_links) throws SQLException{
-		int total_size = outgoing_links.size();
-		int local_counter = 0;
-		Integer beginningNode = node_locator.get(url);
-		for (String ending_Node_URL : outgoing_links){
-			Integer endingNode = node_locator.get(ending_Node_URL);
-			if (endingNode != null && !(beginningNode.equals(endingNode))){			
-				System.out.println(" Beginning node : " + beginningNode);
-				System.out.println(" Ending node : "+endingNode);
-				//URI relationshipUri = addRelationship( beginningNode, endingNode, "link","{}");
-				//System.out.println("First relationship URI : "+relationshipUri);
-				createRelationShip(beginningNode, endingNode);
-				local_counter++;
-			} else {
-				System.out.println("Trouble with url : "+url);
-				System.out.println("One node has not been found : "+url+total_size);
-			}
-		}
-		System.out.println("Having inserted "+local_counter+" over "+total_size);
+	private static void clearing_edges(){
+		edges_infos.clear();
 	}
 
-	private static void all_relations_creation(){
-		Iterator<Map.Entry<NodeInfos, Set<String>>> it = nodes_infos.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<NodeInfos, Set<String>> pairs = (Map.Entry<NodeInfos, Set<String>>)it.next();
-			NodeInfos url_infos =(NodeInfos)pairs.getKey();
-			Set<String> outgoing_links = (Set<String>)pairs.getValue();
-			System.out.println("Creating node : "+url_infos.getUrl());
-			// we create the node and we put its id into the cache
-			try {
-				relations_insertion(url_infos.getUrl(),outgoing_links);	
-				System.out.println("Relations created for node : "+url_infos.getUrl());
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				System.out.println("Trouble creating relations for node : "+url_infos.getUrl());
-				e.printStackTrace();
+	private static void all_nodes_batch_creation(int depth){
+		// batch insertion
+		try {
+			con.setAutoCommit(false);
+			PreparedStatement st = con.prepareStatement(insert_node_statement);
+			for (NodeInfos info : nodes_infos){
+				node_id_counter++;
+				//INSERT INTO NODES (ID,LABEL, MAGASIN, PAGE_TYPE, STATUS_CODE)"
+				st.setInt(1,node_id_counter);
+				st.setString(2,info.getUrl());
+				st.setString(3,info.getMagasin());
+				st.setString(4,info.getType());
+				st.setInt(5,info.getStatus());
+				st.addBatch();
+				url_id_mapping.put(info.getUrl(), node_id_counter);
 			}
+			st.executeBatch();		 
+			con.commit();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("Trouble inserting a depht node creation batch");
+			System.exit(0);
 		}
+		System.out.println(Thread.currentThread()+"Committing batch for depth : " + depth);
+	}
+
+	private static void all_edges_batch_creation(int depth){
+		// batch insertion
+		try {
+			con.setAutoCommit(false);
+			PreparedStatement st = con.prepareStatement(insert_relation_statement);
+			for (EdgeInfos info : edges_infos){
+				//INSERT INTO EDGES (SOURCE, TARGET)
+				st.setInt(1,info.getBeginning());
+				st.setInt(2,info.getEnding());
+				st.addBatch();
+			}
+			st.executeBatch();		 
+			con.commit();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("Trouble inserting a depth relation creation batch");
+			System.exit(0);
+		}
+		System.out.println(Thread.currentThread()+"Committing batch for depth : "+depth);
 	}
 
 	private static void instantiate_connection() throws SQLException{
@@ -149,27 +169,11 @@ public class FastBatchByLevelPostGresLinksDaemon {
 		con = DriverManager.getConnection(url, user, passwd);
 	}
 
-	private static void create_node_without_finding(NodeInfos infos) throws SQLException{
-		PreparedStatement insert_st = con.prepareStatement(insert_node_statement,Statement.RETURN_GENERATED_KEYS);
-		//(LABEL, MAGASIN, PAGE_TYPE, STATUS_CODE, URL)
-		insert_st.setString(1,infos.getUrl());
-		insert_st.setString(2,infos.getMagasin());
-		insert_st.setString(3,infos.getType());
-		insert_st.setInt(4,infos.getStatus());
-		insert_st.executeUpdate();
-		ResultSet rs = insert_st.getGeneratedKeys();
-		int inserted_keys=0;
-		if (rs != null && rs.next()) {
-			inserted_keys = rs.getInt(1);
-		}
-		node_locator.put(infos.getUrl(), inserted_keys);
-	}
-
-	public static void looping_over_urls(int depth) throws SQLException{
+	public static void looping_over_urls_for_node_creation(int depth) throws SQLException{
 		// here is the links daemon starting point
 		// getting all URLS and out.println links for each URL
 		System.out.println("Getting all URLs between depth "+depth +" and "+(depth +1));
-		String level_statement = fetching_by_level_request + depth + " and "+(depth +1)+order_by_default;
+		String level_statement = fetching_nodes_by_level_request + depth + " and "+(depth +1)+order_by_depth;
 		PreparedStatement pst = con.prepareStatement(level_statement);
 		ResultSet rs = pst.executeQuery();
 		while (rs.next()) {
@@ -178,15 +182,43 @@ public class FastBatchByLevelPostGresLinksDaemon {
 			Integer status = rs.getInt(2);
 			String magasin = rs.getString(3);
 			String page_type = rs.getString(4);
-			String output_links = rs.getString(5);
 			NodeInfos result = new NodeInfos();
 			result.setUrl(url_node);
 			result.setStatus(status);
 			result.setMagasin(magasin);
 			result.setType(page_type);
+			nodes_infos.add(result);
+			System.out.println("Putting into cache URL node number :"+counter + " : " +url_node +" for depth : "+depth);
+		}
+		pst.close();
+	}
+
+	public static void looping_over_urls_for_relations_creation(int depth) throws SQLException{
+		// here is the links daemon starting point
+		// getting all URLS and out.println links for each URL
+		System.out.println("Getting all URLs between depth "+depth +" and "+(depth +1));
+		String level_statement = fetching_relations_by_level_request + depth + " and "+(depth +1)+order_by_depth;
+		PreparedStatement pst = con.prepareStatement(level_statement);
+		ResultSet rs = pst.executeQuery();
+		while (rs.next()) {
+			counter++;
+			String url_node = rs.getString(1);
+			String output_links = rs.getString(2);
 			Set<String> outSet = URL_Utilities.parse_nodes_out_links(output_links);
-			nodes_infos.put(result, outSet);
-			System.out.println("Getting URL number :"+counter + " : " +url_node);
+			build_all_edges(url_node,outSet);
+			System.out.println("Getting into cache relations for URL number :"+counter + " : " +url_node);
+		}
+		pst.close();
+	}
+
+	private static void build_all_edges(String beginningNode, Set<String> endingNodes){
+		Integer beginningId =url_id_mapping.get(beginningNode);
+		for (String endingNode : endingNodes){
+			Integer endingId =url_id_mapping.get(endingNode);
+			EdgeInfos edge = new EdgeInfos();
+			edge.setBeginning(beginningId);
+			edge.setEnding(endingId);
+			edges_infos.add(edge);
 		}
 	}
 
@@ -197,6 +229,7 @@ public class FastBatchByLevelPostGresLinksDaemon {
 		insert_st.executeUpdate();
 	}
 
+	// we keep it even if we don't use it here ( if everything runs fine memory speaking, we'll add it
 	private static void compute_page_rank() {
 		//Init a project - and therefore a workspace
 		ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
@@ -250,6 +283,23 @@ public class FastBatchByLevelPostGresLinksDaemon {
 		for (Node n : graph.getNodes()) {
 			Double nodePageRank = (Double)n.getNodeData().getAttributes().getValue(col.getIndex());
 			System.out.println("Page rank for node : "+nodePageRank);
+		}
+	}
+
+	private static class EdgeInfos{
+		private int beginning;
+		private int ending;
+		public int getBeginning() {
+			return beginning;
+		}
+		public void setBeginning(int beginning) {
+			this.beginning = beginning;
+		}
+		public int getEnding() {
+			return ending;
+		}
+		public void setEnding(int ending) {
+			this.ending = ending;
 		}
 	}
 
