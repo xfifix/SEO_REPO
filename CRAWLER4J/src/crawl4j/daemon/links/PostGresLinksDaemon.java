@@ -135,26 +135,22 @@ public class PostGresLinksDaemon {
 
 	public static void manage_input(String url_node, String output_links){
 		// creating the nodes in neo4j
-
 		try {
 			create_node(url_node);
-			Set<String> parsed_output = parse_nodes_out_links(output_links);
+			Set<String> parsed_output = parse_nodes_out_links_and_create(output_links);
 			relations_insertion(url_node,parsed_output);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			System.out.println("Trouble creating node : "+url_node);
 			e.printStackTrace();
 		}
-
-
-
 		//		// populating the outgoing map		
 		//		populate_out_links(url_node, output_links);		
 		//		// populating the incoming map
 		//		populate_in_links(url_node, output_links);
 	}
 
-	private static Set<String> parse_nodes_out_links(String output_links) throws SQLException{
+	private static Set<String> parse_nodes_out_links_and_create(String output_links) throws SQLException{
 		output_links = output_links.replace("[", "");
 		output_links = output_links.replace("]", "");
 		String[] url_outs = output_links.split(",");

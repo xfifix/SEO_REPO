@@ -6,12 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
+
+import crawl4j.urlutilities.URL_Utilities;
 
 public class InsideMagasinQualityWorkerThread implements Runnable {
 	private static String insert_statement="INSERT INTO RAYON_SIMILARITIES (MAGASIN, RAYON1, RAYON2, PERCENTAGE_EXACT, AVG_SIMILARITY, SIMILARITIES, LAST_UPDATE) VALUES (?,?,?,?,?,?,?)";

@@ -7,16 +7,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import crawl4j.urlutilities.URL_Utilities;
 
 public class PostGresLinksByLevelDaemon {
 
 	private static Map<String, Integer> node_locator = new HashMap<String, Integer>(); 
 	private static int counter = 0;
+	// counting the number of nodes actually inserted into the database
+	private static int node_counter = 0;
+	// we actually don't need a resuming threshold as we check each time if the node has already been inserted
+	// private static int resuming_threshold = 167770; // to resume from the current number of created nodes : // select count(*) from nodes
 	private static String fetching_by_level_request= "SELECT URL, LINKS FROM CRAWL_RESULTS WHERE DEPTH BETWEEN ";
-	private static String order_by_default = " ORDER BY DEPTH ";
+	private static String order_by_depth = " ORDER BY DEPTH ";
 
 	private static String find_node_statement ="SELECT ID FROM NODES WHERE LABEL=?";
 	private static String insert_node_statement ="INSERT INTO NODES (LABEL)"
@@ -54,14 +59,11 @@ public class PostGresLinksByLevelDaemon {
 		con = DriverManager.getConnection(url, user, passwd);
 	}
 
-
-
-
 	public static void looping_over_urls(int depth) throws SQLException{
 		// here is the links daemon starting point
 		// getting all URLS and out.println links for each URL
 		System.out.println("Getting all URLs between depth "+depth +" and "+(depth +1));
-		String level_statement = fetching_by_level_request + depth + " and "+(depth +1)+order_by_default;
+		String level_statement = fetching_by_level_request + depth + " and "+(depth +1)+order_by_depth;
 		PreparedStatement pst = con.prepareStatement(level_statement);
 		ResultSet rs = pst.executeQuery();
 		while (rs.next()) {
@@ -75,23 +77,20 @@ public class PostGresLinksByLevelDaemon {
 
 	public static void manage_input(String url_node, String output_links){
 		// creating the nodes in neo4j
-
 		try {
 			create_node(url_node);
-			Set<String> parsed_output = parse_nodes_out_links(output_links);
+			Set<String> parsed_output = URL_Utilities.parse_nodes_out_links(output_links);
 			for (String tocreate : parsed_output){
 				create_node(tocreate);
 			}
 			relations_insertion(url_node,parsed_output);
+			System.out.println(node_counter + " : nodes actually inserted into databases");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			System.out.println("Trouble creating node : "+url_node);
 			e.printStackTrace();
 		}
 	}
-
-
-
 
 	private static void relations_insertion(String url,Set<String> outgoing_links) throws SQLException{
 		int total_size = outgoing_links.size();
@@ -140,26 +139,17 @@ public class PostGresLinksByLevelDaemon {
 			//insert_st.setString(1,URL_Utilities.checkMagasin(url_node));
 			insert_st.setString(1,url_node);
 			insert_st.executeUpdate();
+			node_counter++;
 			ResultSet rs = insert_st.getGeneratedKeys();
 			int inserted_keys=0;
 			if (rs != null && rs.next()) {
 				inserted_keys = rs.getInt(1);
+				node_locator.put(url_node, inserted_keys);
 			}
-			node_locator.put(url_node, inserted_keys);
 		} else {
-			// the node is already in the database, we just refresh the cache
+			// the node is already in the database, we just refresh the cache by putting his id into it
 			node_locator.put(url_node,potential_id);
 		}
 	}
 
-	private static Set<String> parse_nodes_out_links(String output_links){
-		output_links = output_links.replace("[", "");
-		output_links = output_links.replace("]", "");
-		String[] url_outs = output_links.split(",");
-		Set<String> outputSet = new HashSet<String>();
-		for (String url_out : url_outs){
-			outputSet.add(url_out);
-		}
-		return outputSet;
-	}
 }

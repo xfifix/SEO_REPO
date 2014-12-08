@@ -59,8 +59,7 @@ public class ContinuousCrawler extends WebCrawler {
 			links = htmlParseData.getOutgoingUrls();
 			myCrawlDataManager.incTotalLinks(links.size());
 			myCrawlDataManager.incTotalTextSize(htmlParseData.getText().length());	
-		
-			
+				
 			Set<String> filtered_links = filter_out_links(links);
 			info.setLinks_size(filtered_links.size());
 			info.setOut_links(filtered_links.toString());

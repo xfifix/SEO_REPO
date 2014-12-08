@@ -40,6 +40,28 @@ public class MagasinsCrawlErrorFetchingData {
 		"http://www.cdiscount.com/bagages/",
 		"http://www.cdiscount.com/culture-multimedia/",
 	"http://www.lecomptoirsante.com/"};
+	
+	private static String[] magasin_column_names = {
+		"le-sport",
+		"electromenager",
+		"bricolage_outillage",
+		"auto",
+		"maison_r_tiret",
+		"jeux_et_jouets_par_type",
+		"high_tech",
+		"jardin_animalerie",
+		"telephonie",
+		"maison",
+		"bricolage_chauffage",
+		"vin_alimentaire",
+		"photo_numerique",
+		"pret_a_porter",
+		"informatique",
+		"bagages",
+		"culture_multimedia",
+	    "lecomptoirsante"
+	};
+	
 	private static String CLIENT_ID = "******************************";
 	private static String CLIENT_SECRET = "**************************";
 	private static String REDIRECT_URI = "***************************";

@@ -1,7 +1,9 @@
 package crawl4j.urlutilities;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 public class URL_Utilities {
@@ -143,6 +145,18 @@ public class URL_Utilities {
 		//			produit = tokenize.nextToken();
 		//		}
 		return produit;
+	}
+	
+	public static Set<String> parse_nodes_out_links(String output_links){
+		output_links = output_links.replace("[", "");
+		output_links = output_links.replace("]", "");
+		String[] url_outs = output_links.split(",");
+		Set<String> outputSet = new HashSet<String>();
+		for (String url_out : url_outs){
+			url_out=url_out.trim();
+			outputSet.add(url_out);
+		}
+		return outputSet;
 	}
 
 }

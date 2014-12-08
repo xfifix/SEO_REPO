@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<item value="2" key="TypeHierarchyViewPart.hierarchyview"/>
+	<item value="filter_imports;" key="filters_last_used"/>
 	<item value="500" key="CallHierarchyViewPart.ratio3"/>
 	<item value="500" key="CallHierarchyViewPart.ratio0"/>
 	<item value="500" key="CallHierarchyViewPart.ratio1"/>
@@ -23,17 +24,17 @@
 		<item value="3" key="pageIndex"/>
 	</section>
 	<section name="FatJarPackageWizard">
-		<item value="/home/sduprey/My_Executable/my_position_checker.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
-		<item value="MultipleIPsCronJob - SERP_ENGINE" key="FatJarPackageWizardPage.LAUNCH_CONFIGURATION_SELECTION_NAME"/>
+		<item value="/home/sduprey/My_Executable/my_price_minister_corpus.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
+		<item value="PriceMinisterCorpusController - CRAWLER4J" key="FatJarPackageWizardPage.LAUNCH_CONFIGURATION_SELECTION_NAME"/>
 		<item value="/home/sduprey/My_Code/My_Java_Workspace" key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION"/>
 		<item value="false" key="FatJarPackageWizardPage.ANTSCRIPT_SAVE"/>
 		<item value="1" key="FatJarPackageWizardPage.LIBRARY_HANDLING"/>
 		<list key="FatJarPackageWizardPage.DESTINATION_NAMES_ID">
+			<item value="/home/sduprey/My_Executable/my_price_minister_corpus.jar"/>
+			<item value="/home/sduprey/My_Executable/my_rdc_corpus.jar"/>
 			<item value="/home/sduprey/My_Executable/my_position_checker.jar"/>
 			<item value="/home/sduprey/My_Executable/my_old_position_checker.jar"/>
 			<item value="/home/sduprey/My_Executable/my_links_daemon.jar"/>
-			<item value="/home/sduprey/My_Executable/my_magasin_attribution.jar"/>
-			<item value="/home/sduprey/My_Executable/my_amazon_corpus.jar"/>
 		</list>
 		<list key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION_HISTORY">
 			<item value="/home/sduprey/My_Code/My_Java_Workspace.xml"/>

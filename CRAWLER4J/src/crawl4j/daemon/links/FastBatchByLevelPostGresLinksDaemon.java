@@ -31,6 +31,8 @@ import org.gephi.project.api.Workspace;
 import org.gephi.statistics.plugin.PageRank;
 import org.openide.util.Lookup;
 
+import crawl4j.urlutilities.URL_Utilities;
+
 public class FastBatchByLevelPostGresLinksDaemon {
 
 	private static Map<NodeInfos,Set<String>> nodes_infos = new HashMap<NodeInfos,Set<String>>();
@@ -163,17 +165,6 @@ public class FastBatchByLevelPostGresLinksDaemon {
 		node_locator.put(infos.getUrl(), inserted_keys);
 	}
 
-	private static Set<String> parse_nodes_out_links(String output_links){
-		output_links = output_links.replace("[", "");
-		output_links = output_links.replace("]", "");
-		String[] url_outs = output_links.split(",");
-		Set<String> outputSet = new HashSet<String>();
-		for (String url_out : url_outs){
-			outputSet.add(url_out);
-		}
-		return outputSet;
-	}
-
 	public static void looping_over_urls(int depth) throws SQLException{
 		// here is the links daemon starting point
 		// getting all URLS and out.println links for each URL
@@ -193,7 +184,7 @@ public class FastBatchByLevelPostGresLinksDaemon {
 			result.setStatus(status);
 			result.setMagasin(magasin);
 			result.setType(page_type);
-			Set<String> outSet = parse_nodes_out_links(output_links);
+			Set<String> outSet = URL_Utilities.parse_nodes_out_links(output_links);
 			nodes_infos.put(result, outSet);
 			System.out.println("Getting URL number :"+counter + " : " +url_node);
 		}

@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import crawl4j.urlutilities.URL_Utilities;
+
 
 public class ProcessOneMagasinQualityScore {
 

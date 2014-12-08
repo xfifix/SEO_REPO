@@ -1,7 +1,5 @@
 # x y size not created (optional), Label URL (optional)
 
-
-
 CREATE TABLE IF NOT EXISTS NODES (
     ID SERIAL PRIMARY KEY NOT NULL,
     LABEL TEXT,
@@ -20,4 +18,8 @@ CREATE TABLE IF NOT EXISTS EDGES (
     SOURCE INT,
     TARGET INT
 ) TABLESPACE mydbspace;
+
+
+cleaning up the untrimmed database
+update nodes set label = trim(label)
 
