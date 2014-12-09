@@ -12,6 +12,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import crawl4j.urlutilities.URL_Utilities;
 import crawl4j.urlutilities.URLinfo;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
@@ -60,6 +61,7 @@ public class ContinuousCrawler extends WebCrawler {
 			myCrawlDataManager.incTotalLinks(links.size());
 			myCrawlDataManager.incTotalTextSize(htmlParseData.getText().length());	
 				
+			// we here filter the outlinks we want to keep (they must be internal and they must respect the robot.txt
 			Set<String> filtered_links = filter_out_links(links);
 			info.setLinks_size(filtered_links.size());
 			info.setOut_links(filtered_links.toString());
@@ -131,12 +133,15 @@ public class ContinuousCrawler extends WebCrawler {
 		Set<String> outputSet = new HashSet<String>();
 		for (WebURL url_out : links){
 			if ((shouldVisit(url_out)) && (getMyController().getRobotstxtServer().allows(url_out))){
-				outputSet.add(url_out.getURL());
+				String final_link = URL_Utilities.drop_parameters(url_out.getURL());
+				outputSet.add(final_link);
 			}
 		}
 		return outputSet;
 	}
 
+
+	
 	// This function is called by controller to get the local data of this
 	// crawler when job is finished
 	@Override

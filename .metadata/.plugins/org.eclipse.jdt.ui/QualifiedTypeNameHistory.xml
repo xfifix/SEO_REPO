@@ -20,7 +20,6 @@
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="com.urlutilities.URL_Utilities"/>
 <fullyQualifiedTypeName name="crawl4j.daemon.links.URLNode"/>
-<fullyQualifiedTypeName name="crawl4j.urlutilities.URL_Utilities"/>
 <fullyQualifiedTypeName name="java.sql.Statement"/>
 <fullyQualifiedTypeName name="edu.uci.ics.crawler4j.url.WebURL"/>
 <fullyQualifiedTypeName name="java.net.Proxy"/>
@@ -38,4 +37,5 @@
 <fullyQualifiedTypeName name="java.util.Map.Entry"/>
 <fullyQualifiedTypeName name="java.io.InputStream"/>
 <fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="crawl4j.urlutilities.URL_Utilities"/>
 </qualifiedTypeNameHistroy>

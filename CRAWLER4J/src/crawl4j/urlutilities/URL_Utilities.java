@@ -146,7 +146,7 @@ public class URL_Utilities {
 		//		}
 		return produit;
 	}
-	
+
 	public static Set<String> parse_nodes_out_links(String output_links){
 		output_links = output_links.replace("[", "");
 		output_links = output_links.replace("]", "");
@@ -157,6 +157,18 @@ public class URL_Utilities {
 			outputSet.add(url_out);
 		}
 		return outputSet;
+	}
+
+	public static String drop_parameters(String url_with_possibly_parameters){
+		int interrogation_index = url_with_possibly_parameters.indexOf("?");
+		if (interrogation_index != -1){
+			url_with_possibly_parameters=url_with_possibly_parameters.substring(0, interrogation_index);
+		}
+		int pound_index = url_with_possibly_parameters.indexOf("#");
+		if (pound_index != -1){
+			url_with_possibly_parameters=url_with_possibly_parameters.substring(0, pound_index);
+		}
+		return url_with_possibly_parameters;
 	}
 
 }

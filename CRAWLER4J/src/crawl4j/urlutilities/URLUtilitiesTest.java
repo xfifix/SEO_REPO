@@ -13,6 +13,14 @@ public class URLUtilitiesTest {
 //			Root-4 : Sous-sous rayon : 1XXXXXXXX
 //			Root-5 : 1XXXXXXXXXX
 
+	
+	private static String[] toprune = {
+		"http://tracking.cdiscount.com/tracking/myImage.track?param=2KMk2vLvGYpjZH72sJiUQ0-mLAJwjq8MKR60M0-qrB1YDA-nqLnrPlw7JYxRJQymdNm2RXeSRWOOwbim0nqauG0XHRBlrnsTV9U_lWTM_MmFp03PhxNxuD0rlqfvC8kWh0Us2Vs1VghiPB47CbQRf1lY1YM5zQF4cgW2yXfUye5bth0IOaKTpc0obkbUaqwkVPtqcuOIAMgOEXxnvAEgFvWKET3Wb6njvQxqhLakt9x0X4zdt6u2MZ_f7f8OhBN4visNFCQxxcLb0XOphMnti41nWXuMbIgwbFaH2FB8N2oidrrqZxSYjEkRGVJD5-NrPiCdskF8b6DuIGKka8iVdz7yPDTnOnCzFCphz4AYg74",
+		"http://s2.cdscdn.com/Css/cdsrwd/wl/rwd/block/button.css?LanguageCode=fr&SiteId=100",
+		"http://avis.cdiscount.com/7513-fr_fr/wilk003501x5/review/21977376/inappropriate.htm?authsourcetype=__AUTHTYPE__&format=embedded&innerreturn=http%3A%2F%2Favis.cdiscount.com%2F.%2F7513-fr_fr%2Fwilk003501x5%2Freviews.htm%3Fformat%3Dembedded%26sort%3Drating&return=http%3A%2F%2Fwww.cdiscount.com%2Fau-quotidien%2Fhygiene-soin-beaute%2Fwilkinson-lames-hydro-5-x5%2Ff-12702100101-wilk003501x5.html&sessionparams=__BVSESSIONPARAMS__&submissionparams=__BVSUBMISSIONPARAMETERS__&submissionurl=http%3A%2F%2Fwww.cdiscount.com%2FBazaarVoiceSubmission.html&user=__USERID__",
+		"http://pubads.g.doubleclick.net/gampad/clk?id=21879375&iu=%2F7190%2Fcdiscount"
+	};
+	
 
 	private static String[] totest = 
 		{
@@ -42,6 +50,15 @@ public class URLUtilitiesTest {
 
 
 	public static void main(String[] args){	
+		
+		
+		for (int i=0; i<toprune.length;i++){
+			String current = toprune[i];
+			System.out.println("Coming URL : "+current);
+			String pruned = URL_Utilities.drop_parameters(current);
+			System.out.println("Pruned URL : "+pruned);
+		}
+		
 		for (int i =0; i<totest.length;i++){
 			String current = totest[i];
 			System.out.println(current);

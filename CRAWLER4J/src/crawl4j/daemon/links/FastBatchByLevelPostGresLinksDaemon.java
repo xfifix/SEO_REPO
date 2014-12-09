@@ -33,8 +33,15 @@ import org.openide.util.Lookup;
 import crawl4j.urlutilities.URL_Utilities;
 
 public class FastBatchByLevelPostGresLinksDaemon {
+
+	//
+	private static int depth_threshold = 6;
+
 	// global cache which is never flushed until insertion of all relations for all depths
 	private static Map<String,Integer> url_id_mapping = new HashMap<String,Integer>();
+	// global cache which is never flushed listing all nodes not found
+	private static List<String> url_not_found = new ArrayList<String>();
+	
 
 	// local cache for each depth which is flushed after each depth completion
 	private static List<NodeInfos> nodes_infos = new ArrayList<NodeInfos>();
@@ -64,7 +71,7 @@ public class FastBatchByLevelPostGresLinksDaemon {
 			System.exit(0);
 		}
 		// we create all nodes by levels looping over the depth
-		for (int depth=1;depth<10;depth ++){
+		for (int depth=1;depth<depth_threshold;depth ++){
 			try{
 				// fetching data from the Postgresql data base and looping over
 				looping_over_urls_for_node_creation(depth);
@@ -83,7 +90,7 @@ public class FastBatchByLevelPostGresLinksDaemon {
 
 		// to do to be done to do to be done to do
 		// we create all nodes by levels looping over the depth
-		for (int depth=1;depth<10;depth ++){
+		for (int depth=1;depth<depth_threshold;depth ++){
 			try{
 				// fetching data from the Postgresql data base and looping over
 				looping_over_urls_for_relations_creation(depth);
@@ -95,14 +102,21 @@ public class FastBatchByLevelPostGresLinksDaemon {
 				System.exit(0);
 			}
 		}
-
+		
+		// we here list all nodes never found 
+		listingNofFoundNodes();
+		
 		// we don't do it here as the computation might be heavy
 		// we delegate to another subcrawler
 		//		// computing page rank
 		//		compute_page_rank();
 	}
 
-
+	private static void listingNofFoundNodes(){
+		for (String urlNotFound : url_not_found){
+			System.out.println("URL node not found : "+urlNotFound);
+		}
+	}
 
 	private static void clearing_nodes(){
 		nodes_infos.clear();
@@ -213,20 +227,26 @@ public class FastBatchByLevelPostGresLinksDaemon {
 
 	private static void build_all_edges(String beginningNode, Set<String> endingNodes){
 		Integer beginningId =url_id_mapping.get(beginningNode);
-		for (String endingNode : endingNodes){
-			Integer endingId =url_id_mapping.get(endingNode);
-			EdgeInfos edge = new EdgeInfos();
-			edge.setBeginning(beginningId);
-			edge.setEnding(endingId);
-			edges_infos.add(edge);
+		if (beginningId != null){
+			for (String endingNode : endingNodes){
+				Integer endingId =url_id_mapping.get(endingNode);
+				if (endingId != null){
+					EdgeInfos edge = new EdgeInfos();
+					edge.setBeginning(beginningId);
+					edge.setEnding(endingId);
+					edges_infos.add(edge);
+				} else {
+					// the beginning node is not found
+					System.out.println("The ending node is not found : we don't create it");
+					System.out.println("URL : " + endingNode);
+					url_not_found.add(endingNode);
+				}
+			}
+		} else {
+			// the beginning node is not found
+			System.out.println("The beginning node is not found");
+			url_not_found.add(beginningNode);
 		}
-	}
-
-	private static void createRelationShip(Integer beginningNode, Integer endingNode) throws SQLException{
-		PreparedStatement insert_st = con.prepareStatement(insert_relation_statement);
-		insert_st.setInt(1, beginningNode);
-		insert_st.setInt(2,endingNode);
-		insert_st.executeUpdate();
 	}
 
 	// we keep it even if we don't use it here ( if everything runs fine memory speaking, we'll add it
