@@ -3,6 +3,12 @@
 .metadata/*
 .settings/
 .settings/*
+.recommenders/
+.recommenders/*
+*/.settings/
+*/.settings/*
+
+
 
 *.class
 

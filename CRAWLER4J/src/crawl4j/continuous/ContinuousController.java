@@ -21,7 +21,7 @@ public class ContinuousController {
 			numberOfCrawlers=Integer.valueOf(args[1]);
 		} 
 		String rootFolder = "/home/sduprey/My_Data/My_Crawl4j";
-		int maxDepthOfCrawling = 200;
+		int maxDepthOfCrawling = 300;
         String user_agent_name = "CdiscountBot-crawler";
 		CrawlConfig config = new CrawlConfig();
 		config.setCrawlStorageFolder(rootFolder);
