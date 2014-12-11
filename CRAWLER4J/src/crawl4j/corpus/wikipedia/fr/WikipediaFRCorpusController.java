@@ -42,7 +42,7 @@ public class WikipediaFRCorpusController {
 		PageFetcher pageFetcher = new PageFetcher(config);
 		RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
 		robotstxtConfig.setUserAgentName(user_agent_name);
-		robotstxtConfig.setEnabled(false);
+		robotstxtConfig.setEnabled(true);
 		RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
 		CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
 
