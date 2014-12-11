@@ -1,5 +1,14 @@
 # Metadata for eclipse
 .metadata/
+.metadata/*
+.settings/
+.settings/*
+.recommenders/
+.recommenders/*
+*/.settings/
+*/.settings/*
+
+
 
 *.class
 
