@@ -23,22 +23,18 @@ public class ExaleadThreadPool {
 	private static List<EntryInfo> tofetch_list = new ArrayList<EntryInfo>();
 
 	public static void main(String[] args) throws SQLException {
-
 		if (args.length==1){
 			fixed_pool_size= Integer.valueOf(args[0]);
 			System.out.println("You specified "+fixed_pool_size + " threads");
 		}
-
 		if (args.length==2){
 			size_bucket= Integer.valueOf(args[1]);
 			System.out.println("You specified a "+size_bucket + " bucket size");
 		}
-
 		if (args.length==3){
 			input_path= args[2];
 			System.out.println("You specified a "+input_path + " as input path");
 		}		
-
 		try {
 			parse_input_file(input_path);
 		} catch (NumberFormatException | IOException e) {
