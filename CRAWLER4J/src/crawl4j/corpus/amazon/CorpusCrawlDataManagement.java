@@ -1,15 +1,18 @@
 package crawl4j.corpus.amazon;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 public class CorpusCrawlDataManagement {
-
+	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
 	private Connection con;
 	private static String find_statement="select DOC_LIST from CORPUS_WORDS where WORD=?";
 	private static String insert_statement="INSERT INTO CORPUS_WORDS(WORD,NB_DOCUMENTS,DOC_LIST) values(?,?,?)";
@@ -18,27 +21,29 @@ public class CorpusCrawlDataManagement {
 	private long totalTextSize;
 
 	public CorpusCrawlDataManagement() {
-		//		Properties props = new Properties();
-		//		FileInputStream in = null;      
-		//		try {
-		//			in = new FileInputStream("database.properties");
-		//			props.load(in);
-		//		} catch (IOException ex) {
-		//			Logger lgr = Logger.getLogger(BenchmarkingController.class.getName());
-		//			lgr.log(Level.FATAL, ex.getMessage(), ex);
-		//		} finally {
-		//			try {
-		//				if (in != null) {
-		//					in.close();
-		//				}
-		//			} catch (IOException ex) {
-		//				Logger lgr = Logger.getLogger(BenchmarkingController.class.getName());
-		//				lgr.log(Level.FATAL, ex.getMessage(), ex);
-		//			}
-		//		}
-		String url="jdbc:postgresql://localhost/CRAWL4J";
-		String user="postgres";
-		String passwd="mogette";
+		// Reading the property of our database
+		Properties props = new Properties();
+		FileInputStream in = null;      
+		try {
+			in = new FileInputStream(database_con_path);
+			props.load(in);
+		} catch (IOException ex) {
+			System.out.println("Trouble fetching database configuration");
+			ex.printStackTrace();
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException ex) {
+				System.out.println("Trouble fetching database configuration");
+				ex.printStackTrace();
+			}
+		}
+		// the following properties have been identified
+		String url = props.getProperty("db.url");
+		String user = props.getProperty("db.user");
+		String passwd = props.getProperty("db.passwd");
 		try{
 			con = DriverManager.getConnection(url, user, passwd);
 		} catch (Exception e){

@@ -15,9 +15,9 @@ import java.util.logging.Logger;
 
 import org.postgresql.util.PSQLException;
 
-import com.cybozu.labs.langdetect.DetectorFactory;
-
 public class EnrichingDatabase {
+	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/keywords_enrichment.properties";
+
 	public static int my_threshold=0;
 	public static void main(String[] args){
 
@@ -25,30 +25,26 @@ public class EnrichingDatabase {
 		Properties props = new Properties();
 		FileInputStream in = null;      
 		try {
-			in = new FileInputStream("database.properties");
+			in = new FileInputStream(database_con_path);
 			props.load(in);
-
 		} catch (IOException ex) {
-
-			Logger lgr = Logger.getLogger(EnrichingDatabase.class.getName());
-			lgr.log(Level.SEVERE, ex.getMessage(), ex);
-
+			System.out.println("Trouble fetching database configuration");
+			ex.printStackTrace();
 		} finally {
-
 			try {
 				if (in != null) {
 					in.close();
 				}
 			} catch (IOException ex) {
-				Logger lgr = Logger.getLogger(EnrichingDatabase.class.getName());
-				lgr.log(Level.SEVERE, ex.getMessage(), ex);
+				System.out.println("Trouble fetching database configuration");
+				ex.printStackTrace();
 			}
 		}
-
 		// the following properties have been identified
 		String url = props.getProperty("db.url");
 		String user = props.getProperty("db.user");
 		String passwd = props.getProperty("db.passwd");
+
 		// Instantiating the database
 		Connection con = null;
 		PreparedStatement pst = null;

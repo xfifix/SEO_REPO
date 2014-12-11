@@ -19,6 +19,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 public class PopulatingClass {
+	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/mp_produits_en_ligne.properties";
 	public static int starting_relevant_rows=5;
 	public static void main(String[] args) 
 	{
@@ -26,7 +27,7 @@ public class PopulatingClass {
 		Properties props = new Properties();
 		FileInputStream in = null;      
 		try {
-			in = new FileInputStream("database.properties");
+			in = new FileInputStream(database_con_path);
 			props.load(in);
 
 		} catch (IOException ex) {

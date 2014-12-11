@@ -19,32 +19,20 @@ import org.jsoup.select.Elements;
 
 public class URLListWorkerThread implements Runnable {
 	private String user_agent;
-	private String description;
-	private List<Integer> thread_fetch_ids = new ArrayList<Integer>();
 	private List<ULRId> my_urls_to_fetch = new ArrayList<ULRId>();
 	private Connection con;
 
-
-	public URLListWorkerThread(Connection con ,List<Integer> to_fetch, String my_user_agent, String my_description) throws SQLException{
+	public URLListWorkerThread(Connection con ,List<Integer> to_fetch, String my_user_agent) throws SQLException{
 		this.user_agent=my_user_agent;
-		this.description=my_description;
-		this.thread_fetch_ids=to_fetch;
 		this.con = con;
 		String my_url="";
 		if (to_fetch.size()>0){
 			try {
-				PreparedStatement pst  = null;
-				if ("all".equals(my_description)){
-					my_url="SELECT URL, ID FROM HTTPINFOS_LIST WHERE TO_FETCH = TRUE and ID in "+to_fetch.toString();
-					my_url=my_url.replace("[", "(");
-					my_url=my_url.replace("]", ")");
-					pst = con.prepareStatement(my_url);
-				} else {
-					my_url="SELECT URL, ID FROM HTTPINFOS_LIST WHERE TO_FETCH = TRUE and DESCRIPTION='"+description+"' and ID in "+to_fetch.toString();
-					my_url=my_url.replace("[", "(");
-					my_url=my_url.replace("]", ")");
-					pst = con.prepareStatement(my_url);
-				};
+				PreparedStatement pst = null;
+				my_url="SELECT URL, ID FROM HTTPINFOS_LIST WHERE TO_FETCH = TRUE and ID in "+to_fetch.toString();
+				my_url=my_url.replace("[", "(");
+				my_url=my_url.replace("]", ")");
+				pst = con.prepareStatement(my_url);
 				ResultSet rs = null;
 				rs = pst.executeQuery();
 				while (rs.next()) {
@@ -55,6 +43,9 @@ public class URLListWorkerThread implements Runnable {
 					toadd.setUrl(loc_url);
 					my_urls_to_fetch.add(toadd); 
 				}
+				pst.close();
+				System.out.println(Thread.currentThread()+" initialized with  : "+to_fetch.size() + " fetched URLs");
+
 			}
 			catch(SQLException e){
 				e.printStackTrace();
@@ -67,8 +58,19 @@ public class URLListWorkerThread implements Runnable {
 		List<URLInfo> infos=processCommand();
 		updateStatus(infos);
 		System.out.println(Thread.currentThread().getName()+" End");
+		close_connection();
+		System.out.println(Thread.currentThread().getName()+" closed connection");
 	}
 
+	private void close_connection(){
+		try {
+			this.con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	// batched update
 	private void updateStatus(List<URLInfo> infos){
 		System.out.println("Adding to batch : " + infos.size() + "ULRs into database");
@@ -85,6 +87,7 @@ public class URLListWorkerThread implements Runnable {
 			System.out.println("Beginning to insert : " + infos.size() + "ULRs into database");
 			st.executeBatch();
 			con.commit();
+			st.close();
 			System.out.println("Having inserted : " + infos.size() + "ULRs into database");
 		} catch (SQLException e){
 			e.printStackTrace();
@@ -112,8 +115,7 @@ public class URLListWorkerThread implements Runnable {
 
 	private List<URLInfo> processCommand() {
 		List<URLInfo> my_fetched_infos = new ArrayList<URLInfo>();
-		for (int i=0;i<my_urls_to_fetch.size();i++){
-			ULRId line_info=my_urls_to_fetch.get(i);
+		for(ULRId line_info : my_urls_to_fetch){
 			// second method
 			URLInfo my_info = new URLInfo();
 			my_info.setId(line_info.getId());
@@ -125,7 +127,7 @@ public class URLListWorkerThread implements Runnable {
 				connection.setRequestMethod("GET");
 				connection.setRequestProperty("User-Agent",this.user_agent);
 				connection.setInstanceFollowRedirects(true);
-				connection.setConnectTimeout(30000);
+				connection.setConnectTimeout(3000);
 				connection.connect();
 				// getting the status from the connection
 				my_info.setStatus(connection.getResponseCode());
@@ -183,8 +185,8 @@ public class URLListWorkerThread implements Runnable {
 			this.id = id;
 		}
 	}
-	
-	
+
+
 	class URLInfo{
 		private int id;
 		public int getId() {

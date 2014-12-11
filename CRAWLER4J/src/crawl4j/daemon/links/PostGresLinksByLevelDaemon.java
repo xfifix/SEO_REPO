@@ -1,5 +1,7 @@
 package crawl4j.daemon.links;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,12 +10,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import crawl4j.urlutilities.URL_Utilities;
 
 public class PostGresLinksByLevelDaemon {
-
+	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
 	private static Map<String, Integer> node_locator = new HashMap<String, Integer>(); 
 	private static int counter = 0;
 	// counting the number of nodes actually inserted into the database
@@ -52,10 +55,29 @@ public class PostGresLinksByLevelDaemon {
 	}
 
 	private static void instantiate_connection() throws SQLException{
-		// instantiating database connection
-		String url="jdbc:postgresql://localhost/CRAWL4J";
-		String user="postgres";
-		String passwd="mogette";
+		// Reading the property of our database
+		Properties props = new Properties();
+		FileInputStream in = null;      
+		try {
+			in = new FileInputStream(database_con_path);
+			props.load(in);
+		} catch (IOException ex) {
+			System.out.println("Trouble fetching database configuration");
+			ex.printStackTrace();
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException ex) {
+				System.out.println("Trouble fetching database configuration");
+				ex.printStackTrace();
+			}
+		}
+		// the following properties have been identified
+		String url = props.getProperty("db.url");
+		String user = props.getProperty("db.user");
+		String passwd = props.getProperty("db.passwd");
 		con = DriverManager.getConnection(url, user, passwd);
 	}
 

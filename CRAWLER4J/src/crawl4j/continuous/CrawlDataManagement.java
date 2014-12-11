@@ -1,5 +1,7 @@
 package crawl4j.continuous;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -7,6 +9,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Level;
@@ -17,6 +20,7 @@ import org.apache.solr.common.SolrInputDocument;
 import crawl4j.urlutilities.URLinfo;
 
 public class CrawlDataManagement {
+	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
 	private static String insert_statement="INSERT INTO CRAWL_RESULTS(URL,WHOLE_TEXT,TITLE,LINKS_SIZE,"
 			+ "LINKS,H1,FOOTER_EXTRACT,ZTD_EXTRACT,SHORT_DESCRIPTION,VENDOR,ATTRIBUTES,NB_ATTRIBUTES,STATUS_CODE,HEADERS,DEPTH,PAGE_TYPE,MAGASIN,RAYON,PRODUIT,LAST_UPDATE)"
 			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -30,31 +34,29 @@ public class CrawlDataManagement {
 	private Map<String, URLinfo> crawledContent = new HashMap<String, URLinfo>();
 
 	public CrawlDataManagement() {
-//		Properties props = new Properties();
-//		FileInputStream in = null;      
-//		try {
-//			in = new FileInputStream("database.properties");
-//			props.load(in);
-//		} catch (IOException ex) {
-//			Logger lgr = Logger.getLogger(BenchmarkingController.class.getName());
-//			lgr.log(Level.FATAL, ex.getMessage(), ex);
-//		} finally {
-//			try {
-//				if (in != null) {
-//					in.close();
-//				}
-//			} catch (IOException ex) {
-//				Logger lgr = Logger.getLogger(BenchmarkingController.class.getName());
-//				lgr.log(Level.FATAL, ex.getMessage(), ex);
-//			}
-//		}
+		// Reading the property of our database
+		Properties props = new Properties();
+		FileInputStream in = null;      
+		try {
+			in = new FileInputStream(database_con_path);
+			props.load(in);
+		} catch (IOException ex) {
+			System.out.println("Trouble fetching database configuration");
+			ex.printStackTrace();
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException ex) {
+				System.out.println("Trouble fetching database configuration");
+				ex.printStackTrace();
+			}
+		}
 		// the following properties have been identified
-		//		String url = props.getProperty("db.url");
-		//		String user = props.getProperty("db.user");
-		//		String passwd = props.getProperty("db.passwd");
-		String url="jdbc:postgresql://localhost/CRAWL4J";
-		String user="postgres";
-		String passwd="mogette";
+		String url = props.getProperty("db.url");
+		String user = props.getProperty("db.user");
+		String passwd = props.getProperty("db.passwd");
 		try{
 			con = DriverManager.getConnection(url, user, passwd);
 			solr_server = new HttpSolrServer("http://localhost:8983/solr");
@@ -135,7 +137,7 @@ public class CrawlDataManagement {
 					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
 					doc.addField("last_update", sqlDate.toString());	
 					try{
-					solr_server.add(doc);
+						solr_server.add(doc);
 					}catch (Exception e){
 						System.out.println("Trouble inserting : "+url);
 						e.printStackTrace();  

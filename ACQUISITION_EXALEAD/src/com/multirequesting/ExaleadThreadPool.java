@@ -11,10 +11,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ExaleadThreadPool {
+	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/acquisition_exalead.properties";
 	private static int fixed_pool_size = 1;
 	private static int size_bucket = 10;
 	private static String input_path="D:\\My_Data\\My_Acquisition_Data\\top100k_new.csv";
@@ -44,33 +46,29 @@ public class ExaleadThreadPool {
 			e.printStackTrace();
 			System.out.println("Trouble reading the file or parsing it");
 		}
-
-		// it would be best to use a property file to store MD5 password
-		//		// Getting the database property
-		//		Properties props = new Properties();
-		//		FileInputStream in = null;      
-		//		try {
-		//			in = new FileInputStream("database.properties");
-		//			props.load(in);
-		//		} catch (IOException ex) {
-		//			Logger lgr = Logger.getLogger(HTTPStatusThreadPool.class.getName());
-		//			lgr.log(Level.SEVERE, ex.getMessage(), ex);
-		//
-		//		} finally {
-		//			try {
-		//				if (in != null) {
-		//					in.close();
-		//				}
-		//			} catch (IOException ex) {
-		//				Logger lgr = Logger.getLogger(HTTPStatusThreadPool.class.getName());
-		//				lgr.log(Level.SEVERE, ex.getMessage(), ex);
-		//			}
-		//		}
+		// Reading the property of our database
+		Properties props = new Properties();
+		FileInputStream in = null;      
+		try {
+			in = new FileInputStream(database_con_path);
+			props.load(in);
+		} catch (IOException ex) {
+			System.out.println("Trouble fetching database configuration");
+			ex.printStackTrace();
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException ex) {
+				System.out.println("Trouble fetching database configuration");
+				ex.printStackTrace();
+			}
+		}
 		// the following properties have been identified
-		String url="jdbc:postgresql://localhost/EXALEADDB";
-		String user="postgres";
-		String passwd="root";
-
+		String url = props.getProperty("db.url");
+		String user = props.getProperty("db.user");
+		String passwd = props.getProperty("db.passwd");
 
 		System.out.println("You'll be using "+fixed_pool_size+" threads ");
 		ExecutorService executor = Executors.newFixedThreadPool(fixed_pool_size);

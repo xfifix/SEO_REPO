@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import com.magasin.attributing.URL_Utilities;
 
 public class BatchRanksPricingInsertion {
+	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/keywords_enrichment.properties";
 	private static String request_url = "http://www.cdiscount.com/sa-10/";
 	private static String insert_statement = "INSERT INTO PRICING_KEYWORDS(KEYWORD,LANGUAGE,SEARCH_ENGINE,"
 			+ "CHECK_DATE,URL,SEARCH_POSITION,ABSOLUTE_POSITION,PAGE_NUMBER"
@@ -35,34 +36,25 @@ public class BatchRanksPricingInsertion {
 		Properties props = new Properties();
 		FileInputStream in = null;      
 		try {
-			in = new FileInputStream("database.properties");
+			in = new FileInputStream(database_con_path);
 			props.load(in);
-
 		} catch (IOException ex) {
-
-			Logger lgr = Logger.getLogger(BatchRanksPricingInsertion.class.getName());
-			lgr.log(Level.SEVERE, ex.getMessage(), ex);
-
+			System.out.println("Trouble fetching database configuration");
+			ex.printStackTrace();
 		} finally {
-
 			try {
 				if (in != null) {
 					in.close();
 				}
 			} catch (IOException ex) {
-				Logger lgr = Logger.getLogger(BatchRanksPricingInsertion.class.getName());
-				lgr.log(Level.SEVERE, ex.getMessage(), ex);
+				System.out.println("Trouble fetching database configuration");
+				ex.printStackTrace();
 			}
 		}
-
-		//		// the following properties have been identified
-		//		String url = props.getProperty("db.url");
-		//		String user = props.getProperty("db.user");
-		//		String passwd = props.getProperty("db.passwd");
-		String url="jdbc:postgresql://localhost/KEYWORDSDB";
-		String user="postgres";
-		String passwd="mogette";
-
+		// the following properties have been identified
+		String url = props.getProperty("db.url");
+		String user = props.getProperty("db.user");
+		String passwd = props.getProperty("db.passwd");
 
 		// the following properties have been identified for our files to parse 
 		// and insert into a database

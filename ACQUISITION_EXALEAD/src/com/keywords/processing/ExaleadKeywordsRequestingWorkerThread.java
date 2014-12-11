@@ -21,8 +21,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import com.keywords.processing.ExaleadKeywordsPostExample.ULRLineToInsert;
-
 public class ExaleadKeywordsRequestingWorkerThread implements Runnable {
 
 	private static String find_statement="select am_keyword, am_search_position, am_search_volume from ";

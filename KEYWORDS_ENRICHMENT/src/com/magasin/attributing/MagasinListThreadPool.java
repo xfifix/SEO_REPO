@@ -1,5 +1,7 @@
 package com.magasin.attributing;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -7,46 +9,44 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MagasinListThreadPool {
-	private static int fixed_pool_size = 130;
-	
+	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/keywords_enrichment.properties";
+
+	private static int fixed_pool_size = 130;	
 	// size of keywords to manage for a thread
 	private static int size_bucket = 10000;
 	
 
 	public static void main(String[] args) {
-		// Getting the database property
-		//		Properties props = new Properties();
-		//		FileInputStream in = null;      
-		//		try {
-		//			in = new FileInputStream("database.properties");
-		//			props.load(in);
-		//		} catch (IOException ex) {
-		//			Logger lgr = Logger.getLogger(MagasinListThreadPool.class.getName());
-		//			lgr.log(Level.SEVERE, ex.getMessage(), ex);
-		//
-		//		} finally {
-		//			try {
-		//				if (in != null) {
-		//					in.close();
-		//				}
-		//			} catch (IOException ex) {
-		//				Logger lgr = Logger.getLogger(MagasinListThreadPool.class.getName());
-		//				lgr.log(Level.SEVERE, ex.getMessage(), ex);
-		//			}
-		//		}
+		// Reading the property of our database
+		Properties props = new Properties();
+		FileInputStream in = null;      
+		try {
+			in = new FileInputStream(database_con_path);
+			props.load(in);
+		} catch (IOException ex) {
+			System.out.println("Trouble fetching database configuration");
+			ex.printStackTrace();
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException ex) {
+				System.out.println("Trouble fetching database configuration");
+				ex.printStackTrace();
+			}
+		}
 		// the following properties have been identified
-		//		String url = props.getProperty("db.url");
-		//		String user = props.getProperty("db.user");
-		//		String passwd = props.getProperty("db.passwd");
-		String url="jdbc:postgresql://localhost/KEYWORDSDB";
-		String user="postgres";
-		String passwd="mogette";
+		String url = props.getProperty("db.url");
+		String user = props.getProperty("db.user");
+		String passwd = props.getProperty("db.passwd");
 
 		// Instantiating the pool thread
 		ExecutorService executor = Executors.newFixedThreadPool(fixed_pool_size);

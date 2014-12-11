@@ -1,6 +1,7 @@
 package com.processing;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -11,8 +12,10 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class ReversingListCrawler {
+	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/reversing_dns.properties";
 	// we here just want to get every URL from the input file and get if the SKU is sold by market place/cdiscount and so on
 	private static String insert_statement="INSERT INTO IP_HOSTNAME(IP,HOSTNAME,COUNT)"
 			+ " VALUES(?,?,?)";
@@ -23,10 +26,33 @@ public class ReversingListCrawler {
 
 	public static void main(String[] args)  {
 		String fileName="/home/sduprey/My_Data/My_Logs_IPs/IP_23_11.csv";
-		// instantiating the database connection
-		String url="jdbc:postgresql://localhost/HOSTNAMEDB";
-		String user="postgres";
-		String passwd="mogette";
+
+		// Reading the property of our database
+		Properties props = new Properties();
+		FileInputStream in = null;      
+		try {
+			in = new FileInputStream(database_con_path);
+			props.load(in);
+		} catch (IOException ex) {
+			System.out.println("Trouble getting the database parameters");
+			ex.printStackTrace();
+		} finally {
+
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException ex) {
+				System.out.println("Trouble getting the database parameters");
+				ex.printStackTrace();
+			}
+		}
+
+		// the following properties have been identified
+		String url = props.getProperty("db.url");
+		String user = props.getProperty("db.user");
+		String passwd = props.getProperty("db.passwd");
+
 		try {  
 			con = DriverManager.getConnection(url, user, passwd);
 		}catch (SQLException ex) {

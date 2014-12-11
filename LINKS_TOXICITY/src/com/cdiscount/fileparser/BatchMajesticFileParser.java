@@ -13,40 +13,39 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
-
 public class BatchMajesticFileParser {
+	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/links_toxicity.properties";
 	private static int batch_size = 50000;
 	private static String insert_string ="INSERT INTO MAJESTIC_CISCOUNT_CSV_EXPORT(TARGET_URL,SOURCE_URL,ANCHOR_TEXT,CRAWL_DATE,FIRST_FOUND_DATE,FLAG_NO_FOLLOW,FLAG_IMAGE_LINK,FLAG_REDIRECT,FLAG_FRAME,FLAG_OLD_CRAWL,FLAG_ALT_TEXT,FALG_MENTION,SOURCE_CITATIONFLOW,SOURCE_TRUSTFLOW,TARGET_CITATIONFLOW,TARGET_TRUSTFLOW) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	private static Map<String, Integer> counting_map = new HashMap<String, Integer>();
 	public static void main(String[] args) throws IOException {
 		// Reading the property of our database
-		//		Properties props = new Properties();
-		//		FileInputStream in = null;      
-		//		try {
-		//			in = new FileInputStream("database.properties");
-		//			props.load(in);
-		//		} catch (IOException ex) {
-		//			Logger lgr = Logger.getLogger(MajesticFileParser.class.getName());
-		//			lgr.log(Level.SEVERE, ex.getMessage(), ex);
-		//		} finally {
-		//			try {
-		//				if (in != null) {
-		//					in.close();
-		//				}
-		//			} catch (IOException ex) {
-		//				Logger lgr = Logger.getLogger(MajesticFileParser.class.getName());
-		//				lgr.log(Level.SEVERE, ex.getMessage(), ex);
-		//			}
-		//		}
-		//		// the following properties have been identified
-		//		String url = props.getProperty("db.url");
-		//		String user = props.getProperty("db.user");
-		//		String passwd = props.getProperty("db.passwd");
-		String url ="jdbc:postgresql://localhost/LINKSDB";
-		String user ="postgres";
-		String passwd ="mogette";
+		Properties props = new Properties();
+		FileInputStream in = null;      
+		try {
+			in = new FileInputStream(database_con_path);
+			props.load(in);
+		} catch (IOException ex) {
+			System.out.println("Trouble fetching database configuration");
+			ex.printStackTrace();
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException ex) {
+				System.out.println("Trouble fetching database configuration");
+				ex.printStackTrace();
+			}
+		}
+		// the following properties have been identified
+		String url = props.getProperty("db.url");
+		String user = props.getProperty("db.user");
+		String passwd = props.getProperty("db.passwd");
+
 		// FNAC_file
 		//String csvFile = "D:\\My_FNAC_entering_links\\download_fnac_com_16_Jul_14_E832D435DA56AC2656CDF3E3E4C4E1E4.csv";
 		// CDS file extracted from MAJESTIC

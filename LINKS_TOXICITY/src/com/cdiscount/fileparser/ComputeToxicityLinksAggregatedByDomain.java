@@ -10,9 +10,11 @@ import java.sql.PreparedStatement;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
 public class ComputeToxicityLinksAggregatedByDomain {
+	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/links_toxicity.properties";
 	private static String insert_rate_string ="INSERT INTO TRUST_RATING(SOURCE_URL, SOURCE_DOMAIN, NB_LINKS, LINK_TRUSTFLOW, COMPUTED_TRUST_RATE_LINK, COMPUTED_TRUST_RATE_DOMAIN) VALUES (?,?,?,?,?,?)";
 	private static int batch_size = 50000;
 	private static Map<String, Integer> counting_map = new HashMap<String, Integer>();
@@ -64,9 +66,29 @@ public class ComputeToxicityLinksAggregatedByDomain {
 		Connection con = null;
 		PreparedStatement pst = null;
 		// the csv file variables
-		String url ="jdbc:postgresql://localhost/LINKSDB";
-		String user ="postgres";
-		String passwd ="mogette";
+		// Reading the property of our database
+		Properties props = new Properties();
+		FileInputStream in = null;      
+		try {
+			in = new FileInputStream(database_con_path);
+			props.load(in);
+		} catch (IOException ex) {
+			System.out.println("Trouble fetching database configuration");
+			ex.printStackTrace();
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException ex) {
+				System.out.println("Trouble fetching database configuration");
+				ex.printStackTrace();
+			}
+		}
+		// the following properties have been identified
+		String url = props.getProperty("db.url");
+		String user = props.getProperty("db.user");
+		String passwd = props.getProperty("db.passwd");
 		nb_line=1;
 		int nb_batch=1;
 		// last error

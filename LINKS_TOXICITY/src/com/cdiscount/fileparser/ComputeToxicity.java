@@ -10,9 +10,11 @@ import java.sql.PreparedStatement;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
 public class ComputeToxicity {
+	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/links_toxicity.properties";
 	private static String insert_rate_string ="INSERT INTO TRUST_RATING(SOURCE_URL, SOURCE_DOMAIN, NB_LINKS, NB_DOMAIN_LINKS, LINK_TRUSTFLOW, COMPUTED_TRUST_RATE_LINK, COMPUTED_TRUST_RATE_DOMAIN) VALUES (?,?,?,?,?,?,?)";
 	private static int batch_size = 50000;
 	private static Map<String, Integer> counting_map = new HashMap<String, Integer>();
@@ -65,9 +67,29 @@ public class ComputeToxicity {
 		Connection con = null;
 		PreparedStatement pst = null;
 		// the csv file variables
-		String url ="jdbc:postgresql://localhost/LINKSDB";
-		String user ="postgres";
-		String passwd ="mogette";
+		// Reading the property of our database
+		Properties props = new Properties();
+		FileInputStream in = null;      
+		try {
+			in = new FileInputStream(database_con_path);
+			props.load(in);
+		} catch (IOException ex) {
+			System.out.println("Trouble fetching database configuration");
+			ex.printStackTrace();
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException ex) {
+				System.out.println("Trouble fetching database configuration");
+				ex.printStackTrace();
+			}
+		}
+		// the following properties have been identified
+		String url = props.getProperty("db.url");
+		String user = props.getProperty("db.user");
+		String passwd = props.getProperty("db.passwd");
 		nb_line=1;
 		int nb_batch=1;
 		// last error
@@ -152,7 +174,7 @@ public class ComputeToxicity {
 		}else {
 			trustflow_rate=1;
 		}
-		
+
 		int link_rate = 0;
 		if (links_count<=10){
 			link_rate=1;
@@ -165,7 +187,7 @@ public class ComputeToxicity {
 		}
 		return trustflow_rate+link_rate;
 	}
-	
+
 	private static void populateLinksMap(String targetURL, String sourceURL){
 		Integer local_count = urlcounting_map.get(sourceURL);
 		if (local_count == null){
@@ -175,8 +197,8 @@ public class ComputeToxicity {
 			local_count=local_count+1;
 			urlcounting_map.put(sourceURL,local_count);
 		}
-		
-		
+
+
 		//		System.out.println("Target URL : "+targetURL);
 		String target_domain=getDomain(targetURL);
 		//		System.out.println("Target domain : "+target_domain);
@@ -196,7 +218,7 @@ public class ComputeToxicity {
 			localdomain_count=localdomain_count+1;
 			counting_map.put(source_domain,localdomain_count);
 		}
-		
+
 	}
 
 	private static void displayFoundLinks(){

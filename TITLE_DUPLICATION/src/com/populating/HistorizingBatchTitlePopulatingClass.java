@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 import com.urlutilities.URL_Utilities;
 
 public class HistorizingBatchTitlePopulatingClass {
-
+	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/title_duplication.properties";
 	private static int counter = 0;
 	private static int batch_size = 10000;
 	private static String insert_statement = "INSERT INTO DUPLICATES(TITLE,NB_URLS,URLS,DUPLICATE_TIME,MAGASIN,RAYON,PRODUCT)"
@@ -27,7 +27,7 @@ public class HistorizingBatchTitlePopulatingClass {
 		Properties props = new Properties();
 		FileInputStream in = null;      
 		try {
-			in = new FileInputStream("database.properties");
+			in = new FileInputStream(database_con_path);
 			props.load(in);
 
 		} catch (IOException ex) {

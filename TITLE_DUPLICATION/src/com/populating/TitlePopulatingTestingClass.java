@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class TitlePopulatingTestingClass {
+	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/title_duplication.properties";
 
 	private static int counter = 0;
 
@@ -18,7 +19,7 @@ public class TitlePopulatingTestingClass {
 		Properties props = new Properties();
 		FileInputStream in = null;      
 		try {
-			in = new FileInputStream("database.properties");
+			in = new FileInputStream(database_con_path);
 			props.load(in);
 		} catch (IOException ex) {
 			Logger lgr = Logger.getLogger(TitlePopulatingTestingClass.class.getName());

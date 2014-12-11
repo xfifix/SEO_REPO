@@ -15,10 +15,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class MajesticFileParser {
+	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/links_toxicity.properties";
 	private static String insert_string ="INSERT INTO MAJESTIC_CISCOUNT_CSV_EXPORT(TARGET_URL,SOURCE_URL,ANCHOR_TEXT,CRAWL_DATE,FIRST_FOUND_DATE,FLAG_NO_FOLLOW,FLAG_IMAGE_LINK,FLAG_REDIRECT,FLAG_FRAME,FLAG_OLD_CRAWL,FLAG_ALT_TEXT,FALG_MENTION,SOURCE_CITATIONFLOW,SOURCE_TRUSTFLOW,TARGET_CITATIONFLOW,TARGET_TRUSTFLOW) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	private static Map<String, Integer> counting_map = new HashMap<String, Integer>();
 	public static void main(String[] args) throws IOException {
@@ -26,20 +25,19 @@ public class MajesticFileParser {
 		Properties props = new Properties();
 		FileInputStream in = null;      
 		try {
-			in = new FileInputStream("database.properties");
+			in = new FileInputStream(database_con_path);
 			props.load(in);
 		} catch (IOException ex) {
-			Logger lgr = Logger.getLogger(MajesticFileParser.class.getName());
-			lgr.log(Level.SEVERE, ex.getMessage(), ex);
-
+			System.out.println("Trouble fetching database configuration");
+			ex.printStackTrace();
 		} finally {
 			try {
 				if (in != null) {
 					in.close();
 				}
 			} catch (IOException ex) {
-				Logger lgr = Logger.getLogger(MajesticFileParser.class.getName());
-				lgr.log(Level.SEVERE, ex.getMessage(), ex);
+				System.out.println("Trouble fetching database configuration");
+				ex.printStackTrace();
 			}
 		}
 		// the following properties have been identified
@@ -76,7 +74,7 @@ public class MajesticFileParser {
 				String[] splitted_line = line.split(cvsSplitBy);
 				System.out.println("Inserting line number :"+nb_line);
 				try {
-					
+
 					pst = con.prepareStatement(insert_string);
 					//TARGET_URL
 					String targetURL = splitted_line[0];
