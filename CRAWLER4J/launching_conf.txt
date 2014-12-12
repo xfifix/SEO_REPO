@@ -1,0 +1,5 @@
+sudo java -Xms20256m -Xmx100128m -jar 
+sudo java -Xms50256m -Xmx100128m -jar my_links_daemon.jar
+sudo java -jar my_ajax_serp_analyzer.jar CDISCOUNT_TOP_5000
+sudo java -jar my_position_checker.jar CDISCOUNT_TOP_5000
+sudo java -jar my_title_duplication_crawler.jar

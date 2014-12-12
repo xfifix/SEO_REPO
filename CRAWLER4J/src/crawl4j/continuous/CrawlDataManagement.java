@@ -110,9 +110,9 @@ public class CrawlDataManagement {
 				local_counter++;
 				do {
 					local_counter ++;
-					Map.Entry pairs = (Map.Entry)it.next();
-					String url=(String)pairs.getKey();
-					URLinfo info = (URLinfo)pairs.getValue();
+					Map.Entry<String, URLinfo> pairs = (Map.Entry<String, URLinfo>)it.next();
+					String url=pairs.getKey();
+					URLinfo info =pairs.getValue();
 					SolrInputDocument doc = new SolrInputDocument();
 					doc.addField("id",url.replace("http://www.cdiscount.com/",""));
 					doc.addField("url",url);
@@ -161,9 +161,9 @@ public class CrawlDataManagement {
 				PreparedStatement st = con.prepareStatement(update_statement);
 				do {
 					local_counter ++;
-					Map.Entry pairs = (Map.Entry)it.next();
-					String url=(String)pairs.getKey();
-					URLinfo info = (URLinfo)pairs.getValue();
+					Map.Entry<String, URLinfo> pairs = (Map.Entry<String, URLinfo>)it.next();
+					String url=pairs.getKey();
+					URLinfo info = pairs.getValue();
 					// preparing the statement
 					st.setString(1,info.getText());
 					st.setString(2,info.getTitle());

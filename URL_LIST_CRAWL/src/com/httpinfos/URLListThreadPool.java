@@ -35,7 +35,6 @@ public class URLListThreadPool {
 		}else {
 			System.out.println("You didn't specify any threads number, we'll use : "+fixed_pool_size);
 		}
-
 		if (args.length>=3){
 			size_bucket= Integer.valueOf(args[3]);
 			System.out.println("You specified a "+size_bucket + " bucket size");

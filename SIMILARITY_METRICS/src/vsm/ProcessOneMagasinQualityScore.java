@@ -40,21 +40,19 @@ public class ProcessOneMagasinQualityScore {
 	private static Map<String, String> properties_map = new HashMap<String, String>();
 
 	public static void main(String[] args) {
-		String magasin_to_analyse ="musique-instruments";
+		String magasin_to_analyse ="maison";		
+		//String magasin_to_analyse ="musique-instruments";
 		//String magasin_to_analyse ="dvd";
 		String output_directory="/home/sduprey/My_Data/My_Outgoing_Data/My_Attributes_Filling";
 		if (args.length >= 1){
 			magasin_to_analyse = args[0];
 		} 
-
 		if (args.length == 0) {
 			System.out.println("No magasin specified : choosing "+magasin_to_analyse);
 		}
-
 		if (args.length == 2){
 			output_directory = args[1];
 		}
-
 		if (args.length == 1){
 			System.out.println("No output directory specified : choosing "+output_directory);
 		}
@@ -183,11 +181,11 @@ public class ProcessOneMagasinQualityScore {
 			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_directory+"/"+magasin_to_analyse+".csv"), "UTF-8"));
 			// we write the header
 			writer.write("ATTRIBUTE_NAME;FILLED_PERCENTAGE\n");
-			Iterator it = rayon_argument_counting.entrySet().iterator();
+			Iterator<Map.Entry<String, Integer>> it = rayon_argument_counting.entrySet().iterator();
 			while (it.hasNext()) {
-				Map.Entry pairs = (Map.Entry)it.next();
-				String argument_name=(String)pairs.getKey();
-				Integer count = (Integer)pairs.getValue();
+				Map.Entry<String, Integer> pairs = it.next();
+				String argument_name=pairs.getKey();
+				Integer count =pairs.getValue();
 				System.out.println("Attribut name : " +argument_name);
 				double filled_percent =((double)count)/((double)global_number_products_with_arguments)*100;
 				System.out.println("Filled percentage : " +filled_percent +"%");

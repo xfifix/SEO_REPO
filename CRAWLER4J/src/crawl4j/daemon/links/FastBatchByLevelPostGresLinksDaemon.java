@@ -38,7 +38,7 @@ import crawl4j.urlutilities.URL_Utilities;
 public class FastBatchByLevelPostGresLinksDaemon {
 
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
-	private static int depth_threshold = 6;
+	private static int depth_threshold = 8;
 
 	// global cache which is never flushed until insertion of all relations for all depths
 	private static Map<String,Integer> url_id_mapping = new HashMap<String,Integer>();
