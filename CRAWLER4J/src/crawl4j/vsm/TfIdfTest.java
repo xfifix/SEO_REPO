@@ -8,6 +8,16 @@ public class TfIdfTest {
 		String text2 = "le loup rôde dans le jardin et cherche des lapins";
 		System.out.println("TF similarity" + CorpusCache.computeTFSimilarity(text1, text2));
 		System.out.println("TFIDF similarity" + CorpusCache.computeTFSIDFimilarity(text1, text2));
+		
+		System.out.println("TF similarity" + CorpusCache.computeTFSimilarity(text2, text1));
+		System.out.println("TFIDF similarity" + CorpusCache.computeTFSIDFimilarity(text2, text1));
+		
+		System.out.println("TF similarity" + CorpusCache.computeTFSimilarity(text2, text2));
+		System.out.println("TFIDF similarity" + CorpusCache.computeTFSIDFimilarity(text2, text2));
+		
+		System.out.println("TF similarity" + CorpusCache.computeTFSimilarity(text1, text1));
+		System.out.println("TFIDF similarity" + CorpusCache.computeTFSIDFimilarity(text1, text1));
+		
 	}
 }
 		
