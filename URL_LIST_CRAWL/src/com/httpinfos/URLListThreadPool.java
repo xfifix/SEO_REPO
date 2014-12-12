@@ -1,5 +1,7 @@
 package com.httpinfos;
+import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -17,13 +19,21 @@ import java.util.logging.Logger;
 public class URLListThreadPool {
 
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/url_list_infos.properties";
-	private static int fixed_pool_size = 50;
-	private static int size_bucket = 1000;
+	private static String xpathconf_path = "/home/sduprey/My_Data/My_Xpath_Conf/xpath.conf";
+	private static String[] xpath_expression = new String[5];
+	private static int fixed_pool_size = 80;
+	private static int size_bucket = 2000;
 	private static List<Integer> tofetch_list = new ArrayList<Integer>();
 
 	public static void main(String[] args) {
+		try {
+			loadXpathExpressions();
+		} catch (IOException e) {
+			System.out.println("Trouble reading xpath expressions to parse");
+			e.printStackTrace();
+			System.exit(0);
+		}
 		String my_user_agent= "CdiscountBot-crawler";
-
 		if (args.length>=1){
 			my_user_agent= args[0];
 		} else {
@@ -106,7 +116,7 @@ public class URLListThreadPool {
 					// one new connection per task
 					Connection local_con = DriverManager.getConnection(url, user, passwd);
 					System.out.println("Launching another thread with "+local_count+ " URLs to fetch");
-					Runnable worker = new URLListWorkerThread(local_con,thread_list,my_user_agent);
+					Runnable worker = new URLListWorkerThread(local_con,thread_list,my_user_agent,xpath_expression);
 					executor.execute(worker);		
 					// we initialize everything for the next thread
 					local_count=0;
@@ -118,7 +128,7 @@ public class URLListThreadPool {
 				// one new connection per task
 				Connection local_con = DriverManager.getConnection(url, user, passwd);
 				System.out.println("Launching another thread with "+local_count+ " URLs to fetch");
-				Runnable worker = new URLListWorkerThread(local_con,thread_list,my_user_agent);
+				Runnable worker = new URLListWorkerThread(local_con,thread_list,my_user_agent,xpath_expression);
 				executor.execute(worker);
 			}
 			tofetch_list.clear();
@@ -151,5 +161,15 @@ public class URLListThreadPool {
 
 	}
 
-
+	public static void loadXpathExpressions() throws IOException{
+		BufferedReader br = new BufferedReader(new FileReader(xpathconf_path));
+		String line="";
+		int counter = 0;
+		while (((line = br.readLine()) != null ) && counter < 5) {
+			xpath_expression[counter] = line;
+			counter ++;
+		}
+		br.close();
+	}
 }
+

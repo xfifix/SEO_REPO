@@ -9,7 +9,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,12 +16,18 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.parsing.utility.XPathUtility;
+
 public class URLListWorkerThread implements Runnable {
+
+	private static String updateStatement ="UPDATE HTTPINFOS_LIST SET STATUS=?, H1=?, TITLE=?, XPATH1=?, XPATH2=?, XPATH3=?, XPATH4=?, XPATH5=?, TO_FETCH=FALSE WHERE ID=?";
+	private String[] xpathExpressions;
 	private String user_agent;
 	private List<ULRId> my_urls_to_fetch = new ArrayList<ULRId>();
 	private Connection con;
 
-	public URLListWorkerThread(Connection con ,List<Integer> to_fetch, String my_user_agent) throws SQLException{
+	public URLListWorkerThread(Connection con ,List<Integer> to_fetch, String my_user_agent, String[] xpathExpressions) throws SQLException{
+		this.xpathExpressions = xpathExpressions;
 		this.user_agent=my_user_agent;
 		this.con = con;
 		String my_url="";
@@ -70,18 +75,28 @@ public class URLListWorkerThread implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
+
 	// batched update
 	private void updateStatus(List<URLInfo> infos){
 		System.out.println("Adding to batch : " + infos.size() + "ULRs into database");
 		try {
-			Statement st = con.createStatement();       
-			con.setAutoCommit(false);      
+			//Statement st = con.createStatement();
+			con.setAutoCommit(false); 
+			PreparedStatement st = con.prepareStatement(updateStatement);
 			for (int i=0;i<infos.size();i++){
 				String H1= infos.get(i).getH1().replace("'", "");
 				String TITLE = infos.get(i).getTitle().replace("'", "");
-				String batch ="UPDATE HTTPINFOS_LIST SET STATUS="+infos.get(i).getStatus()+", H1='"+H1+"', TITLE='"+TITLE+ "',TO_FETCH=FALSE WHERE ID="+infos.get(i).getId();
-				st.addBatch(batch);
+				String[] XPATHRESULTS = infos.get(i).getXpathResults();
+				st.setString(1, H1);
+				st.setString(2, TITLE);
+				st.setString(3, XPATHRESULTS[0]);
+				st.setString(4, XPATHRESULTS[1]);
+				st.setString(5, XPATHRESULTS[2]);
+				st.setString(6, XPATHRESULTS[3]);
+				st.setString(7, XPATHRESULTS[4]);
+				st.setInt(8, infos.get(i).getId());
+				//	String batch ="UPDATE HTTPINFOS_LIST SET STATUS="+infos.get(i).getStatus()+", H1='"+H1+"', TITLE='"+TITLE+ "',TO_FETCH=FALSE WHERE ID="+infos.get(i).getId();
+				st.addBatch();
 			}      
 			//int counts[] = st.executeBatch();
 			System.out.println("Beginning to insert : " + infos.size() + "ULRs into database");
@@ -154,7 +169,14 @@ public class URLListWorkerThread implements Runnable {
 					conc_title=conc_title+title.text();
 				}				
 				my_info.setTitle(conc_title);
-
+				String[] xpathResults = new String[5];
+				int local_counter = 0;
+				for (String xpath : xpathExpressions){
+					String content = XPathUtility.parseContent(html, xpath);
+					xpathResults[local_counter]=content;
+					local_counter++;
+				}
+				my_info.setXpathResults(xpathResults);
 			} catch (Exception e){
 				System.out.println("Error with "+line_info);
 				e.printStackTrace();
@@ -195,6 +217,7 @@ public class URLListWorkerThread implements Runnable {
 		public void setId(int id) {
 			this.id = id;
 		}
+		private String[] xpathResults;
 		private String h1="";
 		private String title="";
 		private int status=-1;
@@ -215,6 +238,12 @@ public class URLListWorkerThread implements Runnable {
 		}
 		public void setStatus(int status) {
 			this.status = status;
+		}
+		public String[] getXpathResults() {
+			return xpathResults;
+		}
+		public void setXpathResults(String[] xpathResults) {
+			this.xpathResults = xpathResults;
 		}
 	}
 

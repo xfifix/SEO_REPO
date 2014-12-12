@@ -19,7 +19,6 @@ public class StatusListThreadPool {
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/url_list_status.properties";
 	private static int fixed_pool_size = 50;
 	private static int size_bucket = 20;
-
 	private static List<Integer> tofetch_list = new ArrayList<Integer>();
 
 	public static void main(String[] args) {
