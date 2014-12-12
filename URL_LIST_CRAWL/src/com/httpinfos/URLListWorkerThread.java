@@ -19,6 +19,7 @@ import org.jsoup.select.Elements;
 import com.parsing.utility.XPathUtility;
 
 public class URLListWorkerThread implements Runnable {
+	private int batch_size = 100;
 
 	private static String updateStatement ="UPDATE HTTPINFOS_LIST SET STATUS=?, H1=?, TITLE=?, XPATH1=?, XPATH2=?, XPATH3=?, XPATH4=?, XPATH5=?, TO_FETCH=FALSE WHERE ID=?";
 	private String[] xpathExpressions;
@@ -60,13 +61,25 @@ public class URLListWorkerThread implements Runnable {
 	}
 
 	public void run() {
-		List<URLInfo> infos=processCommand();
-		updateStatus(infos);
-		System.out.println(Thread.currentThread().getName()+" End");
+		List<ULRId> line_infos = new ArrayList<ULRId>();
+		for (ULRId id :my_urls_to_fetch){
+			line_infos.add(id);
+			if (line_infos.size() !=0 && line_infos.size() % batch_size ==0) {
+				runBatch(line_infos);	
+				line_infos.clear();
+				line_infos = new ArrayList<ULRId>();
+			}
+		}
 		close_connection();
 		System.out.println(Thread.currentThread().getName()+" closed connection");
 	}
 
+	public void runBatch(List<ULRId> line_infos){
+		List<URLInfo> infos=processCommand(line_infos);
+		updateStatus(infos);
+		System.out.println(Thread.currentThread().getName()+" End");
+	}
+	
 	private void close_connection(){
 		try {
 			this.con.close();
@@ -87,16 +100,18 @@ public class URLListWorkerThread implements Runnable {
 				String H1= infos.get(i).getH1().replace("'", "");
 				String TITLE = infos.get(i).getTitle().replace("'", "");
 				String[] XPATHRESULTS = infos.get(i).getXpathResults();
-				st.setString(1, H1);
-				st.setString(2, TITLE);
-				st.setString(3, XPATHRESULTS[0]);
-				st.setString(4, XPATHRESULTS[1]);
-				st.setString(5, XPATHRESULTS[2]);
-				st.setString(6, XPATHRESULTS[3]);
-				st.setString(7, XPATHRESULTS[4]);
-				st.setInt(8, infos.get(i).getId());
+				st.setInt(1, infos.get(i).getStatus());
+				st.setString(2, H1);
+				st.setString(3, TITLE);
+				st.setString(4, XPATHRESULTS[0]);
+				st.setString(5, XPATHRESULTS[1]);
+				st.setString(6, XPATHRESULTS[2]);
+				st.setString(7, XPATHRESULTS[3]);
+				st.setString(8, XPATHRESULTS[4]);
+				st.setInt(9, infos.get(i).getId());
+				//UPDATE HTTPINFOS_LIST SET STATUS=?, H1=?, TITLE=?, XPATH1=?, XPATH2=?, XPATH3=?, XPATH4=?, XPATH5=?, TO_FETCH=FALSE WHERE ID=?";
 				//	String batch ="UPDATE HTTPINFOS_LIST SET STATUS="+infos.get(i).getStatus()+", H1='"+H1+"', TITLE='"+TITLE+ "',TO_FETCH=FALSE WHERE ID="+infos.get(i).getId();
-				st.addBatch();
+				st.addBatch();		
 			}      
 			//int counts[] = st.executeBatch();
 			System.out.println("Beginning to insert : " + infos.size() + "ULRs into database");
@@ -128,9 +143,9 @@ public class URLListWorkerThread implements Runnable {
 	//		System.out.println("Inserting : " + infos.size() + "ULRs into database");
 	//	}
 
-	private List<URLInfo> processCommand() {
+	private List<URLInfo> processCommand(List<ULRId> line_infos) {
 		List<URLInfo> my_fetched_infos = new ArrayList<URLInfo>();
-		for(ULRId line_info : my_urls_to_fetch){
+		for(ULRId line_info : line_infos){
 			// second method
 			URLInfo my_info = new URLInfo();
 			my_info.setId(line_info.getId());
