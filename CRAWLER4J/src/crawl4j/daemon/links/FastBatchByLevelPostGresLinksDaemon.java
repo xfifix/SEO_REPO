@@ -38,13 +38,13 @@ import crawl4j.urlutilities.URL_Utilities;
 public class FastBatchByLevelPostGresLinksDaemon {
 
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
-	private static int depth_threshold = 8;
+	private static int depth_threshold = 5;
 
 	// global cache which is never flushed until insertion of all relations for all depths
 	private static Map<String,Integer> url_id_mapping = new HashMap<String,Integer>();
 	// global cache which is never flushed listing all nodes not found
 	private static List<String> url_not_found = new ArrayList<String>();
-	
+
 
 	// local cache for each depth which is flushed after each depth completion
 	private static List<NodeInfos> nodes_infos = new ArrayList<NodeInfos>();
@@ -105,10 +105,10 @@ public class FastBatchByLevelPostGresLinksDaemon {
 				System.exit(0);
 			}
 		}
-		
+
 		// we here list all nodes never found 
 		listingNofFoundNodes();
-		
+
 		// we don't do it here as the computation might be heavy
 		// we delegate to another subcrawler
 		//		// computing page rank
@@ -169,6 +169,7 @@ public class FastBatchByLevelPostGresLinksDaemon {
 			}
 			st.executeBatch();		 
 			con.commit();
+			st.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -226,6 +227,7 @@ public class FastBatchByLevelPostGresLinksDaemon {
 			nodes_infos.add(result);
 			System.out.println("Putting into cache URL node number :"+counter + " : " +url_node +" for depth : "+depth);
 		}
+		rs.close();
 		pst.close();
 	}
 
@@ -244,6 +246,7 @@ public class FastBatchByLevelPostGresLinksDaemon {
 			build_all_edges(url_node,outSet);
 			System.out.println("Getting into cache relations for URL number :"+counter + " : " +url_node);
 		}
+		rs.close();
 		pst.close();
 	}
 

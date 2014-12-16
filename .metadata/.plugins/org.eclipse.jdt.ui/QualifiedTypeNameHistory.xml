@@ -35,7 +35,6 @@
 <fullyQualifiedTypeName name="java.util.Map.Entry"/>
 <fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="crawl4j.urlutilities.URL_Utilities"/>
-<fullyQualifiedTypeName name="java.util.Map"/>
 <fullyQualifiedTypeName name="java.sql.Connection"/>
 <fullyQualifiedTypeName name="java.sql.ResultSet"/>
 <fullyQualifiedTypeName name="java.sql.PreparedStatement"/>
@@ -53,4 +52,6 @@
 <fullyQualifiedTypeName name="org.htmlcleaner.CleanerProperties"/>
 <fullyQualifiedTypeName name="javax.xml.xpath.XPathConstants"/>
 <fullyQualifiedTypeName name="com.parsing.utility.XPathUtility"/>
+<fullyQualifiedTypeName name="java.util.Map"/>
+<fullyQualifiedTypeName name="crawl4j.urlutilities.ArboInfo"/>
 </qualifiedTypeNameHistroy>

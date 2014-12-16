@@ -5,8 +5,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 public class URL_Utilities {
+
+	private static Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg" + "|png|tiff|mid|mp2|mp3|mp4"
+			+ "|wav|avi|mov|mpeg|ram|m4v|ico|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 	//	Voici le principe de hiérarchie pour les navid (première séquence de chiffres indiquée après identifiant type de page dansl’url ( ex : /v- , /l-, /f-)…
 	//	+ 2 chiffres pour chaque sous-strate ( car 99 nœuds max pourune même strate)
 	//	 
@@ -154,9 +158,15 @@ public class URL_Utilities {
 		Set<String> outputSet = new HashSet<String>();
 		for (String url_out : url_outs){
 			url_out=url_out.trim();
-			outputSet.add(url_out);
+			if(shouldVisit(url_out)){
+				outputSet.add(url_out);
+			}
 		}
 		return outputSet;
+	}
+
+	public static boolean shouldVisit(String urlNode) {
+		return !filters.matcher(urlNode).matches() && urlNode.startsWith("http://www.cdiscount.com/");
 	}
 
 	public static String drop_parameters(String url_with_possibly_parameters){
