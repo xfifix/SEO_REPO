@@ -8,7 +8,6 @@ public class ArboInfo {
 	private String short_desc="";
 	private int status_code=0;
 	private int depth=0;
-	private int inlinks_size=0;
 	private int links_size=0;
 	private int nb_breadcrumbs=0;
 	private int nb_ratings=0;
@@ -16,12 +15,7 @@ public class ArboInfo {
 	private int nb_prices=0;
 	private int nb_availabilities=0;
 	private int nb_reviews=0;
-	public int getInlinks_size() {
-		return inlinks_size;
-	}
-	public void setInlinks_size(int inlinks_size) {
-		this.inlinks_size = inlinks_size;
-	}
+
 	public int getNb_breadcrumbs() {
 		return nb_breadcrumbs;
 	}

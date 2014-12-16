@@ -18,7 +18,7 @@ import crawl4j.urlutilities.ArboInfo;
 public class ArboCrawlDataManagement {
 	// we here keep every thing in RAM memory because the inlinks cache updates each time.
 	// we save everything just at the very end of the crawl
-	
+
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
 
 	private static String insert_statement="INSERT INTO ARBOCRAWL_RESULTS (URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH,"
@@ -29,7 +29,7 @@ public class ArboCrawlDataManagement {
 	private long totalLinks;
 	private long totalTextSize;
 	private Connection con;
-	
+
 	// local cache which should contain the site up to depth 5
 	// url arbo info cache
 	private Map<String, ArboInfo> crawledContent = new HashMap<String, ArboInfo>();
@@ -129,7 +129,8 @@ public class ArboCrawlDataManagement {
 					st.setInt(6,info.getStatus_code());
 					st.setInt(7,info.getDepth());
 					st.setInt(8,info.getLinks_size());
-					st.setInt(9,info.getInlinks_size());
+					Integer nb_inlinks = inlinks_cache.get(url).size();
+					st.setInt(9,nb_inlinks);
 					st.setInt(10,info.getNb_breadcrumbs());
 					st.setInt(11,info.getNb_aggregated_rating());
 					st.setInt(12,info.getNb_ratings());
@@ -158,7 +159,7 @@ public class ArboCrawlDataManagement {
 		}	
 		crawledContent.clear();
 	}
-	
+
 	// we here perform upsert to keep up to date our crawl referential
 	public void saveData(){
 		saveDatabaseData();
@@ -168,9 +169,9 @@ public class ArboCrawlDataManagement {
 	public void setCon(Connection con) {
 		this.con = con;
 	}
-	
+
 	public Connection getCon() {
-		
+
 		return con;
 	}
 	public Map<String, ArboInfo> getCrawledContent() {
@@ -179,5 +180,13 @@ public class ArboCrawlDataManagement {
 
 	public void setCrawledContent(Map<String, ArboInfo> crawledContent) {
 		this.crawledContent = crawledContent;
+	}
+
+	public Map<String, Set<String>> getInlinks_cache() {
+		return inlinks_cache;
+	}
+
+	public void setInlinks_cache(Map<String, Set<String>> inlinks_cache) {
+		this.inlinks_cache = inlinks_cache;
 	}
 }
