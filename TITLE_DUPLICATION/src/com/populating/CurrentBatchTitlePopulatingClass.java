@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import com.urlutilities.URL_Utilities;
 
 public class CurrentBatchTitlePopulatingClass {
+	private static String csvFile = "/home/sduprey/My_Data/My_GWT_Extracts/20140825-duplis-titles-GWT.csv";
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/title_duplication.properties";
 	private static int counter = 0;
 	private static int batch_size = 10000;
@@ -53,7 +54,6 @@ public class CurrentBatchTitlePopulatingClass {
 		String passwd = props.getProperty("db.passwd");
 		// the following properties have been identified for our files to parse 
 		// and insert into a database
-		String csvFile = "/home/sduprey/My_Data/My_GWT_Extracts/2014_11_17_extract-gwt-duplis-titles.csv";
 		
 		// Instantiating the database
 		Connection con = null;
@@ -131,6 +131,9 @@ public class CurrentBatchTitlePopulatingClass {
 					nb_line++;
 				}
 			}
+			System.out.println("Inserting a batch");
+			pst.executeBatch();		 
+			con.commit();
 		} catch (Exception ex) {
 			Logger lgr = Logger.getLogger(CurrentBatchTitlePopulatingClass.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);

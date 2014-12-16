@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import com.urlutilities.URL_Utilities;
 
 public class HistorizingBatchTitlePopulatingClass {
+	private static String csvFile = "/home/sduprey/My_Data/My_GWT_Extracts/20140825-duplis-titles-GWT.csv";
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/title_duplication.properties";
 	private static int counter = 0;
 	private static int batch_size = 10000;
@@ -53,7 +54,7 @@ public class HistorizingBatchTitlePopulatingClass {
 		String passwd = props.getProperty("db.passwd");
 		// the following properties have been identified for our files to parse 
 		// and insert into a database
-		String csvFile = "/home/sduprey/My_Data/My_GWT_Extracts/extract_dupli_20_oct.csv";
+
 		// Instantiating the database
 		Connection con = null;
 		PreparedStatement pst = null;
@@ -89,7 +90,7 @@ public class HistorizingBatchTitlePopulatingClass {
 						String[] splitted_line = remaining.split("\\|");
 						String magasin = "";
 						String rayon = "";
-    					String produit = "";
+						String produit = "";
 						String current_url="";
 						// we have at least two couples
 						if (splitted_line.length>=2){
@@ -127,6 +128,10 @@ public class HistorizingBatchTitlePopulatingClass {
 					}
 					nb_line++;
 				}
+				System.out.println("Inserting a batch");
+				pst.executeBatch();		 
+				con.commit();
+				batch_current_size=0;
 			}
 		} catch (Exception ex) {
 			Logger lgr = Logger.getLogger(HistorizingBatchTitlePopulatingClass.class.getName());

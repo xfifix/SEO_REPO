@@ -24,7 +24,7 @@ public class ContinuousCrawler extends WebCrawler {
 	// size of the in memory cache per thread (200 default value)
 	private static int bulk_size = 200;
 
-	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg" + "|png|tiff?|mid|mp2|mp3|mp4"
+	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg" + "|ico|png|tiff|mid|mp2|mp3|mp4"
 			+ "|wav|avi|mov|mpeg|ram|m4v|ico|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 
 	CrawlDataManagement myCrawlDataManager;

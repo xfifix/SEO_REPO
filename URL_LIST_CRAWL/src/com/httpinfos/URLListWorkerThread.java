@@ -79,7 +79,7 @@ public class URLListWorkerThread implements Runnable {
 		updateStatus(infos);
 		System.out.println(Thread.currentThread().getName()+" End");
 	}
-	
+
 	private void close_connection(){
 		try {
 			this.con.close();
@@ -103,11 +103,19 @@ public class URLListWorkerThread implements Runnable {
 				st.setInt(1, infos.get(i).getStatus());
 				st.setString(2, H1);
 				st.setString(3, TITLE);
-				st.setString(4, XPATHRESULTS[0]);
-				st.setString(5, XPATHRESULTS[1]);
-				st.setString(6, XPATHRESULTS[2]);
-				st.setString(7, XPATHRESULTS[3]);
-				st.setString(8, XPATHRESULTS[4]);
+				if (XPATHRESULTS != null){
+					st.setString(4, XPATHRESULTS[0]);
+					st.setString(5, XPATHRESULTS[1]);
+					st.setString(6, XPATHRESULTS[2]);
+					st.setString(7, XPATHRESULTS[3]);
+					st.setString(8, XPATHRESULTS[4]);
+				}else {
+					st.setString(4, "");
+					st.setString(5, "");
+					st.setString(6, "");
+					st.setString(7, "");
+					st.setString(8, "");
+				}
 				st.setInt(9, infos.get(i).getId());
 				//UPDATE HTTPINFOS_LIST SET STATUS=?, H1=?, TITLE=?, XPATH1=?, XPATH2=?, XPATH3=?, XPATH4=?, XPATH5=?, TO_FETCH=FALSE WHERE ID=?";
 				//	String batch ="UPDATE HTTPINFOS_LIST SET STATUS="+infos.get(i).getStatus()+", H1='"+H1+"', TITLE='"+TITLE+ "',TO_FETCH=FALSE WHERE ID="+infos.get(i).getId();
@@ -193,7 +201,7 @@ public class URLListWorkerThread implements Runnable {
 				}
 				my_info.setXpathResults(xpathResults);
 			} catch (Exception e){
-				System.out.println("Error with "+line_info);
+				System.out.println("@@@@@@@@@@@@@@@@ Error with "+line_info);
 				e.printStackTrace();
 			}
 
@@ -204,7 +212,6 @@ public class URLListWorkerThread implements Runnable {
 		}
 		return my_fetched_infos;
 	}
-
 
 	class ULRId{
 		private String url="";
