@@ -51,10 +51,48 @@ public class ArboParsingTestingClass {
 			Elements aggregateRatings = doc.getElementsByAttributeValue("itemprop", "aggregateRating");
 			System.out.println("Number of aggregateRatings : "+aggregateRatings.size());
 			System.out.println("aggregateRatings text : "  + aggregateRatings.text());
-
 			
+			Elements ratingValues = doc.getElementsByAttributeValue("itemprop", "ratingValue");
+			System.out.println("Number of ratingValues : "+ratingValues.size());
+			System.out.println("ratingValues text : "  + ratingValues.text());
 			
+			Elements prices = doc.getElementsByAttributeValue("itemprop", "price");
+			System.out.println("Number of prices : "+prices.size());
+			System.out.println("prices text : "  + prices.text());
+			
+			Elements priceCurrencies = doc.getElementsByAttributeValue("itemprop", "priceCurrency");
+			System.out.println("Number of price currencies : "+priceCurrencies.size());
+			System.out.println("price currencies text : "  + priceCurrencies.text());
+			
+			Elements availabilities = doc.getElementsByAttributeValue("itemprop", "availability");
+			System.out.println("Number of availability : "+availabilities.size());
+			System.out.println("availability text : "  + availabilities.text());
+			
+			Elements descriptions = doc.getElementsByAttributeValue("itemprop", "description");
+			System.out.println("Number of description : "+descriptions.size());
+			System.out.println("description text : "  + descriptions.text());
 
+			Elements names = doc.getElementsByAttributeValue("itemprop", "name");
+			System.out.println("Number of names : "+names.size());
+			System.out.println("names text : "  + names.text());
+			Elements reviews = doc.getElementsByAttributeValue("itemprop", "review");
+			System.out.println("Number of reviews : "+reviews.size());
+			System.out.println("reviews text : "  + reviews.text());
+			Elements reviewRatings = doc.getElementsByAttributeValue("itemprop", "reviewRating");
+			System.out.println("Number of reviewRating : "+reviewRatings.size());
+			System.out.println("reviewRating text : "  + reviewRatings.text());
+			Elements worstRatings = doc.getElementsByAttributeValue("itemprop", "worstRating");
+			System.out.println("Number of worstRatings : "+worstRatings.size());
+			System.out.println("worstRatings text : "  + worstRatings.text());
+			Elements bestRatings = doc.getElementsByAttributeValue("itemprop", "bestRating");
+			System.out.println("Number of bestRatings : "+bestRatings.size());
+			System.out.println("bestRatings text : "  + bestRatings.text());
+			Elements reviewCounts = doc.getElementsByAttributeValue("itemprop", "reviewCount");
+			System.out.println("Number of reviewCounts : "+reviewCounts.size());
+			System.out.println("reviewCounts text : "  + reviewCounts.text());		
+			Elements images = doc.getElementsByAttributeValue("itemprop", "image");
+			System.out.println("Number of images : "+images.size());
+			System.out.println("images text : "  + images.text());	
             // getting all the javascript code to parse it if some data is contained in it
 			URL url = new URL(my_url_to_fetch);
 			HttpURLConnection connection = (HttpURLConnection)url.openConnection();
@@ -73,8 +111,7 @@ public class ArboParsingTestingClass {
 			connection.disconnect();	
 			System.out.println(pageString.contains("http://data-vocabulary.org/Breadcrumb"));
 			System.out.println(pageString.contains("itemprop=\"aggregateRating\""));
-			System.out.println(pageString.contains("itemprop=\"ratingValue\""));
-			
+			System.out.println(pageString.contains("itemprop=\"ratingValue\""));		
 			System.out.println(pageString.contains("itemprop=\"price\""));
 			System.out.println(pageString.contains("itemprop=\"priceCurrency\""));
 			System.out.println(pageString.contains("itemprop=\"availability\""));
@@ -86,30 +123,9 @@ public class ArboParsingTestingClass {
 			System.out.println(pageString.contains("itemprop=\"bestRating\""));
 			System.out.println(pageString.contains("itemprop=\"reviewCount\""));
 			System.out.println(pageString.contains("itemprop=\"image\""));
-			
-
-			//          "itemtype", "http://data-vocabulary.org/Breadcrumb"
-			//          itemprop="aggregateRating" itemtype="http://schema.org/AggregateRating"		
-			//			itemprop="ratingValue"
-			//			itemprop="offers" itemtype="http://schema.org/Offer"
-			//			itemprop="price"
-			//			itemprop="priceCurrency"
-			//			itemprop="availability"
-			//			itemprop="description"
-			//			itemprop="name"
-			//			itemprop="title"
-			//			itemprop="review" itemtype="http://schema.org/Review"
-			//			itemprop="reviewRating" itemtype="http://schema.org/Rating"
-			//			itemprop="worstRating"
-			//			itemprop="bestRating"
-			//			itemprop="reviewCount"
-			//    		 itemprop="review" itemtype="http://schema.org/Review"			
-			//    		 itemprop="image"
 		}
 		catch (IOException e) {
 			e.printStackTrace();
 		} 
-
 	}
-
 }
