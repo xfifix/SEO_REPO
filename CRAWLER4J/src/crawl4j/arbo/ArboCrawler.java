@@ -91,61 +91,33 @@ public class ArboCrawler extends WebCrawler {
 			// we here filter the outlinks we want to keep (they must be internal and they must respect the robot.txt
 			Set<String> filtered_links = filter_out_links(links);
 			info.setLinks_size(filtered_links.size());
-			info.setOut_links(filtered_links.toString());
+			
+			Document doc = Jsoup.parse(html);	
+			// getting the wanted parameters	
+			Elements breadCrumbs = doc.getElementsByAttributeValue("itemtype", "http://data-vocabulary.org/Breadcrumb");
+			info.setNb_breadcrumbs(breadCrumbs.size());
 
-			Document doc = Jsoup.parse(html);
-			Elements titleel = doc.select("title");
-			info.setTitle(titleel.text());
-			// fetching the H1 element
-			Elements h1el = doc.select("h1");
-			info.setH1(h1el.text());
-			// finding the footer
-			Elements footerel = doc.select("div.ftMention");
-			info.setFooter(footerel.text());
-			// finding the ztd
-			Elements ztdunfolded = doc.select("p.scZtdTxt");
-			Elements ztdfolded = doc.select("p.scZtdH");
-			info.setZtd((ztdunfolded==null? "":ztdunfolded.text())+(ztdfolded==null? "":ztdfolded.text()));
-			// finding the short description
-			Elements short_desc_el = doc.select("p.fpMb");
-			info.setShort_desc((short_desc_el==null? "":short_desc_el.text()));
-			// finding the vendor
-			Elements resellers = doc.select(".fpSellBy");
-			StringBuilder resellerBuilder = new StringBuilder();
-			for (Element reseller : resellers){
-				if(reseller.getElementsByTag("a") != null){
-					resellerBuilder.append(reseller.getElementsByTag("a").text());
-				}
-			}
-			String vendor = resellerBuilder.toString();
-			info.setVendor(vendor);
+			Elements aggregateRatings = doc.getElementsByAttributeValue("itemprop", "aggregateRating");
+			info.setNb_aggregated_rating(aggregateRatings.size());
 
-			// finding the number of attributes
-			Elements attributes = doc.select(".fpDescTb tr");
-			int nb_arguments = 0 ;
-			StringBuilder arguments_text = new StringBuilder();
-			for (Element tr_element : attributes){
-				Elements td_elements = tr_element.select("td");
-				if (td_elements.size() == 2){
-					nb_arguments++;
-					String category = td_elements.get(0).text();
-					arguments_text.append(category+"|||");	
-					String description = td_elements.get(1).text();                                    
-					arguments_text.append(description);		
-					arguments_text.append("@@");
-				}
-			}
-			info.setAtt_number(nb_arguments);
-			info.setAtt_desc(arguments_text.toString());
-		}
+			Elements ratingValues = doc.getElementsByAttributeValue("itemprop", "ratingValue");
+            info.setNb_ratings(ratingValues.size());
 
-		Header[] responseHeaders = page.getFetchResponseHeaders();
-		StringBuilder conc = new StringBuilder();
-		if (responseHeaders != null) {
-			for (Header header : responseHeaders) {
-				conc.append( header.getName() + ": " + header.getValue()  + "@");
-			}
-			info.setResponse_headers(conc.toString());	
+			Elements prices = doc.getElementsByAttributeValue("itemprop", "price");
+			info.setNb_prices(prices.size());
+
+			Elements availabilities = doc.getElementsByAttributeValue("itemprop", "availability");
+			info.setNb_availabilities(availabilities.size());
+			
+			Elements reviews = doc.getElementsByAttributeValue("itemprop", "review");
+			info.setNb_reviews(reviews.size());
+
+			Elements reviewCounts = doc.getElementsByAttributeValue("itemprop", "reviewCount");
+			info.setNb_reviews_count(reviewCounts.size());
+			
+			Elements images = doc.getElementsByAttributeValue("itemprop", "image");
+			info.setNb_images(images.size());
+             // end of predictor parsing
 		}
 
 		myCrawlDataManager.getCrawledContent().put(url,info);

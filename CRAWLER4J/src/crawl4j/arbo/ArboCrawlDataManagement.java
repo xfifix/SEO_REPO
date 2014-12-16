@@ -2,7 +2,6 @@ package crawl4j.arbo;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -10,12 +9,9 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 import java.util.Properties;
-
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import java.util.Set;
 
 import crawl4j.urlutilities.ArboInfo;
 
@@ -24,18 +20,16 @@ public class ArboCrawlDataManagement {
 	// we save everything just at the very end of the crawl
 	
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
-	private static String insert_statement="INSERT INTO CRAWL_RESULTS(URL,WHOLE_TEXT,TITLE,LINKS_SIZE,"
-			+ "LINKS,H1,FOOTER_EXTRACT,ZTD_EXTRACT,SHORT_DESCRIPTION,VENDOR,ATTRIBUTES,NB_ATTRIBUTES,STATUS_CODE,HEADERS,DEPTH,PAGE_TYPE,MAGASIN,RAYON,PRODUIT,LAST_UPDATE)"
-			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-	private static String update_statement ="UPDATE CRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,LINKS_SIZE=?,LINKS=?,H1=?,FOOTER_EXTRACT=?,ZTD_EXTRACT=?,SHORT_DESCRIPTION=?,VENDOR=?,ATTRIBUTES=?,NB_ATTRIBUTES=?,STATUS_CODE=?,HEADERS=?,DEPTH=?,PAGE_TYPE=?,MAGASIN=?,RAYON=?,PRODUIT=?,LAST_UPDATE=? WHERE URL=?";
+
+	private static String insert_statement="INSERT INTO ARBOCRAWL_RESULTS (URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH,"
+			+ " OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES INT, LAST_UPDATE)"
+			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 	private int totalProcessedPages;
 	private long totalLinks;
 	private long totalTextSize;
 	private Connection con;
 	
-
-
 	// local cache which should contain the site up to depth 5
 	// url arbo info cache
 	private Map<String, ArboInfo> crawledContent = new HashMap<String, ArboInfo>();
@@ -109,68 +103,46 @@ public class ArboCrawlDataManagement {
 	public void incTotalTextSize(int count) {
 		this.totalTextSize += count;
 	}
-
-	public void updateDatabaseData(){
+	// old and brute force way : we insert all URLs
+	public void saveDatabaseData(){
 		try{
 			Iterator<Entry<String, ArboInfo>> it = crawledContent.entrySet().iterator();
 			int local_counter = 0;
 			if (it.hasNext()){
 				local_counter++;
-				PreparedStatement st = con.prepareStatement(update_statement);
+				con.setAutoCommit(false);
+				PreparedStatement st = con.prepareStatement(insert_statement);
 				do {
 					local_counter ++;
 					Map.Entry<String, ArboInfo> pairs = (Map.Entry<String, ArboInfo>)it.next();
 					String url=pairs.getKey();
 					ArboInfo info = pairs.getValue();
-					// preparing the statement
-					st.setString(1,info.getText());
-					st.setString(2,info.getTitle());
-					st.setInt(3,info.getLinks_size());
-					st.setString(4,info.getOut_links());
-					st.setString(5,info.getH1());
-					st.setString(6,info.getFooter());
-					st.setString(7,info.getZtd());
-					st.setString(8,info.getShort_desc());
-					st.setString(9,info.getVendor());
-					st.setString(10,info.getAtt_desc());
-					st.setInt(11,info.getAtt_number());
-					st.setInt(12,info.getStatus_code());
-					st.setString(13,info.getResponse_headers());		
-					st.setInt(14,info.getDepth());
-					st.setString(15, info.getPage_type());
-					st.setString(16, info.getMagasin());
-					st.setString(17, info.getRayon());
-					st.setString(18, info.getProduit());
+					//INSERT INTO ARBOCRAWL_RESULTS 
+					//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, 
+					//DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS,
+					//NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES INT, LAST_UPDATE)	
+					st.setString(1,url);
+					st.setString(2,info.getText());
+					st.setString(3,info.getTitle());
+					st.setString(4,info.getH1());
+					st.setString(5,info.getShort_desc());
+					st.setInt(6,info.getStatus_code());
+					st.setInt(7,info.getDepth());
+					st.setInt(8,info.getLinks_size());
+					st.setInt(9,info.getInlinks_size());
+					st.setInt(10,info.getNb_breadcrumbs());
+					st.setInt(11,info.getNb_aggregated_rating());
+					st.setInt(12,info.getNb_ratings());
+					st.setInt(13,info.getNb_prices());
+					st.setInt(14,info.getNb_availabilities());
+					st.setInt(15,info.getNb_reviews());
+					st.setInt(16,info.getNb_images());
 					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-					st.setDate(19,sqlDate);
-					st.setString(20,url);
-					int affected_row = st.executeUpdate();
-					// if the row has not been updated, we have to insert it !
-					if(affected_row == 0){
-						PreparedStatement insert_st = con.prepareStatement(insert_statement);
-						insert_st.setString(1,url);
-						insert_st.setString(2,info.getText());
-						insert_st.setString(3,info.getTitle());
-						insert_st.setInt(4,info.getLinks_size());
-						insert_st.setString(5,info.getOut_links());
-						insert_st.setString(6,info.getH1());
-						insert_st.setString(7,info.getFooter());
-						insert_st.setString(8,info.getZtd());
-						insert_st.setString(9,info.getShort_desc());
-						insert_st.setString(10,info.getVendor());
-						insert_st.setString(11,info.getAtt_desc());
-						insert_st.setInt(12,info.getAtt_number());
-						insert_st.setInt(13,info.getStatus_code());
-						insert_st.setString(14,info.getResponse_headers());		
-						insert_st.setInt(15,info.getDepth());
-						insert_st.setString(16, info.getPage_type());
-						insert_st.setString(17, info.getMagasin());
-						insert_st.setString(18, info.getRayon());
-						insert_st.setString(19, info.getProduit());
-						insert_st.setDate(20,sqlDate);
-						insert_st.executeUpdate();
-					}
+					st.setDate(17,sqlDate);
+					st.addBatch();
 				}while (it.hasNext());	
+				st.executeBatch();		 
+				con.commit();
 				System.out.println(Thread.currentThread()+"Committed " + local_counter + " updates");
 			}
 		} catch (SQLException e){
@@ -180,18 +152,16 @@ public class ArboCrawlDataManagement {
 				try {
 					con.rollback();
 				} catch (SQLException ex1) {
-					Logger lgr = Logger.getLogger(ArboCrawlDataManagement.class.getName());
-					lgr.log(Level.ERROR, ex1.getMessage(), ex1);
+					ex1.printStackTrace();
 				}
 			}
-
-			Logger lgr = Logger.getLogger(ArboCrawlDataManagement.class.getName());
-			lgr.log(Level.ERROR, e.getMessage(), e);
 		}	
+		crawledContent.clear();
 	}
+	
 	// we here perform upsert to keep up to date our crawl referential
 	public void saveData(){
-		updateDatabaseData();
+		saveDatabaseData();
 		crawledContent.clear();
 	}
 
@@ -210,6 +180,4 @@ public class ArboCrawlDataManagement {
 	public void setCrawledContent(Map<String, ArboInfo> crawledContent) {
 		this.crawledContent = crawledContent;
 	}
-
-
 }

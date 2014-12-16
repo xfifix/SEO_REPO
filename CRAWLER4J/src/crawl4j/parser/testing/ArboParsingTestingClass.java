@@ -47,7 +47,6 @@ public class ArboParsingTestingClass {
 			System.out.println("Number of breadcrumbs : "+breadCrumbs.size());
 			System.out.println("Breadcrumbs text : "  + breadCrumbs.text());
 
-
 			Elements aggregateRatings = doc.getElementsByAttributeValue("itemprop", "aggregateRating");
 			System.out.println("Number of aggregateRatings : "+aggregateRatings.size());
 			System.out.println("aggregateRatings text : "  + aggregateRatings.text());

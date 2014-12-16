@@ -4,47 +4,75 @@ public class ArboInfo {
 	private String url="";
 	private String text="";
 	private String title="";
-	private int links_size=0;
-	private String out_links="";
 	private String h1="";
-	private String footer="";
-	private String ztd="";
 	private String short_desc="";
-	private String vendor="";
-	private String att_desc="";
-	private int att_number=0;
 	private int status_code=0;
-	private String response_headers="";;
 	private int depth=0;
-	private String page_type="";
-	private String magasin="";
-	private String rayon="";
-	private String produit="";
+	private int inlinks_size=0;
+	private int links_size=0;
+	private int nb_breadcrumbs=0;
+	private int nb_ratings=0;
+	private int nb_aggregated_rating=0;
+	private int nb_prices=0;
+	private int nb_availabilities=0;
+	private int nb_reviews=0;
+	public int getInlinks_size() {
+		return inlinks_size;
+	}
+	public void setInlinks_size(int inlinks_size) {
+		this.inlinks_size = inlinks_size;
+	}
+	public int getNb_breadcrumbs() {
+		return nb_breadcrumbs;
+	}
+	public void setNb_breadcrumbs(int nb_breadcrumbs) {
+		this.nb_breadcrumbs = nb_breadcrumbs;
+	}
+	public int getNb_ratings() {
+		return nb_ratings;
+	}
+	public void setNb_ratings(int nb_ratings) {
+		this.nb_ratings = nb_ratings;
+	}
+	public int getNb_aggregated_rating() {
+		return nb_aggregated_rating;
+	}
+	public void setNb_aggregated_rating(int nb_aggregated_rating) {
+		this.nb_aggregated_rating = nb_aggregated_rating;
+	}
+	public int getNb_prices() {
+		return nb_prices;
+	}
+	public void setNb_prices(int nb_prices) {
+		this.nb_prices = nb_prices;
+	}
+	public int getNb_availabilities() {
+		return nb_availabilities;
+	}
+	public void setNb_availabilities(int nb_availabilities) {
+		this.nb_availabilities = nb_availabilities;
+	}
+	public int getNb_reviews() {
+		return nb_reviews;
+	}
+	public void setNb_reviews(int nb_reviews) {
+		this.nb_reviews = nb_reviews;
+	}
+	public int getNb_reviews_count() {
+		return nb_reviews_count;
+	}
+	public void setNb_reviews_count(int nb_reviews_count) {
+		this.nb_reviews_count = nb_reviews_count;
+	}
+	public int getNb_images() {
+		return nb_images;
+	}
+	public void setNb_images(int nb_images) {
+		this.nb_images = nb_images;
+	}
+	private int nb_reviews_count=0;
+	private int nb_images=0;
 
-	public String getPage_type() {
-		return page_type;
-	}
-	public void setPage_type(String page_type) {
-		this.page_type = page_type;
-	}
-	public String getMagasin() {
-		return magasin;
-	}
-	public void setMagasin(String magasin) {
-		this.magasin = magasin;
-	}
-	public String getRayon() {
-		return rayon;
-	}
-	public void setRayon(String rayon) {
-		this.rayon = rayon;
-	}
-	public String getProduit() {
-		return produit;
-	}
-	public void setProduit(String produit) {
-		this.produit = produit;
-	}
 	public String getText() {
 		return text;
 	}
@@ -63,29 +91,11 @@ public class ArboInfo {
 	public void setLinks_size(int links_size) {
 		this.links_size = links_size;
 	}
-	public String getOut_links() {
-		return out_links;
-	}
-	public void setOut_links(String out_links) {
-		this.out_links = out_links;
-	}
 	public String getH1() {
 		return h1;
 	}
 	public void setH1(String h1) {
 		this.h1 = h1;
-	}
-	public String getFooter() {
-		return footer;
-	}
-	public void setFooter(String footer) {
-		this.footer = footer;
-	}
-	public String getZtd() {
-		return ztd;
-	}
-	public void setZtd(String ztd) {
-		this.ztd = ztd;
 	}
 	public String getShort_desc() {
 		return short_desc;
@@ -93,35 +103,11 @@ public class ArboInfo {
 	public void setShort_desc(String short_desc) {
 		this.short_desc = short_desc;
 	}
-	public String getVendor() {
-		return vendor;
-	}
-	public void setVendor(String vendor) {
-		this.vendor = vendor;
-	}
-	public String getAtt_desc() {
-		return att_desc;
-	}
-	public void setAtt_desc(String att_desc) {
-		this.att_desc = att_desc;
-	}
-	public int getAtt_number() {
-		return att_number;
-	}
-	public void setAtt_number(int att_number) {
-		this.att_number = att_number;
-	}
 	public int getStatus_code() {
 		return status_code;
 	}
 	public void setStatus_code(int status_code) {
 		this.status_code = status_code;
-	}
-	public String getResponse_headers() {
-		return response_headers;
-	}
-	public void setResponse_headers(String response_headers) {
-		this.response_headers = response_headers;
 	}
 	public int getDepth() {
 		return depth;
@@ -134,9 +120,5 @@ public class ArboInfo {
 	}
 	public void setUrl(String url) {
 		this.url = url;
-		this.setPage_type(URL_Utilities.checkType(url));
-		this.setMagasin(URL_Utilities.checkMagasin(url));
-		this.setProduit(URL_Utilities.checkProduit(url));
-		this.setRayon(URL_Utilities.checkRayon(url));
 	}
 }
