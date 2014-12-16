@@ -33,7 +33,7 @@ public class ArboController {
 		config.setMaxPagesToFetch(-1);
 		// we crawl up to depth 5
 		// to get the navigation we only need to go up to depth 5
-		int maxDepthOfCrawling =  5;        
+		int maxDepthOfCrawling =  2;        
 		config.setMaxDepthOfCrawling(maxDepthOfCrawling);
         // we want the crawl not to be reconfigurable : too slow otherwise
 		config.setResumableCrawling(false);
