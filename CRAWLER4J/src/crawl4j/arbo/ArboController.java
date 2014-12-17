@@ -12,7 +12,6 @@ public class ArboController {
 	public static void main(String[] args) throws Exception {
 		System.setProperty("http.agent", "");
 		System.out.println("Starting the crawl configuration");		
-	
 		String seed = "http://www.cdiscount.com/";
 		// we here launch just one thread, enough for a shallow crawl
 		int numberOfCrawlers =  1;	
@@ -33,7 +32,7 @@ public class ArboController {
 		config.setMaxPagesToFetch(-1);
 		// we crawl up to depth 5
 		// to get the navigation we only need to go up to depth 5
-		int maxDepthOfCrawling =  2;        
+		int maxDepthOfCrawling =  1;        
 		config.setMaxDepthOfCrawling(maxDepthOfCrawling);
         // we want the crawl not to be reconfigurable : too slow otherwise
 		config.setResumableCrawling(false);
@@ -44,7 +43,6 @@ public class ArboController {
 		robotstxtConfig.setEnabled(true);
 		RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
 		CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
-
 		controller.addSeed(seed);
 		System.out.println("Starting the crawl");
 		long startTime = System.currentTimeMillis();
@@ -60,7 +58,6 @@ public class ArboController {
 			totalTextSize += stat.getTotalTextSize();
 			totalProcessedPages += stat.getTotalProcessedPages();
 		}
-
 		System.out.println("Aggregated Statistics:");
 		System.out.println("   Processed Pages: " + totalProcessedPages);
 		System.out.println("   Total Links found: " + totalLinks);

@@ -107,11 +107,11 @@ public class ArboCrawlDataManagement {
 	public void saveDatabaseData(){
 		try{
 			Iterator<Entry<String, ArboInfo>> it = crawledContent.entrySet().iterator();
+			con.setAutoCommit(false);
+			PreparedStatement st = con.prepareStatement(insert_statement);
 			int local_counter = 0;
 			if (it.hasNext()){
 				local_counter++;
-				con.setAutoCommit(false);
-				PreparedStatement st = con.prepareStatement(insert_statement);
 				do {
 					local_counter ++;
 					Map.Entry<String, ArboInfo> pairs = (Map.Entry<String, ArboInfo>)it.next();
@@ -129,7 +129,11 @@ public class ArboCrawlDataManagement {
 					st.setInt(6,info.getStatus_code());
 					st.setInt(7,info.getDepth());
 					st.setInt(8,info.getLinks_size());
-					Integer nb_inlinks = inlinks_cache.get(url).size();
+					Integer nb_inlinks = 0;
+					Set<String> inlinksURL = inlinks_cache.get(url);
+					if ( inlinksURL != null){
+						nb_inlinks = inlinks_cache.get(url).size();
+					}
 					st.setInt(9,nb_inlinks);
 					st.setInt(10,info.getNb_breadcrumbs());
 					st.setInt(11,info.getNb_aggregated_rating());
