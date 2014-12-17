@@ -1,5 +1,7 @@
 package crawl4j.daemon.links;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -10,18 +12,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import edu.uci.ics.crawler4j.crawler.CrawlConfig;
-import edu.uci.ics.crawler4j.fetcher.PageFetcher;
-import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
-import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import edu.uci.ics.crawler4j.url.WebURL;
 
-public class PostGresLinksDaemon {
-
-	private static RobotstxtServer robotstxtServer;
+public class PostGresLinksLowMemoryDaemon {
+	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
 	private static Map<String, Integer> node_locator = new HashMap<String, Integer>(); 
 	private static Map<String, Set<String>> in_links_map = new HashMap<String, Set<String>>();
 	private static Map<String, Set<String>> out_links_map = new HashMap<String, Set<String>>();
@@ -30,7 +28,7 @@ public class PostGresLinksDaemon {
 	private static String fetching_request = "SELECT URL, LINKS FROM CRAWL_RESULTS WHERE DEPTH >0 ORDER BY DEPTH LIMIT 1000000";
 	private static String update_statement ="UPDATE CRAWL_RESULTS SET IN_LINKS_SIZE=?, IN_LINKS=? WHERE URL=?";
 
-	private static Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpe?g" + "|png|tiff?|mid|mp2|mp3|mp4"
+	private static Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpe?g" + "|ico|png|tiff?|mid|mp2|mp3|mp4"
 			+ "|wav|avi|mov|mpeg|ram|m4v|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 	private static String find_node_statement ="SELECT ID FROM NODES WHERE URL=?";
 	private static String insert_node_statement ="INSERT INTO NODES (LABEL)"
@@ -42,25 +40,6 @@ public class PostGresLinksDaemon {
 	private static Connection con; 
 
 	public static void main(String[] args){
-		String rootFolder = "/home/sduprey/My_Data/My_Crawl4j";
-		int maxDepthOfCrawling = 200;
-		String user_agent_name = "CdiscountBot-crawler";
-		CrawlConfig config = new CrawlConfig();
-		config.setCrawlStorageFolder(rootFolder);
-		config.setUserAgentString(user_agent_name);
-		// Politeness delay : none by default
-		config.setPolitenessDelay(0);
-		// Unlimited number of pages can be crawled.
-		config.setMaxPagesToFetch(-1);
-		// we crawl up to depth n
-		config.setMaxDepthOfCrawling(maxDepthOfCrawling);
-		// we want the crawl not to be reconfigurable : too slow otherwise
-		config.setResumableCrawling(false);
-		PageFetcher pageFetcher = new PageFetcher(config);
-		RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
-		robotstxtConfig.setUserAgentName(user_agent_name);
-		robotstxtConfig.setEnabled(true);
-		robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
 
 		try {
 			instantiate_connection();
@@ -85,9 +64,30 @@ public class PostGresLinksDaemon {
 
 	private static void instantiate_connection() throws SQLException{
 		// instantiating database connection
-		String url="jdbc:postgresql://localhost/CRAWL4J";
-		String user="postgres";
-		String passwd="mogette";
+		// instantiating database connection
+		// Reading the property of our database
+		Properties props = new Properties();
+		FileInputStream in = null;      
+		try {
+			in = new FileInputStream(database_con_path);
+			props.load(in);
+		} catch (IOException ex) {
+			System.out.println("Trouble fetching database configuration");
+			ex.printStackTrace();
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException ex) {
+				System.out.println("Trouble fetching database configuration");
+				ex.printStackTrace();
+			}
+		}
+		// the following properties have been identified
+		String url = props.getProperty("db.url");
+		String user = props.getProperty("db.user");
+		String passwd = props.getProperty("db.passwd");
 		con = DriverManager.getConnection(url, user, passwd);
 	}
 
@@ -158,7 +158,7 @@ public class PostGresLinksDaemon {
 		for (String url_out : url_outs){
 			WebURL web_url = new WebURL();
 			web_url.setURL(url_out);
-			if ((shouldVisit(url_out)) && (robotstxtServer.allows(web_url))){
+			if ((shouldVisit(url_out))){
 				url_out=url_out.trim();
 				create_node(url_out);
 				outputSet.add(url_out);

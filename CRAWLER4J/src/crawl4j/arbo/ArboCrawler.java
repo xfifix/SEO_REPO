@@ -19,19 +19,21 @@ import edu.uci.ics.crawler4j.url.WebURL;
 
 public class ArboCrawler extends WebCrawler {
 
-	// that is here that we will build our predictor matrix by scraping the web site
-	// we intend to accumulate the following predictors
-	// number of inlinks
-	// presence of breadcrumbs, 
-	// price occurences,
-	// number of images,
-	// presence of order button,
-	// content volume,
-	// rich snippet avis 
-	// we can add the following as last resort :
-	// url, pattern in the url 
-	// but the classifier should guess without it 
-	// size of the in memory cache per thread (200 default value)
+//	number of breadcrumbs int [0,+infinity[
+//	number of aggregated rating boolean int [0, +infinity[
+//	number of product rating values int [0, +infinity[
+//	number of product prices int [0, +infinity[
+//	number of product availabilities int [0, +infinity[
+//	number of reviews int [0, +infinity[
+//	number of reviews ratings int [0, +infinity[
+//	number of review counts 
+//	number of images int [0, +infinity[
+//	number of price dans le texte
+//	number of symbole euro dans le code
+//	editorial text length	
+//	vue épurée retranché du noyau commun aux pages de profondeur 0 et 1 (retirer le négatif)
+//  nombre d'images ajoutées quand on a retranché
+
 	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg" + "|png|tiff|mid|mp2|mp3|mp4"
 			+ "|wav|avi|mov|mpeg|ram|m4v|ico|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 

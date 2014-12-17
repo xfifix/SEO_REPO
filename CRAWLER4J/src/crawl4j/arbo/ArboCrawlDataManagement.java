@@ -18,12 +18,11 @@ import crawl4j.urlutilities.ArboInfo;
 public class ArboCrawlDataManagement {
 	// we here keep every thing in RAM memory because the inlinks cache updates each time.
 	// we save everything just at the very end of the crawl
-
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
 
 	private static String insert_statement="INSERT INTO ARBOCRAWL_RESULTS (URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH,"
-			+ " OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES INT, LAST_UPDATE)"
-			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			+ " OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, LAST_UPDATE)"
+			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 	private int totalProcessedPages;
 	private long totalLinks;
@@ -107,20 +106,18 @@ public class ArboCrawlDataManagement {
 	public void saveDatabaseData(){
 		try{
 			Iterator<Entry<String, ArboInfo>> it = crawledContent.entrySet().iterator();
-			con.setAutoCommit(false);
+            con.setAutoCommit(false);
 			PreparedStatement st = con.prepareStatement(insert_statement);
 			int local_counter = 0;
 			if (it.hasNext()){
-				local_counter++;
 				do {
 					local_counter ++;
+	//				PreparedStatement st = con.prepareStatement(insert_statement);
 					Map.Entry<String, ArboInfo> pairs = (Map.Entry<String, ArboInfo>)it.next();
 					String url=pairs.getKey();
 					ArboInfo info = pairs.getValue();
-					//INSERT INTO ARBOCRAWL_RESULTS 
-					//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, 
-					//DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS,
-					//NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES INT, LAST_UPDATE)	
+					//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, LAST_UPDATE)"
+                    //  1        2        3    4           5                6        7           8              9             10               11                      12            13              14             15            16             17         18       
 					st.setString(1,url);
 					st.setString(2,info.getText());
 					st.setString(3,info.getTitle());
@@ -141,9 +138,11 @@ public class ArboCrawlDataManagement {
 					st.setInt(13,info.getNb_prices());
 					st.setInt(14,info.getNb_availabilities());
 					st.setInt(15,info.getNb_reviews());
-					st.setInt(16,info.getNb_images());
+					st.setInt(16,info.getNb_reviews_count());
+					st.setInt(17,info.getNb_images());
 					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-					st.setDate(17,sqlDate);
+					st.setDate(18,sqlDate);
+//					st.executeUpdate();
 					st.addBatch();
 				}while (it.hasNext());	
 				st.executeBatch();		 
@@ -151,7 +150,6 @@ public class ArboCrawlDataManagement {
 				System.out.println(Thread.currentThread()+"Committed " + local_counter + " updates");
 			}
 		} catch (SQLException e){
-			//System.out.println("Line already inserted : "+nb_lines);
 			e.printStackTrace();  
 			if (con != null) {
 				try {
