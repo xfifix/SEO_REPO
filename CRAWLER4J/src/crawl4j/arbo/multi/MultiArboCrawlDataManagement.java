@@ -1,4 +1,4 @@
-package crawl4j.arbo;
+package crawl4j.arbo.multi;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -6,16 +6,16 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import crawl4j.urlutilities.ArboInfo;
 
-public class ArboCrawlDataManagement {
+public class MultiArboCrawlDataManagement {
 	// we here keep every thing in RAM memory because the inlinks cache updates each time.
 	// we save everything just at the very end of the crawl
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
@@ -27,15 +27,24 @@ public class ArboCrawlDataManagement {
 	private int totalProcessedPages;
 	private long totalLinks;
 	private long totalTextSize;
-	private Connection con;
-
+	
+	// a single connection for all threads
+	private static Connection con;
+	
+	static {
+		instantiateConnection();
+	}
+	
 	// local cache which should contain the site up to depth 5
-	// url arbo info cache ; common to all cache (static)
-	private Map<String, ArboInfo> crawledContent = new HashMap<String, ArboInfo>();
-	// in links cache common to all threads (static)
-	private static Map<String, Set<String>> inlinks_cache = new HashMap<String, Set<String>>();
+	// url arbo info cache ; common to all threads (static), concurrently updated
+	private static Map<String, ArboInfo> crawledContent = new ConcurrentHashMap<String, ArboInfo>();
+	// in links cache common to all threads (static), concurrently updated
+	private static Map<String, Set<String>> inlinks_cache = new ConcurrentHashMap<String, Set<String>>();
 
-	public ArboCrawlDataManagement() {
+	public MultiArboCrawlDataManagement() {
+	}
+	
+	public static void instantiateConnection(){
 		// Reading the property of our database
 		Properties props = new Properties();
 		FileInputStream in = null;      
@@ -67,6 +76,15 @@ public class ArboCrawlDataManagement {
 		}
 	}
 
+	public static void closeConnection(){
+		try {
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public int getTotalProcessedPages() {
 		return totalProcessedPages;
 	}
@@ -103,7 +121,7 @@ public class ArboCrawlDataManagement {
 		this.totalTextSize += count;
 	}
 	// old and brute force way : we insert all URLs
-	public void saveDatabaseData(){
+	public static void saveDatabaseData(){
 		try{
 			Iterator<Entry<String, ArboInfo>> it = crawledContent.entrySet().iterator();
             con.setAutoCommit(false);
@@ -162,20 +180,6 @@ public class ArboCrawlDataManagement {
 		crawledContent.clear();
 	}
 
-	// we here perform upsert to keep up to date our crawl referential
-	public void saveData(){
-		saveDatabaseData();
-		crawledContent.clear();
-	}
-
-	public void setCon(Connection con) {
-		this.con = con;
-	}
-
-	public Connection getCon() {
-
-		return con;
-	}
 	public Map<String, ArboInfo> getCrawledContent() {
 		return crawledContent;
 	}

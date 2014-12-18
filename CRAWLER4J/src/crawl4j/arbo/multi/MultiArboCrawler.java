@@ -1,6 +1,5 @@
-package crawl4j.arbo;
+package crawl4j.arbo.multi;
 
-import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,7 +16,7 @@ import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
 
-public class ArboCrawler extends WebCrawler {
+public class MultiArboCrawler extends WebCrawler {
 
 //	number of breadcrumbs int [0,+infinity[
 //	number of aggregated rating boolean int [0, +infinity[
@@ -39,10 +38,10 @@ public class ArboCrawler extends WebCrawler {
 	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg" + "|png|tiff|mid|mp2|mp3|mp4"
 			+ "|wav|avi|mov|mpeg|ram|m4v|ico|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 
-	ArboCrawlDataManagement myCrawlDataManager;
+	MultiArboCrawlDataManagement myCrawlDataManager;
 
-	public ArboCrawler() {
-		myCrawlDataManager = new ArboCrawlDataManagement();
+	public MultiArboCrawler() {
+		myCrawlDataManager = new MultiArboCrawlDataManagement();
 	}
 
 	// we don't visit media URLs and we keep inside Cdiscount
@@ -137,22 +136,8 @@ public class ArboCrawler extends WebCrawler {
 	// This function is called by controller to get the local data of this
 	// crawler when job is finished
 	@Override
-	public ArboCrawlDataManagement getMyLocalData() {
+	public MultiArboCrawlDataManagement getMyLocalData() {
 		return myCrawlDataManager;
-	}
-
-	// This function is called by controller before finishing the job.
-	// You can put whatever stuff you need here.
-	@Override
-	public void onBeforeExit() {
-		// we only save data from the cache at the very end
-		saveData();
-		try {
-			myCrawlDataManager.getCon().close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	@Override
@@ -164,16 +149,6 @@ public class ArboCrawler extends WebCrawler {
 		}	
 		info.setStatus_code(statusCode);
 		myCrawlDataManager.getCrawledContent().put(url,info);
-	}
-
-	public void saveData(){
-		int id = getMyId();
-		// This is just an example. Therefore I print on screen. You may
-		// probably want to write in a text file.
-		System.out.println("Crawler " + id + "> Processed Pages: " + myCrawlDataManager.getTotalProcessedPages());
-		System.out.println("Crawler " + id + "> Total Links Found: " + myCrawlDataManager.getTotalLinks());
-		System.out.println("Crawler " + id + "> Total Text Size: " + myCrawlDataManager.getTotalTextSize());
-		myCrawlDataManager.saveData();	
 	}
 
 }

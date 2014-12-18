@@ -1,4 +1,4 @@
-package crawl4j.arbo;
+package crawl4j.arbo.multi;
 
 import java.util.List;
 
@@ -8,13 +8,13 @@ import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
-public class ArboController {
+public class MultiArboController {
 	public static void main(String[] args) throws Exception {
 		System.setProperty("http.agent", "");
 		System.out.println("Starting the crawl configuration");		
 		String seed = "http://www.cdiscount.com/";
 		// we here launch just one thread, enough for a shallow crawl
-		int numberOfCrawlers =  1;	
+		int numberOfCrawlers =  200;	
 		// downsizing to test
 		//int numberOfCrawlers =  1;
 		if (args.length == 2) {
@@ -32,7 +32,7 @@ public class ArboController {
 		config.setMaxPagesToFetch(-1);
 		// we crawl up to depth 5
 		// to get the navigation we only need to go up to depth 5
-		int maxDepthOfCrawling =  4;        
+		int maxDepthOfCrawling =  3;        
 		config.setMaxDepthOfCrawling(maxDepthOfCrawling);
         // we want the crawl not to be reconfigurable : too slow otherwise
 		config.setResumableCrawling(false);
@@ -46,14 +46,20 @@ public class ArboController {
 		controller.addSeed(seed);
 		System.out.println("Starting the crawl");
 		long startTime = System.currentTimeMillis();
-		controller.start(ArboCrawler.class, numberOfCrawlers);
+		controller.start(MultiArboCrawler.class, numberOfCrawlers);
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		List<Object> crawlersLocalData = controller.getCrawlersLocalData();
+		if(crawlersLocalData.size() > 0){
+			System.out.println("Saving the whole crawl to the database");		
+			System.out.println("Saving concurrent hashmap to the database");
+			MultiArboCrawlDataManagement.saveDatabaseData();
+		}
+		// listing the work done by each thread
 		long totalLinks = 0;
 		long totalTextSize = 0;
 		int totalProcessedPages = 0;
 		for (Object localData : crawlersLocalData) {
-			ArboCrawlDataManagement stat = (ArboCrawlDataManagement) localData;
+			MultiArboCrawlDataManagement stat = (MultiArboCrawlDataManagement) localData;
 			totalLinks += stat.getTotalLinks();
 			totalTextSize += stat.getTotalTextSize();
 			totalProcessedPages += stat.getTotalProcessedPages();
