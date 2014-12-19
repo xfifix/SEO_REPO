@@ -226,7 +226,6 @@ public class CrawlDataManagement {
 					lgr.log(Level.ERROR, ex1.getMessage(), ex1);
 				}
 			}
-
 			Logger lgr = Logger.getLogger(CrawlDataManagement.class.getName());
 			lgr.log(Level.ERROR, e.getMessage(), e);
 		}	
@@ -251,9 +250,9 @@ public class CrawlDataManagement {
 
 				do {
 					local_counter ++;
-					Map.Entry pairs = (Map.Entry)it.next();
-					String url=(String)pairs.getKey();
-					URLinfo info = (URLinfo)pairs.getValue();
+					Map.Entry<String, URLinfo> pairs = it.next();
+					String url=pairs.getKey();
+					URLinfo info = pairs.getValue();
 					//					String prepared_string = "("+url+","
 					//					                            +(String)list_values[0]+","
 					//					                            +(String)list_values[1]+","

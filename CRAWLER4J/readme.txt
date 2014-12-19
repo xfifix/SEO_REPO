@@ -13,5 +13,8 @@ FastBatchPostGresLinksDaemon
 # fast and not too heavy on memory
 FastBatchByLevelPostGresLinksDaemon
 
+## Tackle up the problem of memory going depth by depth and creating all required nodes
+FastBatchPostGresLinksByLevelLowMemoryDaemon
+
 #Computing the page rank on the whole NODES, EDGES database and updating CRAWL_RESULTS database
 ComputePageRank

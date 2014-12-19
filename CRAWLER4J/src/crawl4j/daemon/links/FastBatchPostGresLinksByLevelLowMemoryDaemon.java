@@ -35,7 +35,7 @@ import org.openide.util.Lookup;
 
 import crawl4j.urlutilities.URL_Utilities;
 
-public class FastBatchByLevelPostGresLinksDaemon {
+public class FastBatchPostGresLinksByLevelLowMemoryDaemon {
 
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
 	private static int depth_threshold = 5;
@@ -95,6 +95,7 @@ public class FastBatchByLevelPostGresLinksDaemon {
 		for (int depth=1;depth<depth_threshold;depth ++){
 			try{
 				// fetching data from the Postgresql data base and looping over
+				// we here don't build a cache as this would be too heavy on memory
 				looping_over_urls_for_relations_creation(depth);
 				all_edges_batch_creation(depth);
 				clearing_edges();
@@ -379,4 +380,3 @@ public class FastBatchByLevelPostGresLinksDaemon {
 		}
 	}
 }
-

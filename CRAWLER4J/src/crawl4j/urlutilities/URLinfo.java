@@ -135,9 +135,5 @@ public class URLinfo {
 	}
 	public void setUrl(String url) {
 		this.url = url;
-		this.setPage_type(URL_Utilities.checkType(url));
-		this.setMagasin(URL_Utilities.checkMagasin(url));
-		this.setProduit(URL_Utilities.checkProduit(url));
-		this.setRayon(URL_Utilities.checkRayon(url));
 	}
 }		

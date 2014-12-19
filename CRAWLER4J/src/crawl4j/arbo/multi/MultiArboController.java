@@ -13,8 +13,10 @@ public class MultiArboController {
 		System.setProperty("http.agent", "");
 		System.out.println("Starting the crawl configuration");		
 		String seed = "http://www.cdiscount.com/";
-		// we here launch just one thread, enough for a shallow crawl
-		int numberOfCrawlers =  200;	
+		// we here launch just a few threads, enough for a shallow crawl
+		// maximum twenty otherwise the concurrent update of the Map might get really too slow
+		// and become a bottleneck rather than a 
+		int numberOfCrawlers =  20;	
 		// downsizing to test
 		//int numberOfCrawlers =  1;
 		if (args.length == 2) {
@@ -49,6 +51,9 @@ public class MultiArboController {
 		controller.start(MultiArboCrawler.class, numberOfCrawlers);
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		List<Object> crawlersLocalData = controller.getCrawlersLocalData();
+		
+		// counting the number of inlinks forces us to wait for the very end
+		// of the crawl before we update the database
 		if(crawlersLocalData.size() > 0){
 			System.out.println("Saving the whole crawl to the database");		
 			System.out.println("Saving concurrent hashmap to the database");

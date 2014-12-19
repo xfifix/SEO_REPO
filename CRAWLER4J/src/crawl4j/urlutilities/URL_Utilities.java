@@ -20,6 +20,7 @@ public class URL_Utilities {
 	//	Root-3/Sous-rayon : 1XXXXXX
 	//	Root-4 : Sous-sous rayon : 1XXXXXXXX
 	//	Root-5 : 1XXXXXXXXXX
+	private static String cdiscount_stub = "http://www.cdiscount.com";
 	private static String Vitrine = "^\\s*http://([a-z0-9]*\\.)*www.cdiscount.com.*/v-.*";
 	private static String FicheProduit  ="^\\s*http://([a-z0-9]*\\.)*www.cdiscount.com.*/f-.*";
 	private static String ListeProduit = "^\\s*http://([a-z0-9]*\\.)*www.cdiscount.com.*/l-.*";
@@ -169,6 +170,12 @@ public class URL_Utilities {
 		return !filters.matcher(urlNode).matches() && urlNode.startsWith("http://www.cdiscount.com/");
 	}
 
+	public static String clean(String url){
+		url=drop_parameters(url);
+		url = cdiscount_shortener(url);
+		return url;
+	}
+	
 	public static String drop_parameters(String url_with_possibly_parameters){
 		int interrogation_index = url_with_possibly_parameters.indexOf("?");
 		if (interrogation_index != -1){
@@ -180,5 +187,9 @@ public class URL_Utilities {
 		}
 		return url_with_possibly_parameters;
 	}
-
+	
+	public static String cdiscount_shortener(String urlNode) {
+		urlNode = urlNode.replace(cdiscount_stub, "");
+		return urlNode;
+	}
 }

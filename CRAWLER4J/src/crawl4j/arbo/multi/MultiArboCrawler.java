@@ -31,7 +31,7 @@ public class MultiArboCrawler extends WebCrawler {
 //	number of symbole euro dans le code
 //	editorial text length	
 //	vue épurée retranché du noyau commun aux pages de profondeur 0 et 1 (retirer le négatif)
-//  nombre d'images ajoutées quand on a retranché
+//  nombre d'images ajoutées quand on a retranché la charte graphique (noyau depth 1 2 )
 	
 	// size of the in memory cache per thread (200 default value)
 
@@ -108,7 +108,6 @@ public class MultiArboCrawler extends WebCrawler {
 			// end of predictor parsing
 		}
 		myCrawlDataManager.getCrawledContent().put(url,info);
-
 	}
 
 	public Set<String> filter_out_links(List<WebURL> links){
