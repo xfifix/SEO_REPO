@@ -62,11 +62,11 @@ public class URLUtilitiesTest {
 		for (int i =0; i<totest.length;i++){
 			String current = totest[i];
 			System.out.println(current);
-			String magasin = URL_Utilities.checkMagasin(current);
+			String magasin = URL_Utilities.checkMagasinFullUrl(current);
 			System.out.println("Magasin " + magasin);
-			String rayon = URL_Utilities.checkRayon(current);
+			String rayon = URL_Utilities.checkRayonFullUrl(current);
 			System.out.println("Rayon : "+rayon);
-			String type = URL_Utilities.checkType(current);
+			String type = URL_Utilities.checkTypeFullUrl(current);
 			System.out.println("Type : "+type);			
 			System.out.println("\n\n");	
 		}

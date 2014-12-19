@@ -29,7 +29,7 @@ public class URL_Utilities {
 	private static String PageConcept = "^\\s*http://([a-z0-9]*\\.)*www.cdiscount.com.*/ct-.*";
 	private static String SearchDexing = "^\\s*http://([a-z0-9]*\\.)*www.cdiscount.com.*/r-.*";
 
-	public static String checkType(String url){
+	public static String checkTypeFullUrl(String url){
 		if (url.matches(Vitrine)){
 			return "Vitrine";
 		}
@@ -54,9 +54,9 @@ public class URL_Utilities {
 		return "Unknown";
 	}
 
-	public static String checkMagasin(String url){
+	public static String checkMagasinFullUrl(String url){
 		String magasin = "Unknown";
-		String type = checkType(url);
+		String type = checkTypeFullUrl(url);
 		if ("Vitrine".equals(type)||"ListeProduit".equals(type)||"FicheProduit".equals(type)||"SearchDexing".equals(type)){
 			url = url.replace("http://www.cdiscount.com/","");
 			StringTokenizer tokenize = new StringTokenizer(url,"/");
@@ -64,15 +64,15 @@ public class URL_Utilities {
 				magasin=tokenize.nextToken();
 			}
 		}
-		if ("ListeProduitFiltre".equals(checkType(url))){
+		if ("ListeProduitFiltre".equals(checkTypeFullUrl(url))){
 			// it will soon behave as the searchdexing
 		}
 		return magasin;
 	}
 
-	public static String[] checkMagasinAndRayonAndProduct(String url){
+	public static String[] checkMagasinAndRayonAndProductFullUrl(String url){
 		String[] output = {"Unknown","Unknown","Unknown"};
-		String type = checkType(url);
+		String type = checkTypeFullUrl(url);
 		if ("Vitrine".equals(type)||"ListeProduit".equals(type)||"FicheProduit".equals(type)||"SearchDexing".equals(type)){
 			url = url.replace("http://www.cdiscount.com/","");
 			StringTokenizer tokenize = new StringTokenizer(url,"/");
@@ -92,9 +92,9 @@ public class URL_Utilities {
 
 	}
 
-	public static String checkRayon(String url){
+	public static String checkRayonFullUrl(String url){
 		String rayon = "Unknown";
-		String type = checkType(url);
+		String type = checkTypeFullUrl(url);
 		if ("Vitrine".equals(type)||"ListeProduit".equals(type)||"FicheProduit".equals(type)){
 			//			int vitrine_index=url.indexOf("/v-");
 			//			int listeproduit_index=url.indexOf("/l-");
@@ -123,7 +123,7 @@ public class URL_Utilities {
 
 	public static String getNavid(String url){
 		String navid = "Unknown";
-		if ("Vitrine".equals(checkType(url))||"ListeProduit".equals(checkType(url))||"FicheProduit".equals(checkType(url))){
+		if ("Vitrine".equals(checkTypeFullUrl(url))||"ListeProduit".equals(checkTypeFullUrl(url))||"FicheProduit".equals(checkTypeFullUrl(url))){
 			int vitrine_index=url.indexOf("/v-");
 			int listeproduit_index=url.indexOf("/l-");
 			int ficheproduit_index=url.indexOf("/f-");
@@ -175,7 +175,7 @@ public class URL_Utilities {
 		url = cdiscount_shortener(url);
 		return url;
 	}
-	
+
 	public static String drop_parameters(String url_with_possibly_parameters){
 		int interrogation_index = url_with_possibly_parameters.indexOf("?");
 		if (interrogation_index != -1){
@@ -187,7 +187,7 @@ public class URL_Utilities {
 		}
 		return url_with_possibly_parameters;
 	}
-	
+
 	public static String cdiscount_shortener(String urlNode) {
 		urlNode = urlNode.replace(cdiscount_stub, "");
 		return urlNode;

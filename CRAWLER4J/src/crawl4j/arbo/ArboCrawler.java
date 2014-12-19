@@ -19,21 +19,21 @@ import edu.uci.ics.crawler4j.url.WebURL;
 
 public class ArboCrawler extends WebCrawler {
 
-//	number of breadcrumbs int [0,+infinity[
-//	number of aggregated rating boolean int [0, +infinity[
-//	number of product rating values int [0, +infinity[
-//	number of product prices int [0, +infinity[
-//	number of product availabilities int [0, +infinity[
-//	number of reviews int [0, +infinity[
-//	number of reviews ratings int [0, +infinity[
-//	number of review counts 
-//	number of images int [0, +infinity[
-//	number of price dans le texte
-//	number of symbole euro dans le code
-//	editorial text length	
-//	vue épurée retranché du noyau commun aux pages de profondeur 0 et 1 (retirer le négatif)
-//  nombre d'images ajoutées quand on a retranché
-	
+	//	number of breadcrumbs int [0,+infinity[
+	//	number of aggregated rating boolean int [0, +infinity[
+	//	number of product rating values int [0, +infinity[
+	//	number of product prices int [0, +infinity[
+	//	number of product availabilities int [0, +infinity[
+	//	number of reviews int [0, +infinity[
+	//	number of reviews ratings int [0, +infinity[
+	//	number of review counts 
+	//	number of images int [0, +infinity[
+	//	number of price dans le texte
+	//	number of symbole euro dans le code
+	//	editorial text length	
+	//	vue épurée retranché du noyau commun aux pages de profondeur 0 et 1 (retirer le négatif)
+	//  nombre d'images ajoutées quand on a retranché
+
 	// size of the in memory cache per thread (200 default value)
 
 	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg" + "|png|tiff|mid|mp2|mp3|mp4"
@@ -48,7 +48,7 @@ public class ArboCrawler extends WebCrawler {
 	// we don't visit media URLs and we keep inside Cdiscount
 	public boolean shouldVisit(WebURL url) {
 		String href = url.getURL().toLowerCase();
-		return !filters.matcher(href).matches() && href.startsWith("http://www.cdiscount.com/");
+		return !filters.matcher(href).matches() && href.startsWith(ArboController.site_stub);
 	}
 
 	@Override
@@ -60,6 +60,8 @@ public class ArboCrawler extends WebCrawler {
 		if (info == null){
 			info =new ArboInfo();
 		}		
+		String pagetype = URL_Utilities.checkTypeFullUrl(url);
+		info.setPage_type(pagetype);
 		info.setUrl(url);
 		info.setDepth((int)page.getWebURL().getDepth());
 		myCrawlDataManager.incProcessedPages();	
@@ -173,6 +175,11 @@ public class ArboCrawler extends WebCrawler {
 		System.out.println("Crawler " + id + "> Processed Pages: " + myCrawlDataManager.getTotalProcessedPages());
 		System.out.println("Crawler " + id + "> Total Links Found: " + myCrawlDataManager.getTotalLinks());
 		System.out.println("Crawler " + id + "> Total Text Size: " + myCrawlDataManager.getTotalTextSize());
+		if (ArboController.site_stub.contains("cdiscount.com")){
+			myCrawlDataManager.saveDataWithLabel();
+		} else {
+			myCrawlDataManager.saveData();
+		}
 		myCrawlDataManager.saveData();	
 	}
 

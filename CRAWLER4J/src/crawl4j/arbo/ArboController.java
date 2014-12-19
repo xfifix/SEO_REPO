@@ -9,10 +9,11 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
 public class ArboController {
+	public static String site_stub="http://www.cdiscount.com/";
 	public static void main(String[] args) throws Exception {
 		System.setProperty("http.agent", "");
 		System.out.println("Starting the crawl configuration");		
-		String seed = "http://www.cdiscount.com/";
+		String seed = site_stub;
 		// we here launch just one thread, enough for a shallow crawl
 		int numberOfCrawlers =  1;	
 		// downsizing to test
@@ -32,7 +33,7 @@ public class ArboController {
 		config.setMaxPagesToFetch(-1);
 		// we crawl up to depth 5
 		// to get the navigation we only need to go up to depth 5
-		int maxDepthOfCrawling =  4;        
+		int maxDepthOfCrawling = 2;        
 		config.setMaxDepthOfCrawling(maxDepthOfCrawling);
         // we want the crawl not to be reconfigurable : too slow otherwise
 		config.setResumableCrawling(false);

@@ -73,7 +73,7 @@ public class InsideMagasinQualityWorkerThread implements Runnable {
 			for (URLContentInfo rayon_info : rayon_infos){
 				String attributes_listing = rayon_info.getAttributes();
 				String url = rayon_info.getUrl();
-				String checkType = URL_Utilities.checkType(url);
+				String checkType = URL_Utilities.checkTypeFullUrl(url);
 				if ("FicheProduit".equals(checkType)){
 					if (attributes_listing.contains("|||")){
 						System.out.println(attributes_listing);

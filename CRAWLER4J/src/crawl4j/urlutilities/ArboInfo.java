@@ -6,6 +6,7 @@ public class ArboInfo {
 	private String title="";
 	private String h1="";
 	private String short_desc="";
+	private String page_type="Unknown";
 	private int status_code=0;
 	private int depth=0;
 	private int links_size=0;
@@ -114,5 +115,11 @@ public class ArboInfo {
 	}
 	public void setUrl(String url) {
 		this.url = url;
+	}
+	public String getPage_type() {
+		return page_type;
+	}
+	public void setPage_type(String page_type) {
+		this.page_type = page_type;
 	}
 }

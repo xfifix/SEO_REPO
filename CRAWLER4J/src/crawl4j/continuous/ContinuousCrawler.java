@@ -43,9 +43,9 @@ public class ContinuousCrawler extends WebCrawler {
 	public void visit(Page page) {
 		String fullUrl = page.getWebURL().getURL();
 		// we drop the unnecessary pieces of the URL
-		String page_type = URL_Utilities.checkType(fullUrl);
-		String magasin = URL_Utilities.checkMagasin(fullUrl);
-		String rayon = URL_Utilities.checkRayon(fullUrl);
+		String page_type = URL_Utilities.checkTypeFullUrl(fullUrl);
+		String magasin = URL_Utilities.checkMagasinFullUrl(fullUrl);
+		String rayon = URL_Utilities.checkRayonFullUrl(fullUrl);
 		String produit = URL_Utilities.checkProduit(fullUrl);
 
 		String url=URL_Utilities.clean(fullUrl);
