@@ -33,7 +33,6 @@
 <fullyQualifiedTypeName name="java.util.Set"/>
 <fullyQualifiedTypeName name="java.util.Map.Entry"/>
 <fullyQualifiedTypeName name="java.util.List"/>
-<fullyQualifiedTypeName name="crawl4j.urlutilities.URL_Utilities"/>
 <fullyQualifiedTypeName name="java.sql.Connection"/>
 <fullyQualifiedTypeName name="java.sql.ResultSet"/>
 <fullyQualifiedTypeName name="java.io.InputStream"/>
@@ -54,4 +53,6 @@
 <fullyQualifiedTypeName name="crawl4j.urlutilities.ArboInfo"/>
 <fullyQualifiedTypeName name="java.util.concurrent.ConcurrentHashMap"/>
 <fullyQualifiedTypeName name="java.sql.PreparedStatement"/>
+<fullyQualifiedTypeName name="crawl4j.arbo.ArboController"/>
+<fullyQualifiedTypeName name="crawl4j.urlutilities.URL_Utilities"/>
 </qualifiedTypeNameHistroy>
