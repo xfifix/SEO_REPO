@@ -68,6 +68,8 @@ public class ComputePageRank {
 		//       db.setEdgeQuery("SELECT edges.source AS source, edges.target AS target, edges.name AS label, edges.weight AS weight FROM edges");
 		db.setEdgeQuery("SELECT edges.source AS source, edges.target AS target FROM edges");
 		ImporterEdgeList edgeListImporter = new ImporterEdgeList();
+		System.out.println("Importing all graph data from the PostgreSQL database");
+		
 		Container container = importController.importDatabase(db, edgeListImporter);
 		container.setAllowAutoNode(false);      //Don't create missing nodes
 		container.getLoader().setEdgeDefault(EdgeDefault.DIRECTED);   //Force UNDIRECTED
@@ -75,11 +77,13 @@ public class ComputePageRank {
 		//Append imported data to GraphAPI
 		importController.process(container, new DefaultProcessor(), workspace);
 
+		System.out.println("Building a directed graph from the imported PostgreSQL data");		
 		//See if graph is well imported
 		DirectedGraph graph = graphModel.getDirectedGraph();
 		System.out.println("Nodes: " + graph.getNodeCount());
 		System.out.println("Edges: " + graph.getEdgeCount());
 
+		System.out.println("Computing the page rank for the directed graph");	
 		// Computing the page rank
 		PageRank pageRank = new PageRank();
 		pageRank.setDirected(true);

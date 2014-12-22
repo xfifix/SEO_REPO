@@ -25,8 +25,8 @@ public class SoftMarketPlaceCrawler {
 	private static String cdiscount_url = "http://www.cdiscount.com/mp-9000-";
 	private static Set<String> skuid = new HashSet<String>(); 
 	private static Map<String,List<String>> shopname = new HashMap<String,List<String>>();
-	private static Map<String, List<Double>> remaining_quantity = new HashMap<String,List<Double>>();
-	private static Map<String, List<Double>> integration_price = new HashMap<String,List<Double>>();
+	private static Map<String,List<Double>> remaining_quantity = new HashMap<String,List<Double>>();
+	private static Map<String,List<Double>> integration_price = new HashMap<String,List<Double>>();
 	private static List<OutRow> output_results = new ArrayList<OutRow>();
 
 	public static void main(String[] args){	
