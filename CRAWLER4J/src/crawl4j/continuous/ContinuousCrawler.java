@@ -46,10 +46,11 @@ public class ContinuousCrawler extends WebCrawler {
 		String page_type = URL_Utilities.checkTypeFullUrl(fullUrl);
 		String magasin = URL_Utilities.checkMagasinFullUrl(fullUrl);
 		String rayon = URL_Utilities.checkRayonFullUrl(fullUrl);
-		String produit = URL_Utilities.checkProduit(fullUrl);
+		String produit = URL_Utilities.checkProduitFullUrl(fullUrl);
 
 		String url=URL_Utilities.clean(fullUrl);
 		System.out.println(Thread.currentThread()+": Visiting URL : "+url);
+		// the static Map cache is based upon the shortened and cleaned URL
 		URLinfo info =myCrawlDataManager.getCrawledContent().get(url);
 		if (info == null){
 			info =new URLinfo();
@@ -146,6 +147,7 @@ public class ContinuousCrawler extends WebCrawler {
 	public Set<String> filter_out_links(List<WebURL> links){
 		Set<String> outputSet = new HashSet<String>();
 		for (WebURL url_out : links){
+			// the should visit is done upon the full URL
 			if ((shouldVisit(url_out)) && (getMyController().getRobotstxtServer().allows(url_out))){
 				String final_link = URL_Utilities.clean(url_out.getURL());
 				outputSet.add(final_link);

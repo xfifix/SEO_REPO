@@ -136,7 +136,7 @@ public class URL_Utilities {
 
 	}
 
-	public static String checkProduit(String url){
+	public static String checkProduitFullUrl(String url){
 		String produit = "Unknown";
 		//		url = url.replace("http://www.cdiscount.com/","");
 		//		StringTokenizer tokenize = new StringTokenizer(url,"/");
@@ -159,15 +159,15 @@ public class URL_Utilities {
 		Set<String> outputSet = new HashSet<String>();
 		for (String url_out : url_outs){
 			url_out=url_out.trim();
-			if(shouldVisit(url_out)){
+			if(shouldList(url_out)){
 				outputSet.add(url_out);
 			}
 		}
 		return outputSet;
 	}
 
-	public static boolean shouldVisit(String urlNode) {
-		return !filters.matcher(urlNode).matches() && urlNode.startsWith("http://www.cdiscount.com/");
+	public static boolean shouldList(String urlNode) {
+		return !filters.matcher(urlNode).matches();
 	}
 
 	public static String clean(String url){
