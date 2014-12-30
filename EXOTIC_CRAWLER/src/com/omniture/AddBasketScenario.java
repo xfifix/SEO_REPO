@@ -35,15 +35,17 @@ public class AddBasketScenario {
 		builder.crawlRules().followExternalLinks(false);
 		builder.setMaximumStates(2);
 		builder.setMaximumDepth(1);
-		
+
 		builder.crawlRules().click("input").withAttribute("type", "submit").withAttribute("id", "fpAddBsk");
 		builder.crawlRules().clickOnce(true);
-		builder.setBrowserConfig(new BrowserConfiguration(BrowserType.FIREFOX, 1));
+		builder.setBrowserConfig(new BrowserConfiguration(BrowserType.PHANTOMJS, 1));
+		//builder.setBrowserConfig(new BrowserConfiguration(BrowserType.FIREFOX, 1));
+		
 		// we give ourselves time (fetching additional resellers might be long)
 		// Set timeouts
 		builder.crawlRules().waitAfterReloadUrl(WAIT_TIME_AFTER_RELOAD, TimeUnit.MILLISECONDS);
 		builder.crawlRules().waitAfterEvent(WAIT_TIME_AFTER_EVENT, TimeUnit.MILLISECONDS);
-		
+
 		//builder.crawlRules().waitAfterEvent(WAIT_TIME_AFTER_EVENT, TimeUnit.MILLISECONDS);
 		// adding our in-house parser plugin which will be used to fetch our resellers data
 
@@ -52,11 +54,8 @@ public class AddBasketScenario {
 			public void onNewState(CrawlerContext context, StateVertex newState) {
 				// This will print the DOM when a new state is detected. You should see it in your
 				// console.
-				if("state1".equals(newState.getName())){
-					// we check at the final state state1 that the omniture trackers have been added
-					String content_to_parse = context.getBrowser().getUnStrippedDom();
-					System.out.println("Checking basket scenario : " + checkBasketScenario(content_to_parse));
-				}
+				String content_to_parse = context.getBrowser().getUnStrippedDom();
+				System.out.println("Checking basket scenario : " + checkBasketScenario(content_to_parse));
 			}
 			@Override
 			public String toString() {
