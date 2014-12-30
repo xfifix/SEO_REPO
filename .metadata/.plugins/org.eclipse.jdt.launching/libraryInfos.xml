@@ -19,7 +19,7 @@
 <entry path="/usr/lib/jvm/java-7-oracle/jre/lib/endorsed"/>
 </endorsedDirs>
 </libraryInfo>
-<libraryInfo home="/usr/lib/jvm/java-7-oracle" version="1.7.0_67">
+<libraryInfo home="/usr/lib/jvm/java-7-oracle" version="1.7.0_72">
 <bootpath>
 <entry path="/usr/lib/jvm/java-7-oracle/jre/lib/resources.jar"/>
 <entry path="/usr/lib/jvm/java-7-oracle/jre/lib/rt.jar"/>

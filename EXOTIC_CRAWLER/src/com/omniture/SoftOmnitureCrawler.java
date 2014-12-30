@@ -141,13 +141,6 @@ public class SoftOmnitureCrawler {
 	}
 	
 	public static boolean checkThirdScenario(String content){
-		// scView, prop1, prop2, prop3, prop7, prop14, prop16, prop17, prop18, prop62, prop63 must be present
-		// they must take the following values
-		//prop1="Cdiscount"
-		//prop2="Orderprocess"
-		//prop3="Panier"
-		//prop7="Panier"
-		//prop14=(typeof $.cookies === "object" && typeof $.cookies.get === "function") ? $.cookies.get("SiteVersionCookie").substring($.cookies.get("SiteVersionCookie").length - 100) : "";    s.eVar8="";    s.eVar11="";    s.eVar30=(typeof $.cookies === "object" && typeof $.cookies.get === "function") ? $.cookies.get("ClientId").substring($.cookies.get("ClientId").length - 100).split("&")[0] : ""
 		boolean isScenarioOK = true;
 		for (String localScenario : scenario3){
 			if (!content.contains(localScenario)){
