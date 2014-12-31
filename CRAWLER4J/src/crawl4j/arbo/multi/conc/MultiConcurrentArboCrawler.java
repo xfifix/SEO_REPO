@@ -1,4 +1,4 @@
-package crawl4j.arbo.multi;
+package crawl4j.arbo.multi.conc;
 
 import java.util.HashSet;
 import java.util.List;
@@ -16,7 +16,7 @@ import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
 
-public class MultiArboCrawler extends WebCrawler {
+public class MultiConcurrentArboCrawler extends WebCrawler {
 
 //	number of breadcrumbs int [0,+infinity[
 //	number of aggregated rating boolean int [0, +infinity[
@@ -38,10 +38,10 @@ public class MultiArboCrawler extends WebCrawler {
 	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg" + "|png|tiff|mid|mp2|mp3|mp4"
 			+ "|wav|avi|mov|mpeg|ram|m4v|ico|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 
-	MultiArboCrawlDataCache myCrawlDataManager;
+	MultiConcurrentArboCrawlDataManagement myCrawlDataManager;
 
-	public MultiArboCrawler() {
-		myCrawlDataManager = new MultiArboCrawlDataCache();
+	public MultiConcurrentArboCrawler() {
+		myCrawlDataManager = new MultiConcurrentArboCrawlDataManagement();
 	}
 
 	// we don't visit media URLs and we keep inside Cdiscount
@@ -83,6 +83,8 @@ public class MultiArboCrawler extends WebCrawler {
 			myCrawlDataManager.incTotalTextSize(htmlParseData.getText().length());	
 			// we here filter the outlinks we want to keep (they must be internal and they must respect the robot.txt
 			Set<String> filtered_links = filter_out_links(links);
+			// managing the count of the inlinks here
+			updateInLinksCache(filtered_links, url);
 
 			info.setLinks_size(filtered_links.size());
 			// parsing the document to get the predictor of our model			
@@ -119,12 +121,21 @@ public class MultiArboCrawler extends WebCrawler {
 		return outputSet;
 	}
 
-
+	public void updateInLinksCache(Set<String> outputSet, String sourceURL){
+		for (String targetURL : outputSet){
+			Set<String> inLinks = getMyLocalData().getInlinks_cache().get(targetURL);
+			if (inLinks == null){
+				inLinks= new HashSet<String>();
+			}
+			inLinks.add(sourceURL);
+			getMyLocalData().getInlinks_cache().put(targetURL,inLinks);
+		}
+	}
 
 	// This function is called by controller to get the local data of this
 	// crawler when job is finished
 	@Override
-	public MultiArboCrawlDataCache getMyLocalData() {
+	public MultiConcurrentArboCrawlDataManagement getMyLocalData() {
 		return myCrawlDataManager;
 	}
 

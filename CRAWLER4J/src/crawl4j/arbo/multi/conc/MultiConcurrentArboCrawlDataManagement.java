@@ -1,4 +1,4 @@
-package crawl4j.arbo.multi;
+package crawl4j.arbo.multi.conc;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import crawl4j.urlutilities.ArboInfo;
 
-public class MultiArboCrawlDataManagement {
+public class MultiConcurrentArboCrawlDataManagement {
 	// we here keep every thing in RAM memory because the inlinks cache updates each time.
 	// we save everything just at the very end of the crawl
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
@@ -41,7 +41,7 @@ public class MultiArboCrawlDataManagement {
 	// in links cache common to all threads (static), concurrently updated
 	private static Map<String, Set<String>> inlinks_cache = new ConcurrentHashMap<String, Set<String>>();
 
-	public MultiArboCrawlDataManagement() {
+	public MultiConcurrentArboCrawlDataManagement() {
 	}
 	
 	public static void instantiateConnection(){
