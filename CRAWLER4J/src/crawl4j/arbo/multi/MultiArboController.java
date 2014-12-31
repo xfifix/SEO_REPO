@@ -1,6 +1,9 @@
 package crawl4j.arbo.multi;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -8,6 +11,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -26,12 +30,17 @@ public class MultiArboController {
 	// of the crawl before we update the database	
 	private static Map<String, Set<String>> inlinks_cache = new HashMap<String, Set<String>>();
 	private static Connection con;
+	
+	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
 
 	private static String insert_statement_with_label="INSERT INTO ARBOCRAWL_RESULTS (URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH,"
 			+ " OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, PAGE_TYPE, LAST_UPDATE)"
 			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 	public static void main(String[] args) throws Exception {
+		
+		instantiate_connection();
+		
 		System.setProperty("http.agent", "");
 		System.out.println("Starting the crawl configuration");		
 		String seed = "http://www.cdiscount.com/";
@@ -56,7 +65,7 @@ public class MultiArboController {
 		config.setMaxPagesToFetch(-1);
 		// we crawl up to depth 5
 		// to get the navigation we only need to go up to depth 5
-		int maxDepthOfCrawling =  5;        
+		int maxDepthOfCrawling =  1;        
 		config.setMaxDepthOfCrawling(maxDepthOfCrawling);
 		// we want the crawl not to be reconfigurable : too slow otherwise
 		config.setResumableCrawling(false);
@@ -115,7 +124,12 @@ public class MultiArboController {
 			String url = pairs.getKey();
 			MultiArboInfo info = pairs.getValue();
 			Set<String> outgoingLinks = info.getOutgoingLinks();
-			updateInLinks(outgoingLinks,url);
+			if (outgoingLinks != null){
+				updateInLinks(outgoingLinks,url);
+			} else {
+				System.out.println(" No outgoing links for this URL : "+url);
+				System.out.println(" Status code : "+info.getStatus_code());
+			}
 		}
 	}
 
@@ -187,5 +201,31 @@ public class MultiArboController {
 				}
 			}
 		}		
+	}
+	
+	public static void instantiate_connection() throws SQLException{
+		Properties props = new Properties();
+		FileInputStream in = null;      
+		try {
+			in = new FileInputStream(database_con_path);
+			props.load(in);
+		} catch (IOException ex) {
+			System.out.println("Trouble fetching database configuration");
+			ex.printStackTrace();
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException ex) {
+				System.out.println("Trouble fetching database configuration");
+				ex.printStackTrace();
+			}
+		}
+		// the following properties have been identified
+		String url = props.getProperty("db.url");
+		String user = props.getProperty("db.user");
+		String passwd = props.getProperty("db.passwd");
+		con = DriverManager.getConnection(url, user, passwd);
 	}
 }

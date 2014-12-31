@@ -10,7 +10,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import crawl4j.arbo.ArboController;
-import crawl4j.urlutilities.ArboInfo;
 import crawl4j.urlutilities.MultiArboInfo;
 import crawl4j.urlutilities.URL_Utilities;
 import edu.uci.ics.crawler4j.crawler.Page;
@@ -20,21 +19,21 @@ import edu.uci.ics.crawler4j.url.WebURL;
 
 public class MultiArboCrawler extends WebCrawler {
 
-//	number of breadcrumbs int [0,+infinity[
-//	number of aggregated rating boolean int [0, +infinity[
-//	number of product rating values int [0, +infinity[
-//	number of product prices int [0, +infinity[
-//	number of product availabilities int [0, +infinity[
-//	number of reviews int [0, +infinity[
-//	number of reviews ratings int [0, +infinity[
-//	number of review counts 
-//	number of images int [0, +infinity[
-//	number of price dans le texte
-//	number of symbole euro dans le code
-//	editorial text length	
-//	vue épurée retranché du noyau commun aux pages de profondeur 0 et 1 (retirer le négatif)
-//  nombre d'images ajoutées quand on a retranché la charte graphique (noyau depth 1 2 )
-	
+	//	number of breadcrumbs int [0,+infinity[
+	//	number of aggregated rating boolean int [0, +infinity[
+	//	number of product rating values int [0, +infinity[
+	//	number of product prices int [0, +infinity[
+	//	number of product availabilities int [0, +infinity[
+	//	number of reviews int [0, +infinity[
+	//	number of reviews ratings int [0, +infinity[
+	//	number of review counts 
+	//	number of images int [0, +infinity[
+	//	number of price dans le texte
+	//	number of symbole euro dans le code
+	//	editorial text length	
+	//	vue épurée retranché du noyau commun aux pages de profondeur 0 et 1 (retirer le négatif)
+	//  nombre d'images ajoutées quand on a retranché la charte graphique (noyau depth 1 2 )
+
 	// size of the in memory cache per thread (200 default value)
 
 	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg" + "|png|tiff|mid|mp2|mp3|mp4"
@@ -57,6 +56,7 @@ public class MultiArboCrawler extends WebCrawler {
 	public void visit(Page page) {
 		// we here parse the html to fill up the cache with the following information
 		String url = page.getWebURL().getURL();
+
 		System.out.println(Thread.currentThread()+": Visiting URL : "+url);
 		MultiArboInfo info =myCrawlDataManager.getCrawledContent().get(url);
 		if (info == null){
@@ -86,8 +86,8 @@ public class MultiArboCrawler extends WebCrawler {
 			myCrawlDataManager.incTotalTextSize(htmlParseData.getText().length());	
 
 			Set<String> filtered_links = filter_out_links(links);
-            info.setOutgoingLinks(filtered_links);
-			
+			info.setOutgoingLinks(filtered_links);
+			info.setLinks_size(filtered_links.size());
 			// parsing the document to get the predictor of our model			
 			Document doc = Jsoup.parse(html);	
 			Elements breadCrumbs = doc.getElementsByAttributeValue("itemtype", "http://data-vocabulary.org/Breadcrumb");
