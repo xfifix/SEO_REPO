@@ -9,7 +9,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import crawl4j.arbo.ArboController;
 import crawl4j.urlutilities.ArboInfo;
+import crawl4j.urlutilities.MultiArboInfo;
 import crawl4j.urlutilities.URL_Utilities;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
@@ -45,9 +47,10 @@ public class MultiArboCrawler extends WebCrawler {
 	}
 
 	// we don't visit media URLs and we keep inside Cdiscount
+	// we don't visit media URLs and we keep inside Cdiscount
 	public boolean shouldVisit(WebURL url) {
 		String href = url.getURL().toLowerCase();
-		return !filters.matcher(href).matches() && href.startsWith("http://www.cdiscount.com/");
+		return !filters.matcher(href).matches() && href.startsWith(ArboController.site_stub);
 	}
 
 	@Override
@@ -55,9 +58,9 @@ public class MultiArboCrawler extends WebCrawler {
 		// we here parse the html to fill up the cache with the following information
 		String url = page.getWebURL().getURL();
 		System.out.println(Thread.currentThread()+": Visiting URL : "+url);
-		ArboInfo info =myCrawlDataManager.getCrawledContent().get(url);
+		MultiArboInfo info =myCrawlDataManager.getCrawledContent().get(url);
 		if (info == null){
-			info =new ArboInfo();
+			info =new MultiArboInfo();
 		}		
 		info.setUrl(url);
 		info.setDepth((int)page.getWebURL().getDepth());
@@ -81,10 +84,10 @@ public class MultiArboCrawler extends WebCrawler {
 			links = htmlParseData.getOutgoingUrls();
 			myCrawlDataManager.incTotalLinks(links.size());
 			myCrawlDataManager.incTotalTextSize(htmlParseData.getText().length());	
-			// we here filter the outlinks we want to keep (they must be internal and they must respect the robot.txt
-			Set<String> filtered_links = filter_out_links(links);
 
-			info.setLinks_size(filtered_links.size());
+			Set<String> filtered_links = filter_out_links(links);
+            info.setOutgoingLinks(filtered_links);
+			
 			// parsing the document to get the predictor of our model			
 			Document doc = Jsoup.parse(html);	
 			Elements breadCrumbs = doc.getElementsByAttributeValue("itemtype", "http://data-vocabulary.org/Breadcrumb");
@@ -108,6 +111,9 @@ public class MultiArboCrawler extends WebCrawler {
 		myCrawlDataManager.getCrawledContent().put(url,info);
 	}
 
+
+
+
 	public Set<String> filter_out_links(List<WebURL> links){
 		Set<String> outputSet = new HashSet<String>();
 		for (WebURL url_out : links){
@@ -119,8 +125,6 @@ public class MultiArboCrawler extends WebCrawler {
 		return outputSet;
 	}
 
-
-
 	// This function is called by controller to get the local data of this
 	// crawler when job is finished
 	@Override
@@ -131,9 +135,9 @@ public class MultiArboCrawler extends WebCrawler {
 	@Override
 	protected void handlePageStatusCode(WebURL webUrl, int statusCode, String statusDescription) {
 		String url = webUrl.getURL();
-		ArboInfo info =myCrawlDataManager.getCrawledContent().get(url);
+		MultiArboInfo info =myCrawlDataManager.getCrawledContent().get(url);
 		if (info == null){
-			info =new ArboInfo();
+			info =new MultiArboInfo();
 		}	
 		info.setStatus_code(statusCode);
 		myCrawlDataManager.getCrawledContent().put(url,info);

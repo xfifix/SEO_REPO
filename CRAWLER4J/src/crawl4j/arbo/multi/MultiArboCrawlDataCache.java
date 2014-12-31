@@ -1,10 +1,9 @@
 package crawl4j.arbo.multi;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import crawl4j.urlutilities.ArboInfo;
+import crawl4j.urlutilities.MultiArboInfo;
 
 public class MultiArboCrawlDataCache {
 	// we here keep every thing in RAM memory because the inlinks cache updates each time.
@@ -16,7 +15,7 @@ public class MultiArboCrawlDataCache {
 	
 
 	// local cache for each thread which has crawled his own URLs
-	private Map<String, ArboInfo> crawledContent = new ConcurrentHashMap<String, ArboInfo>();
+	private Map<String, MultiArboInfo> crawledContent = new ConcurrentHashMap<String, MultiArboInfo>();
 	
 	public MultiArboCrawlDataCache() {
 	}
@@ -57,11 +56,11 @@ public class MultiArboCrawlDataCache {
 		this.totalTextSize += count;
 	}
 
-	public Map<String, ArboInfo> getCrawledContent() {
+	public Map<String, MultiArboInfo> getCrawledContent() {
 		return crawledContent;
 	}
 
-	public void setCrawledContent(Map<String, ArboInfo> crawledContent) {
+	public void setCrawledContent(Map<String, MultiArboInfo> crawledContent) {
 		this.crawledContent = crawledContent;
 	}
 
