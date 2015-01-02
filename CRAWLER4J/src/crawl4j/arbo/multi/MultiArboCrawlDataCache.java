@@ -8,12 +8,10 @@ import crawl4j.urlutilities.MultiArboInfo;
 public class MultiArboCrawlDataCache {
 	// we here keep every thing in RAM memory because the inlinks cache updates each time.
 	// we save everything just at the very end of the crawl
-
 	private int totalProcessedPages;
 	private long totalLinks;
 	private long totalTextSize;
 	
-
 	// local cache for each thread which has crawled his own URLs
 	private Map<String, MultiArboInfo> crawledContent = new ConcurrentHashMap<String, MultiArboInfo>();
 	

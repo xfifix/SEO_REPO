@@ -47,7 +47,7 @@ public class MultiArboController {
 		// we here launch just a few threads, enough for a shallow crawl
 		// maximum twenty otherwise the concurrent update of the Map might get really too slow
 		// and become a bottleneck rather than a 
-		int numberOfCrawlers =  20;	
+		int numberOfCrawlers =  200;	
 		// downsizing to test
 		//int numberOfCrawlers =  1;
 		if (args.length == 2) {
@@ -65,7 +65,7 @@ public class MultiArboController {
 		config.setMaxPagesToFetch(-1);
 		// we crawl up to depth 5
 		// to get the navigation we only need to go up to depth 5
-		int maxDepthOfCrawling =  1;        
+		int maxDepthOfCrawling =  2;        
 		config.setMaxDepthOfCrawling(maxDepthOfCrawling);
 		// we want the crawl not to be reconfigurable : too slow otherwise
 		config.setResumableCrawling(false);

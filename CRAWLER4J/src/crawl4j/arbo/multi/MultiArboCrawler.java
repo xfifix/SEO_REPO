@@ -64,6 +64,10 @@ public class MultiArboCrawler extends WebCrawler {
 		}		
 		info.setUrl(url);
 		info.setDepth((int)page.getWebURL().getDepth());
+		
+		String page_type = URL_Utilities.checkTypeFullUrl(url);
+		info.setPage_type(page_type);
+		
 		myCrawlDataManager.incProcessedPages();	
 		List<WebURL> links = null;
 		if (page.getParseData() instanceof HtmlParseData) {
@@ -110,8 +114,6 @@ public class MultiArboCrawler extends WebCrawler {
 		}
 		myCrawlDataManager.getCrawledContent().put(url,info);
 	}
-
-
 
 
 	public Set<String> filter_out_links(List<WebURL> links){
