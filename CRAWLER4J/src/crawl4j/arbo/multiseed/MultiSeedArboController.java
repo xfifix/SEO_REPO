@@ -34,8 +34,8 @@ public class MultiSeedArboController {
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
 
 	private static String insert_statement_with_label="INSERT INTO ARBOCRAWL_RESULTS (URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH,"
-			+ " OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, PAGE_TYPE, LAST_UPDATE)"
-			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			+ " OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, PAGE_TYPE, CONCURRENT_NAME, LAST_UPDATE)"
+			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 	public static void main(String[] args) throws Exception {
 		instantiate_connection();	
@@ -200,7 +200,7 @@ public class MultiSeedArboController {
 		for (Object localData : crawlersLocalData) {
 			MultiSeedArboCrawlDataCache stat = (MultiSeedArboCrawlDataCache) localData;
 			Map<String, MultiArboInfo> local_thread_cache = stat.getCrawledContent();
-			saveDatabaseData(local_thread_cache);
+			saveDatabaseData(local_thread_cache,name);
 		}
 	}
 	
@@ -232,7 +232,7 @@ public class MultiSeedArboController {
 		}
 	}
 
-	public static void saveDatabaseData(Map<String, MultiArboInfo> local_thread_cache){
+	public static void saveDatabaseData(Map<String, MultiArboInfo> local_thread_cache, String name){
 		try{
 			Iterator<Entry<String, MultiArboInfo>> it = local_thread_cache.entrySet().iterator();
 			con.setAutoCommit(false);
@@ -245,8 +245,8 @@ public class MultiSeedArboController {
 					Map.Entry<String, MultiArboInfo> pairs = (Map.Entry<String, MultiArboInfo>)it.next();
 					String url=pairs.getKey();
 					MultiArboInfo info = pairs.getValue();
-					//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, LAST_UPDATE)"
-					//  1        2        3    4           5                6        7           8              9             10               11                      12            13              14             15            16             17         18       
+					//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, CONCURRENT_NAME,  LAST_UPDATE)"
+					//  1        2        3    4           5                6        7           8              9             10               11                      12            13              14             15            16             17           18              19
 					st.setString(1,url);
 					st.setString(2,info.getText());
 					st.setString(3,info.getTitle());
@@ -270,8 +270,9 @@ public class MultiSeedArboController {
 					st.setInt(16,info.getNb_reviews_count());
 					st.setInt(17,info.getNb_images());
 					st.setString(18,info.getPage_type());
+					st.setString(19,name);
 					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-					st.setDate(19,sqlDate);
+					st.setDate(20,sqlDate);
 					//					st.executeUpdate();
 					st.addBatch();
 				}while (it.hasNext());	

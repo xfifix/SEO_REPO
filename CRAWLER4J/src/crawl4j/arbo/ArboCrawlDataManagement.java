@@ -108,7 +108,7 @@ public class ArboCrawlDataManagement {
 		this.totalTextSize += count;
 	}
 
-	public void saveDatabaseDataWithLabel(){
+	public void saveDatabaseData(){
 		try{
 			Iterator<Entry<String, ArboInfo>> it = crawledContent.entrySet().iterator();
 			con.setAutoCommit(false);
@@ -167,72 +167,8 @@ public class ArboCrawlDataManagement {
 		}	
 	}
 
-	// old and brute force way : we insert all URLs
-	public void saveDatabaseData(){
-		try{
-			Iterator<Entry<String, ArboInfo>> it = crawledContent.entrySet().iterator();
-			con.setAutoCommit(false);
-			PreparedStatement st = con.prepareStatement(insert_statement);
-			int local_counter = 0;
-			if (it.hasNext()){
-				do {
-					local_counter ++;
-					//				PreparedStatement st = con.prepareStatement(insert_statement);
-					Map.Entry<String, ArboInfo> pairs = (Map.Entry<String, ArboInfo>)it.next();
-					String url=pairs.getKey();
-					ArboInfo info = pairs.getValue();
-					//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, PAGE_TYPE, LAST_UPDATE)"
-					//  1        2        3    4           5                6        7           8              9             10               11                      12            13              14             15            16             17         18         19
-					st.setString(1,url);
-					st.setString(2,info.getText());
-					st.setString(3,info.getTitle());
-					st.setString(4,info.getH1());
-					st.setString(5,info.getShort_desc());
-					st.setInt(6,info.getStatus_code());
-					st.setInt(7,info.getDepth());
-					st.setInt(8,info.getLinks_size());
-					Integer nb_inlinks = 0;
-					Set<String> inlinksURL = inlinks_cache.get(url);
-					if ( inlinksURL != null){
-						nb_inlinks = inlinks_cache.get(url).size();
-					}
-					st.setInt(9,nb_inlinks);
-					st.setInt(10,info.getNb_breadcrumbs());
-					st.setInt(11,info.getNb_aggregated_rating());
-					st.setInt(12,info.getNb_ratings());
-					st.setInt(13,info.getNb_prices());
-					st.setInt(14,info.getNb_availabilities());
-					st.setInt(15,info.getNb_reviews());
-					st.setInt(16,info.getNb_reviews_count());
-					st.setInt(17,info.getNb_images());
-					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-					st.setDate(18,sqlDate);
-					//					st.executeUpdate();
-					st.addBatch();
-				}while (it.hasNext());	
-				st.executeBatch();		 
-				con.commit();
-				System.out.println(Thread.currentThread()+"Committed " + local_counter + " updates");
-			}
-		} catch (SQLException e){
-			e.printStackTrace();  
-			if (con != null) {
-				try {
-					con.rollback();
-				} catch (SQLException ex1) {
-					ex1.printStackTrace();
-				}
-			}
-		}	
-	}
-
 	public void saveData(){
 		saveDatabaseData();
-		crawledContent.clear();
-	}
-
-	public void saveDataWithLabel(){
-		saveDatabaseDataWithLabel();
 		crawledContent.clear();
 	}
 

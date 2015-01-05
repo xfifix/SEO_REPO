@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 import com.urlutilities.URL_Utilities;
 
 public class CurrentBatchTitlePopulatingClass {
-	private static String csvFile = "/home/sduprey/My_Data/My_GWT_Extracts/20140825-duplis-titles-GWT.csv";
+	private static String csvFile = "/home/sduprey/My_Data/My_GWT_Extracts/Extarct_GWT_01012015.csv";
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/title_duplication.properties";
 	private static int counter = 0;
 	private static int batch_size = 10000;

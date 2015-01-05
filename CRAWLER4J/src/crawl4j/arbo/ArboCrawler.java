@@ -175,12 +175,7 @@ public class ArboCrawler extends WebCrawler {
 		System.out.println("Crawler " + id + "> Processed Pages: " + myCrawlDataManager.getTotalProcessedPages());
 		System.out.println("Crawler " + id + "> Total Links Found: " + myCrawlDataManager.getTotalLinks());
 		System.out.println("Crawler " + id + "> Total Text Size: " + myCrawlDataManager.getTotalTextSize());
-		if (ArboController.site_stub.contains("cdiscount.com")){
-			myCrawlDataManager.saveDataWithLabel();
-		} else {
-			myCrawlDataManager.saveData();
-		}
-		myCrawlDataManager.saveData();	
+		myCrawlDataManager.saveData();
 	}
 
 }
