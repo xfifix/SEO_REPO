@@ -20,8 +20,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class MultipleIPsCronJob {
-//	private static int min_number_of_wait_times = 40;
-//	private static int max_number_of_wait_times = 60;
+	//	private static int min_number_of_wait_times = 40;
+	//	private static int max_number_of_wait_times = 60;
 	private static int min_number_of_wait_times = 20;
 	private static int max_number_of_wait_times = 30;
 	private static List<String> user_agents = new ArrayList<String>();
@@ -111,6 +111,7 @@ public class MultipleIPsCronJob {
 		while ((line = br.readLine()) != null) {
 			user_agents.add(line);
 		}
+		br.close();
 	}
 
 	private static String randomUserAgent(){
