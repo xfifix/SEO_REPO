@@ -55,8 +55,8 @@ public class MultiSeedArboCrawler extends WebCrawler {
 	@Override
 	public void visit(Page page) {
 		// we here parse the html to fill up the cache with the following information
-		String url = page.getWebURL().getURL();
-
+		String fullUrl = page.getWebURL().getURL();
+        String url = URL_Utilities.drop_parameters(fullUrl);
 		System.out.println(Thread.currentThread()+": Visiting URL : "+url);
 		MultiArboInfo info =myCrawlDataManager.getCrawledContent().get(url);
 		if (info == null){
@@ -136,7 +136,8 @@ public class MultiSeedArboCrawler extends WebCrawler {
 
 	@Override
 	protected void handlePageStatusCode(WebURL webUrl, int statusCode, String statusDescription) {
-		String url = webUrl.getURL();
+		String fullUrl = webUrl.getURL();
+		String url = URL_Utilities.drop_parameters(fullUrl);
 		MultiArboInfo info =myCrawlDataManager.getCrawledContent().get(url);
 		if (info == null){
 			info =new MultiArboInfo();
