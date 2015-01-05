@@ -49,7 +49,7 @@ public class MultiSeedArboCrawler extends WebCrawler {
 	// we don't visit media URLs and we keep inside Cdiscount
 	public boolean shouldVisit(WebURL url) {
 		String href = url.getURL().toLowerCase();
-		return !filters.matcher(href).matches() && href.startsWith(ArboController.site_stub);
+		return (!filters.matcher(href).matches() && ArboController.isAllowedSiteforMultipleCrawl(href));
 	}
 
 	@Override
@@ -64,10 +64,10 @@ public class MultiSeedArboCrawler extends WebCrawler {
 		}		
 		info.setUrl(url);
 		info.setDepth((int)page.getWebURL().getDepth());
-		
+
 		String page_type = URL_Utilities.checkTypeFullUrl(url);
 		info.setPage_type(page_type);
-		
+
 		myCrawlDataManager.incProcessedPages();	
 		List<WebURL> links = null;
 		if (page.getParseData() instanceof HtmlParseData) {

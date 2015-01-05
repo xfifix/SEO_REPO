@@ -1,7 +1,7 @@
 package crawl4j.arbo.multi;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import crawl4j.urlutilities.MultiArboInfo;
 
@@ -13,7 +13,7 @@ public class MultiArboCrawlDataCache {
 	private long totalTextSize;
 	
 	// local cache for each thread which has crawled his own URLs
-	private Map<String, MultiArboInfo> crawledContent = new ConcurrentHashMap<String, MultiArboInfo>();
+	private Map<String, MultiArboInfo> crawledContent = new HashMap<String, MultiArboInfo>();
 	
 	public MultiArboCrawlDataCache() {
 	}

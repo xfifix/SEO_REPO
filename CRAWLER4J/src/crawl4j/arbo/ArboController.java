@@ -10,6 +10,23 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
 public class ArboController {
 	public static String site_stub="http://www.cdiscount.com/";
+	public static String[] multiple_seeds = {
+		"http://www.cdiscount.com/",
+		"http://www.amazon.fr/",
+		"http://www.darty.com/",
+		"http://www.rueducommerce.fr/"
+	};
+
+	public static boolean isAllowedSiteforMultipleCrawl(String href){
+		boolean found = false;
+		for (String seed : multiple_seeds){
+			if(href.startsWith(seed)){
+				found=true;
+			}
+		}
+		return found;
+	}
+
 	public static void main(String[] args) throws Exception {
 		System.setProperty("http.agent", "");
 		System.out.println("Starting the crawl configuration");		
@@ -35,7 +52,7 @@ public class ArboController {
 		// to get the navigation we only need to go up to depth 5
 		int maxDepthOfCrawling = 5;        
 		config.setMaxDepthOfCrawling(maxDepthOfCrawling);
-        // we want the crawl not to be reconfigurable : too slow otherwise
+		// we want the crawl not to be reconfigurable : too slow otherwise
 		config.setResumableCrawling(false);
 		PageFetcher pageFetcher = new PageFetcher(config);
 		RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
