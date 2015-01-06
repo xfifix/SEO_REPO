@@ -30,17 +30,19 @@ public class MultiArboController {
 	// of the crawl before we update the database	
 	private static Map<String, Set<String>> inlinks_cache = new HashMap<String, Set<String>>();
 	private static Connection con;
-	
+
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
 
-	private static String insert_statement_with_label="INSERT INTO ARBOCRAWL_RESULTS (URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH,"
+	private static String insert_statement="INSERT INTO ARBOCRAWL_RESULTS (URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH,"
 			+ " OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, PAGE_TYPE, CONCURRENT_NAME, LAST_UPDATE)"
 			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
+	private static String update_statement ="UPDATE ARBOCRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,H1=?,SHORT_DESCRIPTION=?,STATUS_CODE=?,DEPTH=?,OUTLINKS_SIZE=?,INLINKS_SIZE=?,NB_BREADCRUMBS=?,NB_AGGREGATED_RATINGS=?,NB_RATINGS_VALUES=?,NB_PRICES=?,NB_AVAILABILITIES=?,NB_REVIEWS=?,NB_REVIEWS_COUNT=?,NB_IMAGES=?,PAGE_TYPE=?,CONCURRENT_NAME=?,LAST_UPDATE=? WHERE URL=?";
+
 	public static void main(String[] args) throws Exception {
-		
+
 		instantiate_connection();
-		
+
 		System.setProperty("http.agent", "");
 		System.out.println("Starting the crawl configuration");	
 		String name = "Cdiscount";
@@ -66,7 +68,7 @@ public class MultiArboController {
 		config.setMaxPagesToFetch(-1);
 		// we crawl up to depth 5
 		// to get the navigation we only need to go up to depth 5
-		int maxDepthOfCrawling =  3;        
+		int maxDepthOfCrawling =  4;        
 		config.setMaxDepthOfCrawling(maxDepthOfCrawling);
 		// we want the crawl not to be reconfigurable : too slow otherwise
 		config.setResumableCrawling(false);
@@ -114,7 +116,7 @@ public class MultiArboController {
 		for (Object localData : crawlersLocalData) {
 			MultiArboCrawlDataCache stat = (MultiArboCrawlDataCache) localData;
 			Map<String, MultiArboInfo> local_thread_cache = stat.getCrawledContent();
-			saveDatabaseData(local_thread_cache,name);
+			updateOrInsertDatabaseData(local_thread_cache,name);
 		}
 	}
 
@@ -145,11 +147,101 @@ public class MultiArboController {
 		}
 	}
 
+	public static void updateOrInsertDatabaseData(Map<String, MultiArboInfo> local_thread_cache, String name){
+		try{
+			Iterator<Entry<String, MultiArboInfo>> it = local_thread_cache.entrySet().iterator();
+			int local_counter = 0;
+			if (it.hasNext()){
+				local_counter++;
+				PreparedStatement st = con.prepareStatement(update_statement);
+				do {
+					local_counter ++;
+					Map.Entry<String, MultiArboInfo> pairs = (Map.Entry<String, MultiArboInfo>)it.next();
+					String url=pairs.getKey();
+					MultiArboInfo info = pairs.getValue();
+					// update statement
+					//UPDATE ARBOCRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,H1=?,SHORT_DESCRIPTION=?,STATUS_CODE=?,DEPTH=?,OUTLINKS_SIZE=?,INLINKS_SIZE=?,NB_BREADCRUMBS=?,NB_AGGREGATED_RATINGS=?,NB_RATINGS_VALUES=?,NB_PRICES=?,NB_AVAILABILITIES=?,NB_REVIEWS=?,NB_REVIEWS_COUNT=?,NB_IMAGES=?,PAGE_TYPE=?,CONCURRENT_NAME=?,LAST_UPDATE=? WHERE URL=?";
+					//                                   1         2     3         4                   5          6            7             8               9                   10                     11               12               13             14            15              16             17          18                19            20  
+					st.setString(1,info.getText());
+					st.setString(2,info.getTitle());
+					st.setString(3,info.getH1());
+					st.setString(4,info.getShort_desc());
+					st.setInt(5,info.getStatus_code());
+					st.setInt(6,info.getDepth());
+					st.setInt(7,info.getLinks_size());
+					Integer nb_inlinks = 0;
+					Set<String> inlinksURL = inlinks_cache.get(url);
+					if ( inlinksURL != null){
+						nb_inlinks = inlinks_cache.get(url).size();
+					}
+					st.setInt(8,nb_inlinks);
+					st.setInt(9,info.getNb_breadcrumbs());
+					st.setInt(10,info.getNb_aggregated_rating());
+					st.setInt(11,info.getNb_ratings());
+					st.setInt(12,info.getNb_prices());
+					st.setInt(13,info.getNb_availabilities());
+					st.setInt(14,info.getNb_reviews());
+					st.setInt(15,info.getNb_reviews_count());
+					st.setInt(16,info.getNb_images());
+					st.setString(17,info.getPage_type());
+					st.setString(18,name);
+					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
+					st.setDate(19,sqlDate);
+					st.setString(20,url);
+					int affected_row = st.executeUpdate();
+					// if the row has not been updated, we have to insert it !
+					if(affected_row == 0){
+						PreparedStatement insert_st = con.prepareStatement(insert_statement);
+						//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, PAGE_TYPE,   CONCURRENT_NAME, LAST_UPDATE)"
+						//  1        2        3    4           5                6        7           8              9             10               11                      12            13              14             15            16             17           18             19           20
+						insert_st.setString(1,url); 
+						insert_st.setString(2,info.getText());
+						insert_st.setString(3,info.getTitle());
+						insert_st.setString(4,info.getH1());
+						insert_st.setString(5,info.getShort_desc());
+						insert_st.setInt(6,info.getStatus_code());
+						insert_st.setInt(7,info.getDepth());
+						insert_st.setInt(8,info.getLinks_size());
+						if ( inlinksURL != null){
+							nb_inlinks = inlinks_cache.get(url).size();
+						}
+						insert_st.setInt(9,nb_inlinks);
+						insert_st.setInt(10,info.getNb_breadcrumbs());
+						insert_st.setInt(11,info.getNb_aggregated_rating());
+						insert_st.setInt(12,info.getNb_ratings());
+						insert_st.setInt(13,info.getNb_prices());
+						insert_st.setInt(14,info.getNb_availabilities());
+						insert_st.setInt(15,info.getNb_reviews());
+						insert_st.setInt(16,info.getNb_reviews_count());
+						insert_st.setInt(17,info.getNb_images());
+						insert_st.setString(18,info.getPage_type());
+						insert_st.setString(19,name);
+						insert_st.setDate(20,sqlDate);
+						insert_st.executeUpdate();
+					}
+				}while (it.hasNext());	
+				System.out.println(Thread.currentThread()+"Committed " + local_counter + " updates");
+			}
+		} catch (SQLException e){
+			//System.out.println("Line already inserted : "+nb_lines);
+			e.printStackTrace();  
+			if (con != null) {
+				try {
+					con.rollback();
+				} catch (SQLException ex1) {
+					ex1.printStackTrace();
+				}
+			}
+			e.printStackTrace();
+		}	
+	}
+
+
 	public static void saveDatabaseData(Map<String, MultiArboInfo> local_thread_cache, String name){
 		try{
 			Iterator<Entry<String, MultiArboInfo>> it = local_thread_cache.entrySet().iterator();
 			con.setAutoCommit(false);
-			PreparedStatement st = con.prepareStatement(insert_statement_with_label);
+			PreparedStatement st = con.prepareStatement(insert_statement);
 			int local_counter = 0;
 			if (it.hasNext()){
 				do {
@@ -204,7 +296,7 @@ public class MultiArboController {
 			}
 		}		
 	}
-	
+
 	public static void instantiate_connection() throws SQLException{
 		Properties props = new Properties();
 		FileInputStream in = null;      
