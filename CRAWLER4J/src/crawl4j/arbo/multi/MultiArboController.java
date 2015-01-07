@@ -284,9 +284,9 @@ public class MultiArboController {
 					Map.Entry<String, MultiArboInfo> pairs = (Map.Entry<String, MultiArboInfo>)it.next();
 					String url=pairs.getKey();
 					MultiArboInfo info = pairs.getValue();
-					//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, CONCURRENT_NAME, LAST_UPDATE)"
-					//  1        2        3    4           5                6        7           8              9             10               11                      12            13              14             15            16             17           18             19
-					st.setString(1,url);
+					//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, NB_SEARCH_IN_URL, NB_ADD_IN_TEXT, NB_FILTER_IN_TEXT, NB_SEARCH_IN_TEXT, NB_GUIDE_ACHAT_IN_TEXT, NB_PRODUCT_INFO_IN_TEXT, NB_LIVRAISON_IN_TEXT, NB_GARANTIES_IN_TEXT, NB_PRODUITS_SIMILAIRES_IN_TEXT, NB_IMAGES_TEXT, WIDTH_AVERAGE, HEIGHT_AVERAGE, PAGE_TYPE,   CONCURRENT_NAME, LAST_UPDATE)"
+					//  1        2        3    4           5                6        7           8              9             10               11                      12            13              14             15            16             17           18               19                 20                21                  22                      23                      24                       25                        26                       27             28              29          30              31             32
+					st.setString(1,url); 
 					st.setString(2,info.getText());
 					st.setString(3,info.getTitle());
 					st.setString(4,info.getH1());
@@ -308,10 +308,22 @@ public class MultiArboController {
 					st.setInt(15,info.getNb_reviews());
 					st.setInt(16,info.getNb_reviews_count());
 					st.setInt(17,info.getNb_images());
-					st.setString(18,info.getPage_type());
-					st.setString(19,name);
+					st.setInt(18,info.getNb_search_in_url());
+					st.setInt(19,info.getNb_add_in_text());
+					st.setInt(20,info.getNb_filter_in_text());
+					st.setInt(21,info.getNb_search_in_text());
+					st.setInt(22,info.getNb_guide_achat_in_text());
+					st.setInt(23,info.getNb_product_info_in_text());
+					st.setInt(24,info.getNb_livraison_in_text());
+					st.setInt(25,info.getNb_garanties_in_text());
+					st.setInt(26,info.getNb_produits_similaires_in_text());
+					st.setInt(27,info.getNb_total_images());
+					st.setDouble(28, info.getWidth_average());
+					st.setDouble(29, info.getHeight_average());
+					st.setString(30,info.getPage_type());
+					st.setString(31,name);
 					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-					st.setDate(20,sqlDate);
+					st.setDate(32,sqlDate);
 					//					st.executeUpdate();
 					st.addBatch();
 				}while (it.hasNext());	
