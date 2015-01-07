@@ -3,6 +3,20 @@ package crawl4j.urlutilities;
 import java.util.Set;
 
 public class MultiArboInfo {
+	
+	
+	// text built predictors
+	private int nb_add_in_text;
+	private int nb_filter_in_text;
+	private int nb_search_in_text;
+	private int nb_guide_achat_in_text;
+	private int nb_product_info_in_text;
+	private int nb_livraison_in_text;
+	private int nb_garanties_in_text;
+	private int nb_produits_similaires_in_text;
+    // url built predictors
+	private int nb_search_in_url;
+    // standard predictors
 	private String url="";
 	private String text="";
 	private String title="";
@@ -12,6 +26,7 @@ public class MultiArboInfo {
 	private int status_code=0;
 	private int depth=0;
 	private int links_size=0;
+	// rich snippet predictors
 	private int nb_breadcrumbs=0;
 	private int nb_ratings=0;
 	private int nb_aggregated_rating=0;
@@ -130,5 +145,59 @@ public class MultiArboInfo {
 	}
 	public void setOutgoingLinks(Set<String> outgoingLinks) {
 		this.outgoingLinks = outgoingLinks;
+	}
+	public int getNb_add_in_text() {
+		return nb_add_in_text;
+	}
+	public void setNb_add_in_text(int nb_add_in_text) {
+		this.nb_add_in_text = nb_add_in_text;
+	}
+	public int getNb_filter_in_text() {
+		return nb_filter_in_text;
+	}
+	public void setNb_filter_in_text(int nb_filter_in_text) {
+		this.nb_filter_in_text = nb_filter_in_text;
+	}
+	public int getNb_search_in_text() {
+		return nb_search_in_text;
+	}
+	public void setNb_search_in_text(int nb_search_in_text) {
+		this.nb_search_in_text = nb_search_in_text;
+	}
+	public int getNb_search_in_url() {
+		return nb_search_in_url;
+	}
+	public void setNb_search_in_url(int nb_search_in_url) {
+		this.nb_search_in_url = nb_search_in_url;
+	}
+	public int getNb_guide_achat_in_text() {
+		return nb_guide_achat_in_text;
+	}
+	public void setNb_guide_achat_in_text(int nb_guide_achat_in_text) {
+		this.nb_guide_achat_in_text = nb_guide_achat_in_text;
+	}
+	public int getNb_product_info_in_text() {
+		return nb_product_info_in_text;
+	}
+	public void setNb_product_info_in_text(int nb_product_info_in_text) {
+		this.nb_product_info_in_text = nb_product_info_in_text;
+	}
+	public int getNb_livraison_in_text() {
+		return nb_livraison_in_text;
+	}
+	public void setNb_livraison_in_text(int nb_livraison_in_text) {
+		this.nb_livraison_in_text = nb_livraison_in_text;
+	}
+	public int getNb_garanties_in_text() {
+		return nb_garanties_in_text;
+	}
+	public void setNb_garanties_in_text(int nb_garanties_in_text) {
+		this.nb_garanties_in_text = nb_garanties_in_text;
+	}
+	public int getNb_produits_similaires_in_text() {
+		return nb_produits_similaires_in_text;
+	}
+	public void setNb_produits_similaires_in_text(int nb_produits_similaires_in_text) {
+		this.nb_produits_similaires_in_text = nb_produits_similaires_in_text;
 	}
 }

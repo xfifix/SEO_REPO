@@ -22,8 +22,8 @@ import org.jsoup.select.Elements;
 public class MultipleIPsCronJob {
 	//	private static int min_number_of_wait_times = 40;
 	//	private static int max_number_of_wait_times = 60;
-	private static int min_number_of_wait_times = 20;
-	private static int max_number_of_wait_times = 30;
+	private static int min_number_of_wait_times = 15;
+	private static int max_number_of_wait_times = 25;
 	private static List<String> user_agents = new ArrayList<String>();
 	private static String user_agent_path = "/home/sduprey/My_Data/My_User_Agents/user-agent.txt";
 	public static void main(String[] args){
@@ -136,10 +136,9 @@ public class MultipleIPsCronJob {
 			try{
 				// we wait between x and xx seconds
 				Thread.sleep(randInt(min_number_of_wait_times,max_number_of_wait_times)*1000);
-
 				System.out.println("Fetching a new page");
 				String constructed_url ="https://www.google.fr/search?q="+keyword+"&start="+Integer.toString(depth*10);
-
+                // we here use our properly configured squid proxy on port 3128 on localhost
 				Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", 3128));
 				URL url = new URL(constructed_url);
 				HttpURLConnection connection = (HttpURLConnection)url.openConnection(proxy);

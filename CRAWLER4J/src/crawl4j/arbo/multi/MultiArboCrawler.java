@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -109,7 +110,29 @@ public class MultiArboCrawler extends WebCrawler {
 			info.setNb_reviews_count(reviewCounts.size());
 			Elements images = doc.getElementsByAttributeValue("itemprop", "image");
 			info.setNb_images(images.size());
-			// end of predictor parsing
+			// end of rich snippet predictor parsing
+			String text_to_parse = doc.text();
+			// beginning of url built parameters
+			int nb_search_in_url = StringUtils.countMatches(text_to_parse, "search")+StringUtils.countMatches(text_to_parse, "recherche");
+		    info.setNb_search_in_url(nb_search_in_url);
+			// beginning of text built parameters
+			int nb_add  = StringUtils.countMatches(text_to_parse, "ajout")+StringUtils.countMatches(text_to_parse, "ajouter")+StringUtils.countMatches(text_to_parse, "Ajout")+StringUtils.countMatches(text_to_parse, "Ajouter");
+			info.setNb_add_in_text(nb_add);
+			int nb_filter  = StringUtils.countMatches(text_to_parse, "filtre")+StringUtils.countMatches(text_to_parse, "facette");
+			info.setNb_filter_in_text(nb_filter);
+			int nb_search  = StringUtils.countMatches(text_to_parse, "Ma recherche")+StringUtils.countMatches(text_to_parse, "Votre recherche")+StringUtils.countMatches(text_to_parse, "résultats pour")+StringUtils.countMatches(text_to_parse, "résultats associés");
+		    info.setNb_search_in_text(nb_search);
+
+			int nb_guide_achat = StringUtils.countMatches(text_to_parse, "search");
+		    info.setNb_guide_achat_in_text(nb_guide_achat);
+			int nb_product_info = StringUtils.countMatches(text_to_parse, "caractéristique")+StringUtils.countMatches(text_to_parse, "Caractéristique")+StringUtils.countMatches(text_to_parse, "descriptif")+StringUtils.countMatches(text_to_parse, "Descriptif")+StringUtils.countMatches(text_to_parse, "information")+StringUtils.countMatches(text_to_parse, "Information");	    		
+		    info.setNb_product_info_in_text(nb_product_info);
+			int nb_livraison = StringUtils.countMatches(text_to_parse, "livraison") +StringUtils.countMatches(text_to_parse, "frais de port")+StringUtils.countMatches(text_to_parse, "Frais de port") ;
+		    info.setNb_livraison_in_text(nb_livraison);
+			int nb_garanties = StringUtils.countMatches(text_to_parse, "garantie")+StringUtils.countMatches(text_to_parse, "Garantie")+StringUtils.countMatches(text_to_parse, "Assurance")+StringUtils.countMatches(text_to_parse, "assurance");    
+		    info.setNb_garanties_in_text(nb_garanties);
+			int nb_produits_similaires = StringUtils.countMatches(text_to_parse, "Produits Similaires")+StringUtils.countMatches(text_to_parse, "produits similaires")+StringUtils.countMatches(text_to_parse, "Meilleures Ventes")+StringUtils.countMatches(text_to_parse, "meilleures ventes")+StringUtils.countMatches(text_to_parse, "Meilleures ventes")+StringUtils.countMatches(text_to_parse, "Nouveautés")+StringUtils.countMatches(text_to_parse, "nouveautés");
+            info.setNb_produits_similaires_in_text(nb_produits_similaires);
 		}
 		myCrawlDataManager.getCrawledContent().put(url,info);
 	}
