@@ -40,23 +40,29 @@ public class MultiArboController {
 	private static String update_statement ="UPDATE ARBOCRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,H1=?,SHORT_DESCRIPTION=?,STATUS_CODE=?,DEPTH=?,OUTLINKS_SIZE=?,INLINKS_SIZE=?,NB_BREADCRUMBS=?,NB_AGGREGATED_RATINGS=?,NB_RATINGS_VALUES=?,NB_PRICES=?,NB_AVAILABILITIES=?,NB_REVIEWS=?,NB_REVIEWS_COUNT=?,NB_IMAGES=?,PAGE_TYPE=?,CONCURRENT_NAME=?,LAST_UPDATE=? WHERE URL=?";
 
 	public static void main(String[] args) throws Exception {
-
 		instantiate_connection();
-
 		System.setProperty("http.agent", "");
 		System.out.println("Starting the crawl configuration");	
 		String name = "Cdiscount";
-		String seed = "http://www.cdiscount.com/";
+		//String seed = "http://www.cdiscount.com/";
+		String seed = "http://www.amazon.fr/";
+				
 		// we here launch just a few threads, enough for a shallow crawl
 		// maximum twenty otherwise the concurrent update of the Map might get really too slow
 		// and become a bottleneck rather than a 
 		int numberOfCrawlers =  200;	
 		// downsizing to test
 		//int numberOfCrawlers =  1;
+
+		if (args.length == 1) {
+			seed = args[0];
+		}
+		
 		if (args.length == 2) {
 			seed = args[0];
 			numberOfCrawlers=Integer.valueOf(args[1]);
-		} 
+		}
+		
 		String rootFolder = "/home/sduprey/My_Data/My_Multi_Arbo_Crawl4j";
 		String user_agent_name = "CdiscountBot-crawler";
 		CrawlConfig config = new CrawlConfig();
@@ -68,7 +74,7 @@ public class MultiArboController {
 		config.setMaxPagesToFetch(-1);
 		// we crawl up to depth 5
 		// to get the navigation we only need to go up to depth 5
-		int maxDepthOfCrawling =  4;        
+		int maxDepthOfCrawling =  3;        
 		config.setMaxDepthOfCrawling(maxDepthOfCrawling);
 		// we want the crawl not to be reconfigurable : too slow otherwise
 		config.setResumableCrawling(false);

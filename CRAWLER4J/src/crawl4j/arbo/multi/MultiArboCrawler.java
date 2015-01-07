@@ -18,7 +18,6 @@ import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
 
 public class MultiArboCrawler extends WebCrawler {
-
 	//	number of breadcrumbs int [0,+infinity[
 	//	number of aggregated rating boolean int [0, +infinity[
 	//	number of product rating values int [0, +infinity[
@@ -35,7 +34,6 @@ public class MultiArboCrawler extends WebCrawler {
 	//  nombre d'images ajoutées quand on a retranché la charte graphique (noyau depth 1 2 )
 
 	// size of the in memory cache per thread (200 default value)
-
 	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg" + "|png|tiff|mid|mp2|mp3|mp4"
 			+ "|wav|avi|mov|mpeg|ram|m4v|ico|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 
@@ -49,13 +47,14 @@ public class MultiArboCrawler extends WebCrawler {
 	// we don't visit media URLs and we keep inside Cdiscount
 	public boolean shouldVisit(WebURL url) {
 		String href = url.getURL().toLowerCase();
-		return !filters.matcher(href).matches() && href.startsWith(ArboController.site_stub);
+		return (!filters.matcher(href).matches() && ArboController.isAllowedSiteforMultipleCrawl(href));
 	}
 
 	@Override
 	public void visit(Page page) {
 		// we here parse the html to fill up the cache with the following information
-		String url = page.getWebURL().getURL();
+		String fullUrl = page.getWebURL().getURL();
+		String url = URL_Utilities.drop_parameters(fullUrl);
 
 		System.out.println(Thread.currentThread()+": Visiting URL : "+url);
 		MultiArboInfo info =myCrawlDataManager.getCrawledContent().get(url);
@@ -115,7 +114,6 @@ public class MultiArboCrawler extends WebCrawler {
 		myCrawlDataManager.getCrawledContent().put(url,info);
 	}
 
-
 	public Set<String> filter_out_links(List<WebURL> links){
 		Set<String> outputSet = new HashSet<String>();
 		for (WebURL url_out : links){
@@ -136,7 +134,9 @@ public class MultiArboCrawler extends WebCrawler {
 
 	@Override
 	protected void handlePageStatusCode(WebURL webUrl, int statusCode, String statusDescription) {
-		String url = webUrl.getURL();
+		String fullUrl = webUrl.getURL();
+		String url = URL_Utilities.drop_parameters(fullUrl);
+		
 		MultiArboInfo info =myCrawlDataManager.getCrawledContent().get(url);
 		if (info == null){
 			info =new MultiArboInfo();

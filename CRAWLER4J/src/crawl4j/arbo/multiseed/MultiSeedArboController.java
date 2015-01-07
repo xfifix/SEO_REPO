@@ -43,7 +43,7 @@ public class MultiSeedArboController {
 		String user_agent_name = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
 		System.setProperty("http.agent",user_agent_name);
 		System.out.println("Starting the crawl configuration for Cdiscount, Amazon, Darty, RDC");
-		int maxDepthOfCrawling =  3; // common for all
+		int maxDepthOfCrawling =  2; // common for all
 		// we here launch just a few threads, enough for a shallow crawl
 		// maximum twenty otherwise the concurrent update of the Map might get really too slow
 		// and become a bottleneck rather than a 
