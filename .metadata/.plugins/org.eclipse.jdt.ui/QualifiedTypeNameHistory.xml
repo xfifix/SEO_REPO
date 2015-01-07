@@ -57,4 +57,5 @@
 <fullyQualifiedTypeName name="crawl4j.urlutilities.MultiArboInfo"/>
 <fullyQualifiedTypeName name="java.util.Set"/>
 <fullyQualifiedTypeName name="crawl4j.urlutilities.URL_Utilities"/>
+<fullyQualifiedTypeName name="org.apache.commons.lang3.StringUtils"/>
 </qualifiedTypeNameHistroy>

@@ -3,8 +3,6 @@ package crawl4j.urlutilities;
 import java.util.Set;
 
 public class MultiArboInfo {
-	
-	
 	// text built predictors
 	private int nb_add_in_text;
 	private int nb_filter_in_text;
@@ -14,6 +12,9 @@ public class MultiArboInfo {
 	private int nb_livraison_in_text;
 	private int nb_garanties_in_text;
 	private int nb_produits_similaires_in_text;
+	private int nb_total_images;
+	private double height_average;
+	private double width_average;
     // url built predictors
 	private int nb_search_in_url;
     // standard predictors
@@ -35,6 +36,24 @@ public class MultiArboInfo {
 	private int nb_reviews=0;
     private Set<String> outgoingLinks;
 
+	public int getNb_total_images() {
+		return nb_total_images;
+	}
+	public void setNb_total_images(int nb_total_images) {
+		this.nb_total_images = nb_total_images;
+	}
+	public double getHeight_average() {
+		return height_average;
+	}
+	public void setHeight_average(double height_average) {
+		this.height_average = height_average;
+	}
+	public double getWidth_average() {
+		return width_average;
+	}
+	public void setWidth_average(double width_average) {
+		this.width_average = width_average;
+	}
 	public int getNb_breadcrumbs() {
 		return nb_breadcrumbs;
 	}

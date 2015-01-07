@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import crawl4j.arbo.ArboController;
@@ -133,6 +134,34 @@ public class MultiArboCrawler extends WebCrawler {
 		    info.setNb_garanties_in_text(nb_garanties);
 			int nb_produits_similaires = StringUtils.countMatches(text_to_parse, "Produits Similaires")+StringUtils.countMatches(text_to_parse, "produits similaires")+StringUtils.countMatches(text_to_parse, "Meilleures Ventes")+StringUtils.countMatches(text_to_parse, "meilleures ventes")+StringUtils.countMatches(text_to_parse, "Meilleures ventes")+StringUtils.countMatches(text_to_parse, "Nouveautés")+StringUtils.countMatches(text_to_parse, "nouveautés");
             info.setNb_produits_similaires_in_text(nb_produits_similaires);
+            Elements imageElements = doc.getElementsByTag("img");
+            int nb_total_images = imageElements.size();
+            info.setNb_total_images(nb_total_images);
+            
+            // average height
+            Elements heights  = doc.getElementsByAttribute("height");
+			double height_result = 0;
+			double height_count = 0;
+			for (Element height : heights){
+				String heightstring = height.attr("height");
+				int heightvalue = Integer.valueOf(heightstring);
+				height_count++;
+				height_result=height_result+heightvalue;
+				System.out.println("Height : " + heightstring);
+			}
+			info.setHeight_average(height_result/height_count);
+			//average width
+			Elements widths = doc.getElementsByAttribute("width");
+			double width_result = 0;
+			double width_count = 0;
+			for (Element width : widths){
+				String widthstring = width.attr("width");
+				int widthvalue = Integer.valueOf(widthstring);
+				width_count++;
+				width_result=width_result+widthvalue;
+				System.out.println("Width : "+widthstring);
+			}
+			info.setWidth_average(width_result/width_count);
 		}
 		myCrawlDataManager.getCrawledContent().put(url,info);
 	}
