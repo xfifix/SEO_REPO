@@ -50,17 +50,18 @@ public class MultiSeedArboController {
 		String user_agent_name = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
 		System.setProperty("http.agent",user_agent_name);
 		System.out.println("Starting the crawl configuration for Crawler1, Crawler2, Crawler3, Crawler4");
-		int maxDepthOfCrawling =  1; // common for all
+		int maxDepthOfCrawling =  3; // common for all
         // Managing data for every crawlers for every site
 		// instantiating the seeds for our multiple crawlers
-        String nameCrawler1 = "Cdiscount";
-        String nameCrawler2 = "Amazon";
-        String nameCrawler3 = "Darty";
-        String nameCrawler4 = "RDC";
-		String seedCrawler1 = "http://www.cdiscount.com/";
-		String seedCrawler2 = "http://www.amazon.fr/";
-		String seedCrawler3 = "http://www.darty.com/";
-		String seedCrawler4 = "http://www.rueducommerce.fr/";
+        String nameCrawler1 = "delamaison";
+        String nameCrawler2 = "lamaisonduconvertible";
+        String nameCrawler3 = "habitat";
+        String nameCrawler4 = "enviedemeubles";
+        
+		String seedCrawler1 = "http://www.delamaison.fr/";
+		String seedCrawler2 = "http://www.lamaisonduconvertible.fr/";
+		String seedCrawler3 = "http://www.habitat.fr/";
+		String seedCrawler4 = "http://www.enviedemeubles.com/";
 		// we here launch just a few threads, enough for a shallow crawl
 		// maximum twenty otherwise the concurrent update of the Map might get really too slow
 		// and become a bottleneck rather than a 

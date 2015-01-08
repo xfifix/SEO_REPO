@@ -3,27 +3,32 @@
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
 		<item value="279" key="DIALOG_WIDTH"/>
 		<item value="362" key="DIALOG_Y_ORIGIN"/>
-		<item value="406" key="DIALOG_HEIGHT"/>
 		<item value="1055" key="DIALOG_X_ORIGIN"/>
+		<item value="406" key="DIALOG_HEIGHT"/>
 		<item value="1|Ubuntu|10.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="true" key="wrap"/>
-		<item value="false" key="isRegEx"/>
 		<item value="false" key="casesensitive"/>
+		<item value="false" key="isRegEx"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="current_duplicates" key="selection"/>
+		<item value="Crawler4" key="selection"/>
 		<list key="findhistory">
+			<item value="RDC"/>
+			<item value="Darty"/>
+			<item value="Amazon"/>
+			<item value="Cdiscount"/>
 			<item value="duplicates"/>
 			<item value="]"/>
 			<item value="fpSellBy"/>
 			<item value="PHANTO"/>
-			<item value="&#x09;private static String"/>
-			<item value="nb_attributes"/>
-			<item value="SERP_DATABASE"/>
 		</list>
 		<list key="replacehistory">
+			<item value="Crawler4"/>
+			<item value="Crawler3"/>
+			<item value="Crawler2"/>
+			<item value="Crawler1"/>
 			<item value="current_duplicates"/>
 			<item value=""/>
 			<item value="SERPOSCOPE"/>

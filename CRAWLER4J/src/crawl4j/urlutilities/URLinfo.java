@@ -1,6 +1,5 @@
 package crawl4j.urlutilities;
 
-
 public class URLinfo {
 	private String url="";
 	private String text="";
@@ -21,7 +20,14 @@ public class URLinfo {
 	private String magasin="";
 	private String rayon="";
 	private String produit="";
+	private byte[] page_source_code;
 	
+	public byte[] getPage_source_code() {
+		return page_source_code;
+	}
+	public void setPage_source_code(byte[] page_source_code) {
+		this.page_source_code = page_source_code;
+	}
 	public String getPage_type() {
 		return page_type;
 	}

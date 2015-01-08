@@ -1,5 +1,6 @@
 package crawl4j.continuous;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
@@ -40,7 +41,7 @@ public class ContinuousCrawler extends WebCrawler {
 	}
 
 	@Override
-	public void visit(Page page) {
+	public void visit(Page page) {		
 		String fullUrl = page.getWebURL().getURL();
 		// we drop the unnecessary pieces of the URL
 		String page_type = URL_Utilities.checkTypeFullUrl(fullUrl);
@@ -55,6 +56,9 @@ public class ContinuousCrawler extends WebCrawler {
 		if (info == null){
 			info =new URLinfo();
 		}		
+		// filling up entity to be cached with page source code
+		byte[] pageContent = page.getContentData();
+		info.setPage_source_code(pageContent);
 		// filling up url regexp attributes
 		info.setPage_type(page_type);
 		info.setMagasin(magasin);

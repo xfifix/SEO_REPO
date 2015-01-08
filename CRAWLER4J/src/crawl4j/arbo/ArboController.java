@@ -14,7 +14,11 @@ public class ArboController {
 		"http://www.cdiscount.com/",
 		"http://www.amazon.fr/",
 		"http://www.darty.com/",
-		"http://www.rueducommerce.fr/"
+		"http://www.rueducommerce.fr/",
+		"http://www.delamaison.fr/",
+		"http://www.lamaisonduconvertible.fr/",
+		"http://www.habitat.fr/",
+		"http://www.enviedemeubles.com/"
 	};
 
 	public static boolean isAllowedSiteforMultipleCrawl(String href){
