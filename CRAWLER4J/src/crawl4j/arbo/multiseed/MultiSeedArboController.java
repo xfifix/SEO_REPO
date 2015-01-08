@@ -49,131 +49,137 @@ public class MultiSeedArboController {
 		// we here hide our identity
 		String user_agent_name = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
 		System.setProperty("http.agent",user_agent_name);
-		System.out.println("Starting the crawl configuration for Cdiscount, Amazon, Darty, RDC");
-		int maxDepthOfCrawling =  2; // common for all
+		System.out.println("Starting the crawl configuration for Crawler1, Crawler2, Crawler3, Crawler4");
+		int maxDepthOfCrawling =  1; // common for all
+        // Managing data for every crawlers for every site
+        String nameCrawler1 = "Cdiscount";
+        String nameCrawler2 = "Amazon";
+        String nameCrawler3 = "Darty";
+        String nameCrawler4 = "RDC";
+		
 		// we here launch just a few threads, enough for a shallow crawl
 		// maximum twenty otherwise the concurrent update of the Map might get really too slow
 		// and become a bottleneck rather than a 
-		String seedCdiscount = "http://www.cdiscount.com/";
-		String rootFolderCdiscount = "/home/sduprey/My_Data/My_Multi_Cdiscount_Arbo_Crawl4j";
-		int numberOfCdiscountCrawlers =  50;
-        CrawlConfig configCdiscount = new CrawlConfig();
-        configCdiscount.setCrawlStorageFolder(rootFolderCdiscount);
-        configCdiscount.setUserAgentString(user_agent_name);
+		String seedCrawler1 = "http://www.cdiscount.com/";
+		String rootFolderCrawler1 = "/home/sduprey/My_Data/My_Multi_Crawler1_Arbo_Crawl4j";
+		int numberOfCrawler1Crawlers =  50;
+        CrawlConfig configCrawler1 = new CrawlConfig();
+        configCrawler1.setCrawlStorageFolder(rootFolderCrawler1);
+        configCrawler1.setUserAgentString(user_agent_name);
 		// Politeness delay : none by default
-        configCdiscount.setPolitenessDelay(0);
+        configCrawler1.setPolitenessDelay(0);
 		// Unlimited number of pages can be crawled.
-        configCdiscount.setMaxPagesToFetch(-1);
+        configCrawler1.setMaxPagesToFetch(-1);
 		// we crawl up to depth 5
 		// to get the navigation we only need to go up to depth 5
-		configCdiscount.setMaxDepthOfCrawling(maxDepthOfCrawling);
+        configCrawler1.setMaxDepthOfCrawling(maxDepthOfCrawling);
 		// we want the crawl not to be reconfigurable : too slow otherwise
-		configCdiscount.setResumableCrawling(false);
-		PageFetcher pageFetcherCdiscount = new PageFetcher(configCdiscount);
-		RobotstxtConfig robotstxtConfigCdiscount = new RobotstxtConfig();
-		robotstxtConfigCdiscount.setUserAgentName(user_agent_name);
+        configCrawler1.setResumableCrawling(false);
+		PageFetcher pageFetcherCrawler1 = new PageFetcher(configCrawler1);
+		RobotstxtConfig robotstxtConfigCrawler1 = new RobotstxtConfig();
+		robotstxtConfigCrawler1.setUserAgentName(user_agent_name);
 		// we respect the text robot
-		robotstxtConfigCdiscount.setEnabled(true);
-		RobotstxtServer robotstxtServerCdiscount = new RobotstxtServer(robotstxtConfigCdiscount, pageFetcherCdiscount);
+		robotstxtConfigCrawler1.setEnabled(true);
+		RobotstxtServer robotstxtServerCrawler1 = new RobotstxtServer(robotstxtConfigCrawler1, pageFetcherCrawler1);
 
-		CrawlController controllerCdiscount = new CrawlController(configCdiscount, pageFetcherCdiscount, robotstxtServerCdiscount);
-		controllerCdiscount.addSeed(seedCdiscount);
+		CrawlController controllerCrawler1 = new CrawlController(configCrawler1, pageFetcherCrawler1, robotstxtServerCrawler1);
+		controllerCrawler1.addSeed(seedCrawler1);
 	
-		String seedAmazon = "http://www.amazon.fr/";
-		String rootFolderAmazon = "/home/sduprey/My_Data/My_Multi_Amazon_Arbo_Crawl4j";
-		int numberOfAmazonCrawlers =  50;
-        CrawlConfig configAmazon = new CrawlConfig();
-        configAmazon.setCrawlStorageFolder(rootFolderAmazon);
-        configAmazon.setUserAgentString(user_agent_name);
+		String seedCrawler2 = "http://www.Crawler2.fr/";
+		String rootFolderCrawler2 = "/home/sduprey/My_Data/My_Multi_Crawler2_Arbo_Crawl4j";
+		int numberOfCrawler2Crawlers =  50;
+        CrawlConfig configCrawler2 = new CrawlConfig();
+        configCrawler2.setCrawlStorageFolder(rootFolderCrawler2);
+        configCrawler2.setUserAgentString(user_agent_name);
 		// Politeness delay : none by default
-        configAmazon.setPolitenessDelay(0);
+        configCrawler2.setPolitenessDelay(0);
 		// Unlimited number of pages can be crawled.
-        configAmazon.setMaxPagesToFetch(-1);
+        configCrawler2.setMaxPagesToFetch(-1);
 		// we crawl up to depth 5
 		// to get the navigation we only need to go up to depth 5
-        configAmazon.setMaxDepthOfCrawling(maxDepthOfCrawling);
+        configCrawler2.setMaxDepthOfCrawling(maxDepthOfCrawling);
 		// we want the crawl not to be reconfigurable : too slow otherwise
-        configAmazon.setResumableCrawling(false);
-		PageFetcher pageFetcherAmazon = new PageFetcher(configAmazon);
-		RobotstxtConfig robotstxtConfigAmazon = new RobotstxtConfig();
-		robotstxtConfigAmazon.setUserAgentName(user_agent_name);
+        configCrawler2.setResumableCrawling(false);
+		PageFetcher pageFetcherCrawler2 = new PageFetcher(configCrawler2);
+		RobotstxtConfig robotstxtConfigCrawler2 = new RobotstxtConfig();
+		robotstxtConfigCrawler2.setUserAgentName(user_agent_name);
 		// we respect the text robot
-		robotstxtConfigAmazon.setEnabled(true);
-		RobotstxtServer robotstxtServerAmazon = new RobotstxtServer(robotstxtConfigAmazon, pageFetcherAmazon);
-		CrawlController controllerAmazon = new CrawlController(configAmazon, pageFetcherAmazon, robotstxtServerAmazon);
-		controllerAmazon.addSeed(seedAmazon);
+		robotstxtConfigCrawler2.setEnabled(true);
+		RobotstxtServer robotstxtServerCrawler2 = new RobotstxtServer(robotstxtConfigCrawler2, pageFetcherCrawler2);
+		CrawlController controllerCrawler2 = new CrawlController(configCrawler2, pageFetcherCrawler2, robotstxtServerCrawler2);
+		controllerCrawler2.addSeed(seedCrawler2);
 		
-		String seedDarty = "http://www.darty.com/";
-		String rootFolderDarty = "/home/sduprey/My_Data/My_Multi_Darty_Arbo_Crawl4j";
-		int numberOfDartyCrawlers =  50;
-        CrawlConfig configDarty = new CrawlConfig();
-        configDarty.setCrawlStorageFolder(rootFolderDarty);
-        configDarty.setUserAgentString(user_agent_name);
+		String seedCrawler3 = "http://www.Crawler3.com/";
+		String rootFolderCrawler3 = "/home/sduprey/My_Data/My_Multi_Crawler3_Arbo_Crawl4j";
+		int numberOfCrawler3Crawlers =  50;
+        CrawlConfig configCrawler3 = new CrawlConfig();
+        configCrawler3.setCrawlStorageFolder(rootFolderCrawler3);
+        configCrawler3.setUserAgentString(user_agent_name);
 		// Politeness delay : none by default
-        configDarty.setPolitenessDelay(0);
+        configCrawler3.setPolitenessDelay(0);
 		// Unlimited number of pages can be crawled.
-        configDarty.setMaxPagesToFetch(-1);
+        configCrawler3.setMaxPagesToFetch(-1);
 		// we crawl up to depth 5
 		// to get the navigation we only need to go up to depth 5
-        configDarty.setMaxDepthOfCrawling(maxDepthOfCrawling);
+        configCrawler3.setMaxDepthOfCrawling(maxDepthOfCrawling);
 		// we want the crawl not to be reconfigurable : too slow otherwise
-        configDarty.setResumableCrawling(false);
-		PageFetcher pageFetcherDarty = new PageFetcher(configDarty);
-		RobotstxtConfig robotstxtConfigDarty = new RobotstxtConfig();
-		robotstxtConfigDarty.setUserAgentName(user_agent_name);
+        configCrawler3.setResumableCrawling(false);
+		PageFetcher pageFetcherCrawler3 = new PageFetcher(configCrawler3);
+		RobotstxtConfig robotstxtConfigCrawler3 = new RobotstxtConfig();
+		robotstxtConfigCrawler3.setUserAgentName(user_agent_name);
 		// we respect the text robot
-		robotstxtConfigDarty.setEnabled(true);
-		RobotstxtServer robotstxtServerDarty = new RobotstxtServer(robotstxtConfigDarty, pageFetcherDarty);
-		CrawlController controllerDarty = new CrawlController(configDarty, pageFetcherDarty, robotstxtServerDarty);
-		controllerDarty.addSeed(seedDarty);
+		robotstxtConfigCrawler3.setEnabled(true);
+		RobotstxtServer robotstxtServerCrawler3 = new RobotstxtServer(robotstxtConfigCrawler3, pageFetcherCrawler3);
+		CrawlController controllerCrawler3 = new CrawlController(configCrawler3, pageFetcherCrawler3, robotstxtServerCrawler3);
+		controllerCrawler3.addSeed(seedCrawler3);
 		
-		String seedRDC = "http://www.rueducommerce.fr/";
-		String rootFolderRDC = "/home/sduprey/My_Data/My_Multi_RDC_Arbo_Crawl4j";
-		int numberOfRDCCrawlers =  50;
-        CrawlConfig configRDC = new CrawlConfig();
-        configRDC.setCrawlStorageFolder(rootFolderRDC);
-        configRDC.setUserAgentString(user_agent_name);
+		String seedCrawler4 = "http://www.rueducommerce.fr/";
+		String rootFolderCrawler4 = "/home/sduprey/My_Data/My_Multi_Crawler4_Arbo_Crawl4j";
+		int numberOfCrawler4Crawlers =  50;
+        CrawlConfig configCrawler4 = new CrawlConfig();
+        configCrawler4.setCrawlStorageFolder(rootFolderCrawler4);
+        configCrawler4.setUserAgentString(user_agent_name);
 		// Politeness delay : none by default
-        configRDC.setPolitenessDelay(0);
+        configCrawler4.setPolitenessDelay(0);
 		// Unlimited number of pages can be crawled.
-        configRDC.setMaxPagesToFetch(-1);
+        configCrawler4.setMaxPagesToFetch(-1);
 		// we crawl up to depth 5
 		// to get the navigation we only need to go up to depth 5
-        configRDC.setMaxDepthOfCrawling(maxDepthOfCrawling);
+        configCrawler4.setMaxDepthOfCrawling(maxDepthOfCrawling);
 		// we want the crawl not to be reconfigurable : too slow otherwise
-        configRDC.setResumableCrawling(false);
-		PageFetcher pageFetcherRDC = new PageFetcher(configRDC);
-		RobotstxtConfig robotstxtConfigRDC = new RobotstxtConfig();
-		robotstxtConfigRDC.setUserAgentName(user_agent_name);
+        configCrawler4.setResumableCrawling(false);
+		PageFetcher pageFetcherCrawler4 = new PageFetcher(configCrawler4);
+		RobotstxtConfig robotstxtConfigCrawler4 = new RobotstxtConfig();
+		robotstxtConfigCrawler4.setUserAgentName(user_agent_name);
 		// we respect the text robot
-		robotstxtConfigRDC.setEnabled(true);
-		RobotstxtServer robotstxtServerRDC = new RobotstxtServer(robotstxtConfigRDC, pageFetcherRDC);
-		CrawlController controllerRDC = new CrawlController(configRDC, pageFetcherRDC, robotstxtServerRDC);
-		controllerRDC.addSeed(seedRDC);
+		robotstxtConfigCrawler4.setEnabled(true);
+		RobotstxtServer robotstxtServerCrawler4 = new RobotstxtServer(robotstxtConfigCrawler4, pageFetcherCrawler4);
+		CrawlController controllerCrawler4 = new CrawlController(configCrawler4, pageFetcherCrawler4, robotstxtServerCrawler4);
+		controllerCrawler4.addSeed(seedCrawler4);
 		
-		System.out.println("Starting the crawl for Cdiscount");
-		controllerCdiscount.startNonBlocking(MultiSeedArboCrawler.class, numberOfCdiscountCrawlers);
-		System.out.println("Starting the crawl for Amazon");
-		controllerAmazon.startNonBlocking(MultiSeedArboCrawler.class, numberOfAmazonCrawlers);
-		System.out.println("Starting the crawl for Darty");
-		controllerDarty.startNonBlocking(MultiSeedArboCrawler.class, numberOfDartyCrawlers);
-		System.out.println("Starting the crawl for RDC");
-		controllerRDC.startNonBlocking(MultiSeedArboCrawler.class, numberOfRDCCrawlers);
+		System.out.println("Starting the crawl for Crawler1");
+		controllerCrawler1.startNonBlocking(MultiSeedArboCrawler.class, numberOfCrawler1Crawlers);
+		System.out.println("Starting the crawl for Crawler2");
+		controllerCrawler2.startNonBlocking(MultiSeedArboCrawler.class, numberOfCrawler2Crawlers);
+		System.out.println("Starting the crawl for Crawler3");
+		controllerCrawler3.startNonBlocking(MultiSeedArboCrawler.class, numberOfCrawler3Crawlers);
+		System.out.println("Starting the crawl for Crawler4");
+		controllerCrawler4.startNonBlocking(MultiSeedArboCrawler.class, numberOfCrawler4Crawlers);
 		
-		controllerCdiscount.waitUntilFinish();
-        System.out.println("Crawler Cdiscount is finished.");
-        controllerAmazon.waitUntilFinish();
-        System.out.println("Crawler Amazon is finished.");
-        controllerDarty.waitUntilFinish();
-        System.out.println("Crawler Darty is finished.");
-        controllerRDC.waitUntilFinish();
-        System.out.println("Crawler RDC is finished.");
+		controllerCrawler1.waitUntilFinish();
+        System.out.println("Crawler Crawler1 is finished.");
+        controllerCrawler2.waitUntilFinish();
+        System.out.println("Crawler Crawler2 is finished.");
+        controllerCrawler3.waitUntilFinish();
+        System.out.println("Crawler Crawler3 is finished.");
+        controllerCrawler4.waitUntilFinish();
+        System.out.println("Crawler Crawler4 is finished.");
         
         // Managing data for every crawlers for every site
-        updateControllerData(controllerCdiscount,"Cdiscount");
-        updateControllerData(controllerAmazon,"Amazon");
-        updateControllerData(controllerDarty,"Darty");
-        updateControllerData(controllerRDC,"RDC");
+        updateControllerData(controllerCrawler1,nameCrawler1);
+        updateControllerData(controllerCrawler2,nameCrawler2);
+        updateControllerData(controllerCrawler3,nameCrawler3);
+        updateControllerData(controllerCrawler4,nameCrawler4);
 	}
 
 	public static void updateControllerData(CrawlController controller, String name){
@@ -207,7 +213,7 @@ public class MultiSeedArboController {
 		for (Object localData : crawlersLocalData) {
 			MultiSeedArboCrawlDataCache stat = (MultiSeedArboCrawlDataCache) localData;
 			Map<String, MultiArboInfo> local_thread_cache = stat.getCrawledContent();
-			saveDatabaseData(local_thread_cache,name);
+			updateOrInsertDatabaseData(local_thread_cache,name);
 		}
 	}
 	
