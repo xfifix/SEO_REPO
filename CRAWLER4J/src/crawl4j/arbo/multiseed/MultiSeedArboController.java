@@ -52,15 +52,18 @@ public class MultiSeedArboController {
 		System.out.println("Starting the crawl configuration for Crawler1, Crawler2, Crawler3, Crawler4");
 		int maxDepthOfCrawling =  1; // common for all
         // Managing data for every crawlers for every site
+		// instantiating the seeds for our multiple crawlers
         String nameCrawler1 = "Cdiscount";
         String nameCrawler2 = "Amazon";
         String nameCrawler3 = "Darty";
         String nameCrawler4 = "RDC";
-		
+		String seedCrawler1 = "http://www.cdiscount.com/";
+		String seedCrawler2 = "http://www.amazon.fr/";
+		String seedCrawler3 = "http://www.darty.com/";
+		String seedCrawler4 = "http://www.rueducommerce.fr/";
 		// we here launch just a few threads, enough for a shallow crawl
 		// maximum twenty otherwise the concurrent update of the Map might get really too slow
 		// and become a bottleneck rather than a 
-		String seedCrawler1 = "http://www.cdiscount.com/";
 		String rootFolderCrawler1 = "/home/sduprey/My_Data/My_Multi_Crawler1_Arbo_Crawl4j";
 		int numberOfCrawler1Crawlers =  50;
         CrawlConfig configCrawler1 = new CrawlConfig();
@@ -85,7 +88,6 @@ public class MultiSeedArboController {
 		CrawlController controllerCrawler1 = new CrawlController(configCrawler1, pageFetcherCrawler1, robotstxtServerCrawler1);
 		controllerCrawler1.addSeed(seedCrawler1);
 	
-		String seedCrawler2 = "http://www.Crawler2.fr/";
 		String rootFolderCrawler2 = "/home/sduprey/My_Data/My_Multi_Crawler2_Arbo_Crawl4j";
 		int numberOfCrawler2Crawlers =  50;
         CrawlConfig configCrawler2 = new CrawlConfig();
@@ -109,7 +111,7 @@ public class MultiSeedArboController {
 		CrawlController controllerCrawler2 = new CrawlController(configCrawler2, pageFetcherCrawler2, robotstxtServerCrawler2);
 		controllerCrawler2.addSeed(seedCrawler2);
 		
-		String seedCrawler3 = "http://www.Crawler3.com/";
+		
 		String rootFolderCrawler3 = "/home/sduprey/My_Data/My_Multi_Crawler3_Arbo_Crawl4j";
 		int numberOfCrawler3Crawlers =  50;
         CrawlConfig configCrawler3 = new CrawlConfig();
@@ -133,7 +135,6 @@ public class MultiSeedArboController {
 		CrawlController controllerCrawler3 = new CrawlController(configCrawler3, pageFetcherCrawler3, robotstxtServerCrawler3);
 		controllerCrawler3.addSeed(seedCrawler3);
 		
-		String seedCrawler4 = "http://www.rueducommerce.fr/";
 		String rootFolderCrawler4 = "/home/sduprey/My_Data/My_Multi_Crawler4_Arbo_Crawl4j";
 		int numberOfCrawler4Crawlers =  50;
         CrawlConfig configCrawler4 = new CrawlConfig();
