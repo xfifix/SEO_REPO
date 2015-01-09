@@ -61,7 +61,6 @@ public class ContinuousCrawler extends WebCrawler {
 			info =new URLinfo();
 		}		
 		// filling up entity to be cached with page source code
-
 		byte[] compressedPageContent = gzip_compress_byte_stream(page.getContentData());
 		info.setPage_source_code(compressedPageContent);
 		// filling up url regexp attributes
@@ -159,8 +158,7 @@ public class ContinuousCrawler extends WebCrawler {
 		try{
 			byteStream =
 					new ByteArrayOutputStream(dataToCompress.length);
-			GZIPOutputStream zipStream =
-					zipStream = new GZIPOutputStream(byteStream);
+			GZIPOutputStream zipStream = new GZIPOutputStream(byteStream);
 			try
 			{
 				zipStream.write(dataToCompress);

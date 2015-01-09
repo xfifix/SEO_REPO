@@ -168,7 +168,9 @@ public class CrawlDataManagement {
 			ResultSet oid_result = oid_query_statement.executeQuery();
 			if (oid_result.next()){
 				oid = oid_result.getInt(1);
-			}		
+			}	
+			oid_result.close();
+			oid_query_statement.close();
 		} catch (SQLException e) {
 			System.out.println("Trouble fetching OID from the database");
 			e.printStackTrace();
@@ -197,6 +199,8 @@ public class CrawlDataManagement {
 			}
 			System.out.println("BLOB byte size written : "+tl);
 			obj.close();
+			// we close the stream
+			fis.close();
 			// once the blob has been written we insert the whole url line in crawl_results
 			// we insert here the brand new url with its blob oid
 			PreparedStatement insert_st = con.prepareStatement(insert_statement_with_oid);
@@ -242,6 +246,8 @@ public class CrawlDataManagement {
 			obj.truncate(tl);
 			// Close the large object
 			obj.close();
+			// we close the stream
+			fis.close();
 			// once the BLOB object has been updated, we update the matching line
 			PreparedStatement update_st = con.prepareStatement(update_statement_with_oid);
 			update_st.setString(1,info.getText());
