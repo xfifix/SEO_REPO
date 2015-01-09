@@ -1,11 +1,13 @@
 package crawl4j.continuous;
 
-import java.io.UnsupportedEncodingException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.http.Header;
 import org.jsoup.Jsoup;
@@ -23,7 +25,8 @@ import edu.uci.ics.crawler4j.url.WebURL;
 public class ContinuousCrawler extends WebCrawler {
 
 	// size of the in memory cache per thread (200 default value)
-	private static int bulk_size = 200;
+	private static int bulk_size = 10;
+	//private static int bulk_size = 200;
 
 	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg" + "|png|tiff|mid|mp2|mp3|mp4"
 			+ "|wav|avi|mov|mpeg|ram|m4v|ico|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
@@ -57,8 +60,9 @@ public class ContinuousCrawler extends WebCrawler {
 			info =new URLinfo();
 		}		
 		// filling up entity to be cached with page source code
-		byte[] pageContent = page.getContentData();
-		info.setPage_source_code(pageContent);
+
+		byte[] compressedPageContent = gzip_compress_byte_stream(page.getContentData());
+		info.setPage_source_code(compressedPageContent);
 		// filling up url regexp attributes
 		info.setPage_type(page_type);
 		info.setMagasin(magasin);
@@ -148,6 +152,44 @@ public class ContinuousCrawler extends WebCrawler {
 		}
 	}
 
+	// compressing the byte stream
+	public byte[] gzip_compress_byte_stream(byte[] dataToCompress ){
+		ByteArrayOutputStream byteStream = null;
+		try{
+			byteStream =
+					new ByteArrayOutputStream(dataToCompress.length);
+			GZIPOutputStream zipStream =
+					zipStream = new GZIPOutputStream(byteStream);
+			try
+			{
+				zipStream.write(dataToCompress);
+			}
+			finally
+			{
+				zipStream.close();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (byteStream != null){
+				try {
+					byteStream.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		byte[] compressedData = new byte[0];
+		if (byteStream != null){
+			compressedData = byteStream.toByteArray();
+		}	
+		return compressedData;
+	}
+	
 	public Set<String> filter_out_links(List<WebURL> links){
 		Set<String> outputSet = new HashSet<String>();
 		for (WebURL url_out : links){
@@ -208,5 +250,4 @@ public class ContinuousCrawler extends WebCrawler {
 		System.out.println("Crawler " + id + "> Total Text Size: " + myCrawlDataManager.getTotalTextSize());
 		myCrawlDataManager.updateData();	
 	}
-
 }

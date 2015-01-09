@@ -1,10 +1,13 @@
 package crawl4j.continuous;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,10 +15,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.common.SolrInputDocument;
+import org.postgresql.largeobject.LargeObject;
+import org.postgresql.largeobject.LargeObjectManager;
 
 import crawl4j.urlutilities.URLinfo;
 
@@ -24,8 +27,11 @@ public class CrawlDataManagement {
 	private static String insert_statement="INSERT INTO CRAWL_RESULTS(URL,WHOLE_TEXT,TITLE,LINKS_SIZE,"
 			+ "LINKS,H1,FOOTER_EXTRACT,ZTD_EXTRACT,SHORT_DESCRIPTION,VENDOR,ATTRIBUTES,NB_ATTRIBUTES,STATUS_CODE,HEADERS,DEPTH,PAGE_TYPE,MAGASIN,RAYON,PRODUIT,LAST_UPDATE)"
 			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+	private static String insert_statement_with_oid="INSERT INTO CRAWL_RESULTS(URL,WHOLE_TEXT,TITLE,LINKS_SIZE,"
+			+ "LINKS,H1,FOOTER_EXTRACT,ZTD_EXTRACT,SHORT_DESCRIPTION,VENDOR,ATTRIBUTES,NB_ATTRIBUTES,STATUS_CODE,HEADERS,DEPTH,PAGE_TYPE,MAGASIN,RAYON,PRODUIT,BLOBOID,LAST_UPDATE)"
+			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	private static String update_statement ="UPDATE CRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,LINKS_SIZE=?,LINKS=?,H1=?,FOOTER_EXTRACT=?,ZTD_EXTRACT=?,SHORT_DESCRIPTION=?,VENDOR=?,ATTRIBUTES=?,NB_ATTRIBUTES=?,STATUS_CODE=?,HEADERS=?,DEPTH=?,PAGE_TYPE=?,MAGASIN=?,RAYON=?,PRODUIT=?,LAST_UPDATE=? WHERE URL=?";
-
+	private static String get_blob_oid = "SELECT BLOBOID FROM CRAWL_RESULTS WHERE URL = ?";
 	private int totalProcessedPages;
 	private long totalLinks;
 	private long totalTextSize;
@@ -152,6 +158,94 @@ public class CrawlDataManagement {
 		}
 	}
 
+	public int getBlobOID(String url){
+		int oid = 0;
+		try {
+			PreparedStatement oid_query_statement = con.prepareStatement(get_blob_oid);
+			oid_query_statement.setString(1, url);
+			ResultSet oid_result = oid_query_statement.executeQuery();
+			if (oid_result.next()){
+				oid = oid_result.getInt(1);
+			}		
+		} catch (SQLException e) {
+			System.out.println("Trouble fetching OID from the database");
+			e.printStackTrace();
+		}
+		return oid;
+	}
+
+	public void update_url(URLinfo info, String url) throws SQLException, IOException{
+		int oid = getBlobOID(url);
+		// if oid not found, we insert a whole new line and we create a new blob
+		if (oid == 0){
+			// we create here the blob
+			LargeObjectManager lobj = ((org.postgresql.PGConnection)con).getLargeObjectAPI();
+			oid = lobj.create(LargeObjectManager.READ | LargeObjectManager.WRITE);
+			// Open the large object for writing
+			LargeObject obj = lobj.open(oid, LargeObjectManager.WRITE);
+			InputStream fis = new ByteArrayInputStream(info.getPage_source_code());
+			// Copy the data from the file to the large object
+			// 2048 is the buffer size, does not really matter
+			byte buf[] = new byte[2048];
+			int s, tl = 0;
+			while ((s = fis.read(buf, 0, 2048)) > 0) {
+				obj.write(buf, 0, s);
+				tl += s;
+			}
+			System.out.println("BLOB byte size written : "+tl);
+			obj.close();
+			// once the blob has been written we insert the whole url line in crawl_results
+			// we insert here the brand new url with its blob oid
+			PreparedStatement insert_st = con.prepareStatement(insert_statement_with_oid);
+			insert_st.setString(1,url);
+			insert_st.setString(2,info.getText());
+			insert_st.setString(3,info.getTitle());
+			insert_st.setInt(4,info.getLinks_size());
+			insert_st.setString(5,info.getOut_links());
+			insert_st.setString(6,info.getH1());
+			insert_st.setString(7,info.getFooter());
+			insert_st.setString(8,info.getZtd());
+			insert_st.setString(9,info.getShort_desc());
+			insert_st.setString(10,info.getVendor());
+			insert_st.setString(11,info.getAtt_desc());
+			insert_st.setInt(12,info.getAtt_number());
+			insert_st.setInt(13,info.getStatus_code());
+			insert_st.setString(14,info.getResponse_headers());		
+			insert_st.setInt(15,info.getDepth());
+			insert_st.setString(16, info.getPage_type());
+			insert_st.setString(17, info.getMagasin());
+			insert_st.setString(18, info.getRayon());
+			insert_st.setString(19, info.getProduit());
+			insert_st.setInt(20,oid);
+			java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
+			insert_st.setDate(21,sqlDate);
+			insert_st.executeUpdate(); 	
+		} else {
+			// if oid found, we update the found line and we update the matching blob
+
+		}
+		con.commit();
+	}
+
+	public void updateDatabaseWithBlobData(){
+		Iterator<Entry<String, URLinfo>> it = crawledContent.entrySet().iterator();
+
+		while (it.hasNext()){
+			Map.Entry<String, URLinfo> pairs = (Map.Entry<String, URLinfo>)it.next();
+			String url=pairs.getKey();
+			URLinfo info = pairs.getValue();
+			try {
+				con.setAutoCommit(false);
+				update_url(info,url);
+
+			} catch (SQLException | IOException e) {
+				// TODO Auto-generated catch block
+				System.out.println("Trouble inserting URL  : " + url);
+				e.printStackTrace();
+			}
+		}
+	}
+
 	public void updateDatabaseData(){
 		try{
 			Iterator<Entry<String, URLinfo>> it = crawledContent.entrySet().iterator();
@@ -222,17 +316,20 @@ public class CrawlDataManagement {
 				try {
 					con.rollback();
 				} catch (SQLException ex1) {
-					Logger lgr = Logger.getLogger(CrawlDataManagement.class.getName());
-					lgr.log(Level.ERROR, ex1.getMessage(), ex1);
+					ex1.printStackTrace();
 				}
 			}
-			Logger lgr = Logger.getLogger(CrawlDataManagement.class.getName());
-			lgr.log(Level.ERROR, e.getMessage(), e);
+			e.printStackTrace();
 		}	
 	}
 	// we here perform upsert to keep up to date our crawl referential
 	public void updateData(){
-		updateDatabaseData();
+		// we here choose wether or not we store all the page source code
+		if (ContinuousController.isBlobStored){
+			updateDatabaseWithBlobData();
+		} else {
+			updateDatabaseData();
+		}
 		updateSolrData();
 		// clear cache
 		crawledContent.clear();
@@ -298,13 +395,9 @@ public class CrawlDataManagement {
 				try {
 					con.rollback();
 				} catch (SQLException ex1) {
-					Logger lgr = Logger.getLogger(CrawlDataManagement.class.getName());
-					lgr.log(Level.ERROR, ex1.getMessage(), ex1);
+					ex1.printStackTrace();
 				}
-			}
-
-			Logger lgr = Logger.getLogger(CrawlDataManagement.class.getName());
-			lgr.log(Level.ERROR, e.getMessage(), e);
+			}	
 		}	
 		crawledContent.clear();
 	}
