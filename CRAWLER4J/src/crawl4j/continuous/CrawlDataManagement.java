@@ -262,9 +262,10 @@ public class CrawlDataManagement {
 			update_st.setString(16, info.getMagasin());
 			update_st.setString(17, info.getRayon());
 			update_st.setString(18, info.getProduit());
+			update_st.setInt(19, oid);
 			java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-			update_st.setDate(19,sqlDate);
-			update_st.setString(20,url);
+			update_st.setDate(20,sqlDate);
+			update_st.setString(21,url);
 			// we here don't care about wether or not the line has been found and updated
 			// as we have found the blob oid, the line is present and should be updated
 			//int affected_row = update_st.executeUpdate();
@@ -275,7 +276,6 @@ public class CrawlDataManagement {
 
 	public void updateDatabaseWithBlobData(){
 		Iterator<Entry<String, URLinfo>> it = crawledContent.entrySet().iterator();
-
 		while (it.hasNext()){
 			Map.Entry<String, URLinfo> pairs = (Map.Entry<String, URLinfo>)it.next();
 			String url=pairs.getKey();
@@ -395,21 +395,6 @@ public class CrawlDataManagement {
 					Map.Entry<String, URLinfo> pairs = it.next();
 					String url=pairs.getKey();
 					URLinfo info = pairs.getValue();
-					//					String prepared_string = "("+url+","
-					//					                            +(String)list_values[0]+","
-					//					                            +(String)list_values[1]+","
-					//             					                +(String)list_values[1]+","
-					//             					                +(int)list_values[2]+","
-					//					                            +(String)list_values[3]+","
-					//             					                +(String)list_values[4]+","
-					//             					                +(String)list_values[5]+","
-					//					                            +(String)list_values[6]+","
-					//             					                +(String)list_values[7]+","
-					//             					                +(String)list_values[8]+","
-					//					                            +(String)list_values[9]+","
-					//             					                +(int)list_values[10]+","
-					//               					                +(int)list_values[11]+","
-					//   					                            +(String)list_values[12]+")";
 					st.setString(1,url);
 					st.setString(2,info.getText());
 					st.setString(3,info.getTitle());

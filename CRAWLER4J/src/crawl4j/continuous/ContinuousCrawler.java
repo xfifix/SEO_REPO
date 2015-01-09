@@ -25,9 +25,10 @@ import edu.uci.ics.crawler4j.url.WebURL;
 public class ContinuousCrawler extends WebCrawler {
 
 	// size of the in memory cache per thread (200 default value)
-	private static int bulk_size = 10;
-	//private static int bulk_size = 200;
-
+	private static int bulk_size = 200;
+	// debugging size
+	//private static int bulk_size = 10;
+	
 	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg" + "|png|tiff|mid|mp2|mp3|mp4"
 			+ "|wav|avi|mov|mpeg|ram|m4v|ico|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 

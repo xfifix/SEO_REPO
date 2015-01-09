@@ -15,9 +15,9 @@ public class ContinuousController {
 		System.out.println("Starting the crawl configuration");		
 	
 		String seed = "http://www.cdiscount.com/";
-		//int numberOfCrawlers =  250;	
+		int numberOfCrawlers =  250;	
 		// downsizing to test
-		int numberOfCrawlers =  1;
+		//int numberOfCrawlers =  1;
 		if (args.length == 2) {
 			seed = args[0];
 			numberOfCrawlers=Integer.valueOf(args[1]);
