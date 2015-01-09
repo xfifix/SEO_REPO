@@ -170,7 +170,6 @@ public class SemanticArboCrawler extends WebCrawler {
 			// this step needs to put the semantics corpus frequency in cache at the crawling set up				
 			Map<String, Double> tfIdfMap = CorpusCache.computePageTFIDFVector(text_to_parse);
 			String semantics_hit_to_store = CorpusCache.formatTFIDFMap(tfIdfMap);
-			System.out.println(semantics_hit_to_store);
 			info.setSemantics_hit(semantics_hit_to_store);
 		}
 		myCrawlDataManager.getCrawledContent().put(url,info);
