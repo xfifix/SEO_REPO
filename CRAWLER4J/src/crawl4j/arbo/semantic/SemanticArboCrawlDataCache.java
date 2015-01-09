@@ -1,11 +1,11 @@
-package crawl4j.arbo.multi;
+package crawl4j.arbo.semantic;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import crawl4j.urlutilities.MultiArboInfo;
 
-public class MultiArboCrawlDataCache {
+public class SemanticArboCrawlDataCache {
 	// we here keep every thing in RAM memory because the inlinks cache updates each time.
 	// we save everything just at the very end of the crawl
 	private int totalProcessedPages;
@@ -15,7 +15,7 @@ public class MultiArboCrawlDataCache {
 	// local cache for each thread which has crawled his own URLs
 	private Map<String, MultiArboInfo> crawledContent = new HashMap<String, MultiArboInfo>();
 	
-	public MultiArboCrawlDataCache() {
+	public SemanticArboCrawlDataCache() {
 	}
 	
 	public int getTotalProcessedPages() {

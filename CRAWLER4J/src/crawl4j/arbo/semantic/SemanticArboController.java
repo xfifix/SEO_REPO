@@ -1,4 +1,4 @@
-package crawl4j.arbo.multi;
+package crawl4j.arbo.semantic;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,13 +16,14 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import crawl4j.urlutilities.MultiArboInfo;
+import crawl4j.vsm.CorpusCache;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
-public class MultiArboController {
+public class SemanticArboController {
 	// here we locally merge all cache
 	// that is heavy on RAM memory : we here have to limit the depth to avoid out of memory
 	// only shallow crawl will go through this step
@@ -45,6 +46,10 @@ public class MultiArboController {
 
 	public static void main(String[] args) throws Exception {
 		instantiate_connection();
+
+		// First as a semantic crawler, we need to load in cache the semantic corpus 
+		CorpusCache.load();
+		
 		System.setProperty("http.agent", "");
 		System.out.println("Starting the crawl configuration");	
 		String name = "Cdiscount";
@@ -67,7 +72,7 @@ public class MultiArboController {
 			numberOfCrawlers=Integer.valueOf(args[1]);
 		}
 		
-		String rootFolder = "/home/sduprey/My_Data/My_Multi_Arbo_Crawl4j";
+		String rootFolder = "/home/sduprey/My_Data/My_Semantic_Arbo_Crawl4j";
 		String user_agent_name = "CdiscountBot-crawler";
 		CrawlConfig config = new CrawlConfig();
 		config.setCrawlStorageFolder(rootFolder);
@@ -92,7 +97,7 @@ public class MultiArboController {
 		controller.addSeed(seed);
 		System.out.println("Starting the crawl");
 		long startTime = System.currentTimeMillis();
-		controller.start(MultiArboCrawler.class, numberOfCrawlers);
+		controller.start(SemanticArboCrawler.class, numberOfCrawlers);
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		List<Object> crawlersLocalData = controller.getCrawlersLocalData();
 
@@ -101,7 +106,7 @@ public class MultiArboController {
 		long totalTextSize = 0;
 		int totalProcessedPages = 0;
 		for (Object localData : crawlersLocalData) {
-			MultiArboCrawlDataCache stat = (MultiArboCrawlDataCache) localData;
+			SemanticArboCrawlDataCache stat = (SemanticArboCrawlDataCache) localData;
 			totalLinks += stat.getTotalLinks();
 			totalTextSize += stat.getTotalTextSize();
 			totalProcessedPages += stat.getTotalProcessedPages();
@@ -115,7 +120,7 @@ public class MultiArboController {
 		// computing the number of inlinks per pages over the whole crawl
 		System.out.println("Computing inlinks hashmap cache to the database");
 		for (Object localData : crawlersLocalData) {
-			MultiArboCrawlDataCache stat = (MultiArboCrawlDataCache) localData;
+			SemanticArboCrawlDataCache stat = (SemanticArboCrawlDataCache) localData;
 			Map<String, MultiArboInfo> local_thread_cache = stat.getCrawledContent();
 			updateInLinksThreadCache(local_thread_cache);
 		}
@@ -124,7 +129,7 @@ public class MultiArboController {
 		System.out.println("Saving the whole crawl to the database");		
 		System.out.println("Saving inlinks hashmap to the database");
 		for (Object localData : crawlersLocalData) {
-			MultiArboCrawlDataCache stat = (MultiArboCrawlDataCache) localData;
+			SemanticArboCrawlDataCache stat = (SemanticArboCrawlDataCache) localData;
 			Map<String, MultiArboInfo> local_thread_cache = stat.getCrawledContent();
 			updateOrInsertDatabaseData(local_thread_cache,name);
 		}

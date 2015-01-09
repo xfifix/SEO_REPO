@@ -35,17 +35,17 @@
 		<item value="3" key="pageIndex"/>
 	</section>
 	<section name="FatJarPackageWizard">
-		<item value="/home/sduprey/My_Executable/my_multiseed_arbo_crawler.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
-		<item value="MultiSeedArboController - CRAWLER4J" key="FatJarPackageWizardPage.LAUNCH_CONFIGURATION_SELECTION_NAME"/>
+		<item value="/home/sduprey/My_Executable/my_crawler.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
+		<item value="ContinuousController - CRAWLER4J" key="FatJarPackageWizardPage.LAUNCH_CONFIGURATION_SELECTION_NAME"/>
 		<item value="/home/sduprey/My_Code/My_Java_Workspace" key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION"/>
 		<item value="false" key="FatJarPackageWizardPage.ANTSCRIPT_SAVE"/>
 		<item value="2" key="FatJarPackageWizardPage.LIBRARY_HANDLING"/>
 		<list key="FatJarPackageWizardPage.DESTINATION_NAMES_ID">
+			<item value="/home/sduprey/My_Executable/my_crawler.jar"/>
 			<item value="/home/sduprey/My_Executable/my_multiseed_arbo_crawler.jar"/>
 			<item value="/home/sduprey/My_Executable/my_multi_arbo_crawler.jar"/>
 			<item value="/home/sduprey/My_Executable/my_position_checker.jar"/>
 			<item value="/home/sduprey/My_Executable/my_page_rank.jar"/>
-			<item value="/home/sduprey/My_Executable/my_links_daemon.jar"/>
 		</list>
 		<list key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION_HISTORY">
 			<item value="/home/sduprey/My_Code/My_Java_Workspace.xml"/>

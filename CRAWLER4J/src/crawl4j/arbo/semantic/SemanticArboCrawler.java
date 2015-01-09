@@ -1,7 +1,8 @@
-package crawl4j.arbo.multi;
+package crawl4j.arbo.semantic;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -14,12 +15,14 @@ import org.jsoup.select.Elements;
 import crawl4j.arbo.ArboController;
 import crawl4j.urlutilities.MultiArboInfo;
 import crawl4j.urlutilities.URL_Utilities;
+import crawl4j.vsm.CorpusCache;
+import crawl4j.vsm.VectorStateSpringRepresentation;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
 
-public class MultiArboCrawler extends WebCrawler {
+public class SemanticArboCrawler extends WebCrawler {
 	//	number of breadcrumbs int [0,+infinity[
 	//	number of aggregated rating boolean int [0, +infinity[
 	//	number of product rating values int [0, +infinity[
@@ -39,10 +42,10 @@ public class MultiArboCrawler extends WebCrawler {
 	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg" + "|png|tiff|mid|mp2|mp3|mp4"
 			+ "|wav|avi|mov|mpeg|ram|m4v|ico|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 
-	MultiArboCrawlDataCache myCrawlDataManager;
+	SemanticArboCrawlDataCache myCrawlDataManager;
 
-	public MultiArboCrawler() {
-		myCrawlDataManager = new MultiArboCrawlDataCache();
+	public SemanticArboCrawler() {
+		myCrawlDataManager = new SemanticArboCrawlDataCache();
 	}
 
 	// we don't visit media URLs and we keep inside Cdiscount
@@ -162,9 +165,22 @@ public class MultiArboCrawler extends WebCrawler {
 				System.out.println("Width : "+widthstring);
 			}
 			info.setWidth_average(width_result/width_count);
+			
+			// extracting the semantic most relevant words with TF/IDF indicators
+			// this step needs to put the semantics corpus frequency in cache at the crawling set up
+						
+			Map<String, Double> tfIdfMap = CorpusCache.computePageTFIDFVector(text_to_parse);
+			String semantics_hit_to_store = formatTFIDFMap(tfIdfMap);
+			info.setSemantics_hit(semantics_hit_to_store);
+
 		}
 		myCrawlDataManager.getCrawledContent().put(url,info);
 	}
+	
+	public String formatTFIDFMap(Map<String, Double> tfIdfMap){
+		return "";
+	}
+	
 
 	public Set<String> filter_out_links(List<WebURL> links){
 		Set<String> outputSet = new HashSet<String>();
@@ -180,7 +196,7 @@ public class MultiArboCrawler extends WebCrawler {
 	// This function is called by controller to get the local data of this
 	// crawler when job is finished
 	@Override
-	public MultiArboCrawlDataCache getMyLocalData() {
+	public SemanticArboCrawlDataCache getMyLocalData() {
 		return myCrawlDataManager;
 	}
 

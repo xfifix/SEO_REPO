@@ -58,7 +58,6 @@ public class ContinuousController {
 			totalTextSize += stat.getTotalTextSize();
 			totalProcessedPages += stat.getTotalProcessedPages();
 		}
-
 		System.out.println("Aggregated Statistics:");
 		System.out.println("   Processed Pages: " + totalProcessedPages);
 		System.out.println("   Total Links found: " + totalLinks);

@@ -35,7 +35,8 @@ public class MultiArboInfo {
 	private int nb_availabilities=0;
 	private int nb_reviews=0;
     private Set<String> outgoingLinks;
-
+    private String semantics_hit;
+    
 	public int getNb_total_images() {
 		return nb_total_images;
 	}
@@ -218,5 +219,11 @@ public class MultiArboInfo {
 	}
 	public void setNb_produits_similaires_in_text(int nb_produits_similaires_in_text) {
 		this.nb_produits_similaires_in_text = nb_produits_similaires_in_text;
+	}
+	public String getSemantics_hit() {
+		return semantics_hit;
+	}
+	public void setSemantics_hit(String semantics_hit) {
+		this.semantics_hit = semantics_hit;
 	}
 }

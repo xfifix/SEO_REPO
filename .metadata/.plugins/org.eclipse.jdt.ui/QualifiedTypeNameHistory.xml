@@ -33,7 +33,6 @@
 <fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="java.sql.Connection"/>
 <fullyQualifiedTypeName name="java.sql.ResultSet"/>
-<fullyQualifiedTypeName name="java.io.InputStream"/>
 <fullyQualifiedTypeName name="java.net.HttpURLConnection"/>
 <fullyQualifiedTypeName name="javax.xml.parsers.DocumentBuilderFactory"/>
 <fullyQualifiedTypeName name="javax.xml.parsers.DocumentBuilder"/>
@@ -58,4 +57,7 @@
 <fullyQualifiedTypeName name="crawl4j.urlutilities.URL_Utilities"/>
 <fullyQualifiedTypeName name="org.apache.commons.lang3.StringUtils"/>
 <fullyQualifiedTypeName name="org.jsoup.nodes.Element"/>
+<fullyQualifiedTypeName name="java.io.ByteArrayInputStream"/>
+<fullyQualifiedTypeName name="java.io.InputStream"/>
+<fullyQualifiedTypeName name="java.io.ByteArrayOutputStream"/>
 </qualifiedTypeNameHistroy>

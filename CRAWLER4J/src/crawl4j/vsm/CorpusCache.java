@@ -86,6 +86,12 @@ public class CorpusCache {
 		return idf;
 	}
 
+	public static Map<String, Double> computePageTFIDFVector(String pageText){
+		VectorStateSpringRepresentation vs =new VectorStateSpringRepresentation(pageText);
+		Map<String, Double> tfidfMap = addTFIDF(vs.getWordFrequencies());
+		return tfidfMap;
+	}
+
 	public static Double computeTFSIDFimilarity(String text1, String text2) {
 		VectorStateSpringRepresentation vs1 =new VectorStateSpringRepresentation(text1);
 		VectorStateSpringRepresentation vs2 =new VectorStateSpringRepresentation(text2);
