@@ -1,5 +1,7 @@
 package crawl4j.vsm;
 
+import java.util.Map;
+
 public class TfIdfTest {
 	//http://www.seo-camp.org/wp-content/uploads/2009/02/apport_semantique.pdf
 	public static void main(String[] args){
@@ -17,6 +19,11 @@ public class TfIdfTest {
 		
 		System.out.println("TF similarity" + CorpusCache.computeTFSimilarity(text1, text1));
 		System.out.println("TFIDF similarity" + CorpusCache.computeTFSIDFimilarity(text1, text1));
+		
+		Map<String, Double> tfIdfMap = CorpusCache.computePageTFIDFVector(text1);
+		
+		String formattedTFIDF = CorpusCache.formatTFIDFMap(tfIdfMap);
+		System.out.println(formattedTFIDF);
 		
 	}
 }

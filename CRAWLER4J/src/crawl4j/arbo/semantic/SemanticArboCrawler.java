@@ -1,9 +1,11 @@
 package crawl4j.arbo.semantic;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +18,6 @@ import crawl4j.arbo.ArboController;
 import crawl4j.urlutilities.MultiArboInfo;
 import crawl4j.urlutilities.URL_Utilities;
 import crawl4j.vsm.CorpusCache;
-import crawl4j.vsm.VectorStateSpringRepresentation;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
@@ -168,16 +169,14 @@ public class SemanticArboCrawler extends WebCrawler {
 			// extracting the semantic most relevant words with TF/IDF indicators
 			// this step needs to put the semantics corpus frequency in cache at the crawling set up				
 			Map<String, Double> tfIdfMap = CorpusCache.computePageTFIDFVector(text_to_parse);
-			String semantics_hit_to_store = formatTFIDFMap(tfIdfMap);
+			String semantics_hit_to_store = CorpusCache.formatTFIDFMap(tfIdfMap);
+			System.out.println(semantics_hit_to_store);
 			info.setSemantics_hit(semantics_hit_to_store);
 		}
 		myCrawlDataManager.getCrawledContent().put(url,info);
 	}
 	
-	public String formatTFIDFMap(Map<String, Double> tfIdfMap){
-		return "";
-	}
-	
+
 
 	public Set<String> filter_out_links(List<WebURL> links){
 		Set<String> outputSet = new HashSet<String>();

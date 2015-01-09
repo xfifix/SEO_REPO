@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
@@ -22,6 +23,7 @@ public class CorpusCache {
 	private static Map<String, Double> corpus_idf = new HashMap<String, Double>();
 	private static int nb_total_documents = 1;
 
+	
 	public static void load(){
 		Connection con = null;
 		Properties props = new Properties();
@@ -138,4 +140,13 @@ public class CorpusCache {
 		for (String k : v2.keySet()) norm2 += v2.get(k) * v2.get(k);
 		return sclar / Math.sqrt(norm1 * norm2);
 	}
+	
+	public static String formatTFIDFMap(Map<String, Double> tfIdfMap){
+	    HashMap<String,Double> map = new HashMap<String,Double>();
+	    ValueComparator bvc =  new ValueComparator(map); 
+        TreeMap<String,Double> sorted_map = new TreeMap<String,Double>(bvc);
+        sorted_map.putAll(tfIdfMap);
+		return sorted_map.toString();
+	}
+	
 }

@@ -60,7 +60,7 @@ public class SemanticArboController {
 		// we here launch just a few threads, enough for a shallow crawl
 		// maximum twenty otherwise the concurrent update of the Map might get really too slow
 		// and become a bottleneck rather than a 
-		int numberOfCrawlers =  200;	
+		int numberOfCrawlers =  1;	
 		// downsizing to test
 		//int numberOfCrawlers =  1;
 
