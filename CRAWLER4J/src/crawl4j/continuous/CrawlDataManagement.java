@@ -31,6 +31,8 @@ public class CrawlDataManagement {
 			+ "LINKS,H1,FOOTER_EXTRACT,ZTD_EXTRACT,SHORT_DESCRIPTION,VENDOR,ATTRIBUTES,NB_ATTRIBUTES,STATUS_CODE,HEADERS,DEPTH,PAGE_TYPE,MAGASIN,RAYON,PRODUIT,BLOBOID,LAST_UPDATE)"
 			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	private static String update_statement ="UPDATE CRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,LINKS_SIZE=?,LINKS=?,H1=?,FOOTER_EXTRACT=?,ZTD_EXTRACT=?,SHORT_DESCRIPTION=?,VENDOR=?,ATTRIBUTES=?,NB_ATTRIBUTES=?,STATUS_CODE=?,HEADERS=?,DEPTH=?,PAGE_TYPE=?,MAGASIN=?,RAYON=?,PRODUIT=?,LAST_UPDATE=? WHERE URL=?";
+	private static String update_statement_with_oid ="UPDATE CRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,LINKS_SIZE=?,LINKS=?,H1=?,FOOTER_EXTRACT=?,ZTD_EXTRACT=?,SHORT_DESCRIPTION=?,VENDOR=?,ATTRIBUTES=?,NB_ATTRIBUTES=?,STATUS_CODE=?,HEADERS=?,DEPTH=?,PAGE_TYPE=?,MAGASIN=?,RAYON=?,PRODUIT=?,BLOBOID=?,LAST_UPDATE=? WHERE URL=?";
+
 	private static String get_blob_oid = "SELECT BLOBOID FROM CRAWL_RESULTS WHERE URL = ?";
 	private int totalProcessedPages;
 	private long totalLinks;
@@ -174,12 +176,13 @@ public class CrawlDataManagement {
 		return oid;
 	}
 
-	public void update_url(URLinfo info, String url) throws SQLException, IOException{
+	@SuppressWarnings("deprecation")
+	public void update_url_and_blob(URLinfo info, String url) throws SQLException, IOException{
 		int oid = getBlobOID(url);
+		LargeObjectManager lobj = ((org.postgresql.PGConnection)con).getLargeObjectAPI();
 		// if oid not found, we insert a whole new line and we create a new blob
 		if (oid == 0){
 			// we create here the blob
-			LargeObjectManager lobj = ((org.postgresql.PGConnection)con).getLargeObjectAPI();
 			oid = lobj.create(LargeObjectManager.READ | LargeObjectManager.WRITE);
 			// Open the large object for writing
 			LargeObject obj = lobj.open(oid, LargeObjectManager.WRITE);
@@ -221,8 +224,51 @@ public class CrawlDataManagement {
 			insert_st.setDate(21,sqlDate);
 			insert_st.executeUpdate(); 	
 		} else {
-			// if oid found, we update the found line and we update the matching blob
-
+			// if oid found not null, we update the found line and we update the matching blob
+            // we don't create the object, we just open it
+			LargeObject obj = lobj.open(oid, LargeObjectManager.WRITE);
+			// we write the new content to the BLOB
+			InputStream fis = new ByteArrayInputStream(info.getPage_source_code());
+			// Copy the data from the file to the large object
+			// 2048 is the buffer size, does not really matter
+			byte buf[] = new byte[2048];
+			int s, tl = 0;
+			while ((s = fis.read(buf, 0, 2048)) > 0) {
+				obj.write(buf, 0, s);
+				tl += s;
+			}
+			System.out.println("BLOB byte updated size : "+tl);
+			// please here do not forget to truncate to the new size in case the previous one was bigger
+			obj.truncate(tl);
+			// Close the large object
+			obj.close();
+			// once the BLOB object has been updated, we update the matching line
+			PreparedStatement update_st = con.prepareStatement(update_statement_with_oid);
+			update_st.setString(1,info.getText());
+			update_st.setString(2,info.getTitle());
+			update_st.setInt(3,info.getLinks_size());
+			update_st.setString(4,info.getOut_links());
+			update_st.setString(5,info.getH1());
+			update_st.setString(6,info.getFooter());
+			update_st.setString(7,info.getZtd());
+			update_st.setString(8,info.getShort_desc());
+			update_st.setString(9,info.getVendor());
+			update_st.setString(10,info.getAtt_desc());
+			update_st.setInt(11,info.getAtt_number());
+			update_st.setInt(12,info.getStatus_code());
+			update_st.setString(13,info.getResponse_headers());		
+			update_st.setInt(14,info.getDepth());
+			update_st.setString(15, info.getPage_type());
+			update_st.setString(16, info.getMagasin());
+			update_st.setString(17, info.getRayon());
+			update_st.setString(18, info.getProduit());
+			java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
+			update_st.setDate(19,sqlDate);
+			update_st.setString(20,url);
+			// we here don't care about wether or not the line has been found and updated
+			// as we have found the blob oid, the line is present and should be updated
+			//int affected_row = update_st.executeUpdate();
+			update_st.executeUpdate();
 		}
 		con.commit();
 	}
@@ -236,8 +282,7 @@ public class CrawlDataManagement {
 			URLinfo info = pairs.getValue();
 			try {
 				con.setAutoCommit(false);
-				update_url(info,url);
-
+				update_url_and_blob(info,url);
 			} catch (SQLException | IOException e) {
 				// TODO Auto-generated catch block
 				System.out.println("Trouble inserting URL  : " + url);

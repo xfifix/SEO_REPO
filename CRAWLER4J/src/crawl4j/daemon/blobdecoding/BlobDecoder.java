@@ -16,7 +16,6 @@ import java.util.zip.GZIPInputStream;
 import org.postgresql.largeobject.LargeObject;
 import org.postgresql.largeobject.LargeObjectManager;
 
-
 public class BlobDecoder {
 
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
@@ -47,7 +46,8 @@ public class BlobDecoder {
 			}
 		}
 	}
-
+	
+	@SuppressWarnings("deprecation")
 	public static void looping_over_blobs(int depth) throws SQLException{
 		// here is the links daemon starting point
 		// getting all URLS and out.println links for each URL
@@ -151,5 +151,4 @@ public class BlobDecoder {
 		String passwd = props.getProperty("db.passwd");
 		con = DriverManager.getConnection(url, user, passwd);
 	}
-
 }
