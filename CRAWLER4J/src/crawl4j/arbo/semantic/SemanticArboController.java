@@ -54,7 +54,8 @@ public class SemanticArboController {
 		System.out.println("Starting the crawl configuration");	
 		String name = "Cdiscount";
 		//String seed = "http://www.cdiscount.com/";
-		String seed = "http://www.amazon.fr/";
+		//String seed = "http://www.amazon.fr/";
+		String seed = "http://www.lamaisonduconvertible.fr/";
 				
 		// we here launch just a few threads, enough for a shallow crawl
 		// maximum twenty otherwise the concurrent update of the Map might get really too slow
@@ -73,7 +74,7 @@ public class SemanticArboController {
 		}
 		
 		String rootFolder = "/home/sduprey/My_Data/My_Semantic_Arbo_Crawl4j";
-		String user_agent_name = "CdiscountBot-crawler";
+		String user_agent_name = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
 		CrawlConfig config = new CrawlConfig();
 		config.setCrawlStorageFolder(rootFolder);
 		config.setUserAgentString(user_agent_name);

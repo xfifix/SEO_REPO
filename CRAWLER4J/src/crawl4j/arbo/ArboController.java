@@ -44,7 +44,7 @@ public class ArboController {
 			numberOfCrawlers=Integer.valueOf(args[1]);
 		} 
 		String rootFolder = "/home/sduprey/My_Data/My_Arbo_Crawl4j";
-		String user_agent_name = "CdiscountBot-crawler";
+		String user_agent_name = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
 		CrawlConfig config = new CrawlConfig();
 		config.setCrawlStorageFolder(rootFolder);
 		config.setUserAgentString(user_agent_name);

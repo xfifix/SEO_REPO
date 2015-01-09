@@ -164,15 +164,12 @@ public class SemanticArboCrawler extends WebCrawler {
 				width_result=width_result+widthvalue;
 				System.out.println("Width : "+widthstring);
 			}
-			info.setWidth_average(width_result/width_count);
-			
+			info.setWidth_average(width_result/width_count);	
 			// extracting the semantic most relevant words with TF/IDF indicators
-			// this step needs to put the semantics corpus frequency in cache at the crawling set up
-						
+			// this step needs to put the semantics corpus frequency in cache at the crawling set up				
 			Map<String, Double> tfIdfMap = CorpusCache.computePageTFIDFVector(text_to_parse);
 			String semantics_hit_to_store = formatTFIDFMap(tfIdfMap);
 			info.setSemantics_hit(semantics_hit_to_store);
-
 		}
 		myCrawlDataManager.getCrawledContent().put(url,info);
 	}
