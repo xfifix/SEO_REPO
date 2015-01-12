@@ -1,4 +1,4 @@
-package crawl4j.arbo.multiseed;
+package crawl4j.arbo.semantic.multiseed;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,10 +11,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 
+import crawl4j.arbo.semantic.SemanticArboCrawlDataCache;
+import crawl4j.arbo.semantic.SemanticArboCrawler;
 import crawl4j.urlutilities.MultiArboInfo;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
@@ -22,7 +24,7 @@ import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
-public class MultiSeedArboController {
+public class SemanticMultiSeedController {
 	// here we locally merge all cache
 	// that is heavy on RAM memory : we here have to limit the depth to avoid out of memory
 	// only shallow crawl will go through this step
@@ -36,13 +38,12 @@ public class MultiSeedArboController {
 	private static String insert_statement="INSERT INTO ARBOCRAWL_RESULTS (URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH,"
 			+ " OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES,"
 		    + " NB_SEARCH_IN_URL, NB_ADD_IN_TEXT, NB_FILTER_IN_TEXT, NB_SEARCH_IN_TEXT, NB_GUIDE_ACHAT_IN_TEXT, NB_PRODUCT_INFO_IN_TEXT, NB_LIVRAISON_IN_TEXT, NB_GARANTIES_IN_TEXT, NB_PRODUITS_SIMILAIRES_IN_TEXT, NB_IMAGES_TEXT, WIDTH_AVERAGE, HEIGHT_AVERAGE,"
-			+ " PAGE_TYPE, CONCURRENT_NAME, LAST_UPDATE)"
-			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			+ " PAGE_TYPE, SEMANTIC_HITS, CONCURRENT_NAME, LAST_UPDATE)"
+			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 	private static String update_statement ="UPDATE ARBOCRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,H1=?,SHORT_DESCRIPTION=?,STATUS_CODE=?,DEPTH=?,OUTLINKS_SIZE=?,INLINKS_SIZE=?,NB_BREADCRUMBS=?,NB_AGGREGATED_RATINGS=?,NB_RATINGS_VALUES=?,NB_PRICES=?,NB_AVAILABILITIES=?,NB_REVIEWS=?,NB_REVIEWS_COUNT=?,NB_IMAGES=?,"
 			+ "NB_SEARCH_IN_URL=?,NB_ADD_IN_TEXT=?,NB_FILTER_IN_TEXT=?,NB_SEARCH_IN_TEXT=?,NB_GUIDE_ACHAT_IN_TEXT=?,NB_PRODUCT_INFO_IN_TEXT=?,NB_LIVRAISON_IN_TEXT=?,NB_GARANTIES_IN_TEXT=?,NB_PRODUITS_SIMILAIRES_IN_TEXT=?,NB_IMAGES_TEXT=?,WIDTH_AVERAGE=?,HEIGHT_AVERAGE=?,"
-			+ "PAGE_TYPE=?,CONCURRENT_NAME=?,LAST_UPDATE=? WHERE URL=?";
-	
+			+ "PAGE_TYPE=?,SEMANTIC_HITS=?,CONCURRENT_NAME=?,LAST_UPDATE=? WHERE URL=?";
 	
 	public static void main(String[] args) throws Exception {
 		instantiate_connection();	
@@ -50,7 +51,7 @@ public class MultiSeedArboController {
 		String user_agent_name = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
 		System.setProperty("http.agent",user_agent_name);
 		System.out.println("Starting the crawl configuration for Crawler1, Crawler2, Crawler3, Crawler4");
-		int maxDepthOfCrawling =  3; // common for all
+		int maxDepthOfCrawling =  2; // common for all
         // Managing data for every crawlers for every site
 		// instantiating the seeds for our multiple crawlers
         String nameCrawler1 = "delamaison";
@@ -160,13 +161,13 @@ public class MultiSeedArboController {
 		controllerCrawler4.addSeed(seedCrawler4);
 		
 		System.out.println("Starting the crawl for Crawler1");
-		controllerCrawler1.startNonBlocking(MultiSeedArboCrawler.class, numberOfCrawler1Crawlers);
+		controllerCrawler1.startNonBlocking(SemanticArboCrawler.class, numberOfCrawler1Crawlers);
 		System.out.println("Starting the crawl for Crawler2");
-		controllerCrawler2.startNonBlocking(MultiSeedArboCrawler.class, numberOfCrawler2Crawlers);
+		controllerCrawler2.startNonBlocking(SemanticArboCrawler.class, numberOfCrawler2Crawlers);
 		System.out.println("Starting the crawl for Crawler3");
-		controllerCrawler3.startNonBlocking(MultiSeedArboCrawler.class, numberOfCrawler3Crawlers);
+		controllerCrawler3.startNonBlocking(SemanticArboCrawler.class, numberOfCrawler3Crawlers);
 		System.out.println("Starting the crawl for Crawler4");
-		controllerCrawler4.startNonBlocking(MultiSeedArboCrawler.class, numberOfCrawler4Crawlers);
+		controllerCrawler4.startNonBlocking(SemanticArboCrawler.class, numberOfCrawler4Crawlers);
 		
 		controllerCrawler1.waitUntilFinish();
         System.out.println("Crawler Crawler1 is finished.");
@@ -191,7 +192,7 @@ public class MultiSeedArboController {
 		long totalTextSize = 0;
 		int totalProcessedPages = 0;
 		for (Object localData : crawlersLocalData) {
-			MultiSeedArboCrawlDataCache stat = (MultiSeedArboCrawlDataCache) localData;
+			SemanticArboCrawlDataCache stat = (SemanticArboCrawlDataCache) localData;
 			totalLinks += stat.getTotalLinks();
 			totalTextSize += stat.getTotalTextSize();
 			totalProcessedPages += stat.getTotalProcessedPages();
@@ -204,7 +205,7 @@ public class MultiSeedArboController {
 		// computing the number of inlinks per pages over the whole crawl
 		System.out.println("Computing inlinks hashmap cache to the database for "+name + " :");
 		for (Object localData : crawlersLocalData) {
-			MultiSeedArboCrawlDataCache stat = (MultiSeedArboCrawlDataCache) localData;
+			SemanticArboCrawlDataCache stat = (SemanticArboCrawlDataCache) localData;
 			Map<String, MultiArboInfo> local_thread_cache = stat.getCrawledContent();
 			updateInLinksThreadCache(local_thread_cache);
 		}
@@ -213,7 +214,7 @@ public class MultiSeedArboController {
 		System.out.println("Saving the whole crawl to the database for "+name + " :");		
 		System.out.println("Saving inlinks hashmap to the database for "+name + " :");
 		for (Object localData : crawlersLocalData) {
-			MultiSeedArboCrawlDataCache stat = (MultiSeedArboCrawlDataCache) localData;
+			SemanticArboCrawlDataCache stat = (SemanticArboCrawlDataCache) localData;
 			Map<String, MultiArboInfo> local_thread_cache = stat.getCrawledContent();
 			updateOrInsertDatabaseData(local_thread_cache,name);
 		}
@@ -260,8 +261,8 @@ public class MultiSeedArboController {
 					String url=pairs.getKey();
 					MultiArboInfo info = pairs.getValue();
 					// update statement
-					//UPDATE ARBOCRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,H1=?,SHORT_DESCRIPTION=?,STATUS_CODE=?,DEPTH=?,OUTLINKS_SIZE=?,INLINKS_SIZE=?,NB_BREADCRUMBS=?,NB_AGGREGATED_RATINGS=?,NB_RATINGS_VALUES=?,NB_PRICES=?,NB_AVAILABILITIES=?,NB_REVIEWS=?,NB_REVIEWS_COUNT=?,NB_IMAGES=?,NB_SEARCH_IN_URL=?,NB_ADD_IN_TEXT=?,NB_FILTER_IN_TEXT=?,NB_SEARCH_IN_TEXT=?,NB_GUIDE_ACHAT_IN_TEXT=?,NB_PRODUCT_INFO_IN_TEXT=?,NB_LIVRAISON_IN_TEXT=?,NB_GARANTIES_IN_TEXT=?,NB_PRODUITS_SIMILAIRES_IN_TEXT=?,NB_IMAGES_TEXT=?,WIDTH_AVERAGE=?,HEIGHT_AVERAGE=?,PAGE_TYPE=?,CONCURRENT_NAME=?,LAST_UPDATE=? WHERE URL=?"; 
-					//                                  1         2      3         4                   5          6            7             8               9                   10                     11               12               13             14            15              16             17                    18                19               20                       21                      22                      23                        24                      25                         26            27               28              29          30              31               32
+					//UPDATE ARBOCRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,H1=?,SHORT_DESCRIPTION=?,STATUS_CODE=?,DEPTH=?,OUTLINKS_SIZE=?,INLINKS_SIZE=?,NB_BREADCRUMBS=?,NB_AGGREGATED_RATINGS=?,NB_RATINGS_VALUES=?,NB_PRICES=?,NB_AVAILABILITIES=?,NB_REVIEWS=?,NB_REVIEWS_COUNT=?,NB_IMAGES=?,NB_SEARCH_IN_URL=?,NB_ADD_IN_TEXT=?,NB_FILTER_IN_TEXT=?,NB_SEARCH_IN_TEXT=?,NB_GUIDE_ACHAT_IN_TEXT=?,NB_PRODUCT_INFO_IN_TEXT=?,NB_LIVRAISON_IN_TEXT=?,NB_GARANTIES_IN_TEXT=?,NB_PRODUITS_SIMILAIRES_IN_TEXT=?,NB_IMAGES_TEXT=?,WIDTH_AVERAGE=?,HEIGHT_AVERAGE=?,PAGE_TYPE=?,SEMANTIC_HITS=?,CONCURRENT_NAME=?,LAST_UPDATE=? WHERE URL=?"; 
+					//                                  1         2      3         4                   5          6            7             8               9                   10                     11               12               13             14            15              16             17                    18                19               20                       21                      22                      23                        24                      25                         26            27               28              29          30              31               32                33
 					st.setString(1,info.getText());
 					st.setString(2,info.getTitle());
 					st.setString(3,info.getH1());
@@ -296,16 +297,17 @@ public class MultiSeedArboController {
 					st.setDouble(27, info.getWidth_average());
 					st.setDouble(28, info.getHeight_average());	
 					st.setString(29,info.getPage_type());
-					st.setString(30,name);
+					st.setString(30,info.getSemantics_hit());
+					st.setString(31,name);
 					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-					st.setDate(31,sqlDate);
-					st.setString(32,url);
+					st.setDate(32,sqlDate);
+					st.setString(33,url);
 					int affected_row = st.executeUpdate();
 					// if the row has not been updated, we have to insert it !
 					if(affected_row == 0){
 						PreparedStatement insert_st = con.prepareStatement(insert_statement);
-						//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, NB_SEARCH_IN_URL, NB_ADD_IN_TEXT, NB_FILTER_IN_TEXT, NB_SEARCH_IN_TEXT, NB_GUIDE_ACHAT_IN_TEXT, NB_PRODUCT_INFO_IN_TEXT, NB_LIVRAISON_IN_TEXT, NB_GARANTIES_IN_TEXT, NB_PRODUITS_SIMILAIRES_IN_TEXT, NB_IMAGES_TEXT, WIDTH_AVERAGE, HEIGHT_AVERAGE, PAGE_TYPE,   CONCURRENT_NAME, LAST_UPDATE)"
-						//  1        2        3    4           5                6        7           8              9             10               11                      12            13              14             15            16             17           18               19                 20                21                  22                      23                      24                       25                        26                       27             28              29          30              31             32
+						//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, NB_SEARCH_IN_URL, NB_ADD_IN_TEXT, NB_FILTER_IN_TEXT, NB_SEARCH_IN_TEXT, NB_GUIDE_ACHAT_IN_TEXT, NB_PRODUCT_INFO_IN_TEXT, NB_LIVRAISON_IN_TEXT, NB_GARANTIES_IN_TEXT, NB_PRODUITS_SIMILAIRES_IN_TEXT, NB_IMAGES_TEXT, WIDTH_AVERAGE, HEIGHT_AVERAGE, PAGE_TYPE, SEMANTIC_HITS,  CONCURRENT_NAME, LAST_UPDATE)"
+						//  1        2        3    4           5                6        7           8              9             10               11                      12            13              14             15            16             17           18               19                 20                21                  22                      23                      24                       25                        26                       27             28              29          30              31             32             33
 						insert_st.setString(1,url); 
 						insert_st.setString(2,info.getText());
 						insert_st.setString(3,info.getTitle());
@@ -339,8 +341,9 @@ public class MultiSeedArboController {
 						insert_st.setDouble(28, info.getWidth_average());
 						insert_st.setDouble(29, info.getHeight_average());
 						insert_st.setString(30,info.getPage_type());
-						insert_st.setString(31,name);
-						insert_st.setDate(32,sqlDate);
+						insert_st.setString(31,info.getSemantics_hit());
+						insert_st.setString(32,name);
+						insert_st.setDate(33,sqlDate);
 						insert_st.executeUpdate();
 					}
 				}while (it.hasNext());	
@@ -374,8 +377,8 @@ public class MultiSeedArboController {
 					Map.Entry<String, MultiArboInfo> pairs = (Map.Entry<String, MultiArboInfo>)it.next();
 					String url=pairs.getKey();
 					MultiArboInfo info = pairs.getValue();
-					//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, NB_SEARCH_IN_URL, NB_ADD_IN_TEXT, NB_FILTER_IN_TEXT, NB_SEARCH_IN_TEXT, NB_GUIDE_ACHAT_IN_TEXT, NB_PRODUCT_INFO_IN_TEXT, NB_LIVRAISON_IN_TEXT, NB_GARANTIES_IN_TEXT, NB_PRODUITS_SIMILAIRES_IN_TEXT, NB_IMAGES_TEXT, WIDTH_AVERAGE, HEIGHT_AVERAGE, PAGE_TYPE,   CONCURRENT_NAME, LAST_UPDATE)"
-					//  1        2        3    4           5                6        7           8              9             10               11                      12            13              14             15            16             17           18               19                 20                21                  22                      23                      24                       25                        26                       27             28              29          30              31             32
+					//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, NB_SEARCH_IN_URL, NB_ADD_IN_TEXT, NB_FILTER_IN_TEXT, NB_SEARCH_IN_TEXT, NB_GUIDE_ACHAT_IN_TEXT, NB_PRODUCT_INFO_IN_TEXT, NB_LIVRAISON_IN_TEXT, NB_GARANTIES_IN_TEXT, NB_PRODUITS_SIMILAIRES_IN_TEXT, NB_IMAGES_TEXT, WIDTH_AVERAGE, HEIGHT_AVERAGE, PAGE_TYPE,   SEMANTIC_HITS, CONCURRENT_NAME, LAST_UPDATE)"
+					//  1        2        3    4           5                6        7           8              9             10               11                      12            13              14             15            16             17           18               19                 20                21                  22                      23                      24                       25                        26                       27             28              29          30              31             32               33
 					st.setString(1,url); 
 					st.setString(2,info.getText());
 					st.setString(3,info.getTitle());
@@ -411,9 +414,10 @@ public class MultiSeedArboController {
 					st.setDouble(28, info.getWidth_average());
 					st.setDouble(29, info.getHeight_average());
 					st.setString(30,info.getPage_type());
-					st.setString(31,name);
+					st.setString(31,info.getSemantics_hit());
+					st.setString(32,name);
 					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-					st.setDate(32,sqlDate);
+					st.setDate(33,sqlDate);
 					//					st.executeUpdate();
 					st.addBatch();
 				}while (it.hasNext());	
@@ -432,7 +436,6 @@ public class MultiSeedArboController {
 			}
 		}		
 	}
-
 	
 	public static void instantiate_connection() throws SQLException{
 		Properties props = new Properties();

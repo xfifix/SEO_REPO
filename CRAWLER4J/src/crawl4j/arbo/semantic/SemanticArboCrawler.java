@@ -12,7 +12,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import crawl4j.arbo.ArboController;
 import crawl4j.urlutilities.MultiArboInfo;
 import crawl4j.urlutilities.URL_Utilities;
 import crawl4j.vsm.CorpusCache;
@@ -51,7 +50,7 @@ public class SemanticArboCrawler extends WebCrawler {
 	// we don't visit media URLs and we keep inside Cdiscount
 	public boolean shouldVisit(WebURL url) {
 		String href = url.getURL().toLowerCase();
-		return (!filters.matcher(href).matches() && ArboController.isAllowedSiteforMultipleCrawl(href));
+		return (!filters.matcher(href).matches() && SemanticArboController.isAllowedSiteforMultipleCrawl(href));
 	}
 
 	@Override
@@ -84,7 +83,7 @@ public class SemanticArboCrawler extends WebCrawler {
 			// we can add the following as last resort :
 			// url, pattern in the url 
 			// but the classifier should guess without it 
-			// size of the in memory cache per thread (200 default value)			
+			// size of the in memory cache per thread (200 default value)	
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
 			info.setText(htmlParseData.getText());
 			String html = htmlParseData.getHtml();

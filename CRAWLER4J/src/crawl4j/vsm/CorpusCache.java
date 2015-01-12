@@ -187,7 +187,7 @@ public class CorpusCache {
 			Iterator<Entry<String, Double>> it = tfIdfMapSortedMap.entrySet().iterator();
 			// we go forward as the Map has been sorted descending
 			int counter = 0;
-			while (it.hasNext()){
+			while (it.hasNext() && counter <nb_semantic_hits_threshold){
 				Map.Entry<String, Double> pairs = (Map.Entry<String, Double>)it.next();
 				ordered_keys[counter] = pairs.getKey();
 				counter ++;

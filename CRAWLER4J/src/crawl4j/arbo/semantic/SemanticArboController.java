@@ -24,6 +24,17 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
 public class SemanticArboController {
+	public static String site_stub="http://www.cdiscount.com/";
+	public static String[] multiple_seeds = {
+		"http://www.cdiscount.com/",
+		"http://www.amazon.fr/",
+		"http://www.darty.com/",
+		"http://www.rueducommerce.fr/",
+		"http://www.delamaison.fr/",
+		"http://www.lamaisonduconvertible.fr/",
+		"http://www.habitat.fr/",
+		"http://www.enviedemeubles.com/"
+	};
 	// here we locally merge all cache
 	// that is heavy on RAM memory : we here have to limit the depth to avoid out of memory
 	// only shallow crawl will go through this step
@@ -375,5 +386,15 @@ public class SemanticArboController {
 		String user = props.getProperty("db.user");
 		String passwd = props.getProperty("db.passwd");
 		con = DriverManager.getConnection(url, user, passwd);
+	}
+	
+	public static boolean isAllowedSiteforMultipleCrawl(String href){
+		boolean found = false;
+		for (String seed : multiple_seeds){
+			if(href.startsWith(seed)){
+				found=true;
+			}
+		}
+		return found;
 	}
 }
