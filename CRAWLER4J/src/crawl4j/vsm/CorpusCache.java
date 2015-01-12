@@ -28,7 +28,7 @@ public class CorpusCache {
 
 	private static Map<String, Double> corpus_idf = new HashMap<String, Double>();
 	private static int nb_total_documents = 1;
-
+	private static int nb_semantic_hits_threshold = 10;
 
 	public static void load(){
 		Connection con = null;
@@ -95,12 +95,15 @@ public class CorpusCache {
 	}
 
 	public static Map<String, Double> computePageTFIDFVector(String pageText){
+		pageText = CorpusCache.preprocessSemanticText(pageText);
 		VectorStateSpringRepresentation vs =new VectorStateSpringRepresentation(pageText);
 		Map<String, Double> tfidfMap = addTFIDF(vs.getWordFrequencies());
 		return tfidfMap;
 	}
 
 	public static Double computeTFSIDFimilarity(String text1, String text2) {
+		text1 = CorpusCache.preprocessSemanticText(text1);
+		text2 = CorpusCache.preprocessSemanticText(text2);
 		VectorStateSpringRepresentation vs1 =new VectorStateSpringRepresentation(text1);
 		VectorStateSpringRepresentation vs2 =new VectorStateSpringRepresentation(text2);
 		Map<String, Double> firstMap = addTFIDF(vs1.getWordFrequencies());
@@ -122,6 +125,8 @@ public class CorpusCache {
 	}
 
 	public static Double computeTFSimilarity(String text1, String text2) {
+		text1 = CorpusCache.preprocessSemanticText(text1);
+		text2 = CorpusCache.preprocessSemanticText(text2);
 		VectorStateSpringRepresentation vs1 =new VectorStateSpringRepresentation(text1);
 		VectorStateSpringRepresentation vs2 =new VectorStateSpringRepresentation(text2);
 		return cosine_tfsimilarity(vs1.getWordFrequencies() , vs2.getWordFrequencies());
@@ -148,36 +153,72 @@ public class CorpusCache {
 	}
 
 	public static String formatTFIDFMapWithWeights(Map<String, Double> tfIdfMap){
-		Map<String, Double> tfIdfMapSortedMap = sortByValue( tfIdfMap );
+		Map<String, Double> tfIdfMapSortedMap = sortByValueDescendingly( tfIdfMap );
 		return tfIdfMapSortedMap.toString();
 	}
 
+	public static String formatTFIDFMapBestTenHits(Map<String, Double> tfIdfMap){
+		Map<String, Double> tfIdfMapSortedMap = sortByValueDescendingly( tfIdfMap );
+		String[] orderedKeysTenHits=getOrderedKeysTenBestHits(tfIdfMapSortedMap);
+		return StringUtils.join(orderedKeysTenHits,"|||");
+	}
+
 	public static String formatTFIDFMap(Map<String, Double> tfIdfMap){
-		Map<String, Double> tfIdfMapSortedMap = sortByValue( tfIdfMap );
+		Map<String, Double> tfIdfMapSortedMap = sortByValueDescendingly( tfIdfMap );
 		String[] orderedKeys=getOrderedKeys(tfIdfMapSortedMap);
 		return StringUtils.join(orderedKeys,"|||");
+	}
+
+	public static String[] getOrderedKeysTenBestHits(Map<String, Double> tfIdfMapSortedMap){
+		String[] ordered_keys =null;
+		if (tfIdfMapSortedMap.size() <= nb_semantic_hits_threshold){
+			ordered_keys = new String[tfIdfMapSortedMap.size()];
+			Iterator<Entry<String, Double>> it = tfIdfMapSortedMap.entrySet().iterator();
+			// we go forward as the Map has been sorted descending
+			int counter = 0;
+			while (it.hasNext()){
+				Map.Entry<String, Double> pairs = (Map.Entry<String, Double>)it.next();
+				ordered_keys[counter] = pairs.getKey();
+				counter ++;
+			}
+		} else {
+			// we limit the number of hits up to ten
+			ordered_keys = new String[nb_semantic_hits_threshold];
+			Iterator<Entry<String, Double>> it = tfIdfMapSortedMap.entrySet().iterator();
+			// we go forward as the Map has been sorted descending
+			int counter = 0;
+			while (it.hasNext()){
+				Map.Entry<String, Double> pairs = (Map.Entry<String, Double>)it.next();
+				ordered_keys[counter] = pairs.getKey();
+				counter ++;
+			}
+		}
+		return ordered_keys;
 	}
 
 	public static String[] getOrderedKeys(Map<String, Double> tfIdfMapSortedMap){
 		String[] ordered_keys = new String[tfIdfMapSortedMap.size()];
 		Iterator<Entry<String, Double>> it = tfIdfMapSortedMap.entrySet().iterator();
-		int counter = tfIdfMapSortedMap.size()-1;
+		// we go forward as the Map has been sorted descending
+		int counter = 0;
 		while (it.hasNext()){
 			Map.Entry<String, Double> pairs = (Map.Entry<String, Double>)it.next();
 			ordered_keys[counter] = pairs.getKey();
-			counter --;
+			counter ++;
 		}
 		return ordered_keys;
 	}
 
-	public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue( Map<K, V> map )
+	public static <K, V extends Comparable<? super V>> Map<K, V> sortByValueDescendingly( Map<K, V> map )
 	{
 		List<Map.Entry<K, V>> list = new LinkedList<Map.Entry<K, V>>( map.entrySet() );
 		Collections.sort( list, new Comparator<Map.Entry<K, V>>()
 				{
 			public int compare( Map.Entry<K, V> o1, Map.Entry<K, V> o2 )
 			{
-				return (o1.getValue()).compareTo( o2.getValue() );
+				// we sort the Map descendingly
+				int toreturn =-(  o1.getValue()).compareTo( o2.getValue() );
+				return toreturn;
 			}
 				});
 		Map<K, V> result = new LinkedHashMap<K, V>();
@@ -187,4 +228,33 @@ public class CorpusCache {
 		}
 		return result;
 	}
+	
+	public static <K, V extends Comparable<? super V>> Map<K, V> sortByValueAscendingly( Map<K, V> map )
+	{
+		List<Map.Entry<K, V>> list = new LinkedList<Map.Entry<K, V>>( map.entrySet() );
+		Collections.sort( list, new Comparator<Map.Entry<K, V>>()
+				{
+			public int compare( Map.Entry<K, V> o1, Map.Entry<K, V> o2 )
+			{
+				// we sort the Map ascendingly
+				int toreturn =(o1.getValue()).compareTo( o2.getValue() );
+				return toreturn;
+			}
+				});
+		Map<K, V> result = new LinkedHashMap<K, V>();
+		for (Map.Entry<K, V> entry : list)
+		{
+			result.put( entry.getKey(), entry.getValue() );
+		}
+		return result;
+	}
+	
+	public static String preprocessSemanticText(String semanticText){
+		semanticText=semanticText.replace("l'", "");
+		semanticText=semanticText.replace("n'", "");
+		semanticText=semanticText.replace("d'", "");
+		semanticText=semanticText.replace("m'", "");
+		return semanticText;
+	}
+	
 }

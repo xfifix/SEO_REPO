@@ -25,6 +25,10 @@ public class TfIdfTest {
 		System.out.println(formattedTFIDF);	
 		String orderedKeys = CorpusCache.formatTFIDFMap(tfIdfMap);
 		System.out.println(orderedKeys);	
+		String orderedKeysTenBestHits = CorpusCache.formatTFIDFMapBestTenHits(tfIdfMap);
+		System.out.println(orderedKeysTenBestHits);	
+		
+		
 	}
 }
 		

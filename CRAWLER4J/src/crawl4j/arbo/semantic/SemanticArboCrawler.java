@@ -67,10 +67,10 @@ public class SemanticArboCrawler extends WebCrawler {
 		}		
 		info.setUrl(url);
 		info.setDepth((int)page.getWebURL().getDepth());
-		
+
 		String page_type = URL_Utilities.checkTypeFullUrl(url);
 		info.setPage_type(page_type);
-		
+
 		myCrawlDataManager.incProcessedPages();	
 		List<WebURL> links = null;
 		if (page.getParseData() instanceof HtmlParseData) {
@@ -117,62 +117,78 @@ public class SemanticArboCrawler extends WebCrawler {
 			String text_to_parse = doc.text();
 			// beginning of url built parameters
 			int nb_search_in_url = StringUtils.countMatches(text_to_parse, "search")+StringUtils.countMatches(text_to_parse, "recherche");
-		    info.setNb_search_in_url(nb_search_in_url);
+			info.setNb_search_in_url(nb_search_in_url);
 			// beginning of text built parameters
 			int nb_add  = StringUtils.countMatches(text_to_parse, "ajout")+StringUtils.countMatches(text_to_parse, "ajouter")+StringUtils.countMatches(text_to_parse, "Ajout")+StringUtils.countMatches(text_to_parse, "Ajouter");
 			info.setNb_add_in_text(nb_add);
 			int nb_filter  = StringUtils.countMatches(text_to_parse, "filtre")+StringUtils.countMatches(text_to_parse, "facette");
 			info.setNb_filter_in_text(nb_filter);
 			int nb_search  = StringUtils.countMatches(text_to_parse, "Ma recherche")+StringUtils.countMatches(text_to_parse, "Votre recherche")+StringUtils.countMatches(text_to_parse, "résultats pour")+StringUtils.countMatches(text_to_parse, "résultats associés");
-		    info.setNb_search_in_text(nb_search);
+			info.setNb_search_in_text(nb_search);
 
 			int nb_guide_achat = StringUtils.countMatches(text_to_parse, "search");
-		    info.setNb_guide_achat_in_text(nb_guide_achat);
+			info.setNb_guide_achat_in_text(nb_guide_achat);
 			int nb_product_info = StringUtils.countMatches(text_to_parse, "caractéristique")+StringUtils.countMatches(text_to_parse, "Caractéristique")+StringUtils.countMatches(text_to_parse, "descriptif")+StringUtils.countMatches(text_to_parse, "Descriptif")+StringUtils.countMatches(text_to_parse, "information")+StringUtils.countMatches(text_to_parse, "Information");	    		
-		    info.setNb_product_info_in_text(nb_product_info);
+			info.setNb_product_info_in_text(nb_product_info);
 			int nb_livraison = StringUtils.countMatches(text_to_parse, "livraison") +StringUtils.countMatches(text_to_parse, "frais de port")+StringUtils.countMatches(text_to_parse, "Frais de port") ;
-		    info.setNb_livraison_in_text(nb_livraison);
+			info.setNb_livraison_in_text(nb_livraison);
 			int nb_garanties = StringUtils.countMatches(text_to_parse, "garantie")+StringUtils.countMatches(text_to_parse, "Garantie")+StringUtils.countMatches(text_to_parse, "Assurance")+StringUtils.countMatches(text_to_parse, "assurance");    
-		    info.setNb_garanties_in_text(nb_garanties);
+			info.setNb_garanties_in_text(nb_garanties);
 			int nb_produits_similaires = StringUtils.countMatches(text_to_parse, "Produits Similaires")+StringUtils.countMatches(text_to_parse, "produits similaires")+StringUtils.countMatches(text_to_parse, "Meilleures Ventes")+StringUtils.countMatches(text_to_parse, "meilleures ventes")+StringUtils.countMatches(text_to_parse, "Meilleures ventes")+StringUtils.countMatches(text_to_parse, "Nouveautés")+StringUtils.countMatches(text_to_parse, "nouveautés");
-            info.setNb_produits_similaires_in_text(nb_produits_similaires);
-            Elements imageElements = doc.getElementsByTag("img");
-            int nb_total_images = imageElements.size();
-            info.setNb_total_images(nb_total_images);
-            
-            // average height
-            Elements heights  = doc.getElementsByAttribute("height");
+			info.setNb_produits_similaires_in_text(nb_produits_similaires);
+			Elements imageElements = doc.getElementsByTag("img");
+			int nb_total_images = imageElements.size();
+			info.setNb_total_images(nb_total_images);
+
+			// average height
+			Elements heights  = doc.getElementsByAttribute("height");
 			double height_result = 0;
 			double height_count = 0;
-			for (Element height : heights){
-				String heightstring = height.attr("height");
-				int heightvalue = Integer.valueOf(heightstring);
-				height_count++;
-				height_result=height_result+heightvalue;
-				System.out.println("Height : " + heightstring);
-			}
-			info.setHeight_average(height_result/height_count);
-			//average width
-			Elements widths = doc.getElementsByAttribute("width");
 			double width_result = 0;
 			double width_count = 0;
+
+			for (Element height : heights){
+				String heightstring = height.attr("height");
+				if (!(heightstring.contains("%") || heightstring.contains("px"))){
+					double heightvalue = 0;
+					try{
+						heightvalue = Double.valueOf(heightstring);
+					} catch (NumberFormatException e){
+						System.out.println("Trouble parsing width, height average size");
+						e.printStackTrace();
+					}
+					height_count++;
+					height_result=height_result+heightvalue;
+				}
+			}
+			//average width
+			Elements widths = doc.getElementsByAttribute("width");
 			for (Element width : widths){
 				String widthstring = width.attr("width");
-				int widthvalue = Integer.valueOf(widthstring);
-				width_count++;
-				width_result=width_result+widthvalue;
-				System.out.println("Width : "+widthstring);
+				if (!(widthstring.contains("%") || widthstring.contains("px"))){
+					double widthvalue = 0;
+					try{
+						widthvalue = Double.valueOf(widthstring);
+					} catch (NumberFormatException e){
+						System.out.println("Trouble parsing width, height average size");
+						e.printStackTrace();
+					}
+					width_count++;
+					width_result=width_result+widthvalue;
+				}
 			}
+
+			info.setHeight_average(height_result/height_count);
 			info.setWidth_average(width_result/width_count);	
 			// extracting the semantic most relevant words with TF/IDF indicators
 			// this step needs to put the semantics corpus frequency in cache at the crawling set up				
 			Map<String, Double> tfIdfMap = CorpusCache.computePageTFIDFVector(text_to_parse);
-			String semantics_hit_to_store = CorpusCache.formatTFIDFMap(tfIdfMap);
+			String semantics_hit_to_store = CorpusCache.formatTFIDFMapBestTenHits(tfIdfMap);
 			info.setSemantics_hit(semantics_hit_to_store);
 		}
 		myCrawlDataManager.getCrawledContent().put(url,info);
 	}
-	
+
 	public Set<String> filter_out_links(List<WebURL> links){
 		Set<String> outputSet = new HashSet<String>();
 		for (WebURL url_out : links){
@@ -195,7 +211,7 @@ public class SemanticArboCrawler extends WebCrawler {
 	protected void handlePageStatusCode(WebURL webUrl, int statusCode, String statusDescription) {
 		String fullUrl = webUrl.getURL();
 		String url = URL_Utilities.drop_parameters(fullUrl);
-		
+
 		MultiArboInfo info =myCrawlDataManager.getCrawledContent().get(url);
 		if (info == null){
 			info =new MultiArboInfo();

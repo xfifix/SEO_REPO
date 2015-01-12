@@ -7,10 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
+import crawl4j.vsm.CorpusCache;
 import crawl4j.vsm.VectorStateSpringRepresentation;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
@@ -43,13 +40,8 @@ public class CorpusCrawler extends WebCrawler {
 
 		if (page.getParseData() instanceof HtmlParseData) {
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();			
-			String html = htmlParseData.getHtml();
-			Elements elements = Jsoup.parse(html).body().select("*");
-			StringBuilder textBuilder = new StringBuilder();
-			for (Element element : elements) {
-				textBuilder.append(" "+element.text()+" ");
-			}
-			VectorStateSpringRepresentation vector_rep = new VectorStateSpringRepresentation(textBuilder.toString());
+			String semantic_text = CorpusCache.preprocessSemanticText(htmlParseData.getText());
+			VectorStateSpringRepresentation vector_rep = new VectorStateSpringRepresentation(semantic_text);
 			Map<String, Integer> word_map = vector_rep.getWordFrequencies();
 
 			Iterator<Map.Entry<String, Integer>> it = word_map.entrySet().iterator();
@@ -58,10 +50,6 @@ public class CorpusCrawler extends WebCrawler {
 				String word=pairs.getKey();
 				// we here don't want any number
 				if (!word.matches(".*\\d+.*")){
-					word=word.replace("l'", "");
-					word=word.replace("n'", "");
-					word=word.replace("d'", "");
-					word=word.replace("m'", "");
 					System.out.println("Word to add to the corpus : "+word);
 					myCrawlDataManager.updateWord(word, url);
 				}
@@ -126,7 +114,7 @@ public class CorpusCrawler extends WebCrawler {
 		// probably want to write in a text file.
 		System.out.println("Crawler " + id + "> Processed Pages: " + myCrawlDataManager.getTotalProcessedPages());
 		System.out.println("Crawler " + id + "> Total Text Size: " + myCrawlDataManager.getTotalTextSize());
-	//	myCrawlDataManager.updateData();	
+		//	myCrawlDataManager.updateData();	
 	}
 
 }
