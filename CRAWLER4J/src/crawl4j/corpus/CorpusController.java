@@ -9,9 +9,18 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
 public class CorpusController {
-
 	public static String crawler_seed = "http://www.amazon.fr";
-
+	public static String site_stub="http://www.cdiscount.com/";
+	public static String[] multiple_seeds = {
+		"http://www.cdiscount.com/",
+		"http://www.amazon.fr/",
+		"http://www.darty.com/",
+		"http://www.rueducommerce.fr/",
+		"http://www.delamaison.fr/",
+		"http://www.lamaisonduconvertible.fr/",
+		"http://www.habitat.fr/",
+		"http://www.enviedemeubles.com/"
+	};
 	public static void main(String[] args) throws Exception {
 		System.setProperty("http.agent", "");
 		System.out.println("Starting the crawl configuration");
@@ -63,5 +72,15 @@ public class CorpusController {
 		System.out.println("   Processed Pages: " + totalProcessedPages);
 		System.out.println("   Total Text Size: " + totalTextSize);
 		System.out.println("   Estimated time (ms): " + estimatedTime);
+	}
+	
+	public static boolean isAllowedSiteforMultipleCrawl(String href){
+		boolean found = false;
+		for (String seed : multiple_seeds){
+			if(href.startsWith(seed)){
+				found=true;
+			}
+		}
+		return found;
 	}
 }

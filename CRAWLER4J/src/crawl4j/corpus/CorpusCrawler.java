@@ -17,7 +17,7 @@ import edu.uci.ics.crawler4j.url.WebURL;
 public class CorpusCrawler extends WebCrawler {
 
 	// size of the in memory cache per thread (200 default value)
-	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg" + "|png|tiff?|mid|mp2|mp3|mp4"
+	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg|jpg" + "|png|tiff?|mid|mp2|mp3|mp4"
 			+ "|wav|avi|mov|mpeg|ram|m4v|ico|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 
 	CorpusCrawlDataManagement myCrawlDataManager;
@@ -29,7 +29,7 @@ public class CorpusCrawler extends WebCrawler {
 	@Override
 	public boolean shouldVisit(WebURL url) {
 		String href = url.getURL().toLowerCase();
-		return !filters.matcher(href).matches() && href.startsWith(CorpusController.crawler_seed);
+		return ((!filters.matcher(href).matches()) && CorpusController.isAllowedSiteforMultipleCrawl(href));
 	}
 
 	@Override
@@ -73,47 +73,13 @@ public class CorpusCrawler extends WebCrawler {
 		return myCrawlDataManager;
 	}
 
-	// This function is called by controller before finishing the job.
-	// You can put whatever stuff you need here.
-	@Override
-	public void onBeforeExit() {
-		//		saveData();
-		//		try {
-		//			myCrawlDataManager.getCon().close();
-		//		} catch (SQLException e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		}
-	}
-
-
-
-	// we just don't care about the status code
-	//	@Override
-	//	protected void handlePageStatusCode(WebURL webUrl, int statusCode, String statusDescription) {
-	//		String url = webUrl.getURL();
-	//		CORPUSinfo info =myCrawlDataManager.getCrawledContent().get(url);
-	//		if (info == null){
-	//			info =new CORPUSinfo();
-	//		}	
-	//		//info.setStatus_code(statusCode);
-	//		myCrawlDataManager.getCrawledContent().put(url,info);
-	//		//		if (statusCode != HttpStatus.SC_OK) {
-	//		//			if (statusCode == HttpStatus.SC_NOT_FOUND) {
-	//		//				System.out.println("Broken link: " + webUrl.getURL() + ", this link was found in page with docid: " + webUrl.getParentDocid());
-	//		//			} else {
-	//		//				System.out.println("Non success status for link: " + webUrl.getURL() + ", status code: " + statusCode + ", description: " + statusDescription);
-	//		//			}
-	//		//		}
-	//	}
-
 	public void saveData(){
 		int id = getMyId();
 		// This is just an example. Therefore I print on screen. You may
 		// probably want to write in a text file.
 		System.out.println("Crawler " + id + "> Processed Pages: " + myCrawlDataManager.getTotalProcessedPages());
 		System.out.println("Crawler " + id + "> Total Text Size: " + myCrawlDataManager.getTotalTextSize());
-	//	myCrawlDataManager.updateData();	
+		//	myCrawlDataManager.updateData();	
 	}
 
 }
