@@ -51,7 +51,7 @@ public class SemanticMultiSeedController {
 		String user_agent_name = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
 		System.setProperty("http.agent",user_agent_name);
 		System.out.println("Starting the crawl configuration for Crawler1, Crawler2, Crawler3, Crawler4");
-		int maxDepthOfCrawling =  2; // common for all
+		int maxDepthOfCrawling =  5; // common for all
         // Managing data for every crawlers for every site
 		// instantiating the seeds for our multiple crawlers
         String nameCrawler1 = "delamaison";
@@ -67,7 +67,15 @@ public class SemanticMultiSeedController {
 		// maximum twenty otherwise the concurrent update of the Map might get really too slow
 		// and become a bottleneck rather than a 
 		String rootFolderCrawler1 = "/home/sduprey/My_Data/My_Multi_Crawler1_Arbo_Crawl4j";
-		int numberOfCrawler1Crawlers =  50;
+		String rootFolderCrawler2 = "/home/sduprey/My_Data/My_Multi_Crawler2_Arbo_Crawl4j";
+		String rootFolderCrawler3 = "/home/sduprey/My_Data/My_Multi_Crawler3_Arbo_Crawl4j";
+		String rootFolderCrawler4 = "/home/sduprey/My_Data/My_Multi_Crawler4_Arbo_Crawl4j";
+
+		int numberOfCrawler1Crawlers =  10;
+		int numberOfCrawler2Crawlers =  10;
+		int numberOfCrawler3Crawlers =  10;
+		int numberOfCrawler4Crawlers =  10;
+		
         CrawlConfig configCrawler1 = new CrawlConfig();
         configCrawler1.setCrawlStorageFolder(rootFolderCrawler1);
         configCrawler1.setUserAgentString(user_agent_name);
@@ -90,8 +98,6 @@ public class SemanticMultiSeedController {
 		CrawlController controllerCrawler1 = new CrawlController(configCrawler1, pageFetcherCrawler1, robotstxtServerCrawler1);
 		controllerCrawler1.addSeed(seedCrawler1);
 	
-		String rootFolderCrawler2 = "/home/sduprey/My_Data/My_Multi_Crawler2_Arbo_Crawl4j";
-		int numberOfCrawler2Crawlers =  50;
         CrawlConfig configCrawler2 = new CrawlConfig();
         configCrawler2.setCrawlStorageFolder(rootFolderCrawler2);
         configCrawler2.setUserAgentString(user_agent_name);
@@ -113,9 +119,6 @@ public class SemanticMultiSeedController {
 		CrawlController controllerCrawler2 = new CrawlController(configCrawler2, pageFetcherCrawler2, robotstxtServerCrawler2);
 		controllerCrawler2.addSeed(seedCrawler2);
 		
-		
-		String rootFolderCrawler3 = "/home/sduprey/My_Data/My_Multi_Crawler3_Arbo_Crawl4j";
-		int numberOfCrawler3Crawlers =  50;
         CrawlConfig configCrawler3 = new CrawlConfig();
         configCrawler3.setCrawlStorageFolder(rootFolderCrawler3);
         configCrawler3.setUserAgentString(user_agent_name);
@@ -137,8 +140,6 @@ public class SemanticMultiSeedController {
 		CrawlController controllerCrawler3 = new CrawlController(configCrawler3, pageFetcherCrawler3, robotstxtServerCrawler3);
 		controllerCrawler3.addSeed(seedCrawler3);
 		
-		String rootFolderCrawler4 = "/home/sduprey/My_Data/My_Multi_Crawler4_Arbo_Crawl4j";
-		int numberOfCrawler4Crawlers =  50;
         CrawlConfig configCrawler4 = new CrawlConfig();
         configCrawler4.setCrawlStorageFolder(rootFolderCrawler4);
         configCrawler4.setUserAgentString(user_agent_name);
