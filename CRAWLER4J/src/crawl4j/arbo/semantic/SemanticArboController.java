@@ -65,8 +65,10 @@ public class SemanticArboController {
 		System.out.println("Starting the crawl configuration");	
 		String name = "Cdiscount";
 		//String seed = "http://www.cdiscount.com/";
-		String seed = "http://www.amazon.fr/";
+		//String seed = "http://www.amazon.fr/";
 		//String seed = "http://www.lamaisonduconvertible.fr/";
+		//debugging seed
+		String seed = "http://www.delamaison.fr/rideau-tamisant-nouettes-lave-140x280cm-purete-p-162563.html";
 				
 		// we here launch just a few threads, enough for a shallow crawl
 		// maximum twenty otherwise the concurrent update of the Map might get really too slow

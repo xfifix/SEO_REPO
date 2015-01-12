@@ -157,9 +157,9 @@ public class CorpusCache {
 		return tfIdfMapSortedMap.toString();
 	}
 
-	public static String formatTFIDFMapBestTenHits(Map<String, Double> tfIdfMap){
+	public static String formatTFIDFMapBestHits(Map<String, Double> tfIdfMap){
 		Map<String, Double> tfIdfMapSortedMap = sortByValueDescendingly( tfIdfMap );
-		String[] orderedKeysTenHits=getOrderedKeysTenBestHits(tfIdfMapSortedMap);
+		String[] orderedKeysTenHits=getOrderedKeysBestHits(tfIdfMapSortedMap);
 		return StringUtils.join(orderedKeysTenHits,"|||");
 	}
 
@@ -169,7 +169,7 @@ public class CorpusCache {
 		return StringUtils.join(orderedKeys,"|||");
 	}
 
-	public static String[] getOrderedKeysTenBestHits(Map<String, Double> tfIdfMapSortedMap){
+	public static String[] getOrderedKeysBestHits(Map<String, Double> tfIdfMapSortedMap){
 		String[] ordered_keys =null;
 		if (tfIdfMapSortedMap.size() <= nb_semantic_hits_threshold){
 			ordered_keys = new String[tfIdfMapSortedMap.size()];

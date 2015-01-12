@@ -182,7 +182,7 @@ public class SemanticArboCrawler extends WebCrawler {
 			// extracting the semantic most relevant words with TF/IDF indicators
 			// this step needs to put the semantics corpus frequency in cache at the crawling set up				
 			Map<String, Double> tfIdfMap = CorpusCache.computePageTFIDFVector(text_to_parse);
-			String semantics_hit_to_store = CorpusCache.formatTFIDFMapBestTenHits(tfIdfMap);
+			String semantics_hit_to_store = CorpusCache.formatTFIDFMapBestHits(tfIdfMap);
 			info.setSemantics_hit(semantics_hit_to_store);
 		}
 		myCrawlDataManager.getCrawledContent().put(url,info);
