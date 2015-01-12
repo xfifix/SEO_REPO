@@ -25,7 +25,10 @@ import edu.uci.ics.crawler4j.url.WebURL;
 public class ContinuousCrawler extends WebCrawler {
 
 	// size of the in memory cache per thread (200 default value)
-	private static int bulk_size = 100;
+	// depending wether or not you store the whole page source code
+	// this cache size is important
+	// if you don't save blob and store the page source code you can go up to 200
+	private static int bulk_size = 70;
 	// debugging size
 	//private static int bulk_size = 10;
 	

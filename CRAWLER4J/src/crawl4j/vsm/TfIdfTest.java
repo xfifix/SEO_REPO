@@ -21,8 +21,10 @@ public class TfIdfTest {
 		System.out.println("TFIDF similarity" + CorpusCache.computeTFSIDFimilarity(text1, text1));
 		
 		Map<String, Double> tfIdfMap = CorpusCache.computePageTFIDFVector(text1);
-		String formattedTFIDF = CorpusCache.formatTFIDFMap(tfIdfMap);
+		String formattedTFIDF = CorpusCache.formatTFIDFMapWithWeights(tfIdfMap);
 		System.out.println(formattedTFIDF);	
+		String orderedKeys = CorpusCache.formatTFIDFMap(tfIdfMap);
+		System.out.println(orderedKeys);	
 	}
 }
 		

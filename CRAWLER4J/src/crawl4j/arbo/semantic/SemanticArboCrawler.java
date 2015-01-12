@@ -1,11 +1,9 @@
 package crawl4j.arbo.semantic;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -175,8 +173,6 @@ public class SemanticArboCrawler extends WebCrawler {
 		myCrawlDataManager.getCrawledContent().put(url,info);
 	}
 	
-
-
 	public Set<String> filter_out_links(List<WebURL> links){
 		Set<String> outputSet = new HashSet<String>();
 		for (WebURL url_out : links){

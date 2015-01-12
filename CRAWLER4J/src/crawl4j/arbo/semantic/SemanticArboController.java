@@ -54,8 +54,8 @@ public class SemanticArboController {
 		System.out.println("Starting the crawl configuration");	
 		String name = "Cdiscount";
 		//String seed = "http://www.cdiscount.com/";
-		//String seed = "http://www.amazon.fr/";
-		String seed = "http://www.lamaisonduconvertible.fr/";
+		String seed = "http://www.amazon.fr/";
+		//String seed = "http://www.lamaisonduconvertible.fr/";
 				
 		// we here launch just a few threads, enough for a shallow crawl
 		// maximum twenty otherwise the concurrent update of the Map might get really too slow
@@ -83,7 +83,7 @@ public class SemanticArboController {
 		config.setMaxPagesToFetch(-1);
 		// we crawl up to depth 5
 		// to get the navigation we only need to go up to depth 5
-		int maxDepthOfCrawling =  3;        
+		int maxDepthOfCrawling =  1;        
 		config.setMaxDepthOfCrawling(maxDepthOfCrawling);
 		// we want the crawl not to be reconfigurable : too slow otherwise
 		config.setResumableCrawling(false);

@@ -19,6 +19,8 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class CorpusCache {
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
 	private static String select_totalcount_statement="select nb_total_documents from CORPUS_WORDS_METADATA where thema='TOTAL_NUMBER_DOCUMENTS'";
@@ -27,7 +29,7 @@ public class CorpusCache {
 	private static Map<String, Double> corpus_idf = new HashMap<String, Double>();
 	private static int nb_total_documents = 1;
 
-	
+
 	public static void load(){
 		Connection con = null;
 		Properties props = new Properties();
@@ -144,27 +146,45 @@ public class CorpusCache {
 		for (String k : v2.keySet()) norm2 += v2.get(k) * v2.get(k);
 		return sclar / Math.sqrt(norm1 * norm2);
 	}
-	
-	public static String formatTFIDFMap(Map<String, Double> tfIdfMap){
+
+	public static String formatTFIDFMapWithWeights(Map<String, Double> tfIdfMap){
 		Map<String, Double> tfIdfMapSortedMap = sortByValue( tfIdfMap );
 		return tfIdfMapSortedMap.toString();
 	}
-	
+
+	public static String formatTFIDFMap(Map<String, Double> tfIdfMap){
+		Map<String, Double> tfIdfMapSortedMap = sortByValue( tfIdfMap );
+		String[] orderedKeys=getOrderedKeys(tfIdfMapSortedMap);
+		return StringUtils.join(orderedKeys,"|||");
+	}
+
+	public static String[] getOrderedKeys(Map<String, Double> tfIdfMapSortedMap){
+		String[] ordered_keys = new String[tfIdfMapSortedMap.size()];
+		Iterator<Entry<String, Double>> it = tfIdfMapSortedMap.entrySet().iterator();
+		int counter = tfIdfMapSortedMap.size()-1;
+		while (it.hasNext()){
+			Map.Entry<String, Double> pairs = (Map.Entry<String, Double>)it.next();
+			ordered_keys[counter] = pairs.getKey();
+			counter --;
+		}
+		return ordered_keys;
+	}
+
 	public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue( Map<K, V> map )
-	    {
-	        List<Map.Entry<K, V>> list = new LinkedList<Map.Entry<K, V>>( map.entrySet() );
-	        Collections.sort( list, new Comparator<Map.Entry<K, V>>()
-	        {
-	            public int compare( Map.Entry<K, V> o1, Map.Entry<K, V> o2 )
-	            {
-	                return (o1.getValue()).compareTo( o2.getValue() );
-	            }
-	        });
-	        Map<K, V> result = new LinkedHashMap<K, V>();
-	        for (Map.Entry<K, V> entry : list)
-	        {
-	            result.put( entry.getKey(), entry.getValue() );
-	        }
-	        return result;
-	    }
+	{
+		List<Map.Entry<K, V>> list = new LinkedList<Map.Entry<K, V>>( map.entrySet() );
+		Collections.sort( list, new Comparator<Map.Entry<K, V>>()
+				{
+			public int compare( Map.Entry<K, V> o1, Map.Entry<K, V> o2 )
+			{
+				return (o1.getValue()).compareTo( o2.getValue() );
+			}
+				});
+		Map<K, V> result = new LinkedHashMap<K, V>();
+		for (Map.Entry<K, V> entry : list)
+		{
+			result.put( entry.getKey(), entry.getValue() );
+		}
+		return result;
+	}
 }
