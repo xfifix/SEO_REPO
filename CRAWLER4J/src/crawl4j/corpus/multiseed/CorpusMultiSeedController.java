@@ -1,4 +1,4 @@
-package crawl4j.arbo.semantic;
+package crawl4j.corpus.multiseed;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,30 +11,20 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 
+import crawl4j.arbo.semantic.SemanticArboCrawlDataCache;
+import crawl4j.arbo.semantic.SemanticArboCrawler;
 import crawl4j.urlutilities.MultiSeedSemanticArboInfo;
-import crawl4j.vsm.CorpusCache;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
-public class SemanticArboController {
-	public static String site_stub="http://www.cdiscount.com/";
-	public static String[] multiple_seeds = {
-		"http://www.cdiscount.com/",
-		"http://www.amazon.fr/",
-		"http://www.darty.com/",
-		"http://www.rueducommerce.fr/",
-		"http://www.delamaison.fr/",
-		"http://www.lamaisonduconvertible.fr/",
-		"http://www.habitat.fr/",
-		"http://www.enviedemeubles.com/"
-	};
+public class CorpusMultiSeedController {
 	// here we locally merge all cache
 	// that is heavy on RAM memory : we here have to limit the depth to avoid out of memory
 	// only shallow crawl will go through this step
@@ -42,7 +32,7 @@ public class SemanticArboController {
 	// of the crawl before we update the database	
 	private static Map<String, Set<String>> inlinks_cache = new HashMap<String, Set<String>>();
 	private static Connection con;
-
+	
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
 
 	private static String insert_statement="INSERT INTO ARBOCRAWL_RESULTS (URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH,"
@@ -54,64 +44,149 @@ public class SemanticArboController {
 	private static String update_statement ="UPDATE ARBOCRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,H1=?,SHORT_DESCRIPTION=?,STATUS_CODE=?,DEPTH=?,OUTLINKS_SIZE=?,INLINKS_SIZE=?,NB_BREADCRUMBS=?,NB_AGGREGATED_RATINGS=?,NB_RATINGS_VALUES=?,NB_PRICES=?,NB_AVAILABILITIES=?,NB_REVIEWS=?,NB_REVIEWS_COUNT=?,NB_IMAGES=?,"
 			+ "NB_SEARCH_IN_URL=?,NB_ADD_IN_TEXT=?,NB_FILTER_IN_TEXT=?,NB_SEARCH_IN_TEXT=?,NB_GUIDE_ACHAT_IN_TEXT=?,NB_PRODUCT_INFO_IN_TEXT=?,NB_LIVRAISON_IN_TEXT=?,NB_GARANTIES_IN_TEXT=?,NB_PRODUITS_SIMILAIRES_IN_TEXT=?,NB_IMAGES_TEXT=?,WIDTH_AVERAGE=?,HEIGHT_AVERAGE=?,"
 			+ "PAGE_TYPE=?,SEMANTIC_HITS=?,CONCURRENT_NAME=?,LAST_UPDATE=? WHERE URL=?";
-
+	
 	public static void main(String[] args) throws Exception {
-		instantiate_connection();
-
-		// First as a semantic crawler, we need to load in cache the semantic corpus 
-		CorpusCache.load();
-		
-		System.setProperty("http.agent", "");
-		System.out.println("Starting the crawl configuration");	
-		String name = "Cdiscount";
-		//String seed = "http://www.cdiscount.com/";
-		String seed = "http://www.amazon.fr/";
-		//String seed = "http://www.lamaisonduconvertible.fr/";
-				
+		instantiate_connection();	
+		// we here hide our identity
+		String user_agent_name = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
+		System.setProperty("http.agent",user_agent_name);
+		System.out.println("Starting the crawl configuration for Crawler1, Crawler2, Crawler3, Crawler4");
+		int maxDepthOfCrawling =  2; // common for all
+        // Managing data for every crawlers for every site
+		// instantiating the seeds for our multiple crawlers
+        String nameCrawler1 = "delamaison";
+        String nameCrawler2 = "lamaisonduconvertible";
+        String nameCrawler3 = "habitat";
+        String nameCrawler4 = "enviedemeubles";
+        
+		String seedCrawler1 = "http://www.delamaison.fr/";
+		String seedCrawler2 = "http://www.lamaisonduconvertible.fr/";
+		String seedCrawler3 = "http://www.habitat.fr/";
+		String seedCrawler4 = "http://www.enviedemeubles.com/";
 		// we here launch just a few threads, enough for a shallow crawl
 		// maximum twenty otherwise the concurrent update of the Map might get really too slow
 		// and become a bottleneck rather than a 
-		int numberOfCrawlers =  1;	
-		// downsizing to test
-		//int numberOfCrawlers =  1;
-
-		if (args.length == 1) {
-			seed = args[0];
-		}
-		
-		if (args.length == 2) {
-			seed = args[0];
-			numberOfCrawlers=Integer.valueOf(args[1]);
-		}	
-		String rootFolder = "/home/sduprey/My_Data/My_Semantic_Arbo_Crawl4j";
-		String user_agent_name = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
-		CrawlConfig config = new CrawlConfig();
-		config.setCrawlStorageFolder(rootFolder);
-		config.setUserAgentString(user_agent_name);
+		String rootFolderCrawler1 = "/home/sduprey/My_Data/My_Multi_Crawler1_Arbo_Crawl4j";
+		int numberOfCrawler1Crawlers =  50;
+        CrawlConfig configCrawler1 = new CrawlConfig();
+        configCrawler1.setCrawlStorageFolder(rootFolderCrawler1);
+        configCrawler1.setUserAgentString(user_agent_name);
 		// Politeness delay : none by default
-		config.setPolitenessDelay(0);
+        configCrawler1.setPolitenessDelay(0);
 		// Unlimited number of pages can be crawled.
-		config.setMaxPagesToFetch(-1);
+        configCrawler1.setMaxPagesToFetch(-1);
 		// we crawl up to depth 5
 		// to get the navigation we only need to go up to depth 5
-		int maxDepthOfCrawling =  1;        
-		config.setMaxDepthOfCrawling(maxDepthOfCrawling);
+        configCrawler1.setMaxDepthOfCrawling(maxDepthOfCrawling);
 		// we want the crawl not to be reconfigurable : too slow otherwise
-		config.setResumableCrawling(false);
-		PageFetcher pageFetcher = new PageFetcher(config);
-		RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
-		robotstxtConfig.setUserAgentName(user_agent_name);
+        configCrawler1.setResumableCrawling(false);
+		PageFetcher pageFetcherCrawler1 = new PageFetcher(configCrawler1);
+		RobotstxtConfig robotstxtConfigCrawler1 = new RobotstxtConfig();
+		robotstxtConfigCrawler1.setUserAgentName(user_agent_name);
 		// we respect the text robot
-		robotstxtConfig.setEnabled(true);
-		RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
-		CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
-		controller.addSeed(seed);
-		System.out.println("Starting the crawl");
-		long startTime = System.currentTimeMillis();
-		controller.start(SemanticArboCrawler.class, numberOfCrawlers);
-		long estimatedTime = System.currentTimeMillis() - startTime;
-		List<Object> crawlersLocalData = controller.getCrawlersLocalData();
+		robotstxtConfigCrawler1.setEnabled(true);
+		RobotstxtServer robotstxtServerCrawler1 = new RobotstxtServer(robotstxtConfigCrawler1, pageFetcherCrawler1);
 
+		CrawlController controllerCrawler1 = new CrawlController(configCrawler1, pageFetcherCrawler1, robotstxtServerCrawler1);
+		controllerCrawler1.addSeed(seedCrawler1);
+	
+		String rootFolderCrawler2 = "/home/sduprey/My_Data/My_Multi_Crawler2_Arbo_Crawl4j";
+		int numberOfCrawler2Crawlers =  50;
+        CrawlConfig configCrawler2 = new CrawlConfig();
+        configCrawler2.setCrawlStorageFolder(rootFolderCrawler2);
+        configCrawler2.setUserAgentString(user_agent_name);
+		// Politeness delay : none by default
+        configCrawler2.setPolitenessDelay(0);
+		// Unlimited number of pages can be crawled.
+        configCrawler2.setMaxPagesToFetch(-1);
+		// we crawl up to depth 5
+		// to get the navigation we only need to go up to depth 5
+        configCrawler2.setMaxDepthOfCrawling(maxDepthOfCrawling);
+		// we want the crawl not to be reconfigurable : too slow otherwise
+        configCrawler2.setResumableCrawling(false);
+		PageFetcher pageFetcherCrawler2 = new PageFetcher(configCrawler2);
+		RobotstxtConfig robotstxtConfigCrawler2 = new RobotstxtConfig();
+		robotstxtConfigCrawler2.setUserAgentName(user_agent_name);
+		// we respect the text robot
+		robotstxtConfigCrawler2.setEnabled(true);
+		RobotstxtServer robotstxtServerCrawler2 = new RobotstxtServer(robotstxtConfigCrawler2, pageFetcherCrawler2);
+		CrawlController controllerCrawler2 = new CrawlController(configCrawler2, pageFetcherCrawler2, robotstxtServerCrawler2);
+		controllerCrawler2.addSeed(seedCrawler2);
+		
+		
+		String rootFolderCrawler3 = "/home/sduprey/My_Data/My_Multi_Crawler3_Arbo_Crawl4j";
+		int numberOfCrawler3Crawlers =  50;
+        CrawlConfig configCrawler3 = new CrawlConfig();
+        configCrawler3.setCrawlStorageFolder(rootFolderCrawler3);
+        configCrawler3.setUserAgentString(user_agent_name);
+		// Politeness delay : none by default
+        configCrawler3.setPolitenessDelay(0);
+		// Unlimited number of pages can be crawled.
+        configCrawler3.setMaxPagesToFetch(-1);
+		// we crawl up to depth 5
+		// to get the navigation we only need to go up to depth 5
+        configCrawler3.setMaxDepthOfCrawling(maxDepthOfCrawling);
+		// we want the crawl not to be reconfigurable : too slow otherwise
+        configCrawler3.setResumableCrawling(false);
+		PageFetcher pageFetcherCrawler3 = new PageFetcher(configCrawler3);
+		RobotstxtConfig robotstxtConfigCrawler3 = new RobotstxtConfig();
+		robotstxtConfigCrawler3.setUserAgentName(user_agent_name);
+		// we respect the text robot
+		robotstxtConfigCrawler3.setEnabled(true);
+		RobotstxtServer robotstxtServerCrawler3 = new RobotstxtServer(robotstxtConfigCrawler3, pageFetcherCrawler3);
+		CrawlController controllerCrawler3 = new CrawlController(configCrawler3, pageFetcherCrawler3, robotstxtServerCrawler3);
+		controllerCrawler3.addSeed(seedCrawler3);
+		
+		String rootFolderCrawler4 = "/home/sduprey/My_Data/My_Multi_Crawler4_Arbo_Crawl4j";
+		int numberOfCrawler4Crawlers =  50;
+        CrawlConfig configCrawler4 = new CrawlConfig();
+        configCrawler4.setCrawlStorageFolder(rootFolderCrawler4);
+        configCrawler4.setUserAgentString(user_agent_name);
+		// Politeness delay : none by default
+        configCrawler4.setPolitenessDelay(0);
+		// Unlimited number of pages can be crawled.
+        configCrawler4.setMaxPagesToFetch(-1);
+		// we crawl up to depth 5
+		// to get the navigation we only need to go up to depth 5
+        configCrawler4.setMaxDepthOfCrawling(maxDepthOfCrawling);
+		// we want the crawl not to be reconfigurable : too slow otherwise
+        configCrawler4.setResumableCrawling(false);
+		PageFetcher pageFetcherCrawler4 = new PageFetcher(configCrawler4);
+		RobotstxtConfig robotstxtConfigCrawler4 = new RobotstxtConfig();
+		robotstxtConfigCrawler4.setUserAgentName(user_agent_name);
+		// we respect the text robot
+		robotstxtConfigCrawler4.setEnabled(true);
+		RobotstxtServer robotstxtServerCrawler4 = new RobotstxtServer(robotstxtConfigCrawler4, pageFetcherCrawler4);
+		CrawlController controllerCrawler4 = new CrawlController(configCrawler4, pageFetcherCrawler4, robotstxtServerCrawler4);
+		controllerCrawler4.addSeed(seedCrawler4);
+		
+		System.out.println("Starting the crawl for Crawler1");
+		controllerCrawler1.startNonBlocking(SemanticArboCrawler.class, numberOfCrawler1Crawlers);
+		System.out.println("Starting the crawl for Crawler2");
+		controllerCrawler2.startNonBlocking(SemanticArboCrawler.class, numberOfCrawler2Crawlers);
+		System.out.println("Starting the crawl for Crawler3");
+		controllerCrawler3.startNonBlocking(SemanticArboCrawler.class, numberOfCrawler3Crawlers);
+		System.out.println("Starting the crawl for Crawler4");
+		controllerCrawler4.startNonBlocking(SemanticArboCrawler.class, numberOfCrawler4Crawlers);
+		
+		controllerCrawler1.waitUntilFinish();
+        System.out.println("Crawler Crawler1 is finished.");
+        controllerCrawler2.waitUntilFinish();
+        System.out.println("Crawler Crawler2 is finished.");
+        controllerCrawler3.waitUntilFinish();
+        System.out.println("Crawler Crawler3 is finished.");
+        controllerCrawler4.waitUntilFinish();
+        System.out.println("Crawler Crawler4 is finished.");
+        
+        // Managing data for every crawlers for every site
+        updateControllerData(controllerCrawler1,nameCrawler1);
+        updateControllerData(controllerCrawler2,nameCrawler2);
+        updateControllerData(controllerCrawler3,nameCrawler3);
+        updateControllerData(controllerCrawler4,nameCrawler4);
+	}
+
+	public static void updateControllerData(CrawlController controller, String name){
+		List<Object> crawlersLocalData = controller.getCrawlersLocalData();
 		// listing the work done by each thread
 		long totalLinks = 0;
 		long totalTextSize = 0;
@@ -122,14 +197,13 @@ public class SemanticArboController {
 			totalTextSize += stat.getTotalTextSize();
 			totalProcessedPages += stat.getTotalProcessedPages();
 		}
-		System.out.println("Aggregated Statistics:");
-		System.out.println(" Processed Pages: " + totalProcessedPages);
-		System.out.println(" Total Links found: " + totalLinks);
-		System.out.println(" Total Text Size: " + totalTextSize);
-		System.out.println(" Estimated time (ms): " + estimatedTime);
+		System.out.println("Aggregated Statistics for "+name + " :");
+		System.out.println(" Processed Pages for "+name + " :" + totalProcessedPages);
+		System.out.println(" Total Links found for "+name + " :" + totalLinks);
+		System.out.println(" Total Text Size for "+name + " :" + totalTextSize);
 
 		// computing the number of inlinks per pages over the whole crawl
-		System.out.println("Computing inlinks hashmap cache to the database");
+		System.out.println("Computing inlinks hashmap cache to the database for "+name + " :");
 		for (Object localData : crawlersLocalData) {
 			SemanticArboCrawlDataCache stat = (SemanticArboCrawlDataCache) localData;
 			Map<String, MultiSeedSemanticArboInfo> local_thread_cache = stat.getCrawledContent();
@@ -137,15 +211,16 @@ public class SemanticArboController {
 		}
 
 		// saving results to the database
-		System.out.println("Saving the whole crawl to the database");		
-		System.out.println("Saving inlinks hashmap to the database");
+		System.out.println("Saving the whole crawl to the database for "+name + " :");		
+		System.out.println("Saving inlinks hashmap to the database for "+name + " :");
 		for (Object localData : crawlersLocalData) {
 			SemanticArboCrawlDataCache stat = (SemanticArboCrawlDataCache) localData;
 			Map<String, MultiSeedSemanticArboInfo> local_thread_cache = stat.getCrawledContent();
 			updateOrInsertDatabaseData(local_thread_cache,name);
 		}
 	}
-
+	
+	
 	public static void updateInLinksThreadCache(Map<String, MultiSeedSemanticArboInfo> local_thread_cache){
 		Iterator<Map.Entry<String, MultiSeedSemanticArboInfo>>  it = local_thread_cache.entrySet().iterator();
 		while (it.hasNext()) {
@@ -361,7 +436,7 @@ public class SemanticArboController {
 			}
 		}		
 	}
-
+	
 	public static void instantiate_connection() throws SQLException{
 		Properties props = new Properties();
 		FileInputStream in = null;      
@@ -386,15 +461,5 @@ public class SemanticArboController {
 		String user = props.getProperty("db.user");
 		String passwd = props.getProperty("db.passwd");
 		con = DriverManager.getConnection(url, user, passwd);
-	}
-	
-	public static boolean isAllowedSiteforMultipleCrawl(String href){
-		boolean found = false;
-		for (String seed : multiple_seeds){
-			if(href.startsWith(seed)){
-				found=true;
-			}
-		}
-		return found;
 	}
 }

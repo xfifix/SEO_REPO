@@ -9,11 +9,11 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
 public class ContinuousController {
-	public static boolean isBlobStored = true;
+	public static boolean isBlobStored = false;
 	public static void main(String[] args) throws Exception {
 		System.setProperty("http.agent", "");
 		System.out.println("Starting the crawl configuration");		
-	
+
 		String seed = "http://www.cdiscount.com/";
 		int numberOfCrawlers =  250;	
 		// downsizing to test
@@ -24,7 +24,7 @@ public class ContinuousController {
 		} 
 		String rootFolder = "/home/sduprey/My_Data/My_Crawl4j";
 		int maxDepthOfCrawling = 300;
-        String user_agent_name = "CdiscountBot-crawler";
+		String user_agent_name = "CdiscountBot-crawler";
 		CrawlConfig config = new CrawlConfig();
 		config.setCrawlStorageFolder(rootFolder);
 		config.setUserAgentString(user_agent_name);
@@ -34,7 +34,7 @@ public class ContinuousController {
 		config.setMaxPagesToFetch(-1);
 		// we crawl up to depth n
 		config.setMaxDepthOfCrawling(maxDepthOfCrawling);
-        // we want the crawl not to be reconfigurable : too slow otherwise
+		// we want the crawl not to be reconfigurable : too slow otherwise
 		config.setResumableCrawling(false);
 		PageFetcher pageFetcher = new PageFetcher(config);
 		RobotstxtConfig robotstxtConfig = new RobotstxtConfig();

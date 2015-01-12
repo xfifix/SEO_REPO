@@ -12,7 +12,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import crawl4j.urlutilities.MultiArboInfo;
+import crawl4j.urlutilities.MultiSeedSemanticArboInfo;
 import crawl4j.urlutilities.URL_Utilities;
 import crawl4j.vsm.CorpusCache;
 import edu.uci.ics.crawler4j.crawler.Page;
@@ -37,7 +37,7 @@ public class SemanticArboCrawler extends WebCrawler {
 	//  nombre d'images ajoutées quand on a retranché la charte graphique (noyau depth 1 2 )
 
 	// size of the in memory cache per thread (200 default value)
-	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg" + "|png|tiff|mid|mp2|mp3|mp4"
+	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg|jpg" + "|png|tiff|mid|mp2|mp3|mp4"
 			+ "|wav|avi|mov|mpeg|ram|m4v|ico|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 
 	SemanticArboCrawlDataCache myCrawlDataManager;
@@ -58,11 +58,10 @@ public class SemanticArboCrawler extends WebCrawler {
 		// we here parse the html to fill up the cache with the following information
 		String fullUrl = page.getWebURL().getURL();
 		String url = URL_Utilities.drop_parameters(fullUrl);
-
 		System.out.println(Thread.currentThread()+": Visiting URL : "+url);
-		MultiArboInfo info =myCrawlDataManager.getCrawledContent().get(url);
+		MultiSeedSemanticArboInfo info =myCrawlDataManager.getCrawledContent().get(url);
 		if (info == null){
-			info =new MultiArboInfo();
+			info =new MultiSeedSemanticArboInfo();
 		}		
 		info.setUrl(url);
 		info.setDepth((int)page.getWebURL().getDepth());
@@ -85,6 +84,7 @@ public class SemanticArboCrawler extends WebCrawler {
 			// but the classifier should guess without it 
 			// size of the in memory cache per thread (200 default value)	
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
+	        info.setTitle(htmlParseData.getTitle());
 			info.setText(htmlParseData.getText());
 			String html = htmlParseData.getHtml();
 			links = htmlParseData.getOutgoingUrls();
@@ -211,9 +211,9 @@ public class SemanticArboCrawler extends WebCrawler {
 		String fullUrl = webUrl.getURL();
 		String url = URL_Utilities.drop_parameters(fullUrl);
 
-		MultiArboInfo info =myCrawlDataManager.getCrawledContent().get(url);
+		MultiSeedSemanticArboInfo info =myCrawlDataManager.getCrawledContent().get(url);
 		if (info == null){
-			info =new MultiArboInfo();
+			info =new MultiSeedSemanticArboInfo();
 		}	
 		info.setStatus_code(statusCode);
 		myCrawlDataManager.getCrawledContent().put(url,info);

@@ -1,4 +1,4 @@
-package crawl4j.corpus.priceminister;
+package crawl4j.corpus;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -29,7 +29,7 @@ public class CorpusCrawler extends WebCrawler {
 	@Override
 	public boolean shouldVisit(WebURL url) {
 		String href = url.getURL().toLowerCase();
-		return !filters.matcher(href).matches() && href.startsWith(PriceMinisterCorpusController.crawler_seed);
+		return !filters.matcher(href).matches() && href.startsWith(CorpusController.crawler_seed);
 	}
 
 	@Override
@@ -43,7 +43,6 @@ public class CorpusCrawler extends WebCrawler {
 			String semantic_text = CorpusCache.preprocessSemanticText(htmlParseData.getText());
 			VectorStateSpringRepresentation vector_rep = new VectorStateSpringRepresentation(semantic_text);
 			Map<String, Integer> word_map = vector_rep.getWordFrequencies();
-
 			Iterator<Map.Entry<String, Integer>> it = word_map.entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry<String, Integer> pairs = (Map.Entry<String, Integer>)it.next();

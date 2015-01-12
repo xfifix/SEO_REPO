@@ -17,7 +17,7 @@ import java.util.Set;
 
 import crawl4j.arbo.semantic.SemanticArboCrawlDataCache;
 import crawl4j.arbo.semantic.SemanticArboCrawler;
-import crawl4j.urlutilities.MultiArboInfo;
+import crawl4j.urlutilities.MultiSeedSemanticArboInfo;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
@@ -206,7 +206,7 @@ public class SemanticMultiSeedController {
 		System.out.println("Computing inlinks hashmap cache to the database for "+name + " :");
 		for (Object localData : crawlersLocalData) {
 			SemanticArboCrawlDataCache stat = (SemanticArboCrawlDataCache) localData;
-			Map<String, MultiArboInfo> local_thread_cache = stat.getCrawledContent();
+			Map<String, MultiSeedSemanticArboInfo> local_thread_cache = stat.getCrawledContent();
 			updateInLinksThreadCache(local_thread_cache);
 		}
 
@@ -215,18 +215,18 @@ public class SemanticMultiSeedController {
 		System.out.println("Saving inlinks hashmap to the database for "+name + " :");
 		for (Object localData : crawlersLocalData) {
 			SemanticArboCrawlDataCache stat = (SemanticArboCrawlDataCache) localData;
-			Map<String, MultiArboInfo> local_thread_cache = stat.getCrawledContent();
+			Map<String, MultiSeedSemanticArboInfo> local_thread_cache = stat.getCrawledContent();
 			updateOrInsertDatabaseData(local_thread_cache,name);
 		}
 	}
 	
 	
-	public static void updateInLinksThreadCache(Map<String, MultiArboInfo> local_thread_cache){
-		Iterator<Map.Entry<String, MultiArboInfo>>  it = local_thread_cache.entrySet().iterator();
+	public static void updateInLinksThreadCache(Map<String, MultiSeedSemanticArboInfo> local_thread_cache){
+		Iterator<Map.Entry<String, MultiSeedSemanticArboInfo>>  it = local_thread_cache.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry<String, MultiArboInfo> pairs = it.next();
+			Map.Entry<String, MultiSeedSemanticArboInfo> pairs = it.next();
 			String url = pairs.getKey();
-			MultiArboInfo info = pairs.getValue();
+			MultiSeedSemanticArboInfo info = pairs.getValue();
 			Set<String> outgoingLinks = info.getOutgoingLinks();
 			if (outgoingLinks != null){
 				updateInLinks(outgoingLinks,url);
@@ -248,18 +248,18 @@ public class SemanticMultiSeedController {
 		}
 	}
 
-	public static void updateOrInsertDatabaseData(Map<String, MultiArboInfo> local_thread_cache, String name){
+	public static void updateOrInsertDatabaseData(Map<String, MultiSeedSemanticArboInfo> local_thread_cache, String name){
 		try{
-			Iterator<Entry<String, MultiArboInfo>> it = local_thread_cache.entrySet().iterator();
+			Iterator<Entry<String, MultiSeedSemanticArboInfo>> it = local_thread_cache.entrySet().iterator();
 			int local_counter = 0;
 			if (it.hasNext()){
 				local_counter++;
 				PreparedStatement st = con.prepareStatement(update_statement);
 				do {
 					local_counter ++;
-					Map.Entry<String, MultiArboInfo> pairs = (Map.Entry<String, MultiArboInfo>)it.next();
+					Map.Entry<String, MultiSeedSemanticArboInfo> pairs = (Map.Entry<String, MultiSeedSemanticArboInfo>)it.next();
 					String url=pairs.getKey();
-					MultiArboInfo info = pairs.getValue();
+					MultiSeedSemanticArboInfo info = pairs.getValue();
 					// update statement
 					//UPDATE ARBOCRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,H1=?,SHORT_DESCRIPTION=?,STATUS_CODE=?,DEPTH=?,OUTLINKS_SIZE=?,INLINKS_SIZE=?,NB_BREADCRUMBS=?,NB_AGGREGATED_RATINGS=?,NB_RATINGS_VALUES=?,NB_PRICES=?,NB_AVAILABILITIES=?,NB_REVIEWS=?,NB_REVIEWS_COUNT=?,NB_IMAGES=?,NB_SEARCH_IN_URL=?,NB_ADD_IN_TEXT=?,NB_FILTER_IN_TEXT=?,NB_SEARCH_IN_TEXT=?,NB_GUIDE_ACHAT_IN_TEXT=?,NB_PRODUCT_INFO_IN_TEXT=?,NB_LIVRAISON_IN_TEXT=?,NB_GARANTIES_IN_TEXT=?,NB_PRODUITS_SIMILAIRES_IN_TEXT=?,NB_IMAGES_TEXT=?,WIDTH_AVERAGE=?,HEIGHT_AVERAGE=?,PAGE_TYPE=?,SEMANTIC_HITS=?,CONCURRENT_NAME=?,LAST_UPDATE=? WHERE URL=?"; 
 					//                                  1         2      3         4                   5          6            7             8               9                   10                     11               12               13             14            15              16             17                    18                19               20                       21                      22                      23                        24                      25                         26            27               28              29          30              31               32                33
@@ -364,9 +364,9 @@ public class SemanticMultiSeedController {
 	}
 
 
-	public static void saveDatabaseData(Map<String, MultiArboInfo> local_thread_cache, String name){
+	public static void saveDatabaseData(Map<String, MultiSeedSemanticArboInfo> local_thread_cache, String name){
 		try{
-			Iterator<Entry<String, MultiArboInfo>> it = local_thread_cache.entrySet().iterator();
+			Iterator<Entry<String, MultiSeedSemanticArboInfo>> it = local_thread_cache.entrySet().iterator();
 			con.setAutoCommit(false);
 			PreparedStatement st = con.prepareStatement(insert_statement);
 			int local_counter = 0;
@@ -374,9 +374,9 @@ public class SemanticMultiSeedController {
 				do {
 					local_counter ++;
 					//				PreparedStatement st = con.prepareStatement(insert_statement);
-					Map.Entry<String, MultiArboInfo> pairs = (Map.Entry<String, MultiArboInfo>)it.next();
+					Map.Entry<String, MultiSeedSemanticArboInfo> pairs = (Map.Entry<String, MultiSeedSemanticArboInfo>)it.next();
 					String url=pairs.getKey();
-					MultiArboInfo info = pairs.getValue();
+					MultiSeedSemanticArboInfo info = pairs.getValue();
 					//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, NB_SEARCH_IN_URL, NB_ADD_IN_TEXT, NB_FILTER_IN_TEXT, NB_SEARCH_IN_TEXT, NB_GUIDE_ACHAT_IN_TEXT, NB_PRODUCT_INFO_IN_TEXT, NB_LIVRAISON_IN_TEXT, NB_GARANTIES_IN_TEXT, NB_PRODUITS_SIMILAIRES_IN_TEXT, NB_IMAGES_TEXT, WIDTH_AVERAGE, HEIGHT_AVERAGE, PAGE_TYPE,   SEMANTIC_HITS, CONCURRENT_NAME, LAST_UPDATE)"
 					//  1        2        3    4           5                6        7           8              9             10               11                      12            13              14             15            16             17           18               19                 20                21                  22                      23                      24                       25                        26                       27             28              29          30              31             32               33
 					st.setString(1,url); 

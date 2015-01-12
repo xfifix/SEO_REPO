@@ -3,7 +3,7 @@ package crawl4j.arbo.semantic;
 import java.util.HashMap;
 import java.util.Map;
 
-import crawl4j.urlutilities.MultiArboInfo;
+import crawl4j.urlutilities.MultiSeedSemanticArboInfo;
 
 public class SemanticArboCrawlDataCache {
 	// we here keep every thing in RAM memory because the inlinks cache updates each time.
@@ -13,7 +13,7 @@ public class SemanticArboCrawlDataCache {
 	private long totalTextSize;
 	
 	// local cache for each thread which has crawled his own URLs
-	private Map<String, MultiArboInfo> crawledContent = new HashMap<String, MultiArboInfo>();
+	private Map<String, MultiSeedSemanticArboInfo> crawledContent = new HashMap<String, MultiSeedSemanticArboInfo>();
 	
 	public SemanticArboCrawlDataCache() {
 	}
@@ -54,11 +54,11 @@ public class SemanticArboCrawlDataCache {
 		this.totalTextSize += count;
 	}
 
-	public Map<String, MultiArboInfo> getCrawledContent() {
+	public Map<String, MultiSeedSemanticArboInfo> getCrawledContent() {
 		return crawledContent;
 	}
 
-	public void setCrawledContent(Map<String, MultiArboInfo> crawledContent) {
+	public void setCrawledContent(Map<String, MultiSeedSemanticArboInfo> crawledContent) {
 		this.crawledContent = crawledContent;
 	}
 

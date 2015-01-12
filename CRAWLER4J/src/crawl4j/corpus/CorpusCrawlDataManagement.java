@@ -1,4 +1,4 @@
-package crawl4j.corpus.amazon;
+package crawl4j.corpus;
 
 import java.io.FileInputStream;
 import java.io.IOException;

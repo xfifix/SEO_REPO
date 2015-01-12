@@ -2,7 +2,7 @@ package crawl4j.urlutilities;
 
 import java.util.Set;
 
-public class MultiArboInfo {
+public class MultiSeedSemanticArboInfo {
 	// text built predictors
 	private int nb_add_in_text;
 	private int nb_filter_in_text;
