@@ -26,84 +26,23 @@
 visible_hostname le_poulpe
 http_port 3128
 
-acl twentyFivePercent1 random 0.02631578947368421
-acl twentyFivePercent2 random 0.02631578947368421
-acl twentyFivePercent3 random 0.02631578947368421
-acl twentyFivePercent4 random 0.02631578947368421
-acl twentyFivePercent5 random 0.02631578947368421
-acl twentyFivePercent6 random 0.02631578947368421
-acl twentyFivePercent7 random 0.02631578947368421
-acl twentyFivePercent8 random 0.02631578947368421
-acl twentyFivePercent9 random 0.02631578947368421
-acl twentyFivePercent10 random 0.02631578947368421
-acl twentyFivePercent11 random 0.02631578947368421
-acl twentyFivePercent12 random 0.02631578947368421
-acl twentyFivePercent13 random 0.02631578947368421
-acl twentyFivePercent14 random 0.02631578947368421
-acl twentyFivePercent15 random 0.02631578947368421
-acl twentyFivePercent16 random 0.02631578947368421
-acl twentyFivePercent17 random 0.02631578947368421
-acl twentyFivePercent18 random 0.02631578947368421
-acl twentyFivePercent19 random 0.02631578947368421
-acl twentyFivePercent20 random 0.02631578947368421
-acl twentyFivePercent21 random 0.02631578947368421
-acl twentyFivePercent22 random 0.02631578947368421
-acl twentyFivePercent23 random 0.02631578947368421
-acl twentyFivePercent24 random 0.02631578947368421
-acl twentyFivePercent25 random 0.02631578947368421
-acl twentyFivePercent26 random 0.02631578947368421
-acl twentyFivePercent27 random 0.02631578947368421
-acl twentyFivePercent28 random 0.02631578947368421
-acl twentyFivePercent29 random 0.02631578947368421
-acl twentyFivePercent30 random 0.02631578947368421
-acl twentyFivePercent31 random 0.02631578947368421
-acl twentyFivePercent32 random 0.02631578947368421
-acl twentyFivePercent33 random 0.02631578947368421
-acl twentyFivePercent34 random 0.02631578947368421
-acl twentyFivePercent35 random 0.02631578947368421
-acl twentyFivePercent36 random 0.02631578947368421
-acl twentyFivePercent37 random 0.02631578947368421
+acl twentyFivePercent1 random 0.20
+acl twentyFivePercent2 random 0.20
+acl twentyFivePercent3 random 0.20
+acl twentyFivePercent4 random 0.20
+acl twentyFivePercent5 random 0.20
 
 # dispatch randomly the percentages 
-tcp_outgoing_address 178.33.123.238 twentyFivePercent1
-tcp_outgoing_address 5.39.42.20 twentyFivePercent2
-tcp_outgoing_address 5.39.42.21 twentyFivePercent3
-tcp_outgoing_address 5.39.42.22 twentyFivePercent4
-tcp_outgoing_address 5.39.42.23 twentyFivePercent5
-tcp_outgoing_address 151.80.68.232 twentyFivePercent6
-tcp_outgoing_address 151.80.68.233 twentyFivePercent7
-tcp_outgoing_address 151.80.68.234 twentyFivePercent8
-tcp_outgoing_address 151.80.68.235 twentyFivePercent9
-tcp_outgoing_address 151.80.68.236 twentyFivePercent10
-tcp_outgoing_address 151.80.68.237 twentyFivePercent11
-tcp_outgoing_address 151.80.68.238 twentyFivePercent12
-tcp_outgoing_address 151.80.68.239 twentyFivePercent13
-tcp_outgoing_address 151.80.70.0 twentyFivePercent14
-tcp_outgoing_address 151.80.70.1 twentyFivePercent15
-tcp_outgoing_address 151.80.70.2 twentyFivePercent16
-tcp_outgoing_address 151.80.70.3 twentyFivePercent17
-tcp_outgoing_address 151.80.70.8 twentyFivePercent18
-tcp_outgoing_address 151.80.70.9 twentyFivePercent19
-tcp_outgoing_address 151.80.70.10 twentyFivePercent20
-tcp_outgoing_address 151.80.70.11 twentyFivePercent21
-tcp_outgoing_address 151.80.70.12 twentyFivePercent22
-tcp_outgoing_address 151.80.70.13 twentyFivePercent23
-tcp_outgoing_address 151.80.70.14 twentyFivePercent24
-tcp_outgoing_address 151.80.70.15 twentyFivePercent25
-tcp_outgoing_address 151.80.70.24 twentyFivePercent26
-tcp_outgoing_address 151.80.70.25 twentyFivePercent27
-tcp_outgoing_address 151.80.70.26 twentyFivePercent28
-tcp_outgoing_address 151.80.70.27 twentyFivePercent29
-tcp_outgoing_address 151.80.70.40 twentyFivePercent30
-tcp_outgoing_address 151.80.70.41 twentyFivePercent31
-tcp_outgoing_address 151.80.70.42 twentyFivePercent32
-tcp_outgoing_address 151.80.70.43 twentyFivePercent33
-tcp_outgoing_address 151.80.70.44 twentyFivePercent34
-tcp_outgoing_address 151.80.70.45 twentyFivePercent35
-tcp_outgoing_address 151.80.70.46 twentyFivePercent36
-tcp_outgoing_address 151.80.70.47 twentyFivePercent37
+tcp_outgoing_address 5.39.42.20 twentyFivePercent1
+tcp_outgoing_address 5.39.42.21 twentyFivePercent2
+tcp_outgoing_address 5.39.42.22 twentyFivePercent3
+tcp_outgoing_address 5.39.42.23 twentyFivePercent4
+tcp_outgoing_address 178.33.123.238 twentyFivePercent5
 
 # NP: operating system required to route packets from 192.0.2.1 and 192.0.2.2 out separate uplinks.
+
+
+
 
 #http_port 3128 name=3128
 #http_port 3129 name=3129

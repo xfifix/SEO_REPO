@@ -189,3 +189,50 @@ iface eth0:28 inet static
         netmask 255.255.255.255
         broadcast 151.80.70.27
 
+auto eth0:29
+iface eth0:29 inet static
+        address 151.80.70.40
+        netmask 255.255.255.255
+        broadcast 151.80.70.40
+        
+auto eth0:30
+iface eth0:30 inet static
+        address 151.80.70.41
+        netmask 255.255.255.255
+        broadcast 151.80.70.41
+        
+auto eth0:31
+iface eth0:31 inet static
+        address 151.80.70.42
+        netmask 255.255.255.255
+        broadcast 151.80.70.42
+
+auto eth0:32
+iface eth0:32 inet static
+        address 151.80.70.43
+        netmask 255.255.255.255
+        broadcast 151.80.70.43
+        
+auto eth0:33
+iface eth0:33 inet static
+        address 151.80.70.44
+        netmask 255.255.255.255
+        broadcast 151.80.70.44
+        
+auto eth0:34
+iface eth0:34 inet static
+        address 151.80.70.45
+        netmask 255.255.255.255
+        broadcast 151.80.70.45
+        
+auto eth0:35
+iface eth0:35 inet static
+        address 151.80.70.46
+        netmask 255.255.255.255
+        broadcast 151.80.70.46
+        
+auto eth0:36
+iface eth0:36 inet static
+        address 151.80.70.47
+        netmask 255.255.255.255
+        broadcast 151.80.70.47
