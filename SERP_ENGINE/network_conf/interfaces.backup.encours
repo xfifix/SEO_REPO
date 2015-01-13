@@ -1,0 +1,191 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet static
+	address 178.33.123.238
+	netmask 255.255.255.0
+	network 178.33.123.0
+	broadcast 178.33.123.255
+	gateway 178.33.123.254
+
+iface eth0 inet6 static
+	address 2001:41D0:2:F0ee::
+	netmask 64
+	post-up /sbin/ip -f inet6 route add 2001:41D0:2:F0ff:ff:ff:ff:ff dev eth0
+	post-up /sbin/ip -f inet6 route add default via 2001:41D0:2:F0ff:ff:ff:ff:ff
+	pre-down /sbin/ip -f inet6 route del default via 2001:41D0:2:F0ff:ff:ff:ff:ff
+	pre-down /sbin/ip -f inet6 route del 2001:41D0:2:F0ff:ff:ff:ff:ff dev eth0
+
+auto eth0:1
+iface eth0:1 inet static
+        address 5.39.42.20
+        netmask 255.255.255.255
+        broadcast 5.39.42.20
+
+auto eth0:2
+iface eth0:2 inet static
+        address 5.39.42.21
+        netmask 255.255.255.255
+        broadcast 5.39.42.21
+
+auto eth0:3
+iface eth0:3 inet static
+        address 5.39.42.22
+        netmask 255.255.255.255
+        broadcast 5.39.42.22
+
+auto eth0:4
+iface eth0:4 inet static
+        address 5.39.42.23
+        netmask 255.255.255.255
+        broadcast 5.39.42.23
+
+auto eth0:5
+iface eth0:5 inet static
+        address 151.80.68.232
+        netmask 255.255.255.255
+        broadcast 151.80.68.232
+        
+auto eth0:6
+iface eth0:6 inet static
+        address 151.80.68.233
+        netmask 255.255.255.255
+        broadcast 151.80.68.233
+        
+auto eth0:7
+iface eth0:7 inet static
+        address 151.80.68.234
+        netmask 255.255.255.255
+        broadcast 151.80.68.234
+
+auto eth0:8
+iface eth0:8 inet static
+        address 151.80.68.235
+        netmask 255.255.255.255
+        broadcast 151.80.68.235
+
+auto eth0:9
+iface eth0:9 inet static
+        address 151.80.68.236
+        netmask 255.255.255.255
+        broadcast 151.80.68.236
+        
+auto eth0:10
+iface eth0:10 inet static
+        address 151.80.68.237
+        netmask 255.255.255.255
+        broadcast 151.80.68.237
+
+auto eth0:11
+iface eth0:11 inet static
+        address 151.80.68.238
+        netmask 255.255.255.255
+        broadcast 151.80.68.238        
+
+auto eth0:12
+iface eth0:12 inet static
+        address 151.80.68.239
+        netmask 255.255.255.255
+        broadcast 151.80.68.239  
+
+auto eth0:13
+iface eth0:13 inet static
+        address 151.80.70.0
+        netmask 255.255.255.255
+        broadcast 151.80.70.0  
+
+auto eth0:14
+iface eth0:14 inet static
+        address 151.80.70.1
+        netmask 255.255.255.255
+        broadcast 151.80.70.1  
+
+auto eth0:15
+iface eth0:15 inet static
+        address 151.80.70.2
+        netmask 255.255.255.255
+        broadcast 151.80.70.2 
+
+auto eth0:16
+iface eth0:16 inet static
+        address 151.80.70.3
+        netmask 255.255.255.255
+        broadcast 151.80.70.3
+        
+auto eth0:17
+iface eth0:17 inet static
+        address 151.80.70.8
+        netmask 255.255.255.255
+        broadcast 151.80.70.8
+
+auto eth0:18
+iface eth0:18 inet static
+        address 151.80.70.9
+        netmask 255.255.255.255
+        broadcast 151.80.70.9
+
+auto eth0:19
+iface eth0:19 inet static
+        address 151.80.70.10
+        netmask 255.255.255.255
+        broadcast 151.80.70.10
+      
+auto eth0:20
+iface eth0:20 inet static
+        address 151.80.70.11
+        netmask 255.255.255.255
+        broadcast 151.80.70.11  
+        
+auto eth0:21
+iface eth0:21 inet static
+        address 151.80.70.12
+        netmask 255.255.255.255
+        broadcast 151.80.70.12 
+
+auto eth0:22
+iface eth0:22 inet static
+        address 151.80.70.13
+        netmask 255.255.255.255
+        broadcast 151.80.70.13 
+ 
+auto eth0:23
+iface eth0:23 inet static
+        address 151.80.70.14
+        netmask 255.255.255.255
+        broadcast 151.80.70.14
+            
+auto eth0:24
+iface eth0:24 inet static
+        address 151.80.70.15
+        netmask 255.255.255.255
+        broadcast 151.80.70.15
+
+auto eth0:25
+iface eth0:25 inet static
+        address 151.80.70.24
+        netmask 255.255.255.255
+        broadcast 151.80.70.24
+
+auto eth0:26
+iface eth0:26 inet static
+        address 151.80.70.25
+        netmask 255.255.255.255
+        broadcast 151.80.70.25
+
+auto eth0:27
+iface eth0:27 inet static
+        address 151.80.70.26
+        netmask 255.255.255.255
+        broadcast 151.80.70.26
+
+auto eth0:28
+iface eth0:28 inet static
+        address 151.80.70.27
+        netmask 255.255.255.255
+        broadcast 151.80.70.27
+
