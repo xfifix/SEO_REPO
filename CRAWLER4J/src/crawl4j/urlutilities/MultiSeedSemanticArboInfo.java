@@ -36,6 +36,7 @@ public class MultiSeedSemanticArboInfo {
 	private int nb_reviews=0;
     private Set<String> outgoingLinks;
     private String semantics_hit;
+    private String title_semantic;
     
 	public int getNb_total_images() {
 		return nb_total_images;
@@ -225,5 +226,11 @@ public class MultiSeedSemanticArboInfo {
 	}
 	public void setSemantics_hit(String semantics_hit) {
 		this.semantics_hit = semantics_hit;
+	}
+	public String getTitle_semantic() {
+		return title_semantic;
+	}
+	public void setTitle_semantic(String title_semantic) {
+		this.title_semantic = title_semantic;
 	}
 }

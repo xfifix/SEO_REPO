@@ -48,12 +48,12 @@ public class SemanticArboController {
 	private static String insert_statement="INSERT INTO ARBOCRAWL_RESULTS (URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH,"
 			+ " OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES,"
 		    + " NB_SEARCH_IN_URL, NB_ADD_IN_TEXT, NB_FILTER_IN_TEXT, NB_SEARCH_IN_TEXT, NB_GUIDE_ACHAT_IN_TEXT, NB_PRODUCT_INFO_IN_TEXT, NB_LIVRAISON_IN_TEXT, NB_GARANTIES_IN_TEXT, NB_PRODUITS_SIMILAIRES_IN_TEXT, NB_IMAGES_TEXT, WIDTH_AVERAGE, HEIGHT_AVERAGE,"
-			+ " PAGE_TYPE, SEMANTIC_HITS, CONCURRENT_NAME, LAST_UPDATE)"
-			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			+ " PAGE_TYPE, SEMANTIC_HITS, SEMANTIC_TITLE, CONCURRENT_NAME, LAST_UPDATE)"
+			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 	private static String update_statement ="UPDATE ARBOCRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,H1=?,SHORT_DESCRIPTION=?,STATUS_CODE=?,DEPTH=?,OUTLINKS_SIZE=?,INLINKS_SIZE=?,NB_BREADCRUMBS=?,NB_AGGREGATED_RATINGS=?,NB_RATINGS_VALUES=?,NB_PRICES=?,NB_AVAILABILITIES=?,NB_REVIEWS=?,NB_REVIEWS_COUNT=?,NB_IMAGES=?,"
 			+ "NB_SEARCH_IN_URL=?,NB_ADD_IN_TEXT=?,NB_FILTER_IN_TEXT=?,NB_SEARCH_IN_TEXT=?,NB_GUIDE_ACHAT_IN_TEXT=?,NB_PRODUCT_INFO_IN_TEXT=?,NB_LIVRAISON_IN_TEXT=?,NB_GARANTIES_IN_TEXT=?,NB_PRODUITS_SIMILAIRES_IN_TEXT=?,NB_IMAGES_TEXT=?,WIDTH_AVERAGE=?,HEIGHT_AVERAGE=?,"
-			+ "PAGE_TYPE=?,SEMANTIC_HITS=?,CONCURRENT_NAME=?,LAST_UPDATE=? WHERE URL=?";
+			+ "PAGE_TYPE=?,SEMANTIC_HITS=?,SEMANTIC_TITLE=?,CONCURRENT_NAME=?,LAST_UPDATE=? WHERE URL=?";
 
 	public static void main(String[] args) throws Exception {
 		instantiate_connection();
@@ -188,8 +188,8 @@ public class SemanticArboController {
 					String url=pairs.getKey();
 					MultiSeedSemanticArboInfo info = pairs.getValue();
 					// update statement
-					//UPDATE ARBOCRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,H1=?,SHORT_DESCRIPTION=?,STATUS_CODE=?,DEPTH=?,OUTLINKS_SIZE=?,INLINKS_SIZE=?,NB_BREADCRUMBS=?,NB_AGGREGATED_RATINGS=?,NB_RATINGS_VALUES=?,NB_PRICES=?,NB_AVAILABILITIES=?,NB_REVIEWS=?,NB_REVIEWS_COUNT=?,NB_IMAGES=?,NB_SEARCH_IN_URL=?,NB_ADD_IN_TEXT=?,NB_FILTER_IN_TEXT=?,NB_SEARCH_IN_TEXT=?,NB_GUIDE_ACHAT_IN_TEXT=?,NB_PRODUCT_INFO_IN_TEXT=?,NB_LIVRAISON_IN_TEXT=?,NB_GARANTIES_IN_TEXT=?,NB_PRODUITS_SIMILAIRES_IN_TEXT=?,NB_IMAGES_TEXT=?,WIDTH_AVERAGE=?,HEIGHT_AVERAGE=?,PAGE_TYPE=?,SEMANTIC_HITS=?,CONCURRENT_NAME=?,LAST_UPDATE=? WHERE URL=?"; 
-					//                                  1         2      3         4                   5          6            7             8               9                   10                     11               12               13             14            15              16             17                    18                19               20                       21                      22                      23                        24                      25                         26            27               28              29          30              31               32                33
+					//UPDATE ARBOCRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,H1=?,SHORT_DESCRIPTION=?,STATUS_CODE=?,DEPTH=?,OUTLINKS_SIZE=?,INLINKS_SIZE=?,NB_BREADCRUMBS=?,NB_AGGREGATED_RATINGS=?,NB_RATINGS_VALUES=?,NB_PRICES=?,NB_AVAILABILITIES=?,NB_REVIEWS=?,NB_REVIEWS_COUNT=?,NB_IMAGES=?,NB_SEARCH_IN_URL=?,NB_ADD_IN_TEXT=?,NB_FILTER_IN_TEXT=?,NB_SEARCH_IN_TEXT=?,NB_GUIDE_ACHAT_IN_TEXT=?,NB_PRODUCT_INFO_IN_TEXT=?,NB_LIVRAISON_IN_TEXT=?,NB_GARANTIES_IN_TEXT=?,NB_PRODUITS_SIMILAIRES_IN_TEXT=?,NB_IMAGES_TEXT=?,WIDTH_AVERAGE=?,HEIGHT_AVERAGE=?,PAGE_TYPE=?,SEMANTIC_HITS=?,SEMANTIC_TITLE=?,CONCURRENT_NAME=?,LAST_UPDATE=? WHERE URL=?"; 
+					//                                  1         2      3         4                   5          6            7             8               9                   10                     11               12               13             14            15              16             17                    18                19               20                       21                      22                      23                        24                      25                         26            27               28              29          30              31               32                33               34
 					st.setString(1,info.getText());
 					st.setString(2,info.getTitle());
 					st.setString(3,info.getH1());
@@ -225,16 +225,17 @@ public class SemanticArboController {
 					st.setDouble(28, info.getHeight_average());	
 					st.setString(29,info.getPage_type());
 					st.setString(30,info.getSemantics_hit());
-					st.setString(31,name);
+					st.setString(31, info.getTitle_semantic());
+					st.setString(32,name);
 					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-					st.setDate(32,sqlDate);
-					st.setString(33,url);
+					st.setDate(33,sqlDate);
+					st.setString(34,url);
 					int affected_row = st.executeUpdate();
 					// if the row has not been updated, we have to insert it !
 					if(affected_row == 0){
 						PreparedStatement insert_st = con.prepareStatement(insert_statement);
-						//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, NB_SEARCH_IN_URL, NB_ADD_IN_TEXT, NB_FILTER_IN_TEXT, NB_SEARCH_IN_TEXT, NB_GUIDE_ACHAT_IN_TEXT, NB_PRODUCT_INFO_IN_TEXT, NB_LIVRAISON_IN_TEXT, NB_GARANTIES_IN_TEXT, NB_PRODUITS_SIMILAIRES_IN_TEXT, NB_IMAGES_TEXT, WIDTH_AVERAGE, HEIGHT_AVERAGE, PAGE_TYPE, SEMANTIC_HITS,  CONCURRENT_NAME, LAST_UPDATE)"
-						//  1        2        3    4           5                6        7           8              9             10               11                      12            13              14             15            16             17           18               19                 20                21                  22                      23                      24                       25                        26                       27             28              29          30              31             32             33
+						//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, NB_SEARCH_IN_URL, NB_ADD_IN_TEXT, NB_FILTER_IN_TEXT, NB_SEARCH_IN_TEXT, NB_GUIDE_ACHAT_IN_TEXT, NB_PRODUCT_INFO_IN_TEXT, NB_LIVRAISON_IN_TEXT, NB_GARANTIES_IN_TEXT, NB_PRODUITS_SIMILAIRES_IN_TEXT, NB_IMAGES_TEXT, WIDTH_AVERAGE, HEIGHT_AVERAGE, PAGE_TYPE, SEMANTIC_HITS, SEMANTIC_TITLE,  CONCURRENT_NAME, LAST_UPDATE)"
+						//  1        2        3    4           5                6        7           8              9             10               11                      12            13              14             15            16             17           18               19                 20                21                  22                      23                      24                       25                        26                       27             28              29          30              31             32             33             34
 						insert_st.setString(1,url); 
 						insert_st.setString(2,info.getText());
 						insert_st.setString(3,info.getTitle());
@@ -269,8 +270,9 @@ public class SemanticArboController {
 						insert_st.setDouble(29, info.getHeight_average());
 						insert_st.setString(30,info.getPage_type());
 						insert_st.setString(31,info.getSemantics_hit());
-						insert_st.setString(32,name);
-						insert_st.setDate(33,sqlDate);
+						insert_st.setString(32,info.getTitle_semantic());
+						insert_st.setString(33,name);
+						insert_st.setDate(34,sqlDate);
 						insert_st.executeUpdate();
 					}
 				}while (it.hasNext());	
@@ -304,8 +306,8 @@ public class SemanticArboController {
 					Map.Entry<String, MultiSeedSemanticArboInfo> pairs = (Map.Entry<String, MultiSeedSemanticArboInfo>)it.next();
 					String url=pairs.getKey();
 					MultiSeedSemanticArboInfo info = pairs.getValue();
-					//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, NB_SEARCH_IN_URL, NB_ADD_IN_TEXT, NB_FILTER_IN_TEXT, NB_SEARCH_IN_TEXT, NB_GUIDE_ACHAT_IN_TEXT, NB_PRODUCT_INFO_IN_TEXT, NB_LIVRAISON_IN_TEXT, NB_GARANTIES_IN_TEXT, NB_PRODUITS_SIMILAIRES_IN_TEXT, NB_IMAGES_TEXT, WIDTH_AVERAGE, HEIGHT_AVERAGE, PAGE_TYPE,   SEMANTIC_HITS, CONCURRENT_NAME, LAST_UPDATE)"
-					//  1        2        3    4           5                6        7           8              9             10               11                      12            13              14             15            16             17           18               19                 20                21                  22                      23                      24                       25                        26                       27             28              29          30              31             32               33
+					//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, NB_SEARCH_IN_URL, NB_ADD_IN_TEXT, NB_FILTER_IN_TEXT, NB_SEARCH_IN_TEXT, NB_GUIDE_ACHAT_IN_TEXT, NB_PRODUCT_INFO_IN_TEXT, NB_LIVRAISON_IN_TEXT, NB_GARANTIES_IN_TEXT, NB_PRODUITS_SIMILAIRES_IN_TEXT, NB_IMAGES_TEXT, WIDTH_AVERAGE, HEIGHT_AVERAGE, PAGE_TYPE,   SEMANTIC_HITS, SEMANTIC_TITLE, CONCURRENT_NAME, LAST_UPDATE)"
+					//  1        2        3    4           5                6        7           8              9             10               11                      12            13              14             15            16             17           18               19                 20                21                  22                      23                      24                       25                        26                       27             28              29          30              31             32               33            34
 					st.setString(1,url); 
 					st.setString(2,info.getText());
 					st.setString(3,info.getTitle());
@@ -342,9 +344,10 @@ public class SemanticArboController {
 					st.setDouble(29, info.getHeight_average());
 					st.setString(30,info.getPage_type());
 					st.setString(31,info.getSemantics_hit());
-					st.setString(32,name);
+					st.setString(32,info.getTitle_semantic());
+					st.setString(33,name);
 					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-					st.setDate(33,sqlDate);
+					st.setDate(34,sqlDate);
 					//					st.executeUpdate();
 					st.addBatch();
 				}while (it.hasNext());	

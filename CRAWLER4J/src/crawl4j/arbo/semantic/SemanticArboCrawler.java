@@ -84,7 +84,12 @@ public class SemanticArboCrawler extends WebCrawler {
 			// but the classifier should guess without it 
 			// size of the in memory cache per thread (200 default value)	
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
-	        info.setTitle(htmlParseData.getTitle());
+			String title = htmlParseData.getTitle();
+	        info.setTitle(title);
+	
+			Map<String, Integer> title_tfMap = CorpusCache.computePageTFVector(title);
+			String title_semantic = CorpusCache.formatTFMap(title_tfMap);
+			info.setTitle_semantic(title_semantic);
 			info.setText(htmlParseData.getText());
 			String html = htmlParseData.getHtml();
 			links = htmlParseData.getOutgoingUrls();

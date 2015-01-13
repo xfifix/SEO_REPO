@@ -29,6 +29,8 @@ public class CorpusCache {
 	private static Map<String, Double> corpus_idf = new HashMap<String, Double>();
 	private static int nb_total_documents = 1;
 	private static int nb_semantic_hits_threshold = 10;
+	
+	private static String semantic_hit_separator = "@";
 
 	public static void load(){
 		Connection con = null;
@@ -94,6 +96,12 @@ public class CorpusCache {
 		return idf;
 	}
 
+	public static Map<String, Integer> computePageTFVector(String pageText){
+		pageText = CorpusCache.preprocessSemanticText(pageText);
+		VectorStateSpringRepresentation vs =new VectorStateSpringRepresentation(pageText);
+		return vs.getWordFrequencies();
+	}
+	
 	public static Map<String, Double> computePageTFIDFVector(String pageText){
 		pageText = CorpusCache.preprocessSemanticText(pageText);
 		VectorStateSpringRepresentation vs =new VectorStateSpringRepresentation(pageText);
@@ -160,13 +168,18 @@ public class CorpusCache {
 	public static String formatTFIDFMapBestHits(Map<String, Double> tfIdfMap){
 		Map<String, Double> tfIdfMapSortedMap = sortByValueDescendingly( tfIdfMap );
 		String[] orderedKeysTenHits=getOrderedKeysBestHits(tfIdfMapSortedMap);
-		return StringUtils.join(orderedKeysTenHits,"|||");
+		return StringUtils.join(orderedKeysTenHits,semantic_hit_separator);
 	}
 
+	public static String formatTFMap(Map<String, Integer> tfMap){
+		String[] keys=getKeys(tfMap);
+		return StringUtils.join(keys,semantic_hit_separator);
+	}
+	
 	public static String formatTFIDFMap(Map<String, Double> tfIdfMap){
 		Map<String, Double> tfIdfMapSortedMap = sortByValueDescendingly( tfIdfMap );
-		String[] orderedKeys=getOrderedKeys(tfIdfMapSortedMap);
-		return StringUtils.join(orderedKeys,"|||");
+		String[] orderedKeys=getKeys(tfIdfMapSortedMap);
+		return StringUtils.join(orderedKeys,semantic_hit_separator);
 	}
 
 	public static String[] getOrderedKeysBestHits(Map<String, Double> tfIdfMapSortedMap){
@@ -196,13 +209,13 @@ public class CorpusCache {
 		return ordered_keys;
 	}
 
-	public static String[] getOrderedKeys(Map<String, Double> tfIdfMapSortedMap){
+	public static <V> String[] getKeys(Map<String, V> tfIdfMapSortedMap){
 		String[] ordered_keys = new String[tfIdfMapSortedMap.size()];
-		Iterator<Entry<String, Double>> it = tfIdfMapSortedMap.entrySet().iterator();
+		Iterator<Entry<String, V>> it = tfIdfMapSortedMap.entrySet().iterator();
 		// we go forward as the Map has been sorted descending
 		int counter = 0;
 		while (it.hasNext()){
-			Map.Entry<String, Double> pairs = (Map.Entry<String, Double>)it.next();
+			Map.Entry<String, V> pairs = (Map.Entry<String, V>)it.next();
 			ordered_keys[counter] = pairs.getKey();
 			counter ++;
 		}
