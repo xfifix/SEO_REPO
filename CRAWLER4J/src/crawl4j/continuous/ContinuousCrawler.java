@@ -34,7 +34,7 @@ public class ContinuousCrawler extends WebCrawler {
 	// debugging size
 	//private static int bulk_size = 10;
 	
-	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg" + "|png|tiff|mid|mp2|mp3|mp4"
+	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg|jpg" + "|png|tiff|mid|mp2|mp3|mp4"
 			+ "|wav|avi|mov|mpeg|ram|m4v|ico|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 
 	CrawlDataManagement myCrawlDataManager;

@@ -15,6 +15,8 @@ public class SemanticParsingTestingClass {
 	public static void main(String[] args){
 	String my_url_to_fetch = "http://www.delamaison.fr/rideau-tamisant-nouettes-lave-140x280cm-purete-p-162563.html";
 	// fetching data using Jsoup and jQuery
+	// get the offer matching with the following semantic
+	
 	org.jsoup.nodes.Document doc;
 	try{
 		doc =  Jsoup.connect(my_url_to_fetch)
