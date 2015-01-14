@@ -20,6 +20,7 @@ import java.util.List;
 
 public class ProxyTesting {
 
+	
 	// iface IP to be found	
 	//	String[] ips = {
 	//			"5.39.42.23",
@@ -31,20 +32,20 @@ public class ProxyTesting {
 
 	public static void main(String[] args) throws IOException, InterruptedException{
 
-
-		// getting all my ips
+    	// getting all my ips
 		tellAllMyIPs();
         // getting all the configured Proxies
 		tellAllMyProxies();
-
+		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", 3128));
 		for (int i=0;i<1000;i++){
-			Thread.sleep(500);
+			System.out.println("Launching through the proxy");
+			//Thread.sleep(500);
 			//Squid proxy instance, proxy ip = 123.0.0.1 with port 8080
-			Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", 3128));
+			
 			URL url = new URL("http://www.cdiscount.com");
 			HttpURLConnection connection = (HttpURLConnection)url.openConnection(proxy);
 			connection.connect();
-
+			System.out.println("Connection established");
 			InputStreamReader in = new InputStreamReader((InputStream) connection.getContent());
 			BufferedReader buff = new BufferedReader(in);
 			StringBuilder builder = new StringBuilder();
@@ -55,6 +56,7 @@ public class ProxyTesting {
 			} while (line != null);
 			String pageString = builder.toString();
 			System.out.println(pageString);
+			System.out.println("Page fetched and displayed");
 		}
 	}
 
