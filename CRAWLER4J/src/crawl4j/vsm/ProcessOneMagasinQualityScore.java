@@ -42,7 +42,8 @@ public class ProcessOneMagasinQualityScore {
 	private static Map<String, String> properties_map = new HashMap<String, String>();
 
 	public static void main(String[] args) {
-		String magasin_to_analyse ="musique-instruments";
+		String magasin_to_analyse ="informatique";
+		//String magasin_to_analyse ="musique-instruments";
 		//String magasin_to_analyse ="dvd";
 		String output_directory="/home/sduprey/My_Data/My_Outgoing_Data/My_Attributes_Filling";
 		if (args.length >= 1){
@@ -50,7 +51,7 @@ public class ProcessOneMagasinQualityScore {
 		} 
 
 		if (args.length == 0) {
-			System.out.println("No magasin specified : choosing "+magasin_to_analyse);
+			System.out.println("No magasin specified by parameters : choosing "+magasin_to_analyse);
 		}
 
 		if (args.length == 2){
@@ -129,8 +130,7 @@ public class ProcessOneMagasinQualityScore {
 		System.out.println("Assessing " +magasins_datas.size()  + " URLs" );
 		for (URLContentInfo rayon_info : magasins_datas){
 			String attributes_listing = rayon_info.getAttributes();
-			String url = rayon_info.getUrl();
-			String checkType = URL_Utilities.checkTypeFullUrl(url);
+			String checkType = rayon_info.getPageType();
 			if ("FicheProduit".equals(checkType)){
 				if (attributes_listing.contains("|||")){
 					global_number_products_with_arguments++;
@@ -154,7 +154,8 @@ public class ProcessOneMagasinQualityScore {
 			}
 		}
 		// to do : save the results for the rayon
-		System.out.println("Saving the results as a csv file in : ");
+		System.out.println("Saving the results as a csv file in : " + rayon_argument_counting+ " "+ magasin_to_analyse+ " "+output_directory );
+
 		savingDataArguments(rayon_argument_counting,magasin_to_analyse,output_directory);
 	}
 
@@ -185,11 +186,11 @@ public class ProcessOneMagasinQualityScore {
 			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_directory+"/"+magasin_to_analyse+".csv"), "UTF-8"));
 			// we write the header
 			writer.write("ATTRIBUTE_NAME;FILLED_PERCENTAGE\n");
-			Iterator it = rayon_argument_counting.entrySet().iterator();
+			Iterator<Map.Entry<String,Integer>> it = rayon_argument_counting.entrySet().iterator();
 			while (it.hasNext()) {
-				Map.Entry pairs = (Map.Entry)it.next();
-				String argument_name=(String)pairs.getKey();
-				Integer count = (Integer)pairs.getValue();
+				Map.Entry<String,Integer> pairs = (Map.Entry<String,Integer>)it.next();
+				String argument_name=pairs.getKey();
+				Integer count=pairs.getValue();
 				System.out.println("Attribut name : " +argument_name);
 				double filled_percent =((double)count)/((double)global_number_products_with_arguments)*100;
 				System.out.println("Filled percentage : " +filled_percent +"%");
@@ -214,7 +215,7 @@ public class ProcessOneMagasinQualityScore {
 		// getting the URLs infos for each rayon
 		PreparedStatement field_pst;
 		try {
-			field_pst  = con.prepareStatement("SELECT NB_ATTRIBUTES,ATTRIBUTES,URL,VENDOR,MAGASIN,RAYON,PRODUIT FROM CRAWL_RESULTS WHERE MAGASIN='" +magasin_to_analyse+ "'");
+			field_pst  = con.prepareStatement("SELECT NB_ATTRIBUTES,ATTRIBUTES,URL,VENDOR,MAGASIN,RAYON,PRODUIT,PAGE_TYPE FROM CRAWL_RESULTS WHERE MAGASIN='" +magasin_to_analyse+ "'");
 			System.out.println("I am requesting the database, please wait a few seconds");
 			ResultSet field_rs = field_pst.executeQuery();
 			while (field_rs.next()) {
@@ -227,6 +228,7 @@ public class ProcessOneMagasinQualityScore {
 				String my_magasin = field_rs.getString(5);
 				String my_rayon = field_rs.getString(6);
 				String my_produit = field_rs.getString(7);
+				String my_page_type = field_rs.getString(8);
 				url_info.setNb_attributes(nb_attributes);
 				url_info.setAttributes(attributes);
 				url_info.setUrl(my_url);
@@ -234,6 +236,7 @@ public class ProcessOneMagasinQualityScore {
 				url_info.setRayon(my_rayon);
 				url_info.setProduit(my_produit);
 				url_info.setVendor(my_vendor);
+				url_info.setPageType(my_page_type);
 				magasins_datas.add(url_info);
 			}
 		} catch (SQLException e) {

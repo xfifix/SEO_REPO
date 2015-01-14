@@ -40,7 +40,7 @@ public class ProcessOneMagasinQualityScore {
 	private static Map<String, String> properties_map = new HashMap<String, String>();
 
 	public static void main(String[] args) {
-		String magasin_to_analyse ="maison";		
+		String magasin_to_analyse ="informatique";		
 		//String magasin_to_analyse ="musique-instruments";
 		//String magasin_to_analyse ="dvd";
 		String output_directory="/home/sduprey/My_Data/My_Outgoing_Data/My_Attributes_Filling";
@@ -150,7 +150,7 @@ public class ProcessOneMagasinQualityScore {
 			}
 		}
 		// to do : save the results for the rayon
-		System.out.println("Saving the results as a csv file in : ");
+		System.out.println("Saving the results as a csv file in : " + rayon_argument_counting+ " "+ magasin_to_analyse+ " "+output_directory );
 		savingDataArguments(rayon_argument_counting,magasin_to_analyse,output_directory);
 	}
 

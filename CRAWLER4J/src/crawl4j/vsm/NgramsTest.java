@@ -11,16 +11,17 @@ public class NgramsTest {
 
 	public static void main(String[] args) {
 		try {
+
+			
 			String str = "le loup rôde dans le jardin et cherche des lapins. Il a faim, plus que faim et aimerait en manger un ou deux";
 
-			Analyzer analyzer = new NgramAnalyzer();
+			Analyzer two_analyzer = new NGramsAnalyzer();
 
-			TokenStream stream = analyzer.tokenStream("content", new StringReader(str));
-			Token token = new Token();
-			while ((token = stream.next(token)) != null){
-				System.out.println(token.term());
+			TokenStream two_stream = two_analyzer.tokenStream("content", new StringReader(str));
+			Token two_token = new Token();
+			while ((two_token = two_stream.next(two_token)) != null){
+				System.out.println(two_token.term());
 			}
-
 		} catch (IOException ie) {
 			System.out.println("IO Error " + ie.getMessage());
 		}

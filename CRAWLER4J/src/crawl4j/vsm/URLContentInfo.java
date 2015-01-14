@@ -9,6 +9,7 @@ public class URLContentInfo {
 	private String magasin;
 	private String produit;
 	private String rayon;
+	private String pageType;
 	
 	public String getAttributes() {
 		return attributes;
@@ -57,5 +58,11 @@ public class URLContentInfo {
 	}
 	public void setRayon(String rayon) {
 		this.rayon = rayon;
+	}
+	public String getPageType() {
+		return pageType;
+	}
+	public void setPageType(String pageType) {
+		this.pageType = pageType;
 	}
 }
