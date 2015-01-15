@@ -10,8 +10,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class CronJob {
-	private static int min_number_of_wait_times = 80;
-	private static int max_number_of_wait_times = 120;
+	private static int min_number_of_wait_times = 60;
+	private static int max_number_of_wait_times = 80;
 	public static void main(String[] args){
 		System.setProperty("http.agent", "");
 		try{	

@@ -1,0 +1,8 @@
+#find which repertories are causing the disk space shortage :
+du -sh *
+
+#clean up postgres databases :
+#log as postgres user :
+sudo -i -u postgres
+# vacuum clean a database
+vacuumdb TITLESDB
