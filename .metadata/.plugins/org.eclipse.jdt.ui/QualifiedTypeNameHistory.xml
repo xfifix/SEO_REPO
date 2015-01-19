@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="org.w3c.dom.Document"/>
 <fullyQualifiedTypeName name="org.w3c.dom.Node"/>
 <fullyQualifiedTypeName name="org.apache.commons.codec.binary.Base64"/>
 <fullyQualifiedTypeName name="com.crawljax.browser.EmbeddedBrowser.BrowserType"/>
@@ -60,4 +59,5 @@
 <fullyQualifiedTypeName name="crawl4j.arbo.semantic.SemanticArboCrawler"/>
 <fullyQualifiedTypeName name="crawl4j.corpus.CorpusCrawlDataManagement"/>
 <fullyQualifiedTypeName name="java.io.Reader"/>
+<fullyQualifiedTypeName name="crawl4j.arbo.semantic.SemanticArboController"/>
 </qualifiedTypeNameHistroy>

@@ -25,22 +25,17 @@ public class ExaleadOfferMatchingPostExample {
 
 
 	public static void main(String[] args) throws ClientProtocolException, IOException{
-		//		 rajouter &applicationId=FT-PERTINENCE pour le tracking interne
-		//						Par ailleurs vous pouvez vous adresser au load balancer plutÙt quí‡ un serveur :
-		//					http://exasearchv6.gslb.cdweb.biz:10010/search-api/search
-		//					Vous aurez ainsi le failover et si les serveurs viennent ‡ changer cíest transparent pour vous.
-		//					soit ajouter líoption streaming=true, ce qui dÈsactive le sort
-		//					soit paginer en mettant nresults=100 et utilisation de start= pour les offset.
-
-		//String query = "raspberry pi";
-		// bad encoding request
 		// semantic input
-		String title = "Rideau tamisant ‡ nouettes uni 100% lin lavÈ 140x280cm PURETE DÈcoclico Maison";
-		System.out.println("Offer matching for title : "+title);
-		String semantic_hits = "lavÈ@purete@lin@linge@dÈcoclico@unie@tamisant@marques@rideau@nouettes";
-		String titleSemantics = "purete@maison@lavÈ@lin@nouettes@rideau@140x280cm@uni@dÈcoclico@tamisant";
+		String title = "Moule √† b√ªche de No√´l antiadh√©sif 33 x 15 x 6.5 cm noir";
+		String h1 = "Moule √† g√¢teau Moule √† b√ªche de No√´l antiadh√©sif 33 x 15 x 6.5 cm noir R√©f√©rence : FFO5097271";
+		
+		String semantic_hits = "cuisine jardin marques accueil plat linge table d√©coration meuble enfant";
+		String semantic_title = "noir moule cm no√´l b√ªche 6.5 antiadh√©sif 15 33";
+		String inlinks_semantic = "[Revenir en haut de page, Moule √† b√ªche de No√´l antiadh√©sif 33 x 15 x 6.5 cm noir, Facilit√©s de paiement]";
+		String inlinks_semantic_count = "{Revenir en haut de page=1, Moule √† b√ªche de No√´l antiadh√©sif 33 x 15 x 6.5 cm noir=1, Facilit√©s de paiement=1}";
+
 		String[] my_semantic_fields_to_match = OfferMatchingUtility.parseSemanticHit(semantic_hits);
-		String[] my_title_fields_to_match = OfferMatchingUtility.parseSemanticHit(titleSemantics);
+		String[] my_title_fields_to_match = OfferMatchingUtility.parseSemanticHit(semantic_title);
 		String[] queries = ArrayUtils.addAll(my_semantic_fields_to_match, my_title_fields_to_match);
 
 		Set<String> myQueriesSet = new HashSet<String>(Arrays.asList(queries));

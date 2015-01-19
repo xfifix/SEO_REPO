@@ -206,15 +206,17 @@ public class SemanticArboController {
 					st.setInt(6,info.getDepth());
 					st.setInt(7,info.getLinks_size());
 					Integer nb_inlinks = 0;
-					Map<String, Integer> inLinksSemantic = new HashMap<String, Integer>();
+					String inLinksSemantic = "";
+					Map<String, Integer> inLinksSemanticCountMap = new HashMap<String, Integer>();
 					Set<LinkInfo> inlinksURL = inlinks_cache.get(url);
 					if ( inlinksURL != null){
 						nb_inlinks = inlinksURL.size();
-						inLinksSemantic = getIncomingLinkSemantic(inlinksURL);
+						inLinksSemanticCountMap = getIncomingLinkSemanticCount(inlinksURL);
+						inLinksSemantic = formatIncomingLinkSemantic(inLinksSemanticCountMap.keySet());
 					}
 					st.setInt(8,nb_inlinks);
-					st.setString(9,inLinksSemantic.keySet().toString());
-					st.setString(10,inLinksSemantic.toString());
+					st.setString(9,inLinksSemantic);
+					st.setString(10,inLinksSemanticCountMap.toString());
 					st.setInt(11,info.getNb_breadcrumbs());
 					st.setInt(12,info.getNb_aggregated_rating());
 					st.setInt(13,info.getNb_ratings());
@@ -256,13 +258,9 @@ public class SemanticArboController {
 						insert_st.setInt(6,info.getStatus_code());
 						insert_st.setInt(7,info.getDepth());
 						insert_st.setInt(8,info.getLinks_size());
-						if ( inlinksURL != null){
-							nb_inlinks = inlinksURL.size();
-							inLinksSemantic = getIncomingLinkSemantic(inlinksURL);
-						}
 						insert_st.setInt(9,nb_inlinks);
-						insert_st.setString(10,inLinksSemantic.keySet().toString());	
-						insert_st.setString(11,inLinksSemantic.toString());	
+						insert_st.setString(10,inLinksSemantic);	
+						insert_st.setString(11,inLinksSemanticCountMap.toString());	
 						insert_st.setInt(12,info.getNb_breadcrumbs());
 						insert_st.setInt(13,info.getNb_aggregated_rating());
 						insert_st.setInt(14,info.getNb_ratings());
@@ -332,15 +330,17 @@ public class SemanticArboController {
 					st.setInt(7,info.getDepth());
 					st.setInt(8,info.getLinks_size());
 					Integer nb_inlinks = 0;
-					Map<String, Integer> inLinksSemantic = new HashMap<String, Integer>();
+					String inLinksSemantic = "";
+					Map<String, Integer> inLinksSemanticCountMap = new HashMap<String, Integer>();
 					Set<LinkInfo> inlinksURL = inlinks_cache.get(url);
 					if ( inlinksURL != null){
 						nb_inlinks = inlinksURL.size();
-						inLinksSemantic = getIncomingLinkSemantic(inlinksURL);
+						inLinksSemanticCountMap = getIncomingLinkSemanticCount(inlinksURL);
+						inLinksSemantic= formatIncomingLinkSemantic(inLinksSemanticCountMap.keySet());
 					}
 					st.setInt(9,nb_inlinks);
-					st.setString(10,inLinksSemantic.keySet().toString());
-					st.setString(11,inLinksSemantic.toString());
+					st.setString(10,inLinksSemantic);
+					st.setString(11,inLinksSemanticCountMap.toString());
 					st.setInt(12,info.getNb_breadcrumbs());
 					st.setInt(13,info.getNb_aggregated_rating());
 					st.setInt(14,info.getNb_ratings());
@@ -412,7 +412,16 @@ public class SemanticArboController {
 		con = DriverManager.getConnection(url, user, passwd);
 	}
 
-	public static Map<String, Integer> getIncomingLinkSemantic(Set<LinkInfo> infos){
+	public static String formatIncomingLinkSemantic(Set<String> entry_set){
+		StringBuilder builder = new StringBuilder();
+		for (String entryString : entry_set){
+			builder.append(entryString);
+			builder.append("@");			
+		}
+		return builder.toString();
+	}
+
+	public static Map<String, Integer> getIncomingLinkSemanticCount(Set<LinkInfo> infos){
 		List<String> anchor_list = new ArrayList<String>();
 		for (LinkInfo info : infos){
 			String linkAnchor = info.getAnchor();
