@@ -132,15 +132,15 @@ public class SemanticArboCrawler extends WebCrawler {
 			int nb_search  = StringUtils.countMatches(text_to_parse, "Ma recherche")+StringUtils.countMatches(text_to_parse, "Votre recherche")+StringUtils.countMatches(text_to_parse, "résultats pour")+StringUtils.countMatches(text_to_parse, "résultats associés");
 			info.setNb_search_in_text(nb_search);
 
-			int nb_guide_achat = StringUtils.countMatches(text_to_parse, "search");
+			int nb_guide_achat = StringUtils.countMatches(text_to_parse, "guide d'achat") +StringUtils.countMatches(text_to_parse, "Guide d'achat")  ;
 			info.setNb_guide_achat_in_text(nb_guide_achat);
 			int nb_product_info = StringUtils.countMatches(text_to_parse, "caractéristique")+StringUtils.countMatches(text_to_parse, "Caractéristique")+StringUtils.countMatches(text_to_parse, "descriptif")+StringUtils.countMatches(text_to_parse, "Descriptif")+StringUtils.countMatches(text_to_parse, "information")+StringUtils.countMatches(text_to_parse, "Information");	    		
 			info.setNb_product_info_in_text(nb_product_info);
-			int nb_livraison = StringUtils.countMatches(text_to_parse, "livraison") +StringUtils.countMatches(text_to_parse, "frais de port")+StringUtils.countMatches(text_to_parse, "Frais de port") ;
+			int nb_livraison = StringUtils.countMatches(text_to_parse, "livraison") +StringUtils.countMatches(text_to_parse, "Livraison") +StringUtils.countMatches(text_to_parse, "frais de port")+StringUtils.countMatches(text_to_parse, "Frais de port") ;
 			info.setNb_livraison_in_text(nb_livraison);
 			int nb_garanties = StringUtils.countMatches(text_to_parse, "garantie")+StringUtils.countMatches(text_to_parse, "Garantie")+StringUtils.countMatches(text_to_parse, "Assurance")+StringUtils.countMatches(text_to_parse, "assurance");    
 			info.setNb_garanties_in_text(nb_garanties);
-			int nb_produits_similaires = StringUtils.countMatches(text_to_parse, "Produits Similaires")+StringUtils.countMatches(text_to_parse, "produits similaires")+StringUtils.countMatches(text_to_parse, "Meilleures Ventes")+StringUtils.countMatches(text_to_parse, "meilleures ventes")+StringUtils.countMatches(text_to_parse, "Meilleures ventes")+StringUtils.countMatches(text_to_parse, "Nouveautés")+StringUtils.countMatches(text_to_parse, "nouveautés");
+			int nb_produits_similaires = StringUtils.countMatches(text_to_parse, "Produits Similaires")+StringUtils.countMatches(text_to_parse, "produits similaires")+StringUtils.countMatches(text_to_parse, "Meilleures Ventes")+StringUtils.countMatches(text_to_parse, "meilleures ventes")+StringUtils.countMatches(text_to_parse, "Meilleures ventes")+StringUtils.countMatches(text_to_parse, "Nouveautés")+StringUtils.countMatches(text_to_parse, "nouveautés")+StringUtils.countMatches(text_to_parse, "Nouveauté")+StringUtils.countMatches(text_to_parse, "nouveauté");
 			info.setNb_produits_similaires_in_text(nb_produits_similaires);
 			Elements imageElements = doc.getElementsByTag("img");
 			int nb_total_images = imageElements.size();
