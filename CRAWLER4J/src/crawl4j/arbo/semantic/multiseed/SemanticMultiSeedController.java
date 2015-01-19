@@ -16,7 +16,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import crawl4j.arbo.semantic.LinkInfo;
-import crawl4j.arbo.semantic.SemanticArboController;
 import crawl4j.arbo.semantic.SemanticArboCrawlDataCache;
 import crawl4j.arbo.semantic.SemanticArboCrawler;
 import crawl4j.urlutilities.MultiSeedSemanticArboInfo;
@@ -53,7 +52,7 @@ public class SemanticMultiSeedController {
 		String user_agent_name = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
 		System.setProperty("http.agent",user_agent_name);
 		System.out.println("Starting the crawl configuration for Crawler1, Crawler2, Crawler3, Crawler4");
-		int maxDepthOfCrawling = 2; // common for all
+		int maxDepthOfCrawling = 1; // common for all
 		// Managing data for every crawlers for every site
 		// instantiating the seeds for our multiple crawlers
 		String nameCrawler1 = "delamaison";
@@ -210,7 +209,7 @@ public class SemanticMultiSeedController {
 		for (Object localData : crawlersLocalData) {
 			SemanticArboCrawlDataCache stat = (SemanticArboCrawlDataCache) localData;
 			Map<String, MultiSeedSemanticArboInfo> local_thread_cache = stat.getCrawledContent();
-			SemanticArboController.updateInLinksThreadCache(local_thread_cache);
+			updateInLinksThreadCache(local_thread_cache);
 		}
 
 		// saving results to the database
@@ -222,7 +221,7 @@ public class SemanticMultiSeedController {
 			updateOrInsertDatabaseData(local_thread_cache,name);
 		}
 	}
-
+	
 	public static void updateInLinksThreadCache(Map<String, MultiSeedSemanticArboInfo> local_thread_cache){
 		Iterator<Map.Entry<String, MultiSeedSemanticArboInfo>>  it = local_thread_cache.entrySet().iterator();
 		while (it.hasNext()) {
@@ -238,21 +237,6 @@ public class SemanticMultiSeedController {
 			}
 		}
 	}
-	//	public static void updateInLinksThreadCache(Map<String, MultiSeedSemanticArboInfo> local_thread_cache){
-	//		Iterator<Map.Entry<String, MultiSeedSemanticArboInfo>>  it = local_thread_cache.entrySet().iterator();
-	//		while (it.hasNext()) {
-	//			Map.Entry<String, MultiSeedSemanticArboInfo> pairs = it.next();
-	//			String url = pairs.getKey();
-	//			MultiSeedSemanticArboInfo info = pairs.getValue();
-	//			Set<String> outgoingLinks = info.getOutgoingLinks();
-	//			if (outgoingLinks != null){
-	//				updateInLinks(outgoingLinks,url);
-	//			} else {
-	//				System.out.println(" No outgoing links for this URL : "+url);
-	//				System.out.println(" Status code : "+info.getStatus_code());
-	//			}
-	//		}
-	//	}
 
 	public static void updateInLinks(Set<LinkInfo> outputSet, String sourceURL){
 		for (LinkInfo targetLink : outputSet){
@@ -268,17 +252,6 @@ public class SemanticMultiSeedController {
 			inlinks_cache.put(targetURL,inLinks);
 		}
 	}
-
-	//	public static void updateInLinks(Set<String> outputSet, String sourceURL){
-	//		for (String targetURL : outputSet){
-	//			Set<String> inLinks = inlinks_cache.get(targetURL);
-	//			if (inLinks == null){
-	//				inLinks= new HashSet<String>();
-	//			}
-	//			inLinks.add(sourceURL);
-	//			inlinks_cache.put(targetURL,inLinks);
-	//		}
-	//	}
 
 	public static void updateOrInsertDatabaseData(Map<String, MultiSeedSemanticArboInfo> local_thread_cache, String name){
 		try{
