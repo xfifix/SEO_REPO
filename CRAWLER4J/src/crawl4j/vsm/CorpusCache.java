@@ -30,7 +30,7 @@ public class CorpusCache {
 	private static int nb_total_documents = 1;
 	private static int nb_semantic_hits_threshold = 10;
 	
-	private static String semantic_hit_separator = "@";
+	private static String semantic_hit_separator = " ";
 
 	public static void load(){
 		Connection con = null;

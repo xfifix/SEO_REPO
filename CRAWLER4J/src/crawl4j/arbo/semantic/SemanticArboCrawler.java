@@ -101,6 +101,8 @@ public class SemanticArboCrawler extends WebCrawler {
 			info.setLinks_size(filtered_links.size());
 			// parsing the document to get the predictor of our model			
 			Document doc = Jsoup.parse(html);	
+			Elements h1el = doc.select("h1");
+			info.setH1(h1el.text());
 			Elements breadCrumbs = doc.getElementsByAttributeValue("itemtype", "http://data-vocabulary.org/Breadcrumb");
 			info.setNb_breadcrumbs(breadCrumbs.size());
 			Elements aggregateRatings = doc.getElementsByAttributeValue("itemprop", "aggregateRating");

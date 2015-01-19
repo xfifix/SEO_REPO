@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -37,12 +39,12 @@ public class SemanticMultiSeedController {
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
 
 	private static String insert_statement="INSERT INTO ARBOCRAWL_RESULTS (URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH,"
-			+ " OUTLINKS_SIZE, INLINKS_SIZE, INLINKS_SEMANTIC, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES,"
+			+ " OUTLINKS_SIZE, INLINKS_SIZE, INLINKS_SEMANTIC, INLINKS_SEMANTIC_COUNT, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES,"
 			+ " NB_SEARCH_IN_URL, NB_ADD_IN_TEXT, NB_FILTER_IN_TEXT, NB_SEARCH_IN_TEXT, NB_GUIDE_ACHAT_IN_TEXT, NB_PRODUCT_INFO_IN_TEXT, NB_LIVRAISON_IN_TEXT, NB_GARANTIES_IN_TEXT, NB_PRODUITS_SIMILAIRES_IN_TEXT, NB_IMAGES_TEXT, WIDTH_AVERAGE, HEIGHT_AVERAGE,"
 			+ " PAGE_TYPE, SEMANTIC_HITS, SEMANTIC_TITLE, CONCURRENT_NAME, LAST_UPDATE)"
-			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-	private static String update_statement ="UPDATE ARBOCRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,H1=?,SHORT_DESCRIPTION=?,STATUS_CODE=?,DEPTH=?,OUTLINKS_SIZE=?,INLINKS_SIZE=?,INLINKS_SEMANTIC=?,NB_BREADCRUMBS=?,NB_AGGREGATED_RATINGS=?,NB_RATINGS_VALUES=?,NB_PRICES=?,NB_AVAILABILITIES=?,NB_REVIEWS=?,NB_REVIEWS_COUNT=?,NB_IMAGES=?,"
+	private static String update_statement ="UPDATE ARBOCRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,H1=?,SHORT_DESCRIPTION=?,STATUS_CODE=?,DEPTH=?,OUTLINKS_SIZE=?,INLINKS_SIZE=?,INLINKS_SEMANTIC=?,INLINKS_SEMANTIC_COUNT=?,NB_BREADCRUMBS=?,NB_AGGREGATED_RATINGS=?,NB_RATINGS_VALUES=?,NB_PRICES=?,NB_AVAILABILITIES=?,NB_REVIEWS=?,NB_REVIEWS_COUNT=?,NB_IMAGES=?,"
 			+ "NB_SEARCH_IN_URL=?,NB_ADD_IN_TEXT=?,NB_FILTER_IN_TEXT=?,NB_SEARCH_IN_TEXT=?,NB_GUIDE_ACHAT_IN_TEXT=?,NB_PRODUCT_INFO_IN_TEXT=?,NB_LIVRAISON_IN_TEXT=?,NB_GARANTIES_IN_TEXT=?,NB_PRODUITS_SIMILAIRES_IN_TEXT=?,NB_IMAGES_TEXT=?,WIDTH_AVERAGE=?,HEIGHT_AVERAGE=?,"
 			+ "PAGE_TYPE=?,SEMANTIC_HITS=?,SEMANTIC_TITLE=?,CONCURRENT_NAME=?,LAST_UPDATE=? WHERE URL=?";
 
@@ -52,7 +54,7 @@ public class SemanticMultiSeedController {
 		String user_agent_name = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
 		System.setProperty("http.agent",user_agent_name);
 		System.out.println("Starting the crawl configuration for Crawler1, Crawler2, Crawler3, Crawler4");
-		int maxDepthOfCrawling = 1; // common for all
+		int maxDepthOfCrawling = 4; // common for all
 		// Managing data for every crawlers for every site
 		// instantiating the seeds for our multiple crawlers
 		String nameCrawler1 = "delamaison";
@@ -221,7 +223,7 @@ public class SemanticMultiSeedController {
 			updateOrInsertDatabaseData(local_thread_cache,name);
 		}
 	}
-	
+
 	public static void updateInLinksThreadCache(Map<String, MultiSeedSemanticArboInfo> local_thread_cache){
 		Iterator<Map.Entry<String, MultiSeedSemanticArboInfo>>  it = local_thread_cache.entrySet().iterator();
 		while (it.hasNext()) {
@@ -266,8 +268,8 @@ public class SemanticMultiSeedController {
 					String url=pairs.getKey();
 					MultiSeedSemanticArboInfo info = pairs.getValue();
 					// update statement
-					//UPDATE ARBOCRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,H1=?,SHORT_DESCRIPTION=?,STATUS_CODE=?,DEPTH=?,OUTLINKS_SIZE=?,INLINKS_SIZE=?,INLINKS_SEMANTIC=?,NB_BREADCRUMBS=?,NB_AGGREGATED_RATINGS=?,NB_RATINGS_VALUES=?,NB_PRICES=?,NB_AVAILABILITIES=?,NB_REVIEWS=?,NB_REVIEWS_COUNT=?,NB_IMAGES=?,NB_SEARCH_IN_URL=?,NB_ADD_IN_TEXT=?,NB_FILTER_IN_TEXT=?,NB_SEARCH_IN_TEXT=?,NB_GUIDE_ACHAT_IN_TEXT=?,NB_PRODUCT_INFO_IN_TEXT=?,NB_LIVRAISON_IN_TEXT=?,NB_GARANTIES_IN_TEXT=?,NB_PRODUITS_SIMILAIRES_IN_TEXT=?,NB_IMAGES_TEXT=?,WIDTH_AVERAGE=?,HEIGHT_AVERAGE=?,PAGE_TYPE=?,SEMANTIC_HITS=?,SEMANTIC_TITLE=?,CONCURRENT_NAME=?,LAST_UPDATE=? WHERE URL=?"; 
-					//                                  1         2      3         4                   5          6            7             8               9                   10                   11               12                  13             14                15              16             17             18                19               20                   21                      22                      23                        24                      25                         26                     27               28              29             30              31             32                33               34            35
+					//UPDATE ARBOCRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,H1=?,SHORT_DESCRIPTION=?,STATUS_CODE=?,DEPTH=?,OUTLINKS_SIZE=?,INLINKS_SIZE=?,INLINKS_SEMANTIC=?,INLINKS_SEMANTIC_COUNT=?,NB_BREADCRUMBS=?,NB_AGGREGATED_RATINGS=?,NB_RATINGS_VALUES=?,NB_PRICES=?,NB_AVAILABILITIES=?,NB_REVIEWS=?,NB_REVIEWS_COUNT=?,NB_IMAGES=?,NB_SEARCH_IN_URL=?,NB_ADD_IN_TEXT=?,NB_FILTER_IN_TEXT=?,NB_SEARCH_IN_TEXT=?,NB_GUIDE_ACHAT_IN_TEXT=?,NB_PRODUCT_INFO_IN_TEXT=?,NB_LIVRAISON_IN_TEXT=?,NB_GARANTIES_IN_TEXT=?,NB_PRODUITS_SIMILAIRES_IN_TEXT=?,NB_IMAGES_TEXT=?,WIDTH_AVERAGE=?,HEIGHT_AVERAGE=?,PAGE_TYPE=?,SEMANTIC_HITS=?,SEMANTIC_TITLE=?,CONCURRENT_NAME=?,LAST_UPDATE=? WHERE URL=?"; 
+					//                                  1         2      3         4                   5          6            7             8               9                      10                    11                 12                     13               14            15              16             17                18              19               20                  21                 22                      23                       24                      25                      26                      27                          28              29             30              31             32             33               34              35               36
 					st.setString(1,info.getText());
 					st.setString(2,info.getTitle());
 					st.setString(3,info.getH1());
@@ -276,47 +278,48 @@ public class SemanticMultiSeedController {
 					st.setInt(6,info.getDepth());
 					st.setInt(7,info.getLinks_size());
 					Integer nb_inlinks = 0;
-					String inLinksSemantic = "";
+					Map<String, Integer> inLinksSemantic = new HashMap<String, Integer>();
 					Set<LinkInfo> inlinksURL = inlinks_cache.get(url);
 					if ( inlinksURL != null){
 						nb_inlinks = inlinksURL.size();
 						inLinksSemantic = getIncomingLinkSemantic(inlinksURL);
 					}
 					st.setInt(8,nb_inlinks);
-					st.setString(9,inLinksSemantic);
-					st.setInt(10,info.getNb_breadcrumbs());
-					st.setInt(11,info.getNb_aggregated_rating());
-					st.setInt(12,info.getNb_ratings());
-					st.setInt(13,info.getNb_prices());
-					st.setInt(14,info.getNb_availabilities());
-					st.setInt(15,info.getNb_reviews());
-					st.setInt(16,info.getNb_reviews_count());
-					st.setInt(17,info.getNb_images());
-					st.setInt(18,info.getNb_search_in_url());
-					st.setInt(19,info.getNb_add_in_text());
-					st.setInt(20,info.getNb_filter_in_text());
-					st.setInt(21,info.getNb_search_in_text());
-					st.setInt(22,info.getNb_guide_achat_in_text());
-					st.setInt(23,info.getNb_product_info_in_text());
-					st.setInt(24,info.getNb_livraison_in_text());
-					st.setInt(25,info.getNb_garanties_in_text());
-					st.setInt(26,info.getNb_produits_similaires_in_text());
-					st.setInt(27,info.getNb_total_images());
-					st.setDouble(28, info.getWidth_average());
-					st.setDouble(29, info.getHeight_average());	
-					st.setString(30,info.getPage_type());
-					st.setString(31,info.getSemantics_hit());
-					st.setString(32, info.getTitle_semantic());
-					st.setString(33,name);
+					st.setString(9,inLinksSemantic.keySet().toString());
+					st.setString(10,inLinksSemantic.toString());
+					st.setInt(11,info.getNb_breadcrumbs());
+					st.setInt(12,info.getNb_aggregated_rating());
+					st.setInt(13,info.getNb_ratings());
+					st.setInt(14,info.getNb_prices());
+					st.setInt(15,info.getNb_availabilities());
+					st.setInt(16,info.getNb_reviews());
+					st.setInt(17,info.getNb_reviews_count());
+					st.setInt(18,info.getNb_images());
+					st.setInt(19,info.getNb_search_in_url());
+					st.setInt(20,info.getNb_add_in_text());
+					st.setInt(21,info.getNb_filter_in_text());
+					st.setInt(22,info.getNb_search_in_text());
+					st.setInt(23,info.getNb_guide_achat_in_text());
+					st.setInt(24,info.getNb_product_info_in_text());
+					st.setInt(25,info.getNb_livraison_in_text());
+					st.setInt(26,info.getNb_garanties_in_text());
+					st.setInt(27,info.getNb_produits_similaires_in_text());
+					st.setInt(28,info.getNb_total_images());
+					st.setDouble(29, info.getWidth_average());
+					st.setDouble(30, info.getHeight_average());	
+					st.setString(31,info.getPage_type());
+					st.setString(32,info.getSemantics_hit());
+					st.setString(33, info.getTitle_semantic());
+					st.setString(34,name);
 					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-					st.setDate(34,sqlDate);
-					st.setString(35,url);
+					st.setDate(35,sqlDate);
+					st.setString(36,url);
 					int affected_row = st.executeUpdate();
 					// if the row has not been updated, we have to insert it !
 					if(affected_row == 0){
 						PreparedStatement insert_st = con.prepareStatement(insert_statement);
-						//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, INLINKS_SEMANTIC, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, NB_SEARCH_IN_URL, NB_ADD_IN_TEXT, NB_FILTER_IN_TEXT, NB_SEARCH_IN_TEXT, NB_GUIDE_ACHAT_IN_TEXT, NB_PRODUCT_INFO_IN_TEXT, NB_LIVRAISON_IN_TEXT, NB_GARANTIES_IN_TEXT, NB_PRODUITS_SIMILAIRES_IN_TEXT, NB_IMAGES_TEXT, WIDTH_AVERAGE, HEIGHT_AVERAGE, PAGE_TYPE, SEMANTIC_HITS, SEMANTIC_TITLE,  CONCURRENT_NAME, LAST_UPDATE)"
-						//  1        2        3    4           5                6        7           8              9             10               11                  12                  13              14             15            16             17             18            19                 20              21               22                      23                      24                       25                    26                       27                       28              29            30            31           32             33                34             35
+						//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, INLINKS_SEMANTIC, INLINKS_SEMANTIC_COUNT, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, NB_SEARCH_IN_URL, NB_ADD_IN_TEXT, NB_FILTER_IN_TEXT, NB_SEARCH_IN_TEXT, NB_GUIDE_ACHAT_IN_TEXT, NB_PRODUCT_INFO_IN_TEXT, NB_LIVRAISON_IN_TEXT, NB_GARANTIES_IN_TEXT, NB_PRODUITS_SIMILAIRES_IN_TEXT, NB_IMAGES_TEXT, WIDTH_AVERAGE, HEIGHT_AVERAGE, PAGE_TYPE, SEMANTIC_HITS, SEMANTIC_TITLE,  CONCURRENT_NAME, LAST_UPDATE)"
+						//  1        2        3    4           5                6        7           8              9             10                     11                  12                  13                  14             15            16             17             18            19              20              21               22                23                      24                       25                    26                    27                        28                        29              30            31           32             33              34             35             36
 						insert_st.setString(1,url); 
 						insert_st.setString(2,info.getText());
 						insert_st.setString(3,info.getTitle());
@@ -326,35 +329,37 @@ public class SemanticMultiSeedController {
 						insert_st.setInt(7,info.getDepth());
 						insert_st.setInt(8,info.getLinks_size());
 						if ( inlinksURL != null){
-							nb_inlinks = inlinks_cache.get(url).size();
+							nb_inlinks = inlinksURL.size();
+							inLinksSemantic = getIncomingLinkSemantic(inlinksURL);
 						}
 						insert_st.setInt(9,nb_inlinks);
-						insert_st.setString(10,inLinksSemantic);						
-						insert_st.setInt(11,info.getNb_breadcrumbs());
-						insert_st.setInt(12,info.getNb_aggregated_rating());
-						insert_st.setInt(13,info.getNb_ratings());
-						insert_st.setInt(14,info.getNb_prices());
-						insert_st.setInt(15,info.getNb_availabilities());
-						insert_st.setInt(16,info.getNb_reviews());
-						insert_st.setInt(17,info.getNb_reviews_count());
-						insert_st.setInt(18,info.getNb_images());
-						insert_st.setInt(19,info.getNb_search_in_url());
-						insert_st.setInt(20,info.getNb_add_in_text());
-						insert_st.setInt(21,info.getNb_filter_in_text());
-						insert_st.setInt(22,info.getNb_search_in_text());
-						insert_st.setInt(23,info.getNb_guide_achat_in_text());
-						insert_st.setInt(24,info.getNb_product_info_in_text());
-						insert_st.setInt(25,info.getNb_livraison_in_text());
-						insert_st.setInt(26,info.getNb_garanties_in_text());
-						insert_st.setInt(27,info.getNb_produits_similaires_in_text());
-						insert_st.setInt(28,info.getNb_total_images());
-						insert_st.setDouble(29, info.getWidth_average());
-						insert_st.setDouble(30, info.getHeight_average());
-						insert_st.setString(31,info.getPage_type());
-						insert_st.setString(32,info.getSemantics_hit());
-						insert_st.setString(33,info.getTitle_semantic());
-						insert_st.setString(34,name);
-						insert_st.setDate(35,sqlDate);
+						insert_st.setString(10,inLinksSemantic.keySet().toString());	
+						insert_st.setString(11,inLinksSemantic.toString());	
+						insert_st.setInt(12,info.getNb_breadcrumbs());
+						insert_st.setInt(13,info.getNb_aggregated_rating());
+						insert_st.setInt(14,info.getNb_ratings());
+						insert_st.setInt(15,info.getNb_prices());
+						insert_st.setInt(16,info.getNb_availabilities());
+						insert_st.setInt(17,info.getNb_reviews());
+						insert_st.setInt(18,info.getNb_reviews_count());
+						insert_st.setInt(19,info.getNb_images());
+						insert_st.setInt(20,info.getNb_search_in_url());
+						insert_st.setInt(21,info.getNb_add_in_text());
+						insert_st.setInt(22,info.getNb_filter_in_text());
+						insert_st.setInt(23,info.getNb_search_in_text());
+						insert_st.setInt(24,info.getNb_guide_achat_in_text());
+						insert_st.setInt(25,info.getNb_product_info_in_text());
+						insert_st.setInt(26,info.getNb_livraison_in_text());
+						insert_st.setInt(27,info.getNb_garanties_in_text());
+						insert_st.setInt(28,info.getNb_produits_similaires_in_text());
+						insert_st.setInt(29,info.getNb_total_images());
+						insert_st.setDouble(30, info.getWidth_average());
+						insert_st.setDouble(31, info.getHeight_average());
+						insert_st.setString(32,info.getPage_type());
+						insert_st.setString(33,info.getSemantics_hit());
+						insert_st.setString(34,info.getTitle_semantic());
+						insert_st.setString(35,name);
+						insert_st.setDate(36,sqlDate);
 						insert_st.executeUpdate();
 					}
 				}while (it.hasNext());	
@@ -388,8 +393,8 @@ public class SemanticMultiSeedController {
 					Map.Entry<String, MultiSeedSemanticArboInfo> pairs = (Map.Entry<String, MultiSeedSemanticArboInfo>)it.next();
 					String url=pairs.getKey();
 					MultiSeedSemanticArboInfo info = pairs.getValue();
-					//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, INLINKS_SEMANTIC,  NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, NB_SEARCH_IN_URL, NB_ADD_IN_TEXT, NB_FILTER_IN_TEXT, NB_SEARCH_IN_TEXT, NB_GUIDE_ACHAT_IN_TEXT, NB_PRODUCT_INFO_IN_TEXT, NB_LIVRAISON_IN_TEXT, NB_GARANTIES_IN_TEXT, NB_PRODUITS_SIMILAIRES_IN_TEXT, NB_IMAGES_TEXT, WIDTH_AVERAGE, HEIGHT_AVERAGE, PAGE_TYPE, SEMANTIC_HITS, SEMANTIC_TITLE, CONCURRENT_NAME, LAST_UPDATE)"
-					//  1        2        3    4           5                6        7           8              9             10               11                      12              13              14             15              16             17            18               19            20                21                  22                      23                 24                       25                     26                       27                         28            29            30             31           32              33            34               35
+					//(URL, WHOLE_TEXT, TITLE, H1, SHORT_DESCRIPTION, STATUS_CODE, DEPTH, OUTLINKS_SIZE, INLINKS_SIZE, INLINKS_SEMANTIC, INLINKS_SEMANTIC_COUNT, NB_BREADCRUMBS, NB_AGGREGATED_RATINGS, NB_RATINGS_VALUES, NB_PRICES, NB_AVAILABILITIES, NB_REVIEWS, NB_REVIEWS_COUNT, NB_IMAGES, NB_SEARCH_IN_URL, NB_ADD_IN_TEXT, NB_FILTER_IN_TEXT, NB_SEARCH_IN_TEXT, NB_GUIDE_ACHAT_IN_TEXT, NB_PRODUCT_INFO_IN_TEXT, NB_LIVRAISON_IN_TEXT, NB_GARANTIES_IN_TEXT, NB_PRODUITS_SIMILAIRES_IN_TEXT, NB_IMAGES_TEXT, WIDTH_AVERAGE, HEIGHT_AVERAGE, PAGE_TYPE, SEMANTIC_HITS, SEMANTIC_TITLE, CONCURRENT_NAME, LAST_UPDATE)"
+					//  1        2        3    4           5                6        7           8              9             10                  11                     12              13                     14             15              16             17            18             19            20                21              22                  23                 24                       25                     26                       27                         28                       29            30             31           32              33            34               35            36
 					st.setString(1,url); 
 					st.setString(2,info.getText());
 					st.setString(3,info.getTitle());
@@ -399,40 +404,41 @@ public class SemanticMultiSeedController {
 					st.setInt(7,info.getDepth());
 					st.setInt(8,info.getLinks_size());
 					Integer nb_inlinks = 0;
-					String inLinksSemantic = "";
+					Map<String, Integer> inLinksSemantic = new HashMap<String, Integer>();
 					Set<LinkInfo> inlinksURL = inlinks_cache.get(url);
 					if ( inlinksURL != null){
 						nb_inlinks = inlinksURL.size();
 						inLinksSemantic = getIncomingLinkSemantic(inlinksURL);
 					}
 					st.setInt(9,nb_inlinks);
-					st.setString(10,inLinksSemantic);
-					st.setInt(11,info.getNb_breadcrumbs());
-					st.setInt(12,info.getNb_aggregated_rating());
-					st.setInt(13,info.getNb_ratings());
-					st.setInt(14,info.getNb_prices());
-					st.setInt(15,info.getNb_availabilities());
-					st.setInt(16,info.getNb_reviews());
-					st.setInt(17,info.getNb_reviews_count());
-					st.setInt(18,info.getNb_images());
-					st.setInt(19,info.getNb_search_in_url());
-					st.setInt(20,info.getNb_add_in_text());
-					st.setInt(21,info.getNb_filter_in_text());
-					st.setInt(22,info.getNb_search_in_text());
-					st.setInt(23,info.getNb_guide_achat_in_text());
-					st.setInt(24,info.getNb_product_info_in_text());
-					st.setInt(25,info.getNb_livraison_in_text());
-					st.setInt(26,info.getNb_garanties_in_text());
-					st.setInt(27,info.getNb_produits_similaires_in_text());
-					st.setInt(28,info.getNb_total_images());
-					st.setDouble(29, info.getWidth_average());
-					st.setDouble(30, info.getHeight_average());
-					st.setString(31,info.getPage_type());
-					st.setString(32,info.getSemantics_hit());
-					st.setString(33,info.getTitle_semantic());
-					st.setString(34,name);
+					st.setString(10,inLinksSemantic.keySet().toString());
+					st.setString(11,inLinksSemantic.toString());
+					st.setInt(12,info.getNb_breadcrumbs());
+					st.setInt(13,info.getNb_aggregated_rating());
+					st.setInt(14,info.getNb_ratings());
+					st.setInt(15,info.getNb_prices());
+					st.setInt(16,info.getNb_availabilities());
+					st.setInt(17,info.getNb_reviews());
+					st.setInt(18,info.getNb_reviews_count());
+					st.setInt(19,info.getNb_images());
+					st.setInt(20,info.getNb_search_in_url());
+					st.setInt(21,info.getNb_add_in_text());
+					st.setInt(22,info.getNb_filter_in_text());
+					st.setInt(23,info.getNb_search_in_text());
+					st.setInt(24,info.getNb_guide_achat_in_text());
+					st.setInt(25,info.getNb_product_info_in_text());
+					st.setInt(26,info.getNb_livraison_in_text());
+					st.setInt(27,info.getNb_garanties_in_text());
+					st.setInt(28,info.getNb_produits_similaires_in_text());
+					st.setInt(29,info.getNb_total_images());
+					st.setDouble(30, info.getWidth_average());
+					st.setDouble(31, info.getHeight_average());
+					st.setString(32,info.getPage_type());
+					st.setString(33,info.getSemantics_hit());
+					st.setString(34,info.getTitle_semantic());
+					st.setString(35,name);
 					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-					st.setDate(35,sqlDate);
+					st.setDate(36,sqlDate);
 					//					st.executeUpdate();
 					st.addBatch();
 				}while (it.hasNext());	
@@ -478,13 +484,19 @@ public class SemanticMultiSeedController {
 		con = DriverManager.getConnection(url, user, passwd);
 	}
 
-	public static String getIncomingLinkSemantic(Set<LinkInfo> infos){
-		StringBuilder incomingLinksSemantic = new StringBuilder();
+	public static Map<String, Integer> getIncomingLinkSemantic(Set<LinkInfo> infos){
+		List<String> anchor_list = new ArrayList<String>();
 		for (LinkInfo info : infos){
 			String linkAnchor = info.getAnchor();
-			incomingLinksSemantic.append(linkAnchor);
-			incomingLinksSemantic.append(" ");
+			if (linkAnchor != null){
+				anchor_list.add(linkAnchor);
+			}
 		}
-		return incomingLinksSemantic.toString();
+		Map<String, Integer> counting_map = new HashMap<String, Integer>();
+		Set<String> unique = new HashSet<String>(anchor_list);
+		for (String key : unique) {
+			counting_map.put(key, Collections.frequency(anchor_list, key));
+		}
+		return counting_map;
 	}
 }
