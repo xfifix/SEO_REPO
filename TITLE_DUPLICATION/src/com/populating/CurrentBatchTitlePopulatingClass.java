@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 import com.urlutilities.URL_Utilities;
 
 public class CurrentBatchTitlePopulatingClass {
-	private static String csvFile = "/home/sduprey/My_Data/My_GWT_Extracts/08012015.csv";
+	private static String csvFile = "/home/sduprey/My_Data/My_GWT_Extracts/15012015.csv";
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/title_duplication.properties";
 	private static int counter = 0;
 	private static int batch_size = 10000;
@@ -95,7 +95,7 @@ public class CurrentBatchTitlePopulatingClass {
 						String current_url="";
 						// we have at least two couples
 						int nb_urls = splitted_line.length;
-						if (nb_urls>=2){
+						if (nb_urls>=1){
 							current_url = splitted_line[0];
 							magasin = URL_Utilities.checkMagasin(current_url);
 							rayon = URL_Utilities.checkRayon(current_url);

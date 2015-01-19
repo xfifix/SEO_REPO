@@ -85,8 +85,8 @@ public class SemanticArboCrawler extends WebCrawler {
 			// size of the in memory cache per thread (200 default value)	
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
 			String title = htmlParseData.getTitle();
-	        info.setTitle(title);
-	
+			info.setTitle(title);
+
 			Map<String, Integer> title_tfMap = CorpusCache.computePageTFVector(title);
 			String title_semantic = CorpusCache.formatTFMap(title_tfMap);
 			info.setTitle_semantic(title_semantic);
@@ -96,7 +96,7 @@ public class SemanticArboCrawler extends WebCrawler {
 			myCrawlDataManager.incTotalLinks(links.size());
 			myCrawlDataManager.incTotalTextSize(htmlParseData.getText().length());	
 
-			Set<String> filtered_links = filter_out_links(links);
+			Set<LinkInfo> filtered_links = filter_out_links(links);
 			info.setOutgoingLinks(filtered_links);
 			info.setLinks_size(filtered_links.size());
 			// parsing the document to get the predictor of our model			
@@ -193,12 +193,15 @@ public class SemanticArboCrawler extends WebCrawler {
 		myCrawlDataManager.getCrawledContent().put(url,info);
 	}
 
-	public Set<String> filter_out_links(List<WebURL> links){
-		Set<String> outputSet = new HashSet<String>();
+	public Set<LinkInfo> filter_out_links(List<WebURL> links){
+		Set<LinkInfo> outputSet = new HashSet<LinkInfo>();
 		for (WebURL url_out : links){
 			if ((shouldVisit(url_out)) && (getMyController().getRobotstxtServer().allows(url_out))){
+				LinkInfo info = new LinkInfo();
+				info.setAnchor(url_out.getAnchor());
 				String final_link = URL_Utilities.drop_parameters(url_out.getURL());
-				outputSet.add(final_link);
+				info.setUrl(final_link);
+				outputSet.add(info);
 			}
 		}
 		return outputSet;

@@ -2,6 +2,8 @@ package crawl4j.urlutilities;
 
 import java.util.Set;
 
+import crawl4j.arbo.semantic.LinkInfo;
+
 public class MultiSeedSemanticArboInfo {
 	// text built predictors
 	private int nb_add_in_text;
@@ -34,7 +36,7 @@ public class MultiSeedSemanticArboInfo {
 	private int nb_prices=0;
 	private int nb_availabilities=0;
 	private int nb_reviews=0;
-    private Set<String> outgoingLinks;
+    private Set<LinkInfo> outgoingLinks;
     private String semantics_hit;
     private String title_semantic;
     
@@ -161,10 +163,10 @@ public class MultiSeedSemanticArboInfo {
 	public void setPage_type(String page_type) {
 		this.page_type = page_type;
 	}
-	public Set<String> getOutgoingLinks() {
+	public Set<LinkInfo> getOutgoingLinks() {
 		return outgoingLinks;
 	}
-	public void setOutgoingLinks(Set<String> outgoingLinks) {
+	public void setOutgoingLinks(Set<LinkInfo> outgoingLinks) {
 		this.outgoingLinks = outgoingLinks;
 	}
 	public int getNb_add_in_text() {
