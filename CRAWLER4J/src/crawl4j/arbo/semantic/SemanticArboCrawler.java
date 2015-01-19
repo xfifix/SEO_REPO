@@ -122,12 +122,12 @@ public class SemanticArboCrawler extends WebCrawler {
 			// end of rich snippet predictor parsing
 			String text_to_parse = doc.text();
 			// beginning of url built parameters
-			int nb_search_in_url = StringUtils.countMatches(text_to_parse, "search")+StringUtils.countMatches(text_to_parse, "recherche");
+			int nb_search_in_url = StringUtils.countMatches(text_to_parse, "search")+StringUtils.countMatches(text_to_parse, "recherche")+StringUtils.countMatches(text_to_parse, "Recherche")+StringUtils.countMatches(text_to_parse, "Search");
 			info.setNb_search_in_url(nb_search_in_url);
 			// beginning of text built parameters
 			int nb_add  = StringUtils.countMatches(text_to_parse, "ajout")+StringUtils.countMatches(text_to_parse, "ajouter")+StringUtils.countMatches(text_to_parse, "Ajout")+StringUtils.countMatches(text_to_parse, "Ajouter");
 			info.setNb_add_in_text(nb_add);
-			int nb_filter  = StringUtils.countMatches(text_to_parse, "filtre")+StringUtils.countMatches(text_to_parse, "facette");
+			int nb_filter  = StringUtils.countMatches(text_to_parse, "filtre")+StringUtils.countMatches(text_to_parse, "facette")+StringUtils.countMatches(text_to_parse, "Filtre")+StringUtils.countMatches(text_to_parse, "Facette")+StringUtils.countMatches(text_to_parse, "filtré")+StringUtils.countMatches(text_to_parse, "Filtré");
 			info.setNb_filter_in_text(nb_filter);
 			int nb_search  = StringUtils.countMatches(text_to_parse, "Ma recherche")+StringUtils.countMatches(text_to_parse, "Votre recherche")+StringUtils.countMatches(text_to_parse, "résultats pour")+StringUtils.countMatches(text_to_parse, "résultats associés");
 			info.setNb_search_in_text(nb_search);

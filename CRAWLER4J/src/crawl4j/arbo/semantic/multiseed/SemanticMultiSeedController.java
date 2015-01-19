@@ -17,6 +17,8 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+
 import crawl4j.arbo.semantic.LinkInfo;
 import crawl4j.arbo.semantic.SemanticArboCrawlDataCache;
 import crawl4j.arbo.semantic.SemanticArboCrawler;
@@ -54,7 +56,7 @@ public class SemanticMultiSeedController {
 		String user_agent_name = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
 		System.setProperty("http.agent",user_agent_name);
 		System.out.println("Starting the crawl configuration for Crawler1, Crawler2, Crawler3, Crawler4");
-		int maxDepthOfCrawling = 4; // common for all
+		int maxDepthOfCrawling = 6; // common for all
 		// Managing data for every crawlers for every site
 		// instantiating the seeds for our multiple crawlers
 		String nameCrawler1 = "delamaison";
@@ -485,12 +487,7 @@ public class SemanticMultiSeedController {
 	}
 
 	public static String formatIncomingLinkSemantic(Set<String> entry_set){
-		StringBuilder builder = new StringBuilder();
-		for (String entryString : entry_set){
-			builder.append(entryString);
-			builder.append("@");			
-		}
-		return builder.toString();
+		return StringUtils.join(entry_set,"@");
 	}
 
 	public static Map<String, Integer> getIncomingLinkSemanticCount(Set<LinkInfo> infos){

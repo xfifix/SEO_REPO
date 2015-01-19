@@ -17,6 +17,8 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+
 import crawl4j.urlutilities.MultiSeedSemanticArboInfo;
 import crawl4j.vsm.CorpusCache;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
@@ -413,12 +415,7 @@ public class SemanticArboController {
 	}
 
 	public static String formatIncomingLinkSemantic(Set<String> entry_set){
-		StringBuilder builder = new StringBuilder();
-		for (String entryString : entry_set){
-			builder.append(entryString);
-			builder.append("@");			
-		}
-		return builder.toString();
+		return StringUtils.join(entry_set,"@");
 	}
 
 	public static Map<String, Integer> getIncomingLinkSemanticCount(Set<LinkInfo> infos){
