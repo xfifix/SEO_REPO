@@ -22,8 +22,8 @@ import org.jsoup.select.Elements;
 public class MultipleIPsCronJob {
 	//	private static int min_number_of_wait_times = 40;
 	//	private static int max_number_of_wait_times = 60;
-	private static int min_number_of_wait_times = 15;
-	private static int max_number_of_wait_times = 25;
+	private static int min_number_of_wait_times = 5;
+	private static int max_number_of_wait_times = 10;
 	private static List<String> user_agents = new ArrayList<String>();
 	private static String user_agent_path = "/home/sduprey/My_Data/My_User_Agents/user-agent.txt";
 	public static void main(String[] args){

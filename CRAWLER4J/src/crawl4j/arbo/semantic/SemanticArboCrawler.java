@@ -50,7 +50,13 @@ public class SemanticArboCrawler extends WebCrawler {
 	// we don't visit media URLs and we keep inside Cdiscount
 	public boolean shouldVisit(WebURL url) {
 		String href = url.getURL().toLowerCase();
-		return (!filters.matcher(href).matches() && SemanticArboController.isAllowedSiteforMultipleCrawl(href));
+		boolean toReturn = false;
+		if (SemanticArboController.magasin_limited){
+			toReturn = (!filters.matcher(href).matches() && href.startsWith(SemanticArboController.magasin_site_stub));
+		} else {
+			toReturn = (!filters.matcher(href).matches() && SemanticArboController.isAllowedSiteforMultipleCrawl(href));
+		}
+		return toReturn;
 	}
 
 	@Override

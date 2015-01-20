@@ -20,6 +20,7 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 
 import crawl4j.arbo.semantic.LinkInfo;
+import crawl4j.arbo.semantic.SemanticArboController;
 import crawl4j.arbo.semantic.SemanticArboCrawlDataCache;
 import crawl4j.arbo.semantic.SemanticArboCrawler;
 import crawl4j.urlutilities.MultiSeedSemanticArboInfo;
@@ -51,6 +52,7 @@ public class SemanticMultiSeedController {
 			+ "PAGE_TYPE=?,SEMANTIC_HITS=?,SEMANTIC_TITLE=?,CONCURRENT_NAME=?,LAST_UPDATE=? WHERE URL=?";
 
 	public static void main(String[] args) throws Exception {
+		System.out.println("Beware if the Cdiscount magasin limiting check is on : "+SemanticArboController.magasin_limited);
 		instantiate_connection();	
 		// we here hide our identity
 		String user_agent_name = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
