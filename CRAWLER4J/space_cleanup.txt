@@ -6,3 +6,9 @@ du -sh *
 sudo -i -u postgres
 # vacuum clean a database
 vacuumdb TITLESDB
+
+
+ ## delete data from a table
+ sudo -i -u postgres
+ psql CRAWL4J
+ delete from CRAWL_RESULTS
