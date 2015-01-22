@@ -12,7 +12,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.cookie.BasicClientCookie;
+import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
@@ -22,11 +25,19 @@ import com.parsing.utility.ParsingOutput;
 import com.parsing.utility.XPathUtility;
 
 public class CookiesParsingTest {
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
-		String url = "http://www.recette-cdiscount.com/juniors/figurines/dc-comics-new-52-terre-2-superman-action-figure/f-1206740-dcd0761941320083.html";
+		// String url = "http://www.recette-cdiscount.com/juniors/figurines/toute-l-offre-figurines/l-1206740.html#_his_";
+		//String url = "http://www.recette-cdiscount.com/juniors/figurines/dc-comics-new-52-terre-2-superman-action-figure/f-1206740-dcd0761941320083.html";
+		String url = "http://www.recette-cdiscount.com/jardin-animalerie/v-163-1.html";
 		System.out.println(Thread.currentThread().getName()+" fetching URL : "+url + " with cookie value to tap Solr");
 		HttpGet getSolr = new HttpGet(url);
-		DefaultHttpClient clientSolr = new DefaultHttpClient();		
+		HttpParams my_httpParams_solr = new BasicHttpParams();
+
+		HttpConnectionParams.setConnectionTimeout(my_httpParams_solr, 300000000);
+		DefaultHttpClient clientSolr = new DefaultHttpClient(my_httpParams_solr);
+
+
 		HttpContext HTTP_CONTEXT_SOLR = new BasicHttpContext();
 		//String useragent = "CdiscountBot-crawler";
 		String useragent = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
@@ -58,7 +69,12 @@ public class CookiesParsingTest {
 		HTTP_CONTEXT_EXALEAD.setAttribute(CoreProtocolPNames.USER_AGENT, useragent);
 		//getSolr.setHeader("Referer", "http://www.google.com");
 		getExalead.setHeader("User-Agent", useragent);
-		DefaultHttpClient clientExalead = new DefaultHttpClient();
+		HttpParams my_httpParams_exalead = new BasicHttpParams();
+
+		HttpConnectionParams.setConnectionTimeout(my_httpParams_exalead, 300000000);
+		HttpConnectionParams.setSoTimeout(my_httpParams_exalead, 1500000000);
+
+		DefaultHttpClient clientExalead = new DefaultHttpClient(my_httpParams_exalead);
 		// set the cookies
 		CookieStore cookieStoreExalead = new BasicCookieStore();
 		BasicClientCookie cookieExalead = new BasicClientCookie("_$hidden", "666.0");
