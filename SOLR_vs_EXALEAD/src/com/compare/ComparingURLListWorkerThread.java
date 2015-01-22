@@ -1,15 +1,11 @@
 package com.compare;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -22,11 +18,8 @@ import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.xml.sax.SAXException;
 
+import com.parsing.utility.ParsingOutput;
 import com.parsing.utility.XPathUtility;
 
 public class ComparingURLListWorkerThread implements Runnable {
@@ -312,31 +305,6 @@ public class ComparingURLListWorkerThread implements Runnable {
 		}
 	}
 
-	private ParsingOutput parse_page_code_source(String page_source_code) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
-		ParsingOutput output = new ParsingOutput();
-		org.jsoup.nodes.Document doc = Jsoup.parse(page_source_code);
-		Elements h1s = doc.select("h1");
-		String conc_h1="";
-		for (Element h1 : h1s) {
-			conc_h1=conc_h1+h1.text();
-		}	
-		output.setH1(conc_h1);
-		Elements titles = doc.select("title");
-		String conc_title="";
-		for (Element title : titles) {
-			conc_title=conc_title+title.text();
-		}				
-		output.setTitle(conc_title);
-		String[] xpathResults = new String[5];
-		int local_counter = 0;
-		for (String xpath : xpathExpressions){
-			String content = XPathUtility.parseContent(page_source_code, xpath);
-			xpathResults[local_counter]=content;
-			local_counter++;
-		}
-		output.setXpathResults(xpathResults);
-		return output;
-	}
 
 
 	private List<URLComparisonInfo> processComparison(List<ULRId> line_infos) {
@@ -375,7 +343,7 @@ public class ComparingURLListWorkerThread implements Runnable {
 				String page_source_codeSolr = EntityUtils.toString(entitySolr);
 				EntityUtils.consume(entitySolr);
 				clientSolr.close();
-				ParsingOutput solrOutput = parse_page_code_source(page_source_codeSolr);
+				ParsingOutput solrOutput = XPathUtility.parse_page_code_source(page_source_codeSolr,xpathExpressions);
 				my_info.setSolrOutput(solrOutput);
 				my_info.setStatus(responseSolr.getStatusLine().getStatusCode());
 				System.out.println(Thread.currentThread().getName()+" fetching URL : "+url + " with cookie value to tap Exalead");
@@ -401,7 +369,7 @@ public class ComparingURLListWorkerThread implements Runnable {
 				String page_source_codeExalead = EntityUtils.toString(entityExalead);
 				EntityUtils.consume(entityExalead);
 				clientExalead.close();
-				ParsingOutput exaleadOutput = parse_page_code_source(page_source_codeExalead);
+				ParsingOutput exaleadOutput = XPathUtility.parse_page_code_source(page_source_codeExalead,xpathExpressions);
 				my_info.setExaleadOutput(exaleadOutput);
 			} catch (Exception e){
 				System.out.println("Trouble fetching URL : "+url);
@@ -478,30 +446,6 @@ public class ComparingURLListWorkerThread implements Runnable {
 		}
 		public void setId(int id) {
 			this.id = id;
-		}
-	}
-
-	class ParsingOutput{
-		private String[] xpathResults;
-		private String h1="";
-		private String title="";
-		public String getTitle() {
-			return title;
-		}
-		public void setTitle(String title) {
-			this.title = title;
-		}
-		public String getH1() {
-			return h1;
-		}
-		public void setH1(String h1) {
-			this.h1 = h1;
-		}
-		public String[] getXpathResults() {
-			return xpathResults;
-		}
-		public void setXpathResults(String[] xpathResults) {
-			this.xpathResults = xpathResults;
 		}
 	}
 
