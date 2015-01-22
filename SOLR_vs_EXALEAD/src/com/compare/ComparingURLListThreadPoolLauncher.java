@@ -16,13 +16,16 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ComparingURLListThreadPool {
+public class ComparingURLListThreadPoolLauncher {
 
+	private static String select_url_to_fetch = "SELECT ID FROM SOLR_VS_EXALEAD WHERE TO_FETCH = TRUE";
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/url_list_infos.properties";
 	private static String xpathconf_path = "/home/sduprey/My_Data/My_Xpath_Conf/xpath.conf";
 	private static String[] xpath_expression = new String[5];
-	private static int fixed_pool_size = 200;
-	private static int size_bucket = 800;
+	//private static int fixed_pool_size = 200;
+	//private static int size_bucket = 800;
+	private static int fixed_pool_size = 10;
+    private static int size_bucket = 10;	
 	private static List<Integer> tofetch_list = new ArrayList<Integer>();
 
 	public static void main(String[] args) {
@@ -83,7 +86,7 @@ public class ComparingURLListThreadPool {
 		String user = props.getProperty("db.user");
 		String passwd = props.getProperty("db.passwd");
 
-		System.out.println("You are connected to the postgresql HTTPINFOS_LIST database as "+user);
+		System.out.println("You are connected to the postgresql SOLR_VS_EXALEAD database as "+user);
 		// Instantiating the pool thread
 		System.out.println("You'll be using "+fixed_pool_size+" threads ");
 		ExecutorService executor = Executors.newFixedThreadPool(fixed_pool_size);
@@ -96,7 +99,7 @@ public class ComparingURLListThreadPool {
 		try {  
 			con = DriverManager.getConnection(url, user, passwd);
 			// getting the number of URLs to fetch
-			pst = con.prepareStatement("SELECT ID FROM HTTPINFOS_LIST WHERE TO_FETCH = TRUE");
+			pst = con.prepareStatement(select_url_to_fetch);
 			rs = pst.executeQuery();
 			while (rs.next()) {
 				tofetch_list.add(rs.getInt(1));
@@ -133,7 +136,7 @@ public class ComparingURLListThreadPool {
 			}
 			tofetch_list.clear();
 		} catch (SQLException ex) {
-			Logger lgr = Logger.getLogger(ComparingURLListThreadPool.class.getName());
+			Logger lgr = Logger.getLogger(ComparingURLListThreadPoolLauncher.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		} finally {
 			try {
@@ -148,7 +151,7 @@ public class ComparingURLListThreadPool {
 				}
 
 			} catch (SQLException ex) {
-				Logger lgr = Logger.getLogger(ComparingURLListThreadPool.class.getName());
+				Logger lgr = Logger.getLogger(ComparingURLListThreadPoolLauncher.class.getName());
 				lgr.log(Level.WARNING, ex.getMessage(), ex);
 			}
 		}
