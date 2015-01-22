@@ -1,11 +1,6 @@
 package com.compare;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,6 +18,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.cookie.BasicClientCookie;
+import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -356,6 +354,10 @@ public class ComparingURLListWorkerThread implements Runnable {
 				System.out.println(Thread.currentThread().getName()+" fetching URL : "+url + " with cookie value to tap Solr");
 				HttpGet getSolr = new HttpGet(url);
 				DefaultHttpClient clientSolr = new DefaultHttpClient();		
+		        HttpContext HTTP_CONTEXT_SOLR = new BasicHttpContext();
+		        HTTP_CONTEXT_SOLR.setAttribute(CoreProtocolPNames.USER_AGENT, "CdiscountBot-crawler");
+		        //getSolr.setHeader("Referer", "http://www.google.com");
+		        getSolr.setHeader("User-Agent", "CdiscountBot-crawler");
 				// set the cookies
 				CookieStore cookieStoreSolr = new BasicCookieStore();
 				BasicClientCookie cookieSolr = new BasicClientCookie("_$hidden", "666.1");
@@ -364,7 +366,7 @@ public class ComparingURLListWorkerThread implements Runnable {
 				cookieStoreSolr.addCookie(cookieSolr);    
 				clientSolr.setCookieStore(cookieStoreSolr);
 				// get the cookies
-				HttpResponse responseSolr = clientSolr.execute(getSolr);
+				HttpResponse responseSolr = clientSolr.execute(getSolr,HTTP_CONTEXT_SOLR);
 
 				System.out.println(responseSolr.getStatusLine());
 				HttpEntity entitySolr = responseSolr.getEntity();
@@ -378,6 +380,10 @@ public class ComparingURLListWorkerThread implements Runnable {
 				my_info.setStatus(responseSolr.getStatusLine().getStatusCode());
 				System.out.println(Thread.currentThread().getName()+" fetching URL : "+url + " with cookie value to tap Exalead");
 				HttpGet getExalead = new HttpGet(url);
+		        HttpContext HTTP_CONTEXT_EXALEAD = new BasicHttpContext();
+		        HTTP_CONTEXT_EXALEAD.setAttribute(CoreProtocolPNames.USER_AGENT, "CdiscountBot-crawler");
+		        //getSolr.setHeader("Referer", "http://www.google.com");
+		        getExalead.setHeader("User-Agent", "CdiscountBot-crawler");
 				DefaultHttpClient clientExalead = new DefaultHttpClient();
 				// set the cookies
 				CookieStore cookieStoreExalead = new BasicCookieStore();
@@ -387,7 +393,7 @@ public class ComparingURLListWorkerThread implements Runnable {
 				cookieStoreExalead.addCookie(cookieExalead);    
 				clientExalead.setCookieStore(cookieStoreExalead);
 				// get the cookies
-				HttpResponse responseExalead = clientExalead.execute(getExalead);
+				HttpResponse responseExalead = clientExalead.execute(getExalead,HTTP_CONTEXT_EXALEAD);
 				System.out.println(responseExalead.getStatusLine());
 				HttpEntity entityExalead = responseExalead.getEntity();
 				// do something useful with the response body
