@@ -93,6 +93,7 @@ public class ComparingURLListWorkerThread implements Runnable {
 	public void runBatch(List<ULRId> line_infos){
 		List<URLComparisonInfo> infos=processComparison(line_infos);
 		updateStatus(infos);
+		//updateStatusStepByStep(infos);
 		System.out.println(Thread.currentThread().getName()+" End");
 	}
 
@@ -107,7 +108,6 @@ public class ComparingURLListWorkerThread implements Runnable {
 
 	// batched update
 	private void updateStatus(List<URLComparisonInfo> infos){
-
 		System.out.println("Adding to batch : " + infos.size() + "ULRs into database");
 		try {
 			//Statement st = con.createStatement();
@@ -116,16 +116,16 @@ public class ComparingURLListWorkerThread implements Runnable {
 			for (int i=0;i<infos.size();i++){
 				URLComparisonInfo local_info = infos.get(i);
 				ParsingOutput solrOutput = local_info.getSolrOutput();
-				
+
 				String H1_SOLR = solrOutput.getH1().replace("'", "");
 				String TITLE_SOLR = solrOutput.getTitle().replace("'", "");
 				String[] XPATHRESULTS_SOLR = solrOutput.getXpathResults();
-				
+
 				ParsingOutput exaleadOutput = local_info.getExaleadOutput();			
 				String H1_EXALEAD = exaleadOutput.getH1().replace("'", "");
 				String TITLE_EXALEAD = exaleadOutput.getTitle().replace("'", "");
 				String[] XPATHRESULTS_EXALEAD = exaleadOutput.getXpathResults();
-				
+
 				st.setInt(1, local_info.getStatus());
 				st.setString(2,H1_SOLR);
 				st.setString(3, TITLE_SOLR);
@@ -162,40 +162,40 @@ public class ComparingURLListWorkerThread implements Runnable {
 				} else {
 					st.setInt(16, 1);
 				}
-			    if (!TITLE_SOLR.equals(TITLE_EXALEAD)){
+				if (!TITLE_SOLR.equals(TITLE_EXALEAD)){
 					st.setInt(17, 0);
 				} else {
 					st.setInt(17, 1);
 				}
 
 				if ((XPATHRESULTS_EXALEAD != null) && (XPATHRESULTS_SOLR != null)){
-				    if (!XPATHRESULTS_SOLR[0].equals(XPATHRESULTS_EXALEAD[0])){
+					if (!XPATHRESULTS_SOLR[0].equals(XPATHRESULTS_EXALEAD[0])){
 						st.setInt(18, 0);
 					} else {
 						st.setInt(18, 1);
 					}
-				    if (!XPATHRESULTS_SOLR[1].equals(XPATHRESULTS_EXALEAD[1])){
+					if (!XPATHRESULTS_SOLR[1].equals(XPATHRESULTS_EXALEAD[1])){
 						st.setInt(19, 0);
 					} else {
 						st.setInt(19, 1);
 					}
-				    if (!XPATHRESULTS_SOLR[2].equals(XPATHRESULTS_EXALEAD[2])){
+					if (!XPATHRESULTS_SOLR[2].equals(XPATHRESULTS_EXALEAD[2])){
 						st.setInt(20, 0);
 					} else {
 						st.setInt(20, 1);
 					}
-				    if (!XPATHRESULTS_SOLR[3].equals(XPATHRESULTS_EXALEAD[3])){
+					if (!XPATHRESULTS_SOLR[3].equals(XPATHRESULTS_EXALEAD[3])){
 						st.setInt(21, 0);
 					} else {
 						st.setInt(21, 1);
 					}
-				    if (!XPATHRESULTS_SOLR[4].equals(XPATHRESULTS_EXALEAD[4])){
+					if (!XPATHRESULTS_SOLR[4].equals(XPATHRESULTS_EXALEAD[4])){
 						st.setInt(22, 0);
 					} else {
 						st.setInt(22, 1);
 					}
 				}
-	
+
 				st.setInt(23, local_info.getId());
 				//UPDATE HTTPINFOS_LIST SET STATUS=?, H1=?, TITLE=?, XPATH1=?, XPATH2=?, XPATH3=?, XPATH4=?, XPATH5=?, TO_FETCH=FALSE WHERE ID=?";
 				//	String batch ="UPDATE HTTPINFOS_LIST SET STATUS="+infos.get(i).getStatus()+", H1='"+H1+"', TITLE='"+TITLE+ "',TO_FETCH=FALSE WHERE ID="+infos.get(i).getId();
@@ -214,22 +214,105 @@ public class ComparingURLListWorkerThread implements Runnable {
 	}
 
 	// update step by step
-	//	private void updateStatusStepByStep(List<URLInfo> infos){
-	//		for (int i=0;i<infos.size();i++){
-	//			String H1= infos.get(i).getH1().replace("'", "");
-	//			String TITLE = infos.get(i).getTitle().replace("'", "");
-	//			String batch ="UPDATE HTTPINFOS_LIST SET STATUS="+infos.get(i).getStatus()+", H1='"+H1+"', TITLE='"+TITLE+ "',TO_FETCH=FALSE WHERE ID="+thread_fetch_ids.get(i);
-	//			try{
-	//				PreparedStatement insert_st = con.prepareStatement(batch);
-	//				insert_st.executeUpdate();
-	//			} catch (SQLException e){
-	//				System.out.println("Trouble inserting : "+batch);
-	//				e.printStackTrace();
-	//			}
-	//
-	//		}      
-	//		System.out.println("Inserting : " + infos.size() + "ULRs into database");
-	//	}
+	private void updateStatusStepByStep(List<URLComparisonInfo> infos){
+		System.out.println("Adding to batch : " + infos.size() + "ULRs into database");
+		try {
+			PreparedStatement st = con.prepareStatement(updateStatement);
+			for (int i=0;i<infos.size();i++){
+				URLComparisonInfo local_info = infos.get(i);
+				ParsingOutput solrOutput = local_info.getSolrOutput();
+
+				String H1_SOLR = solrOutput.getH1().replace("'", "");
+				String TITLE_SOLR = solrOutput.getTitle().replace("'", "");
+				String[] XPATHRESULTS_SOLR = solrOutput.getXpathResults();
+
+				ParsingOutput exaleadOutput = local_info.getExaleadOutput();			
+				String H1_EXALEAD = exaleadOutput.getH1().replace("'", "");
+				String TITLE_EXALEAD = exaleadOutput.getTitle().replace("'", "");
+				String[] XPATHRESULTS_EXALEAD = exaleadOutput.getXpathResults();
+
+				st.setInt(1, local_info.getStatus());
+				st.setString(2,H1_SOLR);
+				st.setString(3, TITLE_SOLR);
+				if (XPATHRESULTS_SOLR != null){
+					st.setString(4, XPATHRESULTS_SOLR[0]);
+					st.setString(5, XPATHRESULTS_SOLR[1]);
+					st.setString(6, XPATHRESULTS_SOLR[2]);
+					st.setString(7, XPATHRESULTS_SOLR[3]);
+					st.setString(8, XPATHRESULTS_SOLR[4]);
+				}else {
+					st.setString(4, "");
+					st.setString(5, "");
+					st.setString(6, "");
+					st.setString(7, "");
+					st.setString(8, "");
+				}
+				st.setString(9,H1_EXALEAD);
+				st.setString(10, TITLE_EXALEAD);
+				if (XPATHRESULTS_EXALEAD != null){
+					st.setString(11, XPATHRESULTS_EXALEAD[0]);
+					st.setString(12, XPATHRESULTS_EXALEAD[1]);
+					st.setString(13, XPATHRESULTS_EXALEAD[2]);
+					st.setString(14, XPATHRESULTS_EXALEAD[3]);
+					st.setString(15, XPATHRESULTS_EXALEAD[4]);
+				}else {
+					st.setString(11, "");
+					st.setString(12, "");
+					st.setString(13, "");
+					st.setString(14, "");
+					st.setString(15, "");
+				}
+				if (!H1_SOLR.equals(H1_EXALEAD)){
+					st.setInt(16, 0);
+				} else {
+					st.setInt(16, 1);
+				}
+				if (!TITLE_SOLR.equals(TITLE_EXALEAD)){
+					st.setInt(17, 0);
+				} else {
+					st.setInt(17, 1);
+				}
+
+				if ((XPATHRESULTS_EXALEAD != null) && (XPATHRESULTS_SOLR != null)){
+					if (!XPATHRESULTS_SOLR[0].equals(XPATHRESULTS_EXALEAD[0])){
+						st.setInt(18, 0);
+					} else {
+						st.setInt(18, 1);
+					}
+					if (!XPATHRESULTS_SOLR[1].equals(XPATHRESULTS_EXALEAD[1])){
+						st.setInt(19, 0);
+					} else {
+						st.setInt(19, 1);
+					}
+					if (!XPATHRESULTS_SOLR[2].equals(XPATHRESULTS_EXALEAD[2])){
+						st.setInt(20, 0);
+					} else {
+						st.setInt(20, 1);
+					}
+					if (!XPATHRESULTS_SOLR[3].equals(XPATHRESULTS_EXALEAD[3])){
+						st.setInt(21, 0);
+					} else {
+						st.setInt(21, 1);
+					}
+					if (!XPATHRESULTS_SOLR[4].equals(XPATHRESULTS_EXALEAD[4])){
+						st.setInt(22, 0);
+					} else {
+						st.setInt(22, 1);
+					}
+				}
+
+				st.setInt(23, local_info.getId());
+				//UPDATE HTTPINFOS_LIST SET STATUS=?, H1=?, TITLE=?, XPATH1=?, XPATH2=?, XPATH3=?, XPATH4=?, XPATH5=?, TO_FETCH=FALSE WHERE ID=?";
+				//	String batch ="UPDATE HTTPINFOS_LIST SET STATUS="+infos.get(i).getStatus()+", H1='"+H1+"', TITLE='"+TITLE+ "',TO_FETCH=FALSE WHERE ID="+infos.get(i).getId();
+				st.executeUpdate();	
+			}      
+			st.close();
+			System.out.println("Having inserted : " + infos.size() + "ULRs into database");
+		} catch (SQLException e){
+			e.printStackTrace();
+			System.out.println("Trouble inserting batch ");
+		}
+	}
 
 	private ParsingOutput parse_page_code_source(String page_source_code) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
 		ParsingOutput output = new ParsingOutput();
@@ -282,7 +365,7 @@ public class ComparingURLListWorkerThread implements Runnable {
 				clientSolr.setCookieStore(cookieStoreSolr);
 				// get the cookies
 				HttpResponse responseSolr = clientSolr.execute(getSolr);
-	
+
 				System.out.println(responseSolr.getStatusLine());
 				HttpEntity entitySolr = responseSolr.getEntity();
 				// do something useful with the response body
@@ -292,6 +375,7 @@ public class ComparingURLListWorkerThread implements Runnable {
 				clientSolr.close();
 				ParsingOutput solrOutput = parse_page_code_source(page_source_codeSolr);
 				my_info.setSolrOutput(solrOutput);
+				my_info.setStatus(responseSolr.getStatusLine().getStatusCode());
 				System.out.println(Thread.currentThread().getName()+" fetching URL : "+url + " with cookie value to tap Exalead");
 				HttpGet getExalead = new HttpGet(url);
 				DefaultHttpClient clientExalead = new DefaultHttpClient();
@@ -309,7 +393,6 @@ public class ComparingURLListWorkerThread implements Runnable {
 				// do something useful with the response body
 				// and ensure it is fully consumed
 				String page_source_codeExalead = EntityUtils.toString(entityExalead);
-				System.out.println(page_source_codeExalead);
 				EntityUtils.consume(entityExalead);
 				clientExalead.close();
 				ParsingOutput exaleadOutput = parse_page_code_source(page_source_codeExalead);
