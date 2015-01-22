@@ -28,9 +28,11 @@ public class CookiesParsingTest {
 		HttpGet getSolr = new HttpGet(url);
 		DefaultHttpClient clientSolr = new DefaultHttpClient();		
 		HttpContext HTTP_CONTEXT_SOLR = new BasicHttpContext();
-		HTTP_CONTEXT_SOLR.setAttribute(CoreProtocolPNames.USER_AGENT, "CdiscountBot-crawler");
+		//String useragent = "CdiscountBot-crawler";
+		String useragent = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
+		HTTP_CONTEXT_SOLR.setAttribute(CoreProtocolPNames.USER_AGENT,useragent);
 		//getSolr.setHeader("Referer", "http://www.google.com");
-		getSolr.setHeader("User-Agent", "CdiscountBot-crawler");
+		getSolr.setHeader("User-Agent", useragent);
 		// set the cookies
 		CookieStore cookieStoreSolr = new BasicCookieStore();
 		BasicClientCookie cookieSolr = new BasicClientCookie("_$hidden", "666.1");
@@ -53,9 +55,9 @@ public class CookiesParsingTest {
 		System.out.println(Thread.currentThread().getName()+" fetching URL : "+url + " with cookie value to tap Exalead");
 		HttpGet getExalead = new HttpGet(url);
 		HttpContext HTTP_CONTEXT_EXALEAD = new BasicHttpContext();
-		HTTP_CONTEXT_EXALEAD.setAttribute(CoreProtocolPNames.USER_AGENT, "CdiscountBot-crawler");
+		HTTP_CONTEXT_EXALEAD.setAttribute(CoreProtocolPNames.USER_AGENT, useragent);
 		//getSolr.setHeader("Referer", "http://www.google.com");
-		getExalead.setHeader("User-Agent", "CdiscountBot-crawler");
+		getExalead.setHeader("User-Agent", useragent);
 		DefaultHttpClient clientExalead = new DefaultHttpClient();
 		// set the cookies
 		CookieStore cookieStoreExalead = new BasicCookieStore();
