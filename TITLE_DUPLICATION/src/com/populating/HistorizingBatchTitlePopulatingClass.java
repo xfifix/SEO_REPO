@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -17,7 +18,26 @@ import java.util.logging.Logger;
 import com.urlutilities.URL_Utilities;
 
 public class HistorizingBatchTitlePopulatingClass {
-	private static String csvFile = "/home/sduprey/My_Data/My_GWT_Extracts/20140825-duplis-titles-GWT.csv";
+	private static String csvFile = "/home/sduprey/My_Data/My_GWT_Extracts/15012015.csv";
+	private static java.sql.Date sqlDate;
+	static {
+		Calendar myCal = Calendar.getInstance();
+		myCal.set(Calendar.YEAR, 2015);
+		myCal.set(Calendar.MONTH, 0);
+		myCal.set(Calendar.DAY_OF_MONTH, 15);
+		Date theDate = myCal.getTime();
+		sqlDate  = new java.sql.Date(theDate.getTime());
+	}
+//	private static String csvFile = "/home/sduprey/My_Data/My_GWT_Extracts/22012015.csv";
+//	private static java.sql.Date sqlDate;
+//	static {
+//		Calendar myCal = Calendar.getInstance();
+//		myCal.set(Calendar.YEAR, 2015);
+//		myCal.set(Calendar.MONTH, 0);
+//		myCal.set(Calendar.DAY_OF_MONTH, 22);
+//		Date theDate = myCal.getTime();
+//		sqlDate  = new java.sql.Date(theDate.getTime());
+//	}
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/title_duplication.properties";
 	private static int counter = 0;
 	private static int batch_size = 10000;
@@ -33,7 +53,7 @@ public class HistorizingBatchTitlePopulatingClass {
 
 		} catch (IOException ex) {
 
-			Logger lgr = Logger.getLogger(HistorizingBatchTitlePopulatingClass.class.getName());
+			Logger lgr = Logger.getLogger(CurrentBatchTitlePopulatingClass.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 
 		} finally {
@@ -43,7 +63,7 @@ public class HistorizingBatchTitlePopulatingClass {
 					in.close();
 				}
 			} catch (IOException ex) {
-				Logger lgr = Logger.getLogger(HistorizingBatchTitlePopulatingClass.class.getName());
+				Logger lgr = Logger.getLogger(CurrentBatchTitlePopulatingClass.class.getName());
 				lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -54,7 +74,7 @@ public class HistorizingBatchTitlePopulatingClass {
 		String passwd = props.getProperty("db.passwd");
 		// the following properties have been identified for our files to parse 
 		// and insert into a database
-
+		
 		// Instantiating the database
 		Connection con = null;
 		PreparedStatement pst = null;
@@ -81,6 +101,7 @@ public class HistorizingBatchTitlePopulatingClass {
 			while ((line = br.readLine()) != null) {
 				// System.out.println(line);
 				// use comma as separator
+
 				if (nb_line >= counter){
 					try{
 						System.out.println("Inserting line number :"+nb_line);
@@ -90,10 +111,11 @@ public class HistorizingBatchTitlePopulatingClass {
 						String[] splitted_line = remaining.split("\\|");
 						String magasin = "";
 						String rayon = "";
-						String produit = "";
+    					String produit = "";
 						String current_url="";
 						// we have at least two couples
-						if (splitted_line.length>=2){
+						int nb_urls = splitted_line.length;
+						if (nb_urls>=1){
 							current_url = splitted_line[0];
 							magasin = URL_Utilities.checkMagasin(current_url);
 							rayon = URL_Utilities.checkRayon(current_url);
@@ -105,10 +127,9 @@ public class HistorizingBatchTitlePopulatingClass {
 							//							System.out.println("Rayon : "+rayon);
 							//							System.out.println("Produit : "+produit);
 							pst.setString(1,title);
-							pst.setInt(2,counter);
+							pst.setInt(2,nb_urls);
 							pst.setString(3,remaining);
-							Date current_date = new Date();
-							java.sql.Date sqlDate = new java.sql.Date(current_date.getTime());
+
 							pst.setDate(4,sqlDate);
 							pst.setString(5,magasin);
 							pst.setString(6,rayon);
@@ -128,13 +149,12 @@ public class HistorizingBatchTitlePopulatingClass {
 					}
 					nb_line++;
 				}
-				System.out.println("Inserting a batch");
-				pst.executeBatch();		 
-				con.commit();
-				batch_current_size=0;
 			}
+			System.out.println("Inserting a batch");
+			pst.executeBatch();		 
+			con.commit();
 		} catch (Exception ex) {
-			Logger lgr = Logger.getLogger(HistorizingBatchTitlePopulatingClass.class.getName());
+			Logger lgr = Logger.getLogger(CurrentBatchTitlePopulatingClass.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 
 		} finally {
@@ -154,7 +174,7 @@ public class HistorizingBatchTitlePopulatingClass {
 				}
 
 			} catch (SQLException | IOException ex) {
-				Logger lgr = Logger.getLogger(HistorizingBatchTitlePopulatingClass.class.getName());
+				Logger lgr = Logger.getLogger(CurrentBatchTitlePopulatingClass.class.getName());
 				lgr.log(Level.WARNING, ex.getMessage(), ex);
 			}
 		}

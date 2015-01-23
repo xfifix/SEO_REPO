@@ -43,7 +43,8 @@ public class TitlePopulatingTestingClass {
 		String passwd = props.getProperty("db.passwd");
 		// the following properties have been identified for our files to parse 
 		// and insert into a database
-		String csvFile = "/home/sduprey/My_Data/My_GWT_Extracts/extract_dupli_20_oct.csv";
+		String csvFile = "/home/sduprey/My_Data/My_GWT_Extracts/22012015.csv";
+		//String csvFile = "/home/sduprey/My_Data/My_GWT_Extracts/extract_dupli_20_oct.csv";
 		BufferedReader br = null;
 		String line = "";
 		String header = null;
