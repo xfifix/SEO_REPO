@@ -22,10 +22,11 @@ public class ComparingURLListThreadPoolLauncher {
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/url_list_infos.properties";
 	private static String xpathconf_path = "/home/sduprey/My_Data/My_Xpath_Conf/xpath.conf";
 	private static String[] xpath_expression = new String[5];
-	//private static int fixed_pool_size = 200;
-	//private static int size_bucket = 800;
-	private static int fixed_pool_size = 10;
-    private static int size_bucket = 10;	
+	private static int fixed_pool_size = 250;
+	private static int size_bucket = 40000;
+	// debugging parameters
+	//private static int fixed_pool_size = 10;
+    //private static int size_bucket = 10;	
 	private static List<Integer> tofetch_list = new ArrayList<Integer>();
 
 	public static void main(String[] args) {
