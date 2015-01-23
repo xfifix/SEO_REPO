@@ -23,7 +23,7 @@ import com.parsing.utility.ParsingOutput;
 import com.parsing.utility.XPathUtility;
 
 public class ComparingURLListWorkerThread implements Runnable {
-	private int batch_size = 100;
+	private int batch_size = 1000;
 
 	private static String updateStatement ="UPDATE SOLR_VS_EXALEAD SET STATUS=?, H1_SOLR=?, TITLE_SOLR=?, XPATH1_SOLR=?, XPATH2_SOLR=?, XPATH3_SOLR=?, XPATH4_SOLR=?, XPATH5_SOLR=?, H1_EXALEAD=?, TITLE_EXALEAD=?, XPATH1_EXALEAD=?, XPATH2_EXALEAD=?, XPATH3_EXALEAD=?, XPATH4_EXALEAD=?, XPATH5_EXALEAD=?, H1_COMPARISON=?, TITLE_COMPARISON=?, XPATH1_COMPARISON=?, XPATH2_COMPARISON=?, XPATH3_COMPARISON=?, XPATH4_COMPARISON=?, XPATH5_COMPARISON=?, TO_FETCH=FALSE WHERE ID=?";
 	private String[] xpathExpressions;
