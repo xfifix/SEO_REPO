@@ -322,6 +322,7 @@ public class ComparingURLListWorkerThread implements Runnable {
 				// fetching the solr version
 				System.out.println(Thread.currentThread().getName()+" fetching URL : "+url + " with cookie value to tap Solr");
 				HttpGet getSolr = new HttpGet(url);
+				getSolr.setHeader("User-Agent", user_agent);
 				DefaultHttpClient clientSolr = new DefaultHttpClient();		
 		        HttpContext HTTP_CONTEXT_SOLR = new BasicHttpContext();
 		        HTTP_CONTEXT_SOLR.setAttribute(CoreProtocolPNames.USER_AGENT, "CdiscountBot-crawler");
@@ -352,7 +353,7 @@ public class ComparingURLListWorkerThread implements Runnable {
 		        HttpContext HTTP_CONTEXT_EXALEAD = new BasicHttpContext();
 		        HTTP_CONTEXT_EXALEAD.setAttribute(CoreProtocolPNames.USER_AGENT, "CdiscountBot-crawler");
 		        //getSolr.setHeader("Referer", "http://www.google.com");
-		        getExalead.setHeader("User-Agent", "CdiscountBot-crawler");
+		        getExalead.setHeader("User-Agent", user_agent);
 				DefaultHttpClient clientExalead = new DefaultHttpClient();
 				// set the cookies
 				CookieStore cookieStoreExalead = new BasicCookieStore();
