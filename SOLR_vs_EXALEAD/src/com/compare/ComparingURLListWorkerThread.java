@@ -47,7 +47,6 @@ public class ComparingURLListWorkerThread implements Runnable {
 				rs = pst.executeQuery();
 				while (rs.next()) {
 					String loc_url = rs.getString(1);
-					loc_url=loc_url.replace("product\\", "");
 					int id = rs.getInt(2);
 					ULRId toadd = new ULRId();
 					toadd.setId(id);
