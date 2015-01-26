@@ -1,0 +1,1 @@
+update solr_vs_exalead set to_fetch = true where to_fetch = false;
