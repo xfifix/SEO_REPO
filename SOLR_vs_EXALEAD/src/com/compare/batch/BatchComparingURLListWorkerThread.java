@@ -1,4 +1,4 @@
-package com.compare;
+package com.compare.batch;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,14 +22,15 @@ import org.apache.http.util.EntityUtils;
 import com.parsing.utility.ParsingOutput;
 import com.parsing.utility.XPathUtility;
 
-public class ComparingURLListWorkerThread implements Runnable {
+public class BatchComparingURLListWorkerThread implements Runnable {
+	private static int batch_size = 100;
 	private static String updateStatement ="UPDATE SOLR_VS_EXALEAD SET STATUS=?, H1_SOLR=?, TITLE_SOLR=?, XPATH1_SOLR=?, XPATH2_SOLR=?, XPATH3_SOLR=?, XPATH4_SOLR=?, XPATH5_SOLR=?, H1_EXALEAD=?, TITLE_EXALEAD=?, XPATH1_EXALEAD=?, XPATH2_EXALEAD=?, XPATH3_EXALEAD=?, XPATH4_EXALEAD=?, XPATH5_EXALEAD=?, H1_COMPARISON=?, TITLE_COMPARISON=?, XPATH1_COMPARISON=?, XPATH2_COMPARISON=?, XPATH3_COMPARISON=?, XPATH4_COMPARISON=?, XPATH5_COMPARISON=?, TO_FETCH=FALSE WHERE ID=?";
 	private String[] xpathExpressions;
 	private String user_agent;
 	private List<ULRId> my_urls_to_fetch = new ArrayList<ULRId>();
 	private Connection con;
 
-	public ComparingURLListWorkerThread(Connection con ,List<Integer> to_fetch, String my_user_agent, String[] xpathExpressions) throws SQLException{
+	public BatchComparingURLListWorkerThread(Connection con ,List<Integer> to_fetch, String my_user_agent, String[] xpathExpressions) throws SQLException{
 		this.xpathExpressions = xpathExpressions;
 		this.user_agent=my_user_agent;
 		this.con = con;
@@ -63,8 +64,15 @@ public class ComparingURLListWorkerThread implements Runnable {
 	}
 
 	public void run() {
-		// running just a single batch that will be inserted at the very end of the task
-		runBatch(my_urls_to_fetch);
+		List<ULRId> line_infos = new ArrayList<ULRId>();
+		for (ULRId id :my_urls_to_fetch){
+			line_infos.add(id);
+			if (line_infos.size() !=0 && line_infos.size() % batch_size ==0) {
+				runBatch(line_infos);	
+				line_infos.clear();
+				line_infos = new ArrayList<ULRId>();
+			}
+		}
 		close_connection();
 		System.out.println(Thread.currentThread().getName()+" closed connection");
 	}
@@ -311,10 +319,10 @@ public class ComparingURLListWorkerThread implements Runnable {
 				HttpGet getSolr = new HttpGet(url);
 				getSolr.setHeader("User-Agent", user_agent);
 				DefaultHttpClient clientSolr = new DefaultHttpClient();		
-		        HttpContext HTTP_CONTEXT_SOLR = new BasicHttpContext();
-		        HTTP_CONTEXT_SOLR.setAttribute(CoreProtocolPNames.USER_AGENT, "CdiscountBot-crawler");
-		        //getSolr.setHeader("Referer", "http://www.google.com");
-		        getSolr.setHeader("User-Agent", "CdiscountBot-crawler");
+				HttpContext HTTP_CONTEXT_SOLR = new BasicHttpContext();
+				HTTP_CONTEXT_SOLR.setAttribute(CoreProtocolPNames.USER_AGENT, "CdiscountBot-crawler");
+				//getSolr.setHeader("Referer", "http://www.google.com");
+				getSolr.setHeader("User-Agent", "CdiscountBot-crawler");
 				// set the cookies
 				CookieStore cookieStoreSolr = new BasicCookieStore();
 				BasicClientCookie cookieSolr = new BasicClientCookie("_$hidden", "666.1");
@@ -337,10 +345,10 @@ public class ComparingURLListWorkerThread implements Runnable {
 				my_info.setStatus(responseSolr.getStatusLine().getStatusCode());
 				System.out.println(Thread.currentThread().getName()+" fetching URL : "+url + " with cookie value to tap Exalead");
 				HttpGet getExalead = new HttpGet(url);
-		        HttpContext HTTP_CONTEXT_EXALEAD = new BasicHttpContext();
-		        HTTP_CONTEXT_EXALEAD.setAttribute(CoreProtocolPNames.USER_AGENT, "CdiscountBot-crawler");
-		        //getSolr.setHeader("Referer", "http://www.google.com");
-		        getExalead.setHeader("User-Agent", user_agent);
+				HttpContext HTTP_CONTEXT_EXALEAD = new BasicHttpContext();
+				HTTP_CONTEXT_EXALEAD.setAttribute(CoreProtocolPNames.USER_AGENT, "CdiscountBot-crawler");
+				//getSolr.setHeader("Referer", "http://www.google.com");
+				getExalead.setHeader("User-Agent", user_agent);
 				DefaultHttpClient clientExalead = new DefaultHttpClient();
 				// set the cookies
 				CookieStore cookieStoreExalead = new BasicCookieStore();
