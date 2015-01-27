@@ -13,3 +13,10 @@ select product, sum(nb_urls) as global_count from current_duplicates where produ
 # duplication par produit avec rayon
 select product_aggregate.product, product_aggregate.global_count, referential.rayon from product_aggregate, referential where referential.product=product_aggregate.product
 order by global_count desc
+
+
+
+# getting the unique url and their date
+select distinct urls, count(*) as numb into duplicates_unique_url from duplicates group by urls order by numb desc
+
+select duplicates.urls, duplicates.duplicate_time from duplicates, duplicates_unique_url where duplicates.urls = duplicates_unique_url.urls and duplicates_unique_url.numb =1
