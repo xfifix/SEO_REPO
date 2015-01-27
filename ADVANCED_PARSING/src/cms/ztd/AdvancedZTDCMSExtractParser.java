@@ -24,8 +24,10 @@ public class AdvancedZTDCMSExtractParser {
 	private static LineItem current_item;
 
 	public static void main(String[] args)  {
-		String fileName = "/home/sduprey/My_Data/My_CMS_Extract/refnat_export_ztd_2014_11_01_100_0.csv";
-		String outputPathFileName = "/home/sduprey/My_Data/My_Outgoing_Data/My_ZTD_CMS_Extract/refnat_export_ztd_2014_11_01_100_0_results.csv";
+		//String fileName = "/home/sduprey/My_Data/My_CMS_Extract/refnat_export_ztd_2014_11_01_100_0.csv";
+		String fileName = "/home/sduprey/My_Data/My_CMS_Extract/refnat_export_ztd_2015_01_22_100_0.csv";
+		
+		String outputPathFileName = "/home/sduprey/My_Data/My_Outgoing_Data/My_ZTD_CMS_Extract/refnat_export_ztd_2015_01_22_100_0_results.csv";
 		//String fileName = "V:\\SEO\\Stefan\\balises_ztds\\refnat_export_ztd_2014_11_01_100_0.csv";
 		//String outputPathFileName = "V:\\SEO\\Stefan\\balises_ztds\\refnat_export_ztd_2014_11_01_100_0_results.csv";
 		try{
@@ -61,7 +63,7 @@ public class AdvancedZTDCMSExtractParser {
 		for (LineItem item : items){
 			String ZTD_to_check = item.getZTD();
 			Integer balise_count = check_occurences(ZTD_to_check);
-			if (balise_count > 1){
+			if (balise_count >= 1){
 				System.out.println(" ZTD : " + ZTD_to_check);
 				System.out.println(" Count found : " + balise_count);
 				item.setOccurences(balise_count);

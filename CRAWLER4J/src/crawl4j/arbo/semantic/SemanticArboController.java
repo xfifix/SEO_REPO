@@ -240,8 +240,16 @@ public class SemanticArboController {
 					st.setInt(26,info.getNb_garanties_in_text());
 					st.setInt(27,info.getNb_produits_similaires_in_text());
 					st.setInt(28,info.getNb_total_images());
-					st.setDouble(29, info.getWidth_average());
-					st.setDouble(30, info.getHeight_average());	
+					if (!Double.isNaN(info.getWidth_average())){
+						st.setDouble(29, info.getWidth_average());
+					} else {
+						st.setDouble(29, 0);
+					}
+					if (!Double.isNaN(info.getHeight_average())){
+						st.setDouble(30, info.getHeight_average());
+					}else{
+						st.setDouble(30,0);
+					}
 					st.setString(31,info.getPage_type());
 					st.setString(32,info.getSemantics_hit());
 					st.setString(33, info.getTitle_semantic());
@@ -284,8 +292,16 @@ public class SemanticArboController {
 						insert_st.setInt(27,info.getNb_garanties_in_text());
 						insert_st.setInt(28,info.getNb_produits_similaires_in_text());
 						insert_st.setInt(29,info.getNb_total_images());
-						insert_st.setDouble(30, info.getWidth_average());
-						insert_st.setDouble(31, info.getHeight_average());
+						if (!Double.isNaN(info.getWidth_average())){
+							st.setDouble(30, info.getWidth_average());
+						} else {
+							st.setDouble(30, 0);
+						}
+						if (!Double.isNaN(info.getHeight_average())){
+							st.setDouble(31, info.getHeight_average());
+						}else{
+							st.setDouble(31,0);
+						}
 						insert_st.setString(32,info.getPage_type());
 						insert_st.setString(33,info.getSemantics_hit());
 						insert_st.setString(34,info.getTitle_semantic());
@@ -364,8 +380,16 @@ public class SemanticArboController {
 					st.setInt(27,info.getNb_garanties_in_text());
 					st.setInt(28,info.getNb_produits_similaires_in_text());
 					st.setInt(29,info.getNb_total_images());
-					st.setDouble(30, info.getWidth_average());
-					st.setDouble(31, info.getHeight_average());
+					if (!Double.isNaN(info.getWidth_average())){
+						st.setDouble(30, info.getWidth_average());
+					} else {
+						st.setDouble(30, 0);
+					}
+					if (!Double.isNaN(info.getHeight_average())){
+						st.setDouble(31, info.getHeight_average());
+					}else{
+						st.setDouble(31,0);
+					}
 					st.setString(32,info.getPage_type());
 					st.setString(33,info.getSemantics_hit());
 					st.setString(34,info.getTitle_semantic());
