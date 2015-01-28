@@ -220,7 +220,8 @@ public class ProcessMagasinAttributesCompletionPerCategoryMetrics {
 			Map<String, Integer> rayon_argument_counting = arguments_counter.get(category_name);
 			BufferedWriter writer;
 			try {
-				String output_file = output_directory+"/"+magasin_to_analyse+"_"+category_name+".csv";
+				String category_name_for_file = category_name.replace(" ", "_");
+				String output_file = output_directory+"/"+magasin_to_analyse+"_"+category_name_for_file+".csv";
 				System.out.println("Writing the file : "+output_file);
 				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_file), "UTF-8"));
 				// we write the header
