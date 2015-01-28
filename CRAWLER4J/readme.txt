@@ -18,3 +18,10 @@ FastBatchPostGresLinksByLevelLowMemoryDaemon
 
 #Computing the page rank on the whole NODES, EDGES database and updating CRAWL_RESULTS database
 ComputePageRank
+
+#Attributes completion metrics for one magasin
+ProcessOneMagasinQualityScore
+
+#Attributes completion metrics for one magasin aggregated by metrics
+ProcessMagasinAttributesCompletionPerCategoryMetrics
+
