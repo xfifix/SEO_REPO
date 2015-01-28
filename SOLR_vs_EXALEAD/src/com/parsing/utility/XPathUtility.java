@@ -69,7 +69,7 @@ public class XPathUtility {
 			conc_title=conc_title+title.text();
 		}				
 		output.setTitle(conc_title);
-		String[] xpathResults = new String[5];
+		String[] xpathResults = new String[xpath_size];
 		int local_counter = 0;
 		for (String xpath : xpathExpressions){
 			String content = XPathUtility.parseContent(page_source_code, xpath);

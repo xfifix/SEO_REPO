@@ -116,74 +116,200 @@ public class BatchComparingURLListWorkerThread implements Runnable {
 				st.setInt(1, local_info.getStatus());
 				st.setString(2,H1_SOLR);
 				st.setString(3, TITLE_SOLR);
-				if (XPATHRESULTS_SOLR != null){
-					st.setString(4, XPATHRESULTS_SOLR[0]);
-					st.setString(5, XPATHRESULTS_SOLR[1]);
-					st.setString(6, XPATHRESULTS_SOLR[2]);
-					st.setString(7, XPATHRESULTS_SOLR[3]);
-					st.setString(8, XPATHRESULTS_SOLR[4]);
+				if (XPATHRESULTS_SOLR != null){	
+					if (XPATHRESULTS_SOLR[0] != null){
+						st.setString(4, XPATHRESULTS_SOLR[0]);
+					} else {
+						st.setString(4, "");
+					}
+					if (XPATHRESULTS_SOLR[1] != null){
+						st.setString(5, XPATHRESULTS_SOLR[1]);
+					} else {
+						st.setString(5, "");
+					}
+					if (XPATHRESULTS_SOLR[2] != null){
+						st.setString(6, XPATHRESULTS_SOLR[2]);
+					} else {
+						st.setString(6, "");
+					}
+					if (XPATHRESULTS_SOLR[3] != null){
+						st.setString(7, XPATHRESULTS_SOLR[3]);
+					} else {
+						st.setString(7, "");
+					}
+					if (XPATHRESULTS_SOLR[4] != null){
+						st.setString(8, XPATHRESULTS_SOLR[4]);
+					} else {
+						st.setString(8, "");
+					}
+					if (XPATHRESULTS_SOLR[5] != null){
+						st.setString(9, XPATHRESULTS_SOLR[5]);
+					} else {
+						st.setString(9, "");
+					}
+					if (XPATHRESULTS_SOLR[6] != null){
+						st.setString(10, XPATHRESULTS_SOLR[6]);
+					} else {
+						st.setString(10, "");
+					}
+					if (XPATHRESULTS_SOLR[7] != null){
+						st.setString(11, XPATHRESULTS_SOLR[7]);
+					} else {
+						st.setString(11, "");
+					}
+					if (XPATHRESULTS_SOLR[8] != null){
+						st.setString(12, XPATHRESULTS_SOLR[8]);
+					} else {
+						st.setString(12, "");
+					}
+					if (XPATHRESULTS_SOLR[9] != null){
+						st.setString(13, XPATHRESULTS_SOLR[9]);
+					} else {
+						st.setString(13, "");
+					}
 				}else {
 					st.setString(4, "");
 					st.setString(5, "");
 					st.setString(6, "");
 					st.setString(7, "");
 					st.setString(8, "");
-				}
-				st.setString(9,H1_EXALEAD);
-				st.setString(10, TITLE_EXALEAD);
-				if (XPATHRESULTS_EXALEAD != null){
-					st.setString(11, XPATHRESULTS_EXALEAD[0]);
-					st.setString(12, XPATHRESULTS_EXALEAD[1]);
-					st.setString(13, XPATHRESULTS_EXALEAD[2]);
-					st.setString(14, XPATHRESULTS_EXALEAD[3]);
-					st.setString(15, XPATHRESULTS_EXALEAD[4]);
-				}else {
+					st.setString(9, "");
+					st.setString(10, "");
 					st.setString(11, "");
 					st.setString(12, "");
 					st.setString(13, "");
-					st.setString(14, "");
-					st.setString(15, "");
+				}
+				st.setString(14,H1_EXALEAD);
+				st.setString(15, TITLE_EXALEAD);
+				if (XPATHRESULTS_EXALEAD != null){
+
+					if (XPATHRESULTS_EXALEAD[0] != null){
+						st.setString(16, XPATHRESULTS_EXALEAD[0]);
+					} else {
+						st.setString(16, "");
+					}
+					if (XPATHRESULTS_EXALEAD[1] != null){
+						st.setString(17, XPATHRESULTS_EXALEAD[1]);
+					} else {
+						st.setString(17, "");
+					}
+					if (XPATHRESULTS_EXALEAD[2] != null){
+						st.setString(18, XPATHRESULTS_EXALEAD[2]);
+					} else {
+						st.setString(18, "");
+					}
+					if (XPATHRESULTS_EXALEAD[3] != null){
+						st.setString(19, XPATHRESULTS_EXALEAD[3]);
+					} else {
+						st.setString(19, "");
+					}
+					if (XPATHRESULTS_EXALEAD[4] != null){
+						st.setString(20, XPATHRESULTS_EXALEAD[4]);
+					} else {
+						st.setString(20, "");
+					}
+					if (XPATHRESULTS_EXALEAD[5] != null){
+						st.setString(21, XPATHRESULTS_EXALEAD[5]);
+					} else {
+						st.setString(21, "");
+					}
+					if (XPATHRESULTS_EXALEAD[6] != null){
+						st.setString(22, XPATHRESULTS_EXALEAD[6]);
+					} else {
+						st.setString(22, "");
+					}
+					if (XPATHRESULTS_EXALEAD[7] != null){
+						st.setString(23, XPATHRESULTS_EXALEAD[7]);
+					} else {
+						st.setString(23, "");
+					}
+					if (XPATHRESULTS_EXALEAD[8] != null){
+						st.setString(24, XPATHRESULTS_EXALEAD[8]);
+					} else {
+						st.setString(24, "");
+					}
+					if (XPATHRESULTS_EXALEAD[9] != null){
+						st.setString(25, XPATHRESULTS_EXALEAD[9]);
+					} else {
+						st.setString(25, "");
+					}
+				}else {
+					st.setString(16, "");
+					st.setString(17, "");
+					st.setString(18, "");
+					st.setString(19, "");
+					st.setString(20, "");
+					st.setString(21, "");
+					st.setString(22, "");
+					st.setString(23, "");
+					st.setString(24, "");
+					st.setString(25, "");
 				}
 				if (!H1_SOLR.equals(H1_EXALEAD)){
-					st.setInt(16, 0);
+					st.setInt(26, 0);
 				} else {
-					st.setInt(16, 1);
+					st.setInt(26, 1);
 				}
 				if (!TITLE_SOLR.equals(TITLE_EXALEAD)){
-					st.setInt(17, 0);
+					st.setInt(27, 0);
 				} else {
-					st.setInt(17, 1);
+					st.setInt(27, 1);
 				}
 
 				if ((XPATHRESULTS_EXALEAD != null) && (XPATHRESULTS_SOLR != null)){
 					if (!XPATHRESULTS_SOLR[0].equals(XPATHRESULTS_EXALEAD[0])){
-						st.setInt(18, 0);
+						st.setInt(28, 0);
 					} else {
-						st.setInt(18, 1);
+						st.setInt(28, 1);
 					}
 					if (!XPATHRESULTS_SOLR[1].equals(XPATHRESULTS_EXALEAD[1])){
-						st.setInt(19, 0);
+						st.setInt(29, 0);
 					} else {
-						st.setInt(19, 1);
+						st.setInt(29, 1);
 					}
 					if (!XPATHRESULTS_SOLR[2].equals(XPATHRESULTS_EXALEAD[2])){
-						st.setInt(20, 0);
+						st.setInt(30, 0);
 					} else {
-						st.setInt(20, 1);
+						st.setInt(30, 1);
 					}
 					if (!XPATHRESULTS_SOLR[3].equals(XPATHRESULTS_EXALEAD[3])){
-						st.setInt(21, 0);
+						st.setInt(31, 0);
 					} else {
-						st.setInt(21, 1);
+						st.setInt(31, 1);
 					}
 					if (!XPATHRESULTS_SOLR[4].equals(XPATHRESULTS_EXALEAD[4])){
-						st.setInt(22, 0);
+						st.setInt(32, 0);
 					} else {
-						st.setInt(22, 1);
+						st.setInt(32, 1);
+					}
+					if (!XPATHRESULTS_SOLR[5].equals(XPATHRESULTS_EXALEAD[5])){
+						st.setInt(33, 0);
+					} else {
+						st.setInt(33, 1);
+					}
+					if (!XPATHRESULTS_SOLR[6].equals(XPATHRESULTS_EXALEAD[6])){
+						st.setInt(34, 0);
+					} else {
+						st.setInt(34, 1);
+					}
+					if (!XPATHRESULTS_SOLR[7].equals(XPATHRESULTS_EXALEAD[7])){
+						st.setInt(35, 0);
+					} else {
+						st.setInt(35, 1);
+					}
+					if (!XPATHRESULTS_SOLR[8].equals(XPATHRESULTS_EXALEAD[8])){
+						st.setInt(36, 0);
+					} else {
+						st.setInt(36, 1);
+					}
+					if (!XPATHRESULTS_SOLR[9].equals(XPATHRESULTS_EXALEAD[9])){
+						st.setInt(37, 0);
+					} else {
+						st.setInt(37, 1);
 					}
 				}
 
-				st.setInt(23, local_info.getId());
+				st.setInt(38, local_info.getId());
 				//UPDATE HTTPINFOS_LIST SET STATUS=?, H1=?, TITLE=?, XPATH1=?, XPATH2=?, XPATH3=?, XPATH4=?, XPATH5=?, TO_FETCH=FALSE WHERE ID=?";
 				//	String batch ="UPDATE HTTPINFOS_LIST SET STATUS="+infos.get(i).getStatus()+", H1='"+H1+"', TITLE='"+TITLE+ "',TO_FETCH=FALSE WHERE ID="+infos.get(i).getId();
 				st.addBatch();		
@@ -221,76 +347,203 @@ public class BatchComparingURLListWorkerThread implements Runnable {
 				st.setInt(1, local_info.getStatus());
 				st.setString(2,H1_SOLR);
 				st.setString(3, TITLE_SOLR);
-				if (XPATHRESULTS_SOLR != null){
-					st.setString(4, XPATHRESULTS_SOLR[0]);
-					st.setString(5, XPATHRESULTS_SOLR[1]);
-					st.setString(6, XPATHRESULTS_SOLR[2]);
-					st.setString(7, XPATHRESULTS_SOLR[3]);
-					st.setString(8, XPATHRESULTS_SOLR[4]);
+				if (XPATHRESULTS_SOLR != null){	
+					if (XPATHRESULTS_SOLR[0] != null){
+						st.setString(4, XPATHRESULTS_SOLR[0]);
+					} else {
+						st.setString(4, "");
+					}
+					if (XPATHRESULTS_SOLR[1] != null){
+						st.setString(5, XPATHRESULTS_SOLR[1]);
+					} else {
+						st.setString(5, "");
+					}
+					if (XPATHRESULTS_SOLR[2] != null){
+						st.setString(6, XPATHRESULTS_SOLR[2]);
+					} else {
+						st.setString(6, "");
+					}
+					if (XPATHRESULTS_SOLR[3] != null){
+						st.setString(7, XPATHRESULTS_SOLR[3]);
+					} else {
+						st.setString(7, "");
+					}
+					if (XPATHRESULTS_SOLR[4] != null){
+						st.setString(8, XPATHRESULTS_SOLR[4]);
+					} else {
+						st.setString(8, "");
+					}
+					if (XPATHRESULTS_SOLR[5] != null){
+						st.setString(9, XPATHRESULTS_SOLR[5]);
+					} else {
+						st.setString(9, "");
+					}
+					if (XPATHRESULTS_SOLR[6] != null){
+						st.setString(10, XPATHRESULTS_SOLR[6]);
+					} else {
+						st.setString(10, "");
+					}
+					if (XPATHRESULTS_SOLR[7] != null){
+						st.setString(11, XPATHRESULTS_SOLR[7]);
+					} else {
+						st.setString(11, "");
+					}
+					if (XPATHRESULTS_SOLR[8] != null){
+						st.setString(12, XPATHRESULTS_SOLR[8]);
+					} else {
+						st.setString(12, "");
+					}
+					if (XPATHRESULTS_SOLR[9] != null){
+						st.setString(13, XPATHRESULTS_SOLR[9]);
+					} else {
+						st.setString(13, "");
+					}
 				}else {
 					st.setString(4, "");
 					st.setString(5, "");
 					st.setString(6, "");
 					st.setString(7, "");
 					st.setString(8, "");
-				}
-				st.setString(9,H1_EXALEAD);
-				st.setString(10, TITLE_EXALEAD);
-				if (XPATHRESULTS_EXALEAD != null){
-					st.setString(11, XPATHRESULTS_EXALEAD[0]);
-					st.setString(12, XPATHRESULTS_EXALEAD[1]);
-					st.setString(13, XPATHRESULTS_EXALEAD[2]);
-					st.setString(14, XPATHRESULTS_EXALEAD[3]);
-					st.setString(15, XPATHRESULTS_EXALEAD[4]);
-				}else {
+					st.setString(9, "");
+					st.setString(10, "");
 					st.setString(11, "");
 					st.setString(12, "");
 					st.setString(13, "");
-					st.setString(14, "");
-					st.setString(15, "");
+				}
+				st.setString(14,H1_EXALEAD);
+				st.setString(15, TITLE_EXALEAD);
+				if (XPATHRESULTS_EXALEAD != null){
+
+					if (XPATHRESULTS_EXALEAD[0] != null){
+						st.setString(16, XPATHRESULTS_EXALEAD[0]);
+					} else {
+						st.setString(16, "");
+					}
+					if (XPATHRESULTS_EXALEAD[1] != null){
+						st.setString(17, XPATHRESULTS_EXALEAD[1]);
+					} else {
+						st.setString(17, "");
+					}
+					if (XPATHRESULTS_EXALEAD[2] != null){
+						st.setString(18, XPATHRESULTS_EXALEAD[2]);
+					} else {
+						st.setString(18, "");
+					}
+					if (XPATHRESULTS_EXALEAD[3] != null){
+						st.setString(19, XPATHRESULTS_EXALEAD[3]);
+					} else {
+						st.setString(19, "");
+					}
+					if (XPATHRESULTS_EXALEAD[4] != null){
+						st.setString(20, XPATHRESULTS_EXALEAD[4]);
+					} else {
+						st.setString(20, "");
+					}
+					if (XPATHRESULTS_EXALEAD[5] != null){
+						st.setString(21, XPATHRESULTS_EXALEAD[5]);
+					} else {
+						st.setString(21, "");
+					}
+					if (XPATHRESULTS_EXALEAD[6] != null){
+						st.setString(22, XPATHRESULTS_EXALEAD[6]);
+					} else {
+						st.setString(22, "");
+					}
+					if (XPATHRESULTS_EXALEAD[7] != null){
+						st.setString(23, XPATHRESULTS_EXALEAD[7]);
+					} else {
+						st.setString(23, "");
+					}
+					if (XPATHRESULTS_EXALEAD[8] != null){
+						st.setString(24, XPATHRESULTS_EXALEAD[8]);
+					} else {
+						st.setString(24, "");
+					}
+					if (XPATHRESULTS_EXALEAD[9] != null){
+						st.setString(25, XPATHRESULTS_EXALEAD[9]);
+					} else {
+						st.setString(25, "");
+					}
+				}else {
+					st.setString(16, "");
+					st.setString(17, "");
+					st.setString(18, "");
+					st.setString(19, "");
+					st.setString(20, "");
+					st.setString(21, "");
+					st.setString(22, "");
+					st.setString(23, "");
+					st.setString(24, "");
+					st.setString(25, "");
 				}
 				if (!H1_SOLR.equals(H1_EXALEAD)){
-					st.setInt(16, 0);
+					st.setInt(26, 0);
 				} else {
-					st.setInt(16, 1);
+					st.setInt(26, 1);
 				}
 				if (!TITLE_SOLR.equals(TITLE_EXALEAD)){
-					st.setInt(17, 0);
+					st.setInt(27, 0);
 				} else {
-					st.setInt(17, 1);
+					st.setInt(27, 1);
 				}
 
 				if ((XPATHRESULTS_EXALEAD != null) && (XPATHRESULTS_SOLR != null)){
 					if (!XPATHRESULTS_SOLR[0].equals(XPATHRESULTS_EXALEAD[0])){
-						st.setInt(18, 0);
+						st.setInt(28, 0);
 					} else {
-						st.setInt(18, 1);
+						st.setInt(28, 1);
 					}
 					if (!XPATHRESULTS_SOLR[1].equals(XPATHRESULTS_EXALEAD[1])){
-						st.setInt(19, 0);
+						st.setInt(29, 0);
 					} else {
-						st.setInt(19, 1);
+						st.setInt(29, 1);
 					}
 					if (!XPATHRESULTS_SOLR[2].equals(XPATHRESULTS_EXALEAD[2])){
-						st.setInt(20, 0);
+						st.setInt(30, 0);
 					} else {
-						st.setInt(20, 1);
+						st.setInt(30, 1);
 					}
 					if (!XPATHRESULTS_SOLR[3].equals(XPATHRESULTS_EXALEAD[3])){
-						st.setInt(21, 0);
+						st.setInt(31, 0);
 					} else {
-						st.setInt(21, 1);
+						st.setInt(31, 1);
 					}
 					if (!XPATHRESULTS_SOLR[4].equals(XPATHRESULTS_EXALEAD[4])){
-						st.setInt(22, 0);
+						st.setInt(32, 0);
 					} else {
-						st.setInt(22, 1);
+						st.setInt(32, 1);
+					}
+					if (!XPATHRESULTS_SOLR[5].equals(XPATHRESULTS_EXALEAD[5])){
+						st.setInt(33, 0);
+					} else {
+						st.setInt(33, 1);
+					}
+					if (!XPATHRESULTS_SOLR[6].equals(XPATHRESULTS_EXALEAD[6])){
+						st.setInt(34, 0);
+					} else {
+						st.setInt(34, 1);
+					}
+					if (!XPATHRESULTS_SOLR[7].equals(XPATHRESULTS_EXALEAD[7])){
+						st.setInt(35, 0);
+					} else {
+						st.setInt(35, 1);
+					}
+					if (!XPATHRESULTS_SOLR[8].equals(XPATHRESULTS_EXALEAD[8])){
+						st.setInt(36, 0);
+					} else {
+						st.setInt(36, 1);
+					}
+					if (!XPATHRESULTS_SOLR[9].equals(XPATHRESULTS_EXALEAD[9])){
+						st.setInt(37, 0);
+					} else {
+						st.setInt(37, 1);
 					}
 				}
 
-				st.setInt(23, local_info.getId());
+				st.setInt(38, local_info.getId());
 				//UPDATE HTTPINFOS_LIST SET STATUS=?, H1=?, TITLE=?, XPATH1=?, XPATH2=?, XPATH3=?, XPATH4=?, XPATH5=?, TO_FETCH=FALSE WHERE ID=?";
 				//	String batch ="UPDATE HTTPINFOS_LIST SET STATUS="+infos.get(i).getStatus()+", H1='"+H1+"', TITLE='"+TITLE+ "',TO_FETCH=FALSE WHERE ID="+infos.get(i).getId();
+
 				st.executeUpdate();	
 			}      
 			st.close();
