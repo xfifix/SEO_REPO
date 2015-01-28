@@ -22,10 +22,8 @@ public class BatchComparingURLListThreadPoolLauncher {
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/url_list_infos.properties";
 
 	private static String[] xpath_expression;
-	private static int fixed_pool_size = 250;
-	private static int size_bucket = 40000;
-	//private static int fixed_pool_size = 1000;
-	//private static int size_bucket = 10000;
+	private static int fixed_pool_size = 1000;
+	private static int size_bucket = 10000;
 	
 	// debugging parameters
 	//private static int fixed_pool_size = 10;
