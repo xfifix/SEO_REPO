@@ -40,7 +40,7 @@ public class ProcessMagasinAttributesCompletionPerCategoryMetrics {
 
 	private static String categoryString = "Catégorie";
 	private static String unknownCategory = "UNKNOWN";
-	
+
 	public static void main(String[] args) {
 		String magasin_to_analyse ="informatique";
 		//String magasin_to_analyse ="musique-instruments";
@@ -130,7 +130,7 @@ public class ProcessMagasinAttributesCompletionPerCategoryMetrics {
 		Map<String, Integer> category_counter = new HashMap<String, Integer>();
 		// Map to store for each attribut of a category its own counter
 		Map<String, Map<String, Integer>> attributs_count_inside_category_map = new HashMap<String, Map<String, Integer>>();
-		
+
 		System.out.println("Assessing " +magasins_datas.size()  + " URLs" );
 		// Looping over the collected datas for the magasin
 		for (URLContentInfo rayon_info : magasins_datas){
@@ -177,20 +177,18 @@ public class ProcessMagasinAttributesCompletionPerCategoryMetrics {
 							arg_counter=arg_counter+1;
 							attributs_count_inside_category.put(argument_name,arg_counter);
 						}
-						
 					}
-					
 				}
 			}
 		}
 		// to do : save the results for the rayon
-	//	System.out.println("Saving the results as a csv file in : " + rayon_argument_counting+ " "+ magasin_to_analyse+ " "+output_directory );
+		System.out.println("Saving the results for magasin : "+magasin_to_analyse + " as a csv file in : " + output_directory);
 
-//		savingDataArguments(rayon_argument_counting,magasin_to_analyse,output_directory);
+		savingDataArguments(category_counter,attributs_count_inside_category_map,magasin_to_analyse,output_directory);
 	}
 
 	private static Map<String,String> parse_arguments(String arguments_listing){
-		 Map<String,String> output = new  HashMap<String,String>();
+		Map<String,String> output = new  HashMap<String,String>();
 		StringTokenizer arguments_tokenizer = new StringTokenizer(arguments_listing,"@@");
 		while(arguments_tokenizer.hasMoreTokens()){
 			String argument_pair = arguments_tokenizer.nextToken();
@@ -209,36 +207,48 @@ public class ProcessMagasinAttributesCompletionPerCategoryMetrics {
 		return output;
 	}
 
-	private static void savingDataArguments(Map<String, Integer> rayon_argument_counting,String magasin_to_analyse, String output_directory){
-//		System.out.println("Displaying attributs counting results for magasin : "+magasin_to_analyse+ "\n");	
-//		BufferedWriter writer;
-//		try {
-//			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_directory+"/"+magasin_to_analyse+".csv"), "UTF-8"));
-//			// we write the header
-//			writer.write("ATTRIBUTE_NAME;FILLED_PERCENTAGE\n");
-//			Iterator<Map.Entry<String,Integer>> it = rayon_argument_counting.entrySet().iterator();
-//			while (it.hasNext()) {
-//				Map.Entry<String,Integer> pairs = (Map.Entry<String,Integer>)it.next();
-//				String argument_name=pairs.getKey();
-//				Integer count=pairs.getValue();
-//				System.out.println("Attribut name : " +argument_name);
-//				double filled_percent =((double)count)/((double)global_number_products_with_arguments)*100;
-//				System.out.println("Filled percentage : " +filled_percent +"%");
-//				if (filled_percent>= 100){
-//					System.out.println("Trouble greater than 100%");
-//					filled_percent=100;
-//				}
-//				String associated_properties = properties_map.get(argument_name);
-//				writer.write(argument_name+";"+Double.toString(filled_percent)+";"+associated_properties+"\n");
-//			}	
-//			writer.close();	
-//		} catch (UnsupportedEncodingException | FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}	
+	private static void savingDataArguments(Map<String, Integer> global_counter, Map<String, Map<String, Integer>> arguments_counter, String magasin_to_analyse, String output_directory){
+		System.out.println("Displaying attributs counting results for magasin : "+magasin_to_analyse+ "\n");	
+
+		// we loop over each category and create the matching result file
+		Iterator<Map.Entry<String,Integer>> cat_counter_it = global_counter.entrySet().iterator();
+		while (cat_counter_it.hasNext()) {
+			Map.Entry<String,Integer> pairs = (Map.Entry<String,Integer>)cat_counter_it.next();
+			// we are here just interested by our argument naming
+			String category_name =pairs.getKey();
+			Integer global_count =pairs.getValue();
+			Map<String, Integer> rayon_argument_counting = arguments_counter.get(category_name);
+			BufferedWriter writer;
+			try {
+				String output_file = output_directory+"/"+magasin_to_analyse+"_"+category_name+".csv";
+				System.out.println("Writing the file : "+output_file);
+				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_file), "UTF-8"));
+				// we write the header
+				writer.write("ATTRIBUTE_NAME;FILLED_PERCENTAGE\n");
+				Iterator<Map.Entry<String,Integer>> it = rayon_argument_counting.entrySet().iterator();
+				while (it.hasNext()) {
+					Map.Entry<String,Integer> local_pairs = (Map.Entry<String,Integer>)it.next();
+					String argument_name=local_pairs.getKey();
+					Integer count=local_pairs.getValue();
+					System.out.println("Attribut name : " +argument_name);
+					double filled_percent =((double)count)/((double)global_count)*100;
+					System.out.println("Filled percentage : " +filled_percent +"%");
+					if (filled_percent>= 100){
+						System.out.println("Trouble greater than 100%");
+						filled_percent=100;
+					}
+					String associated_properties = properties_map.get(argument_name);
+					writer.write(argument_name+";"+Double.toString(filled_percent)+";"+associated_properties+"\n");
+				}	
+				writer.close();	
+			} catch (UnsupportedEncodingException | FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}
 	}
 
 	private static void fetch_magasin_info(String magasin_to_analyse){
