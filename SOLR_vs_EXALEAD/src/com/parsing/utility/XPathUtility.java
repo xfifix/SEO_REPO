@@ -29,8 +29,12 @@ public class XPathUtility {
 		org.w3c.dom.Document doc = new DomSerializer(
 				new CleanerProperties()).createDOM(tagNode);
 		XPath xpath = XPathFactory.newInstance().newXPath();
-		String str = (String) xpath.evaluate(xpathExpression, 
-				doc, XPathConstants.STRING);
+
+		String str = "";
+		if (xpathExpression != null){
+			str = (String) xpath.evaluate(xpathExpression, 
+					doc, XPathConstants.STRING);
+		}
 		return str;
 	}
 

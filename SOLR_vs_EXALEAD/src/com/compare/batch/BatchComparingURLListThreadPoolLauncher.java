@@ -22,10 +22,10 @@ public class BatchComparingURLListThreadPoolLauncher {
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/url_list_infos.properties";
 
 	private static String[] xpath_expression;
-//	private static int fixed_pool_size = 250;
-//	private static int size_bucket = 40000;
-	private static int fixed_pool_size = 1000;
-	private static int size_bucket = 10000;
+	private static int fixed_pool_size = 250;
+	private static int size_bucket = 40000;
+	//private static int fixed_pool_size = 1000;
+	//private static int size_bucket = 10000;
 	
 	// debugging parameters
 	//private static int fixed_pool_size = 10;
@@ -33,7 +33,7 @@ public class BatchComparingURLListThreadPoolLauncher {
 	private static List<Integer> tofetch_list = new ArrayList<Integer>();
 
 	public static void main(String[] args) {
-		XPathUtility.loadXPATHConf();
+		xpath_expression=XPathUtility.loadXPATHConf();
 		String my_user_agent= "CdiscountBot-crawler";
 		if (args.length>=1){
 			my_user_agent= args[0];
