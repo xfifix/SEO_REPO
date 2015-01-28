@@ -23,7 +23,7 @@ import org.xml.sax.SAXException;
 public class XPathUtility {
 
 	private static String xpathconf_path = "/home/sduprey/My_Data/My_Xpath_Conf/xpath.conf";
-
+	private static int xpath_size = 10;
 	public static String parseContent(String content, String xpathExpression) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException{
 		TagNode tagNode = new HtmlCleaner().clean(content);
 		org.w3c.dom.Document doc = new DomSerializer(
@@ -35,14 +35,14 @@ public class XPathUtility {
 	}
 
 	public static String[] loadXPATHConf(){
-		String[] xpath_expression = new String[5];
+		String[] xpath_expression = new String[xpath_size];
 		BufferedReader br;
 		try {
 			br = new BufferedReader(new FileReader(xpathconf_path));
 
 			String line="";
 			int counter = 0;
-			while (((line = br.readLine()) != null ) && counter < 5) {
+			while (((line = br.readLine()) != null ) && counter < xpath_size) {
 				xpath_expression[counter] = line;
 				counter ++;
 			}

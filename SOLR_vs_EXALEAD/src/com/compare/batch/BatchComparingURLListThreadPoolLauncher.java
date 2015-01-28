@@ -1,7 +1,5 @@
 package com.compare.batch;
-import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,12 +14,14 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.parsing.utility.XPathUtility;
+
 public class BatchComparingURLListThreadPoolLauncher {
 
 	private static String select_url_to_fetch = "SELECT ID FROM SOLR_VS_EXALEAD WHERE TO_FETCH = TRUE";
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/url_list_infos.properties";
-	private static String xpathconf_path = "/home/sduprey/My_Data/My_Xpath_Conf/xpath.conf";
-	private static String[] xpath_expression = new String[5];
+
+	private static String[] xpath_expression;
 //	private static int fixed_pool_size = 250;
 //	private static int size_bucket = 40000;
 	private static int fixed_pool_size = 1000;
@@ -33,13 +33,7 @@ public class BatchComparingURLListThreadPoolLauncher {
 	private static List<Integer> tofetch_list = new ArrayList<Integer>();
 
 	public static void main(String[] args) {
-		try {
-			loadXpathExpressions();
-		} catch (IOException e) {
-			System.out.println("Trouble reading xpath expressions to parse");
-			e.printStackTrace();
-			System.exit(0);
-		}
+		XPathUtility.loadXPATHConf();
 		String my_user_agent= "CdiscountBot-crawler";
 		if (args.length>=1){
 			my_user_agent= args[0];
@@ -166,17 +160,6 @@ public class BatchComparingURLListThreadPoolLauncher {
 
 		System.out.println("Finished all threads");
 
-	}
-
-	public static void loadXpathExpressions() throws IOException{
-		BufferedReader br = new BufferedReader(new FileReader(xpathconf_path));
-		String line="";
-		int counter = 0;
-		while (((line = br.readLine()) != null ) && counter < 5) {
-			xpath_expression[counter] = line;
-			counter ++;
-		}
-		br.close();
 	}
 }
 
