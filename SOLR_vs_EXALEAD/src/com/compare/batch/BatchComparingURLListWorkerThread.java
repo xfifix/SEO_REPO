@@ -568,8 +568,9 @@ public class BatchComparingURLListWorkerThread implements Runnable {
 			String url = line_info.getUrl();
 			try{
 				// fetching the solr version
-				System.out.println(Thread.currentThread().getName()+" fetching URL : "+url + " with cookie value to tap Solr");
-				HttpGet getSolr = new HttpGet(url);
+				String solrurl = url + "?b";
+				System.out.println(Thread.currentThread().getName()+" fetching URL : "+solrurl + " with cookie value to tap Solr");
+				HttpGet getSolr = new HttpGet(solrurl);
 				getSolr.setHeader("User-Agent", user_agent);
 				DefaultHttpClient clientSolr = new DefaultHttpClient();		
 				HttpContext HTTP_CONTEXT_SOLR = new BasicHttpContext();
@@ -596,8 +597,9 @@ public class BatchComparingURLListWorkerThread implements Runnable {
 				ParsingOutput solrOutput = XPathUtility.parse_page_code_source(page_source_codeSolr,xpathExpressions);
 				my_info.setSolrOutput(solrOutput);
 				my_info.setStatus(responseSolr.getStatusLine().getStatusCode());
-				System.out.println(Thread.currentThread().getName()+" fetching URL : "+url + " with cookie value to tap Exalead");
-				HttpGet getExalead = new HttpGet(url);
+				String exaleadurl = url + "?a";
+				System.out.println(Thread.currentThread().getName()+" fetching URL : "+exaleadurl + " with cookie value to tap Exalead");
+				HttpGet getExalead = new HttpGet(exaleadurl);
 				HttpContext HTTP_CONTEXT_EXALEAD = new BasicHttpContext();
 				HTTP_CONTEXT_EXALEAD.setAttribute(CoreProtocolPNames.USER_AGENT, "CdiscountBot-crawler");
 				//getSolr.setHeader("Referer", "http://www.google.com");
