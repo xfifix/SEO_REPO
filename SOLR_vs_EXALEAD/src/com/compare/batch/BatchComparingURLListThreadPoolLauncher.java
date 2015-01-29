@@ -32,7 +32,9 @@ public class BatchComparingURLListThreadPoolLauncher {
 
 	public static void main(String[] args) {
 		xpath_expression=XPathUtility.loadXPATHConf();
-		String my_user_agent= "CdiscountBot-crawler";
+		//String my_user_agent= "CdiscountBot-crawler";
+		// we don't want to it the cache
+		String my_user_agent= "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
 		if (args.length>=1){
 			my_user_agent= args[0];
 		} else {
