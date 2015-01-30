@@ -22,6 +22,8 @@ public class AdvancedZTDCMSExtractParser {
 	private static List<LineItem> items = new ArrayList<LineItem>();
 	private static List<LineItem> bad_items = new ArrayList<LineItem>();
 	private static LineItem current_item;
+	
+	private static int nb_fields_to_parse = 8;
 
 	public static void main(String[] args)  {
 		//String fileName = "V:\\SEO\\Stefan\\balises_ztds\\refnat_export_ztd_2014_11_01_100_0.csv";
@@ -90,6 +92,7 @@ public class AdvancedZTDCMSExtractParser {
 		BufferedReader br = new BufferedReader(new FileReader(fileName));
 		String header = br.readLine();
 		header = br.readLine();
+		System.out.println("File header read : "+header);
 		String line="";
 		StringBuilder word_sentence=new StringBuilder();;
 		int word_counter=0;
@@ -118,36 +121,36 @@ public class AdvancedZTDCMSExtractParser {
 				char_counter++;
 			}
 		}
-
+		br.close();
 	}
 
 	private static void checkWord(int word_counter, StringBuilder word_sentence){
-		if (word_counter%8 == 1){
+		if (word_counter%nb_fields_to_parse == 1){
 			current_item = new LineItem();
 			System.out.println("Adding Node Id :" +word_sentence.toString());
 			current_item.setNodeId(word_sentence.toString());
 		}
-		if (word_counter%8 == 2){
+		if (word_counter%nb_fields_to_parse == 2){
 			System.out.println("Adding Node Label :" +word_sentence.toString());
 			current_item.setNodeLable(word_sentence.toString());
 		}
-		if (word_counter%8 == 3){
+		if (word_counter%nb_fields_to_parse == 3){
 			System.out.println("Adding Node Position :" +word_sentence.toString());
 			current_item.setNodePosition(word_sentence.toString());
 		}
-		if (word_counter%8 == 4){
+		if (word_counter%nb_fields_to_parse == 4){
 			System.out.println("Adding Document :" +word_sentence.toString());
 			current_item.setDocument(word_sentence.toString());
 		}
-		if (word_counter%8 == 6){
+		if (word_counter%nb_fields_to_parse == 6){
 			System.out.println("Adding Mode :" +word_sentence.toString());
 			current_item.setMode(word_sentence.toString());
 		}
-		if (word_counter%8 == 7){
+		if (word_counter%nb_fields_to_parse == 7){
 			System.out.println("Adding Part One :" +word_sentence.toString());
 			current_item.setPartone(word_sentence.toString());
 		}
-		if (word_counter%8 == 0){
+		if (word_counter%nb_fields_to_parse == 0){
 			System.out.println("Adding Part Two :" +word_sentence.toString());
 			current_item.setParttwo(word_sentence.toString());
 			items.add(current_item);
