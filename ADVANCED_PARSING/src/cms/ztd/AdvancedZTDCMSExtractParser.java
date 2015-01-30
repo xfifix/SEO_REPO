@@ -24,12 +24,16 @@ public class AdvancedZTDCMSExtractParser {
 	private static LineItem current_item;
 
 	public static void main(String[] args)  {
-		//String fileName = "/home/sduprey/My_Data/My_CMS_Extract/refnat_export_ztd_2014_11_01_100_0.csv";
-		String fileName = "/home/sduprey/My_Data/My_CMS_Extract/refnat_export_ztd_2015_01_22_100_0.csv";
-		
-		String outputPathFileName = "/home/sduprey/My_Data/My_Outgoing_Data/My_ZTD_CMS_Extract/refnat_export_ztd_2015_01_22_100_0_results.csv";
 		//String fileName = "V:\\SEO\\Stefan\\balises_ztds\\refnat_export_ztd_2014_11_01_100_0.csv";
 		//String outputPathFileName = "V:\\SEO\\Stefan\\balises_ztds\\refnat_export_ztd_2014_11_01_100_0_results.csv";
+		
+		//String fileName = "/home/sduprey/My_Data/My_CMS_Extract/refnat_export_ztd_2015_01_22_100_0.csv";		
+		//String outputPathFileName = "/home/sduprey/My_Data/My_Outgoing_Data/My_ZTD_CMS_Extract/refnat_export_ztd_2015_01_22_100_0_results.csv";
+
+		String fileName = "D:\\My_Data\\My_CMS_Extract\\refnat_export_ztd_2015_01_22_100_0.csv";
+		String outputPathFileName = "D:\\My_Data\\My_CMS_Extract\\refnat_export_ztd_2015_01_22_100_0_results.csv";
+		
+		
 		try{
 			parsing_file(fileName);
 		} catch (IOException e){
@@ -56,6 +60,7 @@ public class AdvancedZTDCMSExtractParser {
 		for (LineItem baditem : bad_items){
 			writer.write(baditem.getDocument()+baditem.getMode()+baditem.getNodeId()+baditem.getNodeLable()+baditem.getNodePosition()+baditem.getOccurences()+"\n");
 		}
+
 		writer.close();
 	}
 
@@ -117,26 +122,33 @@ public class AdvancedZTDCMSExtractParser {
 	}
 
 	private static void checkWord(int word_counter, StringBuilder word_sentence){
-		if (word_counter%7 == 1){
+		if (word_counter%8 == 1){
 			current_item = new LineItem();
+			System.out.println("Adding Node Id :" +word_sentence.toString());
 			current_item.setNodeId(word_sentence.toString());
 		}
-		if (word_counter%7 == 2){
+		if (word_counter%8 == 2){
+			System.out.println("Adding Node Label :" +word_sentence.toString());
 			current_item.setNodeLable(word_sentence.toString());
 		}
-		if (word_counter%7 == 3){
+		if (word_counter%8 == 3){
+			System.out.println("Adding Node Position :" +word_sentence.toString());
 			current_item.setNodePosition(word_sentence.toString());
 		}
-		if (word_counter%7 == 4){
+		if (word_counter%8 == 4){
+			System.out.println("Adding Document :" +word_sentence.toString());
 			current_item.setDocument(word_sentence.toString());
 		}
-		if (word_counter%7 == 5){
+		if (word_counter%8 == 6){
+			System.out.println("Adding Mode :" +word_sentence.toString());
 			current_item.setMode(word_sentence.toString());
 		}
-		if (word_counter%7 == 6){
+		if (word_counter%8 == 7){
+			System.out.println("Adding Part One :" +word_sentence.toString());
 			current_item.setPartone(word_sentence.toString());
 		}
-		if (word_counter%7 == 0){
+		if (word_counter%8 == 0){
+			System.out.println("Adding Part Two :" +word_sentence.toString());
 			current_item.setParttwo(word_sentence.toString());
 			items.add(current_item);
 		}

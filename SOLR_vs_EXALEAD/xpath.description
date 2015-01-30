@@ -1,0 +1,9 @@
+H1 : //h1/text()
+Description : //p[@class="fpMb"]/text()
+Presentation ://div[@class='fpBlk extCode']
+Geoloc : //form/p[1]/a/text()
+Information//table[@class="fpDescTb"]/tbody/tr/td[1]
+Prix du produit : //p[@class="fpPrice price"]/text()
+Resume des offres (nombre d offres neuf et occasion + prix associe) : //div[@class="fpSell"]/p[@class="fpDel"]
+Delais de livraison : //div[@class="fpDel jsOverlay"]
+Le bloc detail sur cette offre : //div[@class="fpSlrName"]
