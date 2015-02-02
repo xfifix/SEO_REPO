@@ -23,3 +23,7 @@ CREATE TABLE IF NOT EXISTS EDGES (
 cleaning up the untrimmed database
 update nodes set label = trim(label)
 
+
+
+DROP TABLE IF EXISTS NODES;
+DROP TABLE IF EXISTS EDGES;
