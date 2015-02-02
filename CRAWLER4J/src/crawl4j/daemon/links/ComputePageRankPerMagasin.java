@@ -46,6 +46,7 @@ public class ComputePageRankPerMagasin {
 	private static Map<NodeInfos,Set<String>> nodes_infos = new HashMap<NodeInfos,Set<String>>();
 	private static Map<String, Integer> node_locator = new HashMap<String, Integer>(); 
 	private static int counter = 0;
+	// we get rid of the zero depth (404 and 301 and so on...)
 	private static String beginning_whole_fetching_request = "SELECT URL, STATUS_CODE, MAGASIN, PAGE_TYPE, LINKS FROM CRAWL_RESULTS WHERE MAGASIN = '";
 	private static String end_request = "' AND DEPTH >0 ORDER BY DEPTH";
 	private static String insert_node_statement ="INSERT INTO NODES (LABEL, MAGASIN, PAGE_TYPE, STATUS_CODE)"
@@ -195,10 +196,8 @@ public class ComputePageRankPerMagasin {
 		for (String ending_Node_URL : outgoing_links){
 			Integer endingNode = node_locator.get(ending_Node_URL);
 			if (endingNode != null && !(beginningNode.equals(endingNode))){			
-				System.out.println(" Beginning node : " + beginningNode);
-				System.out.println(" Ending node : "+endingNode);
-				//URI relationshipUri = addRelationship( beginningNode, endingNode, "link","{}");
-				//System.out.println("First relationship URI : "+relationshipUri);
+				//System.out.println(" Beginning node : " + beginningNode);
+				//System.out.println(" Ending node : "+endingNode);
 				createRelationShip(beginningNode, endingNode);
 				local_counter++;
 			} else {
@@ -206,7 +205,7 @@ public class ComputePageRankPerMagasin {
 				System.out.println("One node has not been found : "+url+total_size);
 			}
 		}
-		System.out.println("Having inserted "+local_counter+" over "+total_size);
+		System.out.println("Having inserted "+local_counter+" over the whole tally of "+counter);
 	}
 
 	private static void all_relations_creation(){
