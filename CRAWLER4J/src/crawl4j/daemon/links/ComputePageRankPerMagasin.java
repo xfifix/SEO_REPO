@@ -42,7 +42,6 @@ public class ComputePageRankPerMagasin {
 	private static String create_nodes_index = "CREATE INDEX ON NODES (label)";
 	private static String drop_edges_table = "DROP TABLE IF EXISTS EDGES";
 	private static String create_edges_table = "CREATE TABLE IF NOT EXISTS EDGES (SOURCE INT,TARGET INT) TABLESPACE mydbspace";
-
 	
 	private static Map<NodeInfos,Set<String>> nodes_infos = new HashMap<NodeInfos,Set<String>>();
 	private static Map<String, Integer> node_locator = new HashMap<String, Integer>(); 
@@ -112,14 +111,14 @@ public class ComputePageRankPerMagasin {
 	public static void main(String[] args){
 		try {
 			instantiate_connection();
+			// making the database clean for the new magasin if it already exists
+			cleaning_database();
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			System.out.println("Trouble with the POSTGRESQL database");
 			System.exit(0);
 		}
 
-		// making the database clean for the new magasin if it already exists
-		cleaning_database();
 		
 		// looping over all distinct magasins to compute page rank
 		for (int i=0;i<magasins.length;i++){
@@ -141,8 +140,26 @@ public class ComputePageRankPerMagasin {
 	}
 
 	
-	private static void cleaning_database(){
+	private static void cleaning_database() throws SQLException{
+		PreparedStatement drop_nodes_table_st = con.prepareStatement(drop_nodes_table);
+		drop_nodes_table_st.executeUpdate();
+		System.out.println("Dropping the old NODES table");
 		
+		PreparedStatement create_nodes_table_st = con.prepareStatement(create_nodes_table);
+		create_nodes_table_st.executeUpdate();
+		System.out.println("Creating the new NODES table");
+		
+		PreparedStatement create_nodes_index_st = con.prepareStatement(create_nodes_index);
+		create_nodes_index_st.executeUpdate();
+		System.out.println("Creating the new INDEX for NODES table");
+		
+		PreparedStatement drop_edges_table_st = con.prepareStatement(drop_edges_table);
+		drop_edges_table_st.executeUpdate();
+		System.out.println("Dropping the old EDGES table");
+		
+		PreparedStatement create_edges_table_st = con.prepareStatement(create_edges_table);
+		create_edges_table_st.executeUpdate();
+		System.out.println("Creating the new EDGES table");
 	}
 	
 	private static void building_database(){
