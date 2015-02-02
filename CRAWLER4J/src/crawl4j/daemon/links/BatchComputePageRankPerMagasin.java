@@ -8,8 +8,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -36,13 +38,13 @@ import org.openide.util.Lookup;
 import crawl4j.urlutilities.URL_Utilities;
 
 public class BatchComputePageRankPerMagasin {
-	
+
 	private static String drop_nodes_table = "DROP TABLE IF EXISTS NODES";
 	private static String create_nodes_table = "CREATE TABLE IF NOT EXISTS NODES (ID SERIAL PRIMARY KEY NOT NULL, LABEL TEXT, MAGASIN VARCHAR(100), STATUS_CODE INT, PAGE_TYPE VARCHAR(50)) TABLESPACE mydbspace";
 	private static String create_nodes_index = "CREATE INDEX ON NODES (label)";
 	private static String drop_edges_table = "DROP TABLE IF EXISTS EDGES";
 	private static String create_edges_table = "CREATE TABLE IF NOT EXISTS EDGES (SOURCE INT,TARGET INT) TABLESPACE mydbspace";
-	
+
 	private static Map<NodeInfos,Set<String>> nodes_infos = new HashMap<NodeInfos,Set<String>>();
 	private static Map<String, Integer> node_locator = new HashMap<String, Integer>(); 
 	private static int counter = 0;
@@ -53,7 +55,7 @@ public class BatchComputePageRankPerMagasin {
 			+ " VALUES(?,?,?,?)";
 	private static String insert_relation_statement ="INSERT INTO EDGES (SOURCE, TARGET)"
 			+ " VALUES(?,?)";
-	
+
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
 	private static String update_statement ="UPDATE CRAWL_RESULTS SET PAGE_RANK=? WHERE URL=?";
 	private static Connection con;
@@ -107,7 +109,7 @@ public class BatchComputePageRankPerMagasin {
 		//"personnalisation-3d",
 		"chaussures",
 		"auto",
-	    "high-tech"};
+	"high-tech"};
 
 	public static void main(String[] args){
 		try {
@@ -120,7 +122,7 @@ public class BatchComputePageRankPerMagasin {
 			System.exit(0);
 		}
 
-		
+
 		// looping over all distinct magasins to compute page rank
 		for (int i=0;i<magasins.length;i++){
 			String magasin = magasins[i];
@@ -146,34 +148,34 @@ public class BatchComputePageRankPerMagasin {
 		}
 	}
 
-	
+
 	private static void cleaning_database() throws SQLException{
 		PreparedStatement drop_nodes_table_st = con.prepareStatement(drop_nodes_table);
 		drop_nodes_table_st.executeUpdate();
 		System.out.println("Dropping the old NODES table");
-		
+
 		PreparedStatement create_nodes_table_st = con.prepareStatement(create_nodes_table);
 		create_nodes_table_st.executeUpdate();
 		System.out.println("Creating the new NODES table");
-		
+
 		PreparedStatement create_nodes_index_st = con.prepareStatement(create_nodes_index);
 		create_nodes_index_st.executeUpdate();
 		System.out.println("Creating the new INDEX for NODES table");
-		
+
 		PreparedStatement drop_edges_table_st = con.prepareStatement(drop_edges_table);
 		drop_edges_table_st.executeUpdate();
 		System.out.println("Dropping the old EDGES table");
-		
+
 		PreparedStatement create_edges_table_st = con.prepareStatement(create_edges_table);
 		create_edges_table_st.executeUpdate();
 		System.out.println("Creating the new EDGES table");
 	}
-	
+
 	private static void building_database() throws SQLException{
 		// we create all nodes at once
 		all_nodes_batch_creation();
 		// we create all relations at once
-		all_relations_creation();
+		all_relations_batch_creation();
 	}
 
 	private static void all_nodes_batch_creation() throws SQLException{
@@ -197,7 +199,6 @@ public class BatchComputePageRankPerMagasin {
 			nodesURL[url_counter]=url_infos.getUrl();
 			url_counter++;
 		}
-		
 		insert_st.executeBatch();
 		con.commit();
 		ResultSet rs = insert_st.getGeneratedKeys();
@@ -208,60 +209,51 @@ public class BatchComputePageRankPerMagasin {
 			node_locator.put(nodesURL[key_counter], inserted_keys);
 			key_counter++;
 		}
-		//node_locator.put(infos.getUrl(), inserted_keys);
-			
-			
-			
-			
-//			
-//			// we create the node and we put its id into the cache
-//			try {
-//				create_node_without_finding(url_infos);
-//				System.out.println("Node created : "+url_infos.getUrl());
-//			} catch (SQLException e) {
-//				// TODO Auto-generated catch block
-//				System.out.println("Trouble creating node : "+url_infos.getUrl());
-//				e.printStackTrace();
-//			}
-	//	}
 	}
 
-	private static void relations_insertion(String url,Set<String> outgoing_links) throws SQLException{
-		int total_size = outgoing_links.size();
-		int local_counter = 0;
-		Integer beginningNode = node_locator.get(url);
-		for (String ending_Node_URL : outgoing_links){
-			Integer endingNode = node_locator.get(ending_Node_URL);
-			if (endingNode != null && !(beginningNode.equals(endingNode))){			
-				//System.out.println(" Beginning node : " + beginningNode);
-				//System.out.println(" Ending node : "+endingNode);
-				createRelationShip(beginningNode, endingNode);
-				local_counter++;
-			} else {
-				System.out.println("Trouble with url : "+url);
-				System.out.println("One node has not been found : "+url+total_size);
-			}
-		}
-		System.out.println("Having inserted "+local_counter+" over the whole tally of "+counter);
-	}
-
-	private static void all_relations_creation(){
+	private static void all_relations_batch_creation() throws SQLException{
 		Iterator<Map.Entry<NodeInfos, Set<String>>> it = nodes_infos.entrySet().iterator();
+		List<EdgeInfos> edge_infos = new ArrayList<EdgeInfos>();
 		while (it.hasNext()) {
 			Map.Entry<NodeInfos, Set<String>> pairs = (Map.Entry<NodeInfos, Set<String>>)it.next();
 			NodeInfos url_infos =(NodeInfos)pairs.getKey();
 			Set<String> outgoing_links = (Set<String>)pairs.getValue();
+			String url = url_infos.getUrl();
 			System.out.println("Creating node : "+url_infos.getUrl());
-			// we create the node and we put its id into the cache
-			try {
-				relations_insertion(url_infos.getUrl(),outgoing_links);	
-				System.out.println("Relations created for node : "+url_infos.getUrl());
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				System.out.println("Trouble creating relations for node : "+url_infos.getUrl());
-				e.printStackTrace();
+			// we create the node and we put its id into the cache		
+			int total_size = outgoing_links.size();
+			int local_counter = 0;
+			Integer beginningNode = node_locator.get(url);
+			for (String ending_Node_URL : outgoing_links){
+				Integer endingNode = node_locator.get(ending_Node_URL);
+				if (endingNode != null && !(beginningNode.equals(endingNode))){			
+					//System.out.println(" Beginning node : " + beginningNode);
+					//System.out.println(" Ending node : "+endingNode);
+					EdgeInfos loc_info = new EdgeInfos();
+					loc_info.setBeginning(beginningNode);
+					loc_info.setEnding(endingNode);
+					edge_infos.add(loc_info);
+
+					local_counter++;
+				} else {
+					System.out.println("Trouble with url : "+url);
+					System.out.println("One node has not been found : "+url+total_size);
+				}
 			}
+			System.out.println("Having inserted "+local_counter+" over the whole tally of "+counter);
+
 		}
+
+		// batch creation
+		con.setAutoCommit(false);
+		PreparedStatement insert_st = con.prepareStatement(insert_relation_statement);
+		for (EdgeInfos info_to_insert : edge_infos){
+			insert_st.setInt(1, info_to_insert.getBeginning());
+			insert_st.setInt(2,info_to_insert.getEnding());
+			insert_st.addBatch();
+		}
+		insert_st.executeBatch();
+		con.commit();
 	}
 
 	private static void compute_page_rank_and_update_database() {
@@ -360,22 +352,6 @@ public class BatchComputePageRankPerMagasin {
 		con = DriverManager.getConnection(url, user, passwd);
 	}
 
-	private static void create_node_without_finding(NodeInfos infos) throws SQLException{
-		PreparedStatement insert_st = con.prepareStatement(insert_node_statement,Statement.RETURN_GENERATED_KEYS);
-		//(LABEL, MAGASIN, PAGE_TYPE, STATUS_CODE, URL)
-		insert_st.setString(1,infos.getUrl());
-		insert_st.setString(2,infos.getMagasin());
-		insert_st.setString(3,infos.getType());
-		insert_st.setInt(4,infos.getStatus());
-		insert_st.executeUpdate();
-		ResultSet rs = insert_st.getGeneratedKeys();
-		int inserted_keys=0;
-		if (rs != null && rs.next()) {
-			inserted_keys = rs.getInt(1);
-		}
-		node_locator.put(infos.getUrl(), inserted_keys);
-	}
-
 	public static void looping_over_urls(String magasin_to_fetch) throws SQLException{
 		// here is the links daemon starting point
 		// getting all URLS and out.println links for each URL
@@ -401,10 +377,23 @@ public class BatchComputePageRankPerMagasin {
 		}
 	}
 
-	private static void createRelationShip(Integer beginningNode, Integer endingNode) throws SQLException{
-		PreparedStatement insert_st = con.prepareStatement(insert_relation_statement);
-		insert_st.setInt(1, beginningNode);
-		insert_st.setInt(2,endingNode);
-		insert_st.executeUpdate();
+
+
+
+	private static class EdgeInfos{
+		private int beginning;
+		private int ending;
+		public int getBeginning() {
+			return beginning;
+		}
+		public void setBeginning(int beginning) {
+			this.beginning = beginning;
+		}
+		public int getEnding() {
+			return ending;
+		}
+		public void setEnding(int ending) {
+			this.ending = ending;
+		}
 	}
 }
