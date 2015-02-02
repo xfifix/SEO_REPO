@@ -144,6 +144,11 @@ public class BatchComputePageRankPerMagasin {
 				System.exit(0);
 			}		
 
+			// flushing all data
+			nodes_infos.clear();
+			node_locator.clear();
+			
+			// computing the page rank inside the magasin
 			compute_page_rank_and_update_database();
 		}
 	}
@@ -212,14 +217,16 @@ public class BatchComputePageRankPerMagasin {
 	}
 
 	private static void all_relations_batch_creation() throws SQLException{
+		int whole_lot_size_to_process = nodes_infos.entrySet().size();
+		System.out.println(whole_lot_size_to_process + " nodes to process");
 		Iterator<Map.Entry<NodeInfos, Set<String>>> it = nodes_infos.entrySet().iterator();
 		List<EdgeInfos> edge_infos = new ArrayList<EdgeInfos>();
+		int nodes_counter=0;
 		while (it.hasNext()) {
 			Map.Entry<NodeInfos, Set<String>> pairs = (Map.Entry<NodeInfos, Set<String>>)it.next();
 			NodeInfos url_infos =(NodeInfos)pairs.getKey();
 			Set<String> outgoing_links = (Set<String>)pairs.getValue();
 			String url = url_infos.getUrl();
-			System.out.println("Creating node : "+url_infos.getUrl());
 			// we create the node and we put its id into the cache		
 			int total_size = outgoing_links.size();
 			int local_counter = 0;
@@ -235,14 +242,16 @@ public class BatchComputePageRankPerMagasin {
 					edge_infos.add(loc_info);
 
 					local_counter++;
-				} else {
-					System.out.println("Trouble with url : "+url);
-					System.out.println("One node has not been found : "+url+total_size);
 				}
+//				else {
+//					System.out.println("Trouble with url : "+url);
+//					System.out.println("One node has not been found : "+url+total_size);
+//				}
 			}
-			System.out.println("Having inserted "+local_counter+" over the whole tally of "+counter);
-
+			System.out.println("Having proccess node number"+nodes_counter+" over the whole tally of "+whole_lot_size_to_process);
+			nodes_counter++;
 		}
+		System.out.println("Having added to the batch insertion "+nodes_counter+" over the whole tally of "+whole_lot_size_to_process);
 
 		// batch creation
 		con.setAutoCommit(false);
@@ -376,9 +385,6 @@ public class BatchComputePageRankPerMagasin {
 			System.out.println("Getting URL number :"+counter + " : " +url_node);
 		}
 	}
-
-
-
 
 	private static class EdgeInfos{
 		private int beginning;

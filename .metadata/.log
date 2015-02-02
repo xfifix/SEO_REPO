@@ -5765,3 +5765,41 @@ Binding(CTRL+D,
 		,,true),null),
 	org.eclipse.ui.defaultAcceleratorConfiguration,
 	org.eclipse.ui.textEditorScope,,,system)
+
+!ENTRY org.eclipse.jdt.debug 4 125 2015-02-02 11:02:22.501
+!MESSAGE Internal error logged from JDI Debug: 
+!STACK 0
+org.eclipse.jdi.TimeoutException: Timeout occurred while waiting for packet 1378.
+	at org.eclipse.jdi.internal.connect.PacketReceiveManager.getReply(PacketReceiveManager.java:186)
+	at org.eclipse.jdi.internal.connect.PacketReceiveManager.getReply(PacketReceiveManager.java:197)
+	at org.eclipse.jdi.internal.MirrorImpl.requestVM(MirrorImpl.java:191)
+	at org.eclipse.jdi.internal.MirrorImpl.requestVM(MirrorImpl.java:226)
+	at org.eclipse.jdi.internal.request.EventRequestImpl.disable(EventRequestImpl.java:217)
+	at org.eclipse.jdi.internal.request.EventRequestManagerImpl.deleteEventRequest(EventRequestManagerImpl.java:367)
+	at org.eclipse.jdt.internal.debug.core.model.JDIThread$StepHandler.deleteStepRequest(JDIThread.java:2393)
+	at org.eclipse.jdt.internal.debug.core.model.JDIThread$StepHandler.stepEnd(JDIThread.java:2584)
+	at org.eclipse.jdt.internal.debug.core.model.JDIThread$StepHandler.handleEvent(JDIThread.java:2486)
+	at org.eclipse.jdt.internal.debug.core.EventDispatcher.dispatch(EventDispatcher.java:152)
+	at org.eclipse.jdt.internal.debug.core.EventDispatcher.access$0(EventDispatcher.java:100)
+	at org.eclipse.jdt.internal.debug.core.EventDispatcher$1.run(EventDispatcher.java:249)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY org.eclipse.jdt.debug 4 125 2015-02-02 11:02:22.502
+!MESSAGE Internal error logged from JDI Debug: 
+!STACK 0
+org.eclipse.jdi.TimeoutException: Timeout occurred while waiting for packet 1379.
+	at org.eclipse.jdi.internal.connect.PacketReceiveManager.getReply(PacketReceiveManager.java:186)
+	at org.eclipse.jdi.internal.connect.PacketReceiveManager.getReply(PacketReceiveManager.java:197)
+	at org.eclipse.jdi.internal.MirrorImpl.requestVM(MirrorImpl.java:191)
+	at org.eclipse.jdi.internal.MirrorImpl.requestVM(MirrorImpl.java:226)
+	at org.eclipse.jdi.internal.ThreadReferenceImpl.frames(ThreadReferenceImpl.java:257)
+	at org.eclipse.jdi.internal.ThreadReferenceImpl.frames(ThreadReferenceImpl.java:240)
+	at org.eclipse.jdt.internal.debug.core.model.JDIThread.getUnderlyingFrames(JDIThread.java:664)
+	at org.eclipse.jdt.internal.debug.core.model.JDIThread.computeStackFrames(JDIThread.java:563)
+	at org.eclipse.jdt.internal.debug.core.model.JDIThread.computeStackFrames(JDIThread.java:635)
+	at org.eclipse.jdt.internal.debug.core.model.JDIStackFrame.supportsDropToFrame(JDIStackFrame.java:617)
+	at org.eclipse.jdt.internal.debug.core.model.JDIStackFrame.canDropToFrame(JDIStackFrame.java:586)
+	at org.eclipse.debug.internal.core.commands.DropToFrameCommand.isSteppable(DropToFrameCommand.java:35)
+	at org.eclipse.debug.internal.core.commands.StepCommand.isExecutable(StepCommand.java:46)
+	at org.eclipse.debug.core.commands.AbstractDebugCommand$UpdateJob.run(AbstractDebugCommand.java:101)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
