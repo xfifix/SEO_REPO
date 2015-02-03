@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
 
+import org.apache.commons.io.Charsets;
 import org.apache.http.Header;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -33,7 +34,7 @@ public class ContinuousCrawler extends WebCrawler {
 	//private static int bulk_size = 5;
 	// debugging size
 	//private static int bulk_size = 10;
-	
+
 	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg|jpg" + "|png|tiff|mid|mp2|mp3|mp4"
 			+ "|wav|avi|mov|mpeg|ram|m4v|ico|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 
@@ -65,9 +66,7 @@ public class ContinuousCrawler extends WebCrawler {
 		if (info == null){
 			info =new URLinfo();
 		}		
-		// filling up entity to be cached with page source code
-		byte[] compressedPageContent = gzip_compress_byte_stream(page.getContentData());
-		info.setPage_source_code(compressedPageContent);
+
 		// filling up url regexp attributes
 		info.setPage_type(page_type);
 		info.setMagasin(magasin);
@@ -76,10 +75,24 @@ public class ContinuousCrawler extends WebCrawler {
 		// filling up url parameters
 		info.setUrl(url);
 		info.setDepth((int)page.getWebURL().getDepth());
-		
+
 		myCrawlDataManager.incProcessedPages();	
 
 		List<WebURL> links = null;
+
+		// finding the appropriate vendor
+		String str_source_code = new String(page.getContentData(), Charsets.UTF_8);
+		boolean vendor = is_cdiscount_best_vendor_from_page_source_code(str_source_code);
+		info.setCdiscountBestBid(vendor);
+		info.setVendor(vendor ? "Cdiscount" : "Market Place");
+		boolean youtube = is_youtube_referenced_from_page_source_code(str_source_code);
+		info.setYoutubeVideoReferenced(youtube);
+
+		// filling up entity to be cached with page source code
+		if (ContinuousController.isBlobStored){
+			byte[] compressedPageContent = gzip_compress_byte_stream(page.getContentData());
+			info.setPage_source_code(compressedPageContent);
+		}
 
 		if (page.getParseData() instanceof HtmlParseData) {
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
@@ -110,16 +123,6 @@ public class ContinuousCrawler extends WebCrawler {
 			// finding the short description
 			Elements short_desc_el = doc.select("p.fpMb");
 			info.setShort_desc((short_desc_el==null? "":short_desc_el.text()));
-			// finding the vendor
-			Elements resellers = doc.select(".fpSellBy");
-			StringBuilder resellerBuilder = new StringBuilder();
-			for (Element reseller : resellers){
-				if(reseller.getElementsByTag("a") != null){
-					resellerBuilder.append(reseller.getElementsByTag("a").text());
-				}
-			}
-			String vendor = resellerBuilder.toString();
-			info.setVendor(vendor);
 
 			// finding the number of attributes
 			Elements attributes = doc.select(".fpDescTb tr");
@@ -154,6 +157,24 @@ public class ContinuousCrawler extends WebCrawler {
 		// We save this crawler data after processing every bulk_sizes pages
 		if (myCrawlDataManager.getTotalProcessedPages() % bulk_size == 0) {
 			saveData();
+		}
+	}
+
+	public boolean is_cdiscount_best_vendor_from_page_source_code(String str_source_code){
+		int cdiscount_index = str_source_code.indexOf("<p class='fpSellBy'>Vendu et expédié par <span class='logoCDS'>");
+		if (cdiscount_index >0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	public boolean is_youtube_referenced_from_page_source_code(String str_source_code){
+		int youtube_index = str_source_code.indexOf("http://www.youtube.com/");
+		if (youtube_index >0){
+			return true;
+		}else{
+			return false;
 		}
 	}
 
@@ -193,7 +214,7 @@ public class ContinuousCrawler extends WebCrawler {
 		}	
 		return compressedData;
 	}
-	
+
 	public Set<String> filter_out_links(List<WebURL> links){
 		Set<String> outputSet = new HashSet<String>();
 		for (WebURL url_out : links){

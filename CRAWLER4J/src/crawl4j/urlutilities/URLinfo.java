@@ -10,7 +10,9 @@ public class URLinfo {
 	private String footer="";
 	private String ztd="";
 	private String short_desc="";
-	private String vendor="";
+	private boolean isCdiscountBestBid;
+	private boolean isYoutubeVideoReferenced;
+	private String vendor ="";
 	private String att_desc="";
 	private int att_number=0;
 	private int status_code=0;
@@ -100,12 +102,6 @@ public class URLinfo {
 	public void setShort_desc(String short_desc) {
 		this.short_desc = short_desc;
 	}
-	public String getVendor() {
-		return vendor;
-	}
-	public void setVendor(String vendor) {
-		this.vendor = vendor;
-	}
 	public String getAtt_desc() {
 		return att_desc;
 	}
@@ -141,5 +137,23 @@ public class URLinfo {
 	}
 	public void setUrl(String url) {
 		this.url = url;
+	}
+	public boolean isCdiscountBestBid() {
+		return isCdiscountBestBid;
+	}
+	public void setCdiscountBestBid(boolean isCdiscountBestBid) {
+		this.isCdiscountBestBid = isCdiscountBestBid;
+	}
+	public boolean isYoutubeVideoReferenced() {
+		return isYoutubeVideoReferenced;
+	}
+	public void setYoutubeVideoReferenced(boolean isYoutubeVideoReferenced) {
+		this.isYoutubeVideoReferenced = isYoutubeVideoReferenced;
+	}
+	public String getVendor() {
+		return vendor;
+	}
+	public void setVendor(String vendor) {
+		this.vendor = vendor;
 	}
 }		

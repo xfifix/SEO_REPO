@@ -53,11 +53,11 @@
 <fullyQualifiedTypeName name="crawl4j.vsm.CorpusCache"/>
 <fullyQualifiedTypeName name="java.util.Map"/>
 <fullyQualifiedTypeName name="java.util.TreeMap"/>
-<fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="crawl4j.arbo.semantic.SemanticArboCrawler"/>
 <fullyQualifiedTypeName name="crawl4j.corpus.CorpusCrawlDataManagement"/>
 <fullyQualifiedTypeName name="java.io.Reader"/>
 <fullyQualifiedTypeName name="crawl4j.arbo.semantic.SemanticArboController"/>
 <fullyQualifiedTypeName name="org.apache.commons.lang3.StringUtils"/>
 <fullyQualifiedTypeName name="com.parsing.utility.XPathUtility"/>
+<fullyQualifiedTypeName name="java.util.List"/>
 </qualifiedTypeNameHistroy>

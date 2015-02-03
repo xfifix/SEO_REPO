@@ -6,12 +6,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class VendorParsingTestingClass {
+public class YoutubeVideoParsingTest {
 	public static void main(String[] args){
-
-		String my_url_to_fetch = "http://www.cdiscount.com/electromenager/tous-nos-accessoires/joint-hublot-d-30-30-cm/f-11029-ind3662734065501.html#mpos=2|mp";
-		//String my_url_to_fetch = "http://www.cdiscount.com/le-sport/vetements-de-sport/kappa-survetement-armor-homme/f-121020526-3025ej0005.html#mpos=1|cd";
-
+		String my_url_to_fetch = "http://www.cdiscount.com/electromenager/lavage-sechage/bosch-wak24160ff-lave-linge-frontal-8-kg/f-11001040406-bos4242002781082.html";
 		// fetching data using jQuery
 		org.jsoup.nodes.Document doc;
 		try{
@@ -31,8 +28,6 @@ public class VendorParsingTestingClass {
 			}
 			String vendor = resellerBuilder.toString();
 			System.out.println(vendor);
-
-
 		}
 		catch (IOException e) {
 			e.printStackTrace();

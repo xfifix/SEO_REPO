@@ -25,13 +25,13 @@ import crawl4j.urlutilities.URLinfo;
 public class CrawlDataManagement {
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
 	private static String insert_statement="INSERT INTO CRAWL_RESULTS(URL,WHOLE_TEXT,TITLE,LINKS_SIZE,"
-			+ "LINKS,H1,FOOTER_EXTRACT,ZTD_EXTRACT,SHORT_DESCRIPTION,VENDOR,ATTRIBUTES,NB_ATTRIBUTES,STATUS_CODE,HEADERS,DEPTH,PAGE_TYPE,MAGASIN,RAYON,PRODUIT,LAST_UPDATE)"
-			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-	private static String insert_statement_with_oid="INSERT INTO CRAWL_RESULTS(URL,WHOLE_TEXT,TITLE,LINKS_SIZE,"
-			+ "LINKS,H1,FOOTER_EXTRACT,ZTD_EXTRACT,SHORT_DESCRIPTION,VENDOR,ATTRIBUTES,NB_ATTRIBUTES,STATUS_CODE,HEADERS,DEPTH,PAGE_TYPE,MAGASIN,RAYON,PRODUIT,BLOBOID,LAST_UPDATE)"
+			+ "LINKS,H1,FOOTER_EXTRACT,ZTD_EXTRACT,SHORT_DESCRIPTION,CDISCOUNT_VENDOR,YOUTUBE_REFERENCED,ATTRIBUTES,NB_ATTRIBUTES,STATUS_CODE,HEADERS,DEPTH,PAGE_TYPE,MAGASIN,RAYON,PRODUIT,LAST_UPDATE)"
 			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-	private static String update_statement ="UPDATE CRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,LINKS_SIZE=?,LINKS=?,H1=?,FOOTER_EXTRACT=?,ZTD_EXTRACT=?,SHORT_DESCRIPTION=?,VENDOR=?,ATTRIBUTES=?,NB_ATTRIBUTES=?,STATUS_CODE=?,HEADERS=?,DEPTH=?,PAGE_TYPE=?,MAGASIN=?,RAYON=?,PRODUIT=?,LAST_UPDATE=? WHERE URL=?";
-	private static String update_statement_with_oid ="UPDATE CRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,LINKS_SIZE=?,LINKS=?,H1=?,FOOTER_EXTRACT=?,ZTD_EXTRACT=?,SHORT_DESCRIPTION=?,VENDOR=?,ATTRIBUTES=?,NB_ATTRIBUTES=?,STATUS_CODE=?,HEADERS=?,DEPTH=?,PAGE_TYPE=?,MAGASIN=?,RAYON=?,PRODUIT=?,BLOBOID=?,LAST_UPDATE=? WHERE URL=?";
+	private static String insert_statement_with_oid="INSERT INTO CRAWL_RESULTS(URL,WHOLE_TEXT,TITLE,LINKS_SIZE,"
+			+ "LINKS,H1,FOOTER_EXTRACT,ZTD_EXTRACT,SHORT_DESCRIPTION,CDISCOUNT_VENDOR,YOUTUBE_REFERENCED,ATTRIBUTES,NB_ATTRIBUTES,STATUS_CODE,HEADERS,DEPTH,PAGE_TYPE,MAGASIN,RAYON,PRODUIT,BLOBOID,LAST_UPDATE)"
+			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+	private static String update_statement ="UPDATE CRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,LINKS_SIZE=?,LINKS=?,H1=?,FOOTER_EXTRACT=?,ZTD_EXTRACT=?,SHORT_DESCRIPTION=?,CDISCOUNT_VENDOR=?,YOUTUBE_REFERENCED=?,ATTRIBUTES=?,NB_ATTRIBUTES=?,STATUS_CODE=?,HEADERS=?,DEPTH=?,PAGE_TYPE=?,MAGASIN=?,RAYON=?,PRODUIT=?,LAST_UPDATE=? WHERE URL=?";
+	private static String update_statement_with_oid ="UPDATE CRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,LINKS_SIZE=?,LINKS=?,H1=?,FOOTER_EXTRACT=?,ZTD_EXTRACT=?,SHORT_DESCRIPTION=?,CDISCOUNT_VENDOR=?,YOUTUBE_REFERENCED=?,ATTRIBUTES=?,NB_ATTRIBUTES=?,STATUS_CODE=?,HEADERS=?,DEPTH=?,PAGE_TYPE=?,MAGASIN=?,RAYON=?,PRODUIT=?,BLOBOID=?,LAST_UPDATE=? WHERE URL=?";
 
 	private static String get_blob_oid = "SELECT BLOBOID FROM CRAWL_RESULTS WHERE URL = ?";
 	private int totalProcessedPages;
@@ -213,19 +213,20 @@ public class CrawlDataManagement {
 			insert_st.setString(7,info.getFooter());
 			insert_st.setString(8,info.getZtd());
 			insert_st.setString(9,info.getShort_desc());
-			insert_st.setString(10,info.getVendor());
-			insert_st.setString(11,info.getAtt_desc());
-			insert_st.setInt(12,info.getAtt_number());
-			insert_st.setInt(13,info.getStatus_code());
-			insert_st.setString(14,info.getResponse_headers());		
-			insert_st.setInt(15,info.getDepth());
-			insert_st.setString(16, info.getPage_type());
-			insert_st.setString(17, info.getMagasin());
-			insert_st.setString(18, info.getRayon());
-			insert_st.setString(19, info.getProduit());
-			insert_st.setInt(20,oid);
+			insert_st.setBoolean(10,info.isCdiscountBestBid());
+			insert_st.setBoolean(11,info.isYoutubeVideoReferenced());		
+			insert_st.setString(12,info.getAtt_desc());
+			insert_st.setInt(13,info.getAtt_number());
+			insert_st.setInt(14,info.getStatus_code());
+			insert_st.setString(15,info.getResponse_headers());		
+			insert_st.setInt(16,info.getDepth());
+			insert_st.setString(17, info.getPage_type());
+			insert_st.setString(18, info.getMagasin());
+			insert_st.setString(19, info.getRayon());
+			insert_st.setString(20, info.getProduit());
+			insert_st.setInt(21,oid);
 			java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-			insert_st.setDate(21,sqlDate);
+			insert_st.setDate(22,sqlDate);
 			insert_st.executeUpdate(); 	
 		} else {
 			// if oid found not null, we update the found line and we update the matching blob
@@ -257,21 +258,22 @@ public class CrawlDataManagement {
 			update_st.setString(5,info.getH1());
 			update_st.setString(6,info.getFooter());
 			update_st.setString(7,info.getZtd());
-			update_st.setString(8,info.getShort_desc());
-			update_st.setString(9,info.getVendor());
-			update_st.setString(10,info.getAtt_desc());
-			update_st.setInt(11,info.getAtt_number());
-			update_st.setInt(12,info.getStatus_code());
-			update_st.setString(13,info.getResponse_headers());		
-			update_st.setInt(14,info.getDepth());
-			update_st.setString(15, info.getPage_type());
-			update_st.setString(16, info.getMagasin());
-			update_st.setString(17, info.getRayon());
-			update_st.setString(18, info.getProduit());
-			update_st.setInt(19, oid);
+			update_st.setString(8,info.getShort_desc());		
+			update_st.setBoolean(9,info.isCdiscountBestBid());
+			update_st.setBoolean(10,info.isYoutubeVideoReferenced());
+			update_st.setString(11,info.getAtt_desc());
+			update_st.setInt(12,info.getAtt_number());
+			update_st.setInt(13,info.getStatus_code());
+			update_st.setString(14,info.getResponse_headers());		
+			update_st.setInt(15,info.getDepth());
+			update_st.setString(16, info.getPage_type());
+			update_st.setString(17, info.getMagasin());
+			update_st.setString(18, info.getRayon());
+			update_st.setString(19, info.getProduit());
+			update_st.setInt(20, oid);
 			java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-			update_st.setDate(20,sqlDate);
-			update_st.setString(21,url);
+			update_st.setDate(21,sqlDate);
+			update_st.setString(22,url);
 			// we here don't care about wether or not the line has been found and updated
 			// as we have found the blob oid, the line is present and should be updated
 			//int affected_row = update_st.executeUpdate();
@@ -317,20 +319,21 @@ public class CrawlDataManagement {
 					st.setString(5,info.getH1());
 					st.setString(6,info.getFooter());
 					st.setString(7,info.getZtd());
-					st.setString(8,info.getShort_desc());
-					st.setString(9,info.getVendor());
-					st.setString(10,info.getAtt_desc());
-					st.setInt(11,info.getAtt_number());
-					st.setInt(12,info.getStatus_code());
-					st.setString(13,info.getResponse_headers());		
-					st.setInt(14,info.getDepth());
-					st.setString(15, info.getPage_type());
-					st.setString(16, info.getMagasin());
-					st.setString(17, info.getRayon());
-					st.setString(18, info.getProduit());
+					st.setString(8,info.getShort_desc());	
+					st.setBoolean(9,info.isCdiscountBestBid());
+					st.setBoolean(10,info.isYoutubeVideoReferenced());
+					st.setString(11,info.getAtt_desc());
+					st.setInt(12,info.getAtt_number());
+					st.setInt(13,info.getStatus_code());
+					st.setString(14,info.getResponse_headers());		
+					st.setInt(15,info.getDepth());
+					st.setString(16, info.getPage_type());
+					st.setString(17, info.getMagasin());
+					st.setString(18, info.getRayon());
+					st.setString(19, info.getProduit());
 					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-					st.setDate(19,sqlDate);
-					st.setString(20,url);
+					st.setDate(20,sqlDate);
+					st.setString(21,url);
 					int affected_row = st.executeUpdate();
 					// if the row has not been updated, we have to insert it !
 					if(affected_row == 0){
@@ -344,17 +347,18 @@ public class CrawlDataManagement {
 						insert_st.setString(7,info.getFooter());
 						insert_st.setString(8,info.getZtd());
 						insert_st.setString(9,info.getShort_desc());
-						insert_st.setString(10,info.getVendor());
-						insert_st.setString(11,info.getAtt_desc());
-						insert_st.setInt(12,info.getAtt_number());
-						insert_st.setInt(13,info.getStatus_code());
-						insert_st.setString(14,info.getResponse_headers());		
-						insert_st.setInt(15,info.getDepth());
-						insert_st.setString(16, info.getPage_type());
-						insert_st.setString(17, info.getMagasin());
-						insert_st.setString(18, info.getRayon());
-						insert_st.setString(19, info.getProduit());
-						insert_st.setDate(20,sqlDate);
+						insert_st.setBoolean(10,info.isCdiscountBestBid());
+						insert_st.setBoolean(11,info.isYoutubeVideoReferenced());					
+						insert_st.setString(12,info.getAtt_desc());
+						insert_st.setInt(13,info.getAtt_number());
+						insert_st.setInt(14,info.getStatus_code());
+						insert_st.setString(15,info.getResponse_headers());		
+						insert_st.setInt(16,info.getDepth());
+						insert_st.setString(17, info.getPage_type());
+						insert_st.setString(18, info.getMagasin());
+						insert_st.setString(19, info.getRayon());
+						insert_st.setString(20, info.getProduit());
+						insert_st.setDate(21,sqlDate);
 						insert_st.executeUpdate();
 					}
 				}while (it.hasNext());	
@@ -410,14 +414,15 @@ public class CrawlDataManagement {
 					st.setString(7,info.getFooter());
 					st.setString(8,info.getZtd());
 					st.setString(9,info.getShort_desc());
-					st.setString(10,info.getVendor());
-					st.setString(11,info.getAtt_desc());
-					st.setInt(12,info.getAtt_number());
-					st.setInt(13,info.getStatus_code());
-					st.setString(14,info.getResponse_headers());		
-					st.setInt(15,info.getDepth());
+					st.setBoolean(10,info.isCdiscountBestBid());
+					st.setBoolean(11,info.isYoutubeVideoReferenced());
+					st.setString(12,info.getAtt_desc());
+					st.setInt(13,info.getAtt_number());
+					st.setInt(14,info.getStatus_code());
+					st.setString(15,info.getResponse_headers());		
+					st.setInt(16,info.getDepth());
 					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-					st.setDate(16,sqlDate);
+					st.setDate(17,sqlDate);
 					st.addBatch();
 				}while (it.hasNext());	
 				st.executeBatch();		 

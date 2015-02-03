@@ -24,8 +24,8 @@ public class BatchComparingURLListThreadPoolLauncher {
 	private static String[] xpath_expression;
 //	private static int fixed_pool_size = 1000;
 //	private static int size_bucket = 10000;
-	private static int fixed_pool_size = 500;
-	private static int size_bucket = 1000;
+	private static int fixed_pool_size = 100;
+	private static int size_bucket = 50;
 	
 	// debugging parameters
 	//private static int fixed_pool_size = 10;
