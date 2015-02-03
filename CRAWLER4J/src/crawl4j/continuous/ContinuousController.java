@@ -14,11 +14,9 @@ public class ContinuousController {
 		System.setProperty("http.agent", "");
 		System.out.println("Starting the crawl configuration");		
 
-		//String seed = "http://www.cdiscount.com/";
-		// debugging string
-		String seed = "http://www.cdiscount.com/electromenager/tous-nos-accessoires/joint-hublot-d-30-30-cm/f-11029-ind3662734065501.html";
+		String seed = "http://www.cdiscount.com/";
 
-		int numberOfCrawlers =  75;	
+		int numberOfCrawlers =  150;	
 		// downsizing to test
 		//int numberOfCrawlers =  1;
 		if (args.length == 2) {
