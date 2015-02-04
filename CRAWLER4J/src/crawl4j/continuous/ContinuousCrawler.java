@@ -9,15 +9,20 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
+
 import org.apache.commons.io.Charsets;
 import org.apache.http.Header;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.xml.sax.SAXException;
 
 import crawl4j.urlutilities.URL_Utilities;
 import crawl4j.urlutilities.URLinfo;
+import crawl4j.xpathutility.XPathUtility;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
@@ -87,6 +92,19 @@ public class ContinuousCrawler extends WebCrawler {
 		info.setVendor(vendor ? "Cdiscount" : "Market Place");
 		boolean youtube = is_youtube_referenced_from_page_source_code(str_source_code);
 		info.setYoutubeVideoReferenced(youtube);
+
+		// XPATH parsing
+		if (ContinuousController.isXPATHparsed){
+			try {
+				String[] solrOutput = XPathUtility.parse_page_code_source(str_source_code,myCrawlDataManager.getXpath_expression());
+				info.setXPATH_results(solrOutput);
+			} catch (XPathExpressionException | ParserConfigurationException
+					| SAXException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				System.out.println("Trouble parsing XPATH expressions for URL : "+url);
+			}
+		}
 
 		// filling up entity to be cached with page source code
 		if (ContinuousController.isBlobStored){
@@ -168,7 +186,7 @@ public class ContinuousCrawler extends WebCrawler {
 			return false;
 		}
 	}
-	
+
 	public boolean is_youtube_referenced_from_page_source_code(String str_source_code){
 		int youtube_index = str_source_code.indexOf("http://www.youtube.com/");
 		if (youtube_index >0){

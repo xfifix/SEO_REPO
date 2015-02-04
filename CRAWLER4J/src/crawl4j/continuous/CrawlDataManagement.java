@@ -21,6 +21,7 @@ import org.postgresql.largeobject.LargeObject;
 import org.postgresql.largeobject.LargeObjectManager;
 
 import crawl4j.urlutilities.URLinfo;
+import crawl4j.xpathutility.XPathUtility;
 
 public class CrawlDataManagement {
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
@@ -40,8 +41,11 @@ public class CrawlDataManagement {
 	private Connection con;
 	private HttpSolrServer solr_server;
 	private Map<String, URLinfo> crawledContent = new HashMap<String, URLinfo>();
-
+	private static String[] xpath_expression;
+	
 	public CrawlDataManagement() {
+		// loading XPATH expression
+		setXpath_expression(XPathUtility.loadXPATHConf());
 		// Reading the property of our database
 		Properties props = new Properties();
 		FileInputStream in = null;      
@@ -457,5 +461,13 @@ public class CrawlDataManagement {
 
 	public void setCrawledContent(Map<String, URLinfo> crawledContent) {
 		this.crawledContent = crawledContent;
+	}
+
+	public String[] getXpath_expression() {
+		return xpath_expression;
+	}
+
+	public static void setXpath_expression(String[] xpath_expression) {
+		CrawlDataManagement.xpath_expression = xpath_expression;
 	}
 }

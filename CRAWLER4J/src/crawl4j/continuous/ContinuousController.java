@@ -10,13 +10,14 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
 public class ContinuousController {
 	public static boolean isBlobStored = false;
+	public static boolean isXPATHparsed = true;
 	public static void main(String[] args) throws Exception {
 		System.setProperty("http.agent", "");
 		System.out.println("Starting the crawl configuration");		
 
 		String seed = "http://www.cdiscount.com/";
-
-		int numberOfCrawlers =  150;	
+		//String seed = "http://www.cdiscount.com/electromenager/tous-nos-accessoires/joint-hublot-d-30-30-cm/f-11029-ind3662734065501.html";
+		int numberOfCrawlers =  300;	
 		// downsizing to test
 		//int numberOfCrawlers =  1;
 		if (args.length == 2) {

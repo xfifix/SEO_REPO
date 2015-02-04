@@ -23,7 +23,14 @@ public class URLinfo {
 	private String rayon="";
 	private String produit="";
 	private byte[] page_source_code;
+	private String[] XPATH_results;
 	
+	public String[] getXPATH_results() {
+		return XPATH_results;
+	}
+	public void setXPATH_results(String[] xPATH_results) {
+		XPATH_results = xPATH_results;
+	}
 	public byte[] getPage_source_code() {
 		return page_source_code;
 	}
