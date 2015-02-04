@@ -363,6 +363,7 @@ public class CrawlDataManagement {
 			java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
 			insert_st.setDate(32,sqlDate);
 			insert_st.executeUpdate(); 	
+			insert_st.close();
 		} else {
 			// if oid found not null, we update the found line and we update the matching blob
 			// we don't create the object, we just open it
@@ -478,6 +479,7 @@ public class CrawlDataManagement {
 			// as we have found the blob oid, the line is present and should be updated
 			//int affected_row = update_st.executeUpdate();
 			update_st.executeUpdate();
+			update_st.close();
 		}
 		con.commit();
 	}
@@ -599,6 +601,7 @@ public class CrawlDataManagement {
 					st.setDate(30,sqlDate);
 					st.setString(31,url);
 					int affected_row = st.executeUpdate();
+					st.close();
 					// if the row has not been updated, we have to insert it !
 					if(affected_row == 0){
 						PreparedStatement insert_st = con.prepareStatement(insert_statement);
@@ -688,6 +691,7 @@ public class CrawlDataManagement {
 						insert_st.setString(30, info.getProduit());
 						insert_st.setDate(31,sqlDate);
 						insert_st.executeUpdate();
+						insert_st.close();
 					}
 				}while (it.hasNext());	
 				System.out.println(Thread.currentThread()+"Committed " + local_counter + " updates");
@@ -819,6 +823,7 @@ public class CrawlDataManagement {
 				}while (it.hasNext());	
 				st.executeBatch();		 
 				con.commit();
+				st.close();
 				System.out.println(Thread.currentThread()+"Committed " + local_counter + " updates");
 			}
 		} catch (SQLException e){
