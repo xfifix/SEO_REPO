@@ -25,7 +25,7 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 
-public class ProcessMagasinAttributesCompletionPerCategoryMetrics {
+public class ProcessMagasinAttributesCompletionPerCategoryPerVendorMetrics {
 
 	private static String config_path = "/home/sduprey/My_Code/My_Java_Workspace/SIMILARITY_METRICS/config/";
 	public static Properties properties;
@@ -256,7 +256,7 @@ public class ProcessMagasinAttributesCompletionPerCategoryMetrics {
 		// getting the URLs infos for each rayon
 		PreparedStatement field_pst;
 		try {
-			field_pst  = con.prepareStatement("SELECT NB_ATTRIBUTES,ATTRIBUTES,URL,MAGASIN,RAYON,PRODUIT,PAGE_TYPE FROM CRAWL_RESULTS WHERE MAGASIN='" +magasin_to_analyse+ "'");
+			field_pst  = con.prepareStatement("SELECT NB_ATTRIBUTES,ATTRIBUTES,URL,MAGASIN,RAYON,PRODUIT,PAGE_TYPE,CDISCOUNT_VENDOR FROM CRAWL_RESULTS WHERE MAGASIN='" +magasin_to_analyse+ "'");
 			System.out.println("I am requesting the database, please wait a few seconds");
 			ResultSet field_rs = field_pst.executeQuery();
 			while (field_rs.next()) {
@@ -269,6 +269,7 @@ public class ProcessMagasinAttributesCompletionPerCategoryMetrics {
 				String my_rayon = field_rs.getString(5);
 				String my_produit = field_rs.getString(6);
 				String my_page_type = field_rs.getString(7);
+				boolean isCdiscountVendor = field_rs.getBoolean(8);
 				url_info.setNb_attributes(nb_attributes);
 				url_info.setAttributes(attributes);
 				url_info.setUrl(my_url);
@@ -276,6 +277,7 @@ public class ProcessMagasinAttributesCompletionPerCategoryMetrics {
 				url_info.setRayon(my_rayon);
 				url_info.setProduit(my_produit);
 				url_info.setPageType(my_page_type);
+				url_info.setCdiscountVendor(isCdiscountVendor);
 				magasins_datas.add(url_info);
 			}
 		} catch (SQLException e) {

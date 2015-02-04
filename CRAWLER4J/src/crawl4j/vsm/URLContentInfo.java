@@ -5,11 +5,11 @@ public class URLContentInfo {
 	private int nb_attributes;
 	private String content;
 	private String url;
-	private String vendor;
 	private String magasin;
 	private String produit;
 	private String rayon;
 	private String pageType;
+	private boolean isCdiscountVendor;
 	
 	public String getAttributes() {
 		return attributes;
@@ -35,12 +35,6 @@ public class URLContentInfo {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	public String getVendor() {
-		return vendor;
-	}
-	public void setVendor(String vendor) {
-		this.vendor = vendor;
-	}
 	public String getMagasin() {
 		return magasin;
 	}
@@ -64,5 +58,11 @@ public class URLContentInfo {
 	}
 	public void setPageType(String pageType) {
 		this.pageType = pageType;
+	}
+	public boolean isCdiscountVendor() {
+		return isCdiscountVendor;
+	}
+	public void setCdiscountVendor(boolean isCdiscountVendor) {
+		this.isCdiscountVendor = isCdiscountVendor;
 	}
 }
