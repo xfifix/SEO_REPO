@@ -17,9 +17,9 @@ public class ContinuousController {
 
 		String seed = "http://www.cdiscount.com/";
 		//String seed = "http://www.cdiscount.com/electromenager/tous-nos-accessoires/joint-hublot-d-30-30-cm/f-11029-ind3662734065501.html";
-		int numberOfCrawlers =  400;	
+		//int numberOfCrawlers =  400;	
 		// downsizing to test
-		//int numberOfCrawlers =  1;
+		int numberOfCrawlers =  1;
 		if (args.length == 2) {
 			seed = args[0];
 			numberOfCrawlers=Integer.valueOf(args[1]);
