@@ -42,7 +42,7 @@ public class CrawlDataManagement {
 	private HttpSolrServer solr_server;
 	private Map<String, URLinfo> crawledContent = new HashMap<String, URLinfo>();
 	private static String[] xpath_expression;
-	
+
 	public CrawlDataManagement() {
 		// loading XPATH expression
 		setXpath_expression(XPathUtility.loadXPATHConf());
@@ -137,6 +137,70 @@ public class CrawlDataManagement {
 					doc.addField("ztd_extract",info.getZtd());
 					doc.addField("short_description",info.getShort_desc());		
 					doc.addField("vendor",info.getVendor());
+					String[] XPATHRESULTS = info.getXPATH_results();
+					if (XPATHRESULTS != null){	
+						if (XPATHRESULTS[0] != null){
+							doc.addField("xpath1",XPATHRESULTS[0]);	
+						} else {
+							doc.addField("xpath1","");
+						}
+						if (XPATHRESULTS[1] != null){
+							doc.addField("xpath2",XPATHRESULTS[1]);
+						} else {
+							doc.addField("xpath2","");
+						}
+						if (XPATHRESULTS[2] != null){
+							doc.addField("xpath3",XPATHRESULTS[2]);
+						} else {
+							doc.addField("xpath3","");
+						}
+						if (XPATHRESULTS[3] != null){
+							doc.addField("xpath4",XPATHRESULTS[3]);
+						} else {
+							doc.addField("xpath4","");
+						}
+						if (XPATHRESULTS[4] != null){
+							doc.addField("xpath5",XPATHRESULTS[4]);
+						} else {
+							doc.addField("xpath5","");
+						}
+						if (XPATHRESULTS[5] != null){
+							doc.addField("xpath6",XPATHRESULTS[5]);
+						} else {
+							doc.addField("xpath6","");
+						}
+						if (XPATHRESULTS[6] != null){
+							doc.addField("xpath7",XPATHRESULTS[6]);
+						} else {
+							doc.addField("xpath7","");
+						}
+						if (XPATHRESULTS[7] != null){
+							doc.addField("xpath8",XPATHRESULTS[7]);
+						} else {
+							doc.addField("xpath8","");
+						}
+						if (XPATHRESULTS[8] != null){
+							doc.addField("xpath9",XPATHRESULTS[8]);
+						} else {
+							doc.addField("xpath9","");
+						}
+						if (XPATHRESULTS[9] != null){
+							doc.addField("xpath10",XPATHRESULTS[9]);
+						} else {
+							doc.addField("xpath10","");
+						}
+					}else {
+						doc.addField("xpath1","");
+						doc.addField("xpath2","");
+						doc.addField("xpath3","");
+						doc.addField("xpath4","");
+						doc.addField("xpath5","");
+						doc.addField("xpath6","");
+						doc.addField("xpath7","");
+						doc.addField("xpath8","");
+						doc.addField("xpath9","");
+						doc.addField("xpath10","");
+					}
 					doc.addField("attributes",info.getAtt_desc());
 					doc.addField("nb_attributes",info.getAtt_number());
 					doc.addField("status_code", info.getStatus_code());
@@ -217,8 +281,8 @@ public class CrawlDataManagement {
 			insert_st.setString(7,info.getFooter());
 			insert_st.setString(8,info.getZtd());
 			insert_st.setString(9,info.getShort_desc());
-			
-			
+
+
 			String[] XPATHRESULTS = info.getXPATH_results();
 			if (XPATHRESULTS != null){	
 				if (XPATHRESULTS[0] != null){
@@ -283,7 +347,7 @@ public class CrawlDataManagement {
 				insert_st.setString(18, "");
 				insert_st.setString(19, "");
 			}
-			
+
 			insert_st.setBoolean(20,info.isCdiscountBestBid());
 			insert_st.setBoolean(21,info.isYoutubeVideoReferenced());		
 			insert_st.setString(22,info.getAtt_desc());
@@ -301,7 +365,7 @@ public class CrawlDataManagement {
 			insert_st.executeUpdate(); 	
 		} else {
 			// if oid found not null, we update the found line and we update the matching blob
-            // we don't create the object, we just open it
+			// we don't create the object, we just open it
 			LargeObject obj = lobj.open(oid, LargeObjectManager.WRITE);
 			// we write the new content to the BLOB
 			InputStream fis = new ByteArrayInputStream(info.getPage_source_code());
@@ -330,7 +394,7 @@ public class CrawlDataManagement {
 			update_st.setString(6,info.getFooter());
 			update_st.setString(7,info.getZtd());
 			update_st.setString(8,info.getShort_desc());	
-			
+
 			String[] XPATHRESULTS = info.getXPATH_results();
 			if (XPATHRESULTS != null){	
 				if (XPATHRESULTS[0] != null){
@@ -610,7 +674,7 @@ public class CrawlDataManagement {
 							insert_st.setString(18, "");
 							insert_st.setString(19, "");
 						}
-						
+
 						insert_st.setBoolean(20,info.isCdiscountBestBid());
 						insert_st.setBoolean(21,info.isYoutubeVideoReferenced());					
 						insert_st.setString(22,info.getAtt_desc());

@@ -185,6 +185,16 @@
    <field name="footer_extract" type="text_general" indexed="true" stored="true" required="true" multiValued="false" /> 
    <field name="ztd_extract" type="text_general" indexed="true" stored="true" required="true" multiValued="false" /> 
    <field name="short_description" type="text_general" indexed="true" stored="true" required="true" multiValued="false" /> 
+   <field name="xpath1" type="text_general" indexed="true" stored="true" required="true" multiValued="false" />
+   <field name="xpath2" type="text_general" indexed="true" stored="true" required="true" multiValued="false" /> 
+   <field name="xpath3" type="text_general" indexed="true" stored="true" required="true" multiValued="false" /> 
+   <field name="xpath4" type="text_general" indexed="true" stored="true" required="true" multiValued="false" /> 
+   <field name="xpath5" type="text_general" indexed="true" stored="true" required="true" multiValued="false" /> 
+   <field name="xpath6" type="text_general" indexed="true" stored="true" required="true" multiValued="false" /> 
+   <field name="xpath7" type="text_general" indexed="true" stored="true" required="true" multiValued="false" /> 
+   <field name="xpath8" type="text_general" indexed="true" stored="true" required="true" multiValued="false" /> 
+   <field name="xpath9" type="text_general" indexed="true" stored="true" required="true" multiValued="false" /> 
+   <field name="xpath10" type="text_general" indexed="true" stored="true" required="true" multiValued="false" /> 
    <field name="vendor" type="string" indexed="true" stored="true" required="true" multiValued="false" /> 
    <field name="nb_attributes" type="string" indexed="true" stored="true" required="true" multiValued="false" /> 
    <field name="attributes" type="text_general" indexed="true" stored="true" required="true" multiValued="false" /> 

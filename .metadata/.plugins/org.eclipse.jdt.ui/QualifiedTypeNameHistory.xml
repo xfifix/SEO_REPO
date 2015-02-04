@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="org.w3c.dom.Node"/>
 <fullyQualifiedTypeName name="org.apache.commons.codec.binary.Base64"/>
 <fullyQualifiedTypeName name="com.crawljax.browser.EmbeddedBrowser.BrowserType"/>
 <fullyQualifiedTypeName name="vsm.URLContentInfo"/>
@@ -60,4 +59,5 @@
 <fullyQualifiedTypeName name="org.apache.commons.lang3.StringUtils"/>
 <fullyQualifiedTypeName name="com.parsing.utility.XPathUtility"/>
 <fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="crawl4j.xpathutility.XPathUtility"/>
 </qualifiedTypeNameHistroy>
