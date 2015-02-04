@@ -26,13 +26,13 @@ import crawl4j.xpathutility.XPathUtility;
 public class CrawlDataManagement {
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
 	private static String insert_statement="INSERT INTO CRAWL_RESULTS(URL,WHOLE_TEXT,TITLE,LINKS_SIZE,"
-			+ "LINKS,H1,FOOTER_EXTRACT,ZTD_EXTRACT,SHORT_DESCRIPTION,CDISCOUNT_VENDOR,YOUTUBE_REFERENCED,ATTRIBUTES,NB_ATTRIBUTES,STATUS_CODE,HEADERS,DEPTH,PAGE_TYPE,MAGASIN,RAYON,PRODUIT,LAST_UPDATE)"
-			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			+ "LINKS,H1,FOOTER_EXTRACT,ZTD_EXTRACT,SHORT_DESCRIPTION,XPATH1,XPATH2,XPATH3,XPATH4,XPATH5,XPATH6,XPATH7,XPATH8,XPATH9,XPATH10,CDISCOUNT_VENDOR,YOUTUBE_REFERENCED,ATTRIBUTES,NB_ATTRIBUTES,STATUS_CODE,HEADERS,DEPTH,PAGE_TYPE,MAGASIN,RAYON,PRODUIT,LAST_UPDATE)"
+			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	private static String insert_statement_with_oid="INSERT INTO CRAWL_RESULTS(URL,WHOLE_TEXT,TITLE,LINKS_SIZE,"
-			+ "LINKS,H1,FOOTER_EXTRACT,ZTD_EXTRACT,SHORT_DESCRIPTION,CDISCOUNT_VENDOR,YOUTUBE_REFERENCED,ATTRIBUTES,NB_ATTRIBUTES,STATUS_CODE,HEADERS,DEPTH,PAGE_TYPE,MAGASIN,RAYON,PRODUIT,BLOBOID,LAST_UPDATE)"
+			+ "LINKS,H1,FOOTER_EXTRACT,ZTD_EXTRACT,SHORT_DESCRIPTION,XPATH1,XPATH2,XPATH3,XPATH4,XPATH5,XPATH6,XPATH7,XPATH8,XPATH9,XPATH10,CDISCOUNT_VENDOR,YOUTUBE_REFERENCED,ATTRIBUTES,NB_ATTRIBUTES,STATUS_CODE,HEADERS,DEPTH,PAGE_TYPE,MAGASIN,RAYON,PRODUIT,BLOBOID,LAST_UPDATE)"
 			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-	private static String update_statement ="UPDATE CRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,LINKS_SIZE=?,LINKS=?,H1=?,FOOTER_EXTRACT=?,ZTD_EXTRACT=?,SHORT_DESCRIPTION=?,CDISCOUNT_VENDOR=?,YOUTUBE_REFERENCED=?,ATTRIBUTES=?,NB_ATTRIBUTES=?,STATUS_CODE=?,HEADERS=?,DEPTH=?,PAGE_TYPE=?,MAGASIN=?,RAYON=?,PRODUIT=?,LAST_UPDATE=? WHERE URL=?";
-	private static String update_statement_with_oid ="UPDATE CRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,LINKS_SIZE=?,LINKS=?,H1=?,FOOTER_EXTRACT=?,ZTD_EXTRACT=?,SHORT_DESCRIPTION=?,CDISCOUNT_VENDOR=?,YOUTUBE_REFERENCED=?,ATTRIBUTES=?,NB_ATTRIBUTES=?,STATUS_CODE=?,HEADERS=?,DEPTH=?,PAGE_TYPE=?,MAGASIN=?,RAYON=?,PRODUIT=?,BLOBOID=?,LAST_UPDATE=? WHERE URL=?";
+	private static String update_statement ="UPDATE CRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,LINKS_SIZE=?,LINKS=?,H1=?,FOOTER_EXTRACT=?,ZTD_EXTRACT=?,SHORT_DESCRIPTION=?,XPATH1=?,XPATH2=?,XPATH3=?,XPATH4=?,XPATH5=?,XPATH6=?,XPATH7=?,XPATH8=?,XPATH9=?,XPATH10=?,CDISCOUNT_VENDOR=?,YOUTUBE_REFERENCED=?,ATTRIBUTES=?,NB_ATTRIBUTES=?,STATUS_CODE=?,HEADERS=?,DEPTH=?,PAGE_TYPE=?,MAGASIN=?,RAYON=?,PRODUIT=?,LAST_UPDATE=? WHERE URL=?";
+	private static String update_statement_with_oid ="UPDATE CRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,LINKS_SIZE=?,LINKS=?,H1=?,FOOTER_EXTRACT=?,ZTD_EXTRACT=?,SHORT_DESCRIPTION=?,XPATH1=?,XPATH2=?,XPATH3=?,XPATH4=?,XPATH5=?,XPATH6=?,XPATH7=?,XPATH8=?,XPATH9=?,XPATH10=?,CDISCOUNT_VENDOR=?,YOUTUBE_REFERENCED=?,ATTRIBUTES=?,NB_ATTRIBUTES=?,STATUS_CODE=?,HEADERS=?,DEPTH=?,PAGE_TYPE=?,MAGASIN=?,RAYON=?,PRODUIT=?,BLOBOID=?,LAST_UPDATE=? WHERE URL=?";
 
 	private static String get_blob_oid = "SELECT BLOBOID FROM CRAWL_RESULTS WHERE URL = ?";
 	private int totalProcessedPages;
@@ -217,20 +217,87 @@ public class CrawlDataManagement {
 			insert_st.setString(7,info.getFooter());
 			insert_st.setString(8,info.getZtd());
 			insert_st.setString(9,info.getShort_desc());
-			insert_st.setBoolean(10,info.isCdiscountBestBid());
-			insert_st.setBoolean(11,info.isYoutubeVideoReferenced());		
-			insert_st.setString(12,info.getAtt_desc());
-			insert_st.setInt(13,info.getAtt_number());
-			insert_st.setInt(14,info.getStatus_code());
-			insert_st.setString(15,info.getResponse_headers());		
-			insert_st.setInt(16,info.getDepth());
-			insert_st.setString(17, info.getPage_type());
-			insert_st.setString(18, info.getMagasin());
-			insert_st.setString(19, info.getRayon());
-			insert_st.setString(20, info.getProduit());
-			insert_st.setInt(21,oid);
+			
+			
+			String[] XPATHRESULTS = info.getXPATH_results();
+			if (XPATHRESULTS != null){	
+				if (XPATHRESULTS[0] != null){
+					insert_st.setString(10, XPATHRESULTS[0]);
+				} else {
+					insert_st.setString(10, "");
+				}
+				if (XPATHRESULTS[1] != null){
+					insert_st.setString(11, XPATHRESULTS[1]);
+				} else {
+					insert_st.setString(11, "");
+				}
+				if (XPATHRESULTS[2] != null){
+					insert_st.setString(12, XPATHRESULTS[2]);
+				} else {
+					insert_st.setString(12, "");
+				}
+				if (XPATHRESULTS[3] != null){
+					insert_st.setString(13, XPATHRESULTS[3]);
+				} else {
+					insert_st.setString(13, "");
+				}
+				if (XPATHRESULTS[4] != null){
+					insert_st.setString(14, XPATHRESULTS[4]);
+				} else {
+					insert_st.setString(14, "");
+				}
+				if (XPATHRESULTS[5] != null){
+					insert_st.setString(15, XPATHRESULTS[5]);
+				} else {
+					insert_st.setString(15, "");
+				}
+				if (XPATHRESULTS[6] != null){
+					insert_st.setString(16, XPATHRESULTS[6]);
+				} else {
+					insert_st.setString(16, "");
+				}
+				if (XPATHRESULTS[7] != null){
+					insert_st.setString(17, XPATHRESULTS[7]);
+				} else {
+					insert_st.setString(17, "");
+				}
+				if (XPATHRESULTS[8] != null){
+					insert_st.setString(18, XPATHRESULTS[8]);
+				} else {
+					insert_st.setString(18, "");
+				}
+				if (XPATHRESULTS[9] != null){
+					insert_st.setString(19, XPATHRESULTS[9]);
+				} else {
+					insert_st.setString(19, "");
+				}
+			}else {
+				insert_st.setString(10, "");
+				insert_st.setString(11, "");
+				insert_st.setString(12, "");
+				insert_st.setString(13, "");
+				insert_st.setString(14, "");
+				insert_st.setString(15, "");
+				insert_st.setString(16, "");
+				insert_st.setString(17, "");
+				insert_st.setString(18, "");
+				insert_st.setString(19, "");
+			}
+			
+			insert_st.setBoolean(20,info.isCdiscountBestBid());
+			insert_st.setBoolean(21,info.isYoutubeVideoReferenced());		
+			insert_st.setString(22,info.getAtt_desc());
+			insert_st.setInt(23,info.getAtt_number());
+			insert_st.setInt(24,info.getStatus_code());
+			insert_st.setString(25,info.getResponse_headers());		
+			insert_st.setInt(26,info.getDepth());
+			insert_st.setString(27, info.getPage_type());
+			insert_st.setString(28, info.getMagasin());
+			insert_st.setString(29, info.getRayon());
+			insert_st.setString(30, info.getProduit());
+			insert_st.setInt(31,oid);
 			java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-			insert_st.setDate(22,sqlDate);
+			insert_st.setDate(32,sqlDate);
 			insert_st.executeUpdate(); 	
 		} else {
 			// if oid found not null, we update the found line and we update the matching blob
@@ -262,22 +329,87 @@ public class CrawlDataManagement {
 			update_st.setString(5,info.getH1());
 			update_st.setString(6,info.getFooter());
 			update_st.setString(7,info.getZtd());
-			update_st.setString(8,info.getShort_desc());		
-			update_st.setBoolean(9,info.isCdiscountBestBid());
-			update_st.setBoolean(10,info.isYoutubeVideoReferenced());
-			update_st.setString(11,info.getAtt_desc());
-			update_st.setInt(12,info.getAtt_number());
-			update_st.setInt(13,info.getStatus_code());
-			update_st.setString(14,info.getResponse_headers());		
-			update_st.setInt(15,info.getDepth());
-			update_st.setString(16, info.getPage_type());
-			update_st.setString(17, info.getMagasin());
-			update_st.setString(18, info.getRayon());
-			update_st.setString(19, info.getProduit());
-			update_st.setInt(20, oid);
+			update_st.setString(8,info.getShort_desc());	
+			
+			String[] XPATHRESULTS = info.getXPATH_results();
+			if (XPATHRESULTS != null){	
+				if (XPATHRESULTS[0] != null){
+					update_st.setString(9, XPATHRESULTS[0]);
+				} else {
+					update_st.setString(9, "");
+				}
+				if (XPATHRESULTS[1] != null){
+					update_st.setString(10, XPATHRESULTS[1]);
+				} else {
+					update_st.setString(10, "");
+				}
+				if (XPATHRESULTS[2] != null){
+					update_st.setString(11, XPATHRESULTS[2]);
+				} else {
+					update_st.setString(11, "");
+				}
+				if (XPATHRESULTS[3] != null){
+					update_st.setString(12, XPATHRESULTS[3]);
+				} else {
+					update_st.setString(12, "");
+				}
+				if (XPATHRESULTS[4] != null){
+					update_st.setString(13, XPATHRESULTS[4]);
+				} else {
+					update_st.setString(13, "");
+				}
+				if (XPATHRESULTS[5] != null){
+					update_st.setString(14, XPATHRESULTS[5]);
+				} else {
+					update_st.setString(14, "");
+				}
+				if (XPATHRESULTS[6] != null){
+					update_st.setString(15, XPATHRESULTS[6]);
+				} else {
+					update_st.setString(15, "");
+				}
+				if (XPATHRESULTS[7] != null){
+					update_st.setString(16, XPATHRESULTS[7]);
+				} else {
+					update_st.setString(16, "");
+				}
+				if (XPATHRESULTS[8] != null){
+					update_st.setString(17, XPATHRESULTS[8]);
+				} else {
+					update_st.setString(17, "");
+				}
+				if (XPATHRESULTS[9] != null){
+					update_st.setString(18, XPATHRESULTS[9]);
+				} else {
+					update_st.setString(18, "");
+				}
+			}else {
+				update_st.setString(9, "");
+				update_st.setString(10, "");
+				update_st.setString(11, "");
+				update_st.setString(12, "");
+				update_st.setString(13, "");
+				update_st.setString(14, "");
+				update_st.setString(15, "");
+				update_st.setString(16, "");
+				update_st.setString(17, "");
+				update_st.setString(18, "");
+			}
+			update_st.setBoolean(19,info.isCdiscountBestBid());
+			update_st.setBoolean(20,info.isYoutubeVideoReferenced());
+			update_st.setString(21,info.getAtt_desc());
+			update_st.setInt(22,info.getAtt_number());
+			update_st.setInt(23,info.getStatus_code());
+			update_st.setString(24,info.getResponse_headers());		
+			update_st.setInt(25,info.getDepth());
+			update_st.setString(26, info.getPage_type());
+			update_st.setString(27, info.getMagasin());
+			update_st.setString(28, info.getRayon());
+			update_st.setString(29, info.getProduit());
+			update_st.setInt(30, oid);
 			java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-			update_st.setDate(21,sqlDate);
-			update_st.setString(22,url);
+			update_st.setDate(31,sqlDate);
+			update_st.setString(32,url);
 			// we here don't care about wether or not the line has been found and updated
 			// as we have found the blob oid, the line is present and should be updated
 			//int affected_row = update_st.executeUpdate();
@@ -324,20 +456,84 @@ public class CrawlDataManagement {
 					st.setString(6,info.getFooter());
 					st.setString(7,info.getZtd());
 					st.setString(8,info.getShort_desc());	
-					st.setBoolean(9,info.isCdiscountBestBid());
-					st.setBoolean(10,info.isYoutubeVideoReferenced());
-					st.setString(11,info.getAtt_desc());
-					st.setInt(12,info.getAtt_number());
-					st.setInt(13,info.getStatus_code());
-					st.setString(14,info.getResponse_headers());		
-					st.setInt(15,info.getDepth());
-					st.setString(16, info.getPage_type());
-					st.setString(17, info.getMagasin());
-					st.setString(18, info.getRayon());
-					st.setString(19, info.getProduit());
+					String[] XPATHRESULTS = info.getXPATH_results();
+					if (XPATHRESULTS != null){	
+						if (XPATHRESULTS[0] != null){
+							st.setString(9, XPATHRESULTS[0]);
+						} else {
+							st.setString(9, "");
+						}
+						if (XPATHRESULTS[1] != null){
+							st.setString(10, XPATHRESULTS[1]);
+						} else {
+							st.setString(10, "");
+						}
+						if (XPATHRESULTS[2] != null){
+							st.setString(11, XPATHRESULTS[2]);
+						} else {
+							st.setString(11, "");
+						}
+						if (XPATHRESULTS[3] != null){
+							st.setString(12, XPATHRESULTS[3]);
+						} else {
+							st.setString(12, "");
+						}
+						if (XPATHRESULTS[4] != null){
+							st.setString(13, XPATHRESULTS[4]);
+						} else {
+							st.setString(13, "");
+						}
+						if (XPATHRESULTS[5] != null){
+							st.setString(14, XPATHRESULTS[5]);
+						} else {
+							st.setString(14, "");
+						}
+						if (XPATHRESULTS[6] != null){
+							st.setString(15, XPATHRESULTS[6]);
+						} else {
+							st.setString(15, "");
+						}
+						if (XPATHRESULTS[7] != null){
+							st.setString(16, XPATHRESULTS[7]);
+						} else {
+							st.setString(16, "");
+						}
+						if (XPATHRESULTS[8] != null){
+							st.setString(17, XPATHRESULTS[8]);
+						} else {
+							st.setString(17, "");
+						}
+						if (XPATHRESULTS[9] != null){
+							st.setString(18, XPATHRESULTS[9]);
+						} else {
+							st.setString(18, "");
+						}
+					}else {
+						st.setString(9, "");
+						st.setString(10, "");
+						st.setString(11, "");
+						st.setString(12, "");
+						st.setString(13, "");
+						st.setString(14, "");
+						st.setString(15, "");
+						st.setString(16, "");
+						st.setString(17, "");
+						st.setString(18, "");
+					}
+					st.setBoolean(19,info.isCdiscountBestBid());
+					st.setBoolean(20,info.isYoutubeVideoReferenced());
+					st.setString(21,info.getAtt_desc());
+					st.setInt(22,info.getAtt_number());
+					st.setInt(23,info.getStatus_code());
+					st.setString(24,info.getResponse_headers());		
+					st.setInt(25,info.getDepth());
+					st.setString(26, info.getPage_type());
+					st.setString(27, info.getMagasin());
+					st.setString(28, info.getRayon());
+					st.setString(29, info.getProduit());
 					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-					st.setDate(20,sqlDate);
-					st.setString(21,url);
+					st.setDate(30,sqlDate);
+					st.setString(31,url);
 					int affected_row = st.executeUpdate();
 					// if the row has not been updated, we have to insert it !
 					if(affected_row == 0){
@@ -350,19 +546,83 @@ public class CrawlDataManagement {
 						insert_st.setString(6,info.getH1());
 						insert_st.setString(7,info.getFooter());
 						insert_st.setString(8,info.getZtd());
-						insert_st.setString(9,info.getShort_desc());
-						insert_st.setBoolean(10,info.isCdiscountBestBid());
-						insert_st.setBoolean(11,info.isYoutubeVideoReferenced());					
-						insert_st.setString(12,info.getAtt_desc());
-						insert_st.setInt(13,info.getAtt_number());
-						insert_st.setInt(14,info.getStatus_code());
-						insert_st.setString(15,info.getResponse_headers());		
-						insert_st.setInt(16,info.getDepth());
-						insert_st.setString(17, info.getPage_type());
-						insert_st.setString(18, info.getMagasin());
-						insert_st.setString(19, info.getRayon());
-						insert_st.setString(20, info.getProduit());
-						insert_st.setDate(21,sqlDate);
+						insert_st.setString(9,info.getShort_desc());		
+						if (XPATHRESULTS != null){	
+							if (XPATHRESULTS[0] != null){
+								insert_st.setString(10, XPATHRESULTS[0]);
+							} else {
+								insert_st.setString(10, "");
+							}
+							if (XPATHRESULTS[1] != null){
+								insert_st.setString(11, XPATHRESULTS[1]);
+							} else {
+								insert_st.setString(11, "");
+							}
+							if (XPATHRESULTS[2] != null){
+								insert_st.setString(12, XPATHRESULTS[2]);
+							} else {
+								insert_st.setString(12, "");
+							}
+							if (XPATHRESULTS[3] != null){
+								insert_st.setString(13, XPATHRESULTS[3]);
+							} else {
+								insert_st.setString(13, "");
+							}
+							if (XPATHRESULTS[4] != null){
+								insert_st.setString(14, XPATHRESULTS[4]);
+							} else {
+								insert_st.setString(14, "");
+							}
+							if (XPATHRESULTS[5] != null){
+								insert_st.setString(15, XPATHRESULTS[5]);
+							} else {
+								insert_st.setString(15, "");
+							}
+							if (XPATHRESULTS[6] != null){
+								insert_st.setString(16, XPATHRESULTS[6]);
+							} else {
+								insert_st.setString(16, "");
+							}
+							if (XPATHRESULTS[7] != null){
+								insert_st.setString(17, XPATHRESULTS[7]);
+							} else {
+								insert_st.setString(17, "");
+							}
+							if (XPATHRESULTS[8] != null){
+								insert_st.setString(18, XPATHRESULTS[8]);
+							} else {
+								insert_st.setString(18, "");
+							}
+							if (XPATHRESULTS[9] != null){
+								insert_st.setString(19, XPATHRESULTS[9]);
+							} else {
+								insert_st.setString(19, "");
+							}
+						}else {
+							insert_st.setString(10, "");
+							insert_st.setString(11, "");
+							insert_st.setString(12, "");
+							insert_st.setString(13, "");
+							insert_st.setString(14, "");
+							insert_st.setString(15, "");
+							insert_st.setString(16, "");
+							insert_st.setString(17, "");
+							insert_st.setString(18, "");
+							insert_st.setString(19, "");
+						}
+						
+						insert_st.setBoolean(20,info.isCdiscountBestBid());
+						insert_st.setBoolean(21,info.isYoutubeVideoReferenced());					
+						insert_st.setString(22,info.getAtt_desc());
+						insert_st.setInt(23,info.getAtt_number());
+						insert_st.setInt(24,info.getStatus_code());
+						insert_st.setString(25,info.getResponse_headers());		
+						insert_st.setInt(26,info.getDepth());
+						insert_st.setString(27, info.getPage_type());
+						insert_st.setString(28, info.getMagasin());
+						insert_st.setString(29, info.getRayon());
+						insert_st.setString(30, info.getProduit());
+						insert_st.setDate(31,sqlDate);
 						insert_st.executeUpdate();
 					}
 				}while (it.hasNext());	
@@ -418,15 +678,79 @@ public class CrawlDataManagement {
 					st.setString(7,info.getFooter());
 					st.setString(8,info.getZtd());
 					st.setString(9,info.getShort_desc());
-					st.setBoolean(10,info.isCdiscountBestBid());
-					st.setBoolean(11,info.isYoutubeVideoReferenced());
-					st.setString(12,info.getAtt_desc());
-					st.setInt(13,info.getAtt_number());
-					st.setInt(14,info.getStatus_code());
-					st.setString(15,info.getResponse_headers());		
-					st.setInt(16,info.getDepth());
+					String[] XPATHRESULTS = info.getXPATH_results();		
+					if (XPATHRESULTS != null){	
+						if (XPATHRESULTS[0] != null){
+							st.setString(10, XPATHRESULTS[0]);
+						} else {
+							st.setString(10, "");
+						}
+						if (XPATHRESULTS[1] != null){
+							st.setString(11, XPATHRESULTS[1]);
+						} else {
+							st.setString(11, "");
+						}
+						if (XPATHRESULTS[2] != null){
+							st.setString(12, XPATHRESULTS[2]);
+						} else {
+							st.setString(12, "");
+						}
+						if (XPATHRESULTS[3] != null){
+							st.setString(13, XPATHRESULTS[3]);
+						} else {
+							st.setString(13, "");
+						}
+						if (XPATHRESULTS[4] != null){
+							st.setString(14, XPATHRESULTS[4]);
+						} else {
+							st.setString(14, "");
+						}
+						if (XPATHRESULTS[5] != null){
+							st.setString(15, XPATHRESULTS[5]);
+						} else {
+							st.setString(15, "");
+						}
+						if (XPATHRESULTS[6] != null){
+							st.setString(16, XPATHRESULTS[6]);
+						} else {
+							st.setString(16, "");
+						}
+						if (XPATHRESULTS[7] != null){
+							st.setString(17, XPATHRESULTS[7]);
+						} else {
+							st.setString(17, "");
+						}
+						if (XPATHRESULTS[8] != null){
+							st.setString(18, XPATHRESULTS[8]);
+						} else {
+							st.setString(18, "");
+						}
+						if (XPATHRESULTS[9] != null){
+							st.setString(19, XPATHRESULTS[9]);
+						} else {
+							st.setString(19, "");
+						}
+					}else {
+						st.setString(10, "");
+						st.setString(11, "");
+						st.setString(12, "");
+						st.setString(13, "");
+						st.setString(14, "");
+						st.setString(15, "");
+						st.setString(16, "");
+						st.setString(17, "");
+						st.setString(18, "");
+						st.setString(19, "");
+					}
+					st.setBoolean(20,info.isCdiscountBestBid());
+					st.setBoolean(21,info.isYoutubeVideoReferenced());
+					st.setString(22,info.getAtt_desc());
+					st.setInt(23,info.getAtt_number());
+					st.setInt(24,info.getStatus_code());
+					st.setString(25,info.getResponse_headers());		
+					st.setInt(26,info.getDepth());
 					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-					st.setDate(17,sqlDate);
+					st.setDate(27,sqlDate);
 					st.addBatch();
 				}while (it.hasNext());	
 				st.executeBatch();		 
