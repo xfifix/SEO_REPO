@@ -709,6 +709,7 @@ public class CrawlDataManagement {
 			}
 			insert_st.executeBatch();
 			con.commit();
+			insert_st.close();
 			System.out.println(Thread.currentThread()+"Committed " + local_counter + " updates");
 		} catch (SQLException e){
 			//System.out.println("Line already inserted : "+nb_lines);

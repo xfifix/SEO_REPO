@@ -11,7 +11,6 @@
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="com.urlutilities.URL_Utilities"/>
 <fullyQualifiedTypeName name="crawl4j.daemon.links.URLNode"/>
-<fullyQualifiedTypeName name="java.sql.Statement"/>
 <fullyQualifiedTypeName name="edu.uci.ics.crawler4j.url.WebURL"/>
 <fullyQualifiedTypeName name="java.net.Proxy"/>
 <fullyQualifiedTypeName name="java.lang.StringBuilder"/>
@@ -60,4 +59,5 @@
 <fullyQualifiedTypeName name="com.parsing.utility.XPathUtility"/>
 <fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="crawl4j.xpathutility.XPathUtility"/>
+<fullyQualifiedTypeName name="java.sql.Statement"/>
 </qualifiedTypeNameHistroy>
