@@ -30,22 +30,20 @@ public class InsideMagasinSimilarityWorkerThread implements Runnable {
 		System.out.println("Getting content from magasin :"+this.magasin);
 		PreparedStatement field_pst;
 		try {
-			field_pst  = this.con.prepareStatement("SELECT "+this.field_to_fetch+" , URL, VENDOR, MAGASIN, RAYON, PRODUIT FROM CRAWL_RESULTS WHERE MAGASIN='" +magasin+ "'");
+			field_pst  = this.con.prepareStatement("SELECT "+this.field_to_fetch+" , URL, MAGASIN, RAYON, PRODUIT FROM CRAWL_RESULTS WHERE MAGASIN='" +magasin+ "'");
 			ResultSet field_rs = field_pst.executeQuery();
 			while (field_rs.next()) {
 				URLContentInfo url_info = new URLContentInfo();
 				String content = field_rs.getString(1);
 				String my_url = field_rs.getString(2);
-				String my_vendor = field_rs.getString(3);
-				String my_magasin = field_rs.getString(4);
-				String my_rayon = field_rs.getString(5);
-				String my_produit = field_rs.getString(6);
+				String my_magasin = field_rs.getString(3);
+				String my_rayon = field_rs.getString(4);
+				String my_produit = field_rs.getString(5);
 				url_info.setContent(content);
 				url_info.setUrl(my_url);
 				url_info.setMagasin(my_magasin);
 				url_info.setRayon(my_rayon);
 				url_info.setProduit(my_produit);
-				url_info.setVendor(my_vendor);
 				magasin_infos.add(url_info);
 			}
 		} catch (SQLException e) {

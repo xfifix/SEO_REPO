@@ -36,24 +36,22 @@ public class InsideMagasinQualityWorkerThread implements Runnable {
 			// getting the URLs infos for each rayon
 			PreparedStatement field_pst;
 			try {
-				field_pst  = this.con.prepareStatement("SELECT NB_ATTRIBUTES,ATTRIBUTES,URL,VENDOR,MAGASIN,RAYON,PRODUIT FROM CRAWL_RESULTS WHERE RAYON='" +rayon+ "'");
+				field_pst  = this.con.prepareStatement("SELECT NB_ATTRIBUTES,ATTRIBUTES,URL,MAGASIN,RAYON,PRODUIT FROM CRAWL_RESULTS WHERE RAYON='" +rayon+ "'");
 				ResultSet field_rs = field_pst.executeQuery();
 				while (field_rs.next()) {
 					URLContentInfo url_info = new URLContentInfo();
 					int nb_attributes = field_rs.getInt(1);
 					String attributes = field_rs.getString(2);
 					String my_url = field_rs.getString(3);
-					String my_vendor = field_rs.getString(4);
-					String my_magasin = field_rs.getString(5);
-					String my_rayon = field_rs.getString(6);
-					String my_produit = field_rs.getString(7);
+					String my_magasin = field_rs.getString(4);
+					String my_rayon = field_rs.getString(5);
+					String my_produit = field_rs.getString(6);
 					url_info.setNb_attributes(nb_attributes);
 					url_info.setAttributes(attributes);
 					url_info.setUrl(my_url);
 					url_info.setMagasin(my_magasin);
 					url_info.setRayon(my_rayon);
 					url_info.setProduit(my_produit);
-					url_info.setVendor(my_vendor);
 					info_list.add(url_info);
 				}
 			} catch (SQLException e) {

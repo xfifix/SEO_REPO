@@ -31,22 +31,20 @@ public class InsideMagasinWorkerThread implements Runnable {
 		ResultSet rs = null;
 		try {
 			// we open the database
-			pst = this.con.prepareStatement("SELECT "+this.field_to_fetch+" , URL, VENDOR, MAGASIN, RAYON, PRODUIT FROM CRAWL_RESULTS where magasin='"+this.magasin+"'");
+			pst = this.con.prepareStatement("SELECT "+this.field_to_fetch+" , URL, MAGASIN, RAYON, PRODUIT FROM CRAWL_RESULTS where magasin='"+this.magasin+"'");
 			rs = pst.executeQuery();
 			while (rs.next()) {
 				URLContentInfo url_info = new URLContentInfo();
 				String content = rs.getString(1);
 				String my_url = rs.getString(2);
-				String my_vendor = rs.getString(3);
-				String my_magasin = rs.getString(4);
-				String my_rayon = rs.getString(5);
-				String my_produit = rs.getString(6);
+				String my_magasin = rs.getString(3);
+				String my_rayon = rs.getString(4);
+				String my_produit = rs.getString(5);
 				url_info.setContent(content);
 				url_info.setUrl(my_url);
 				url_info.setMagasin(my_magasin);
 				url_info.setRayon(my_rayon);
 				url_info.setProduit(my_produit);
-				url_info.setVendor(my_vendor);
 				my_infos.add(url_info);
 			}    
 		} catch (Exception ex) {
