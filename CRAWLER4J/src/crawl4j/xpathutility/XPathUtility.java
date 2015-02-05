@@ -18,7 +18,7 @@ import org.xml.sax.SAXException;
 
 public class XPathUtility {
 
-	private static String xpathconf_path = "/home/sduprey/My_Data/My_Xpath_Conf/xpath.conf";
+	public static String xpathconf_path = "/home/sduprey/My_Data/My_Xpath_Conf/xpath.conf";
 	private static int xpath_size = 10;
 	public static String parseContent(String content, String xpathExpression) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException{
 		TagNode tagNode = new HtmlCleaner().clean(content);
