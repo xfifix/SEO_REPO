@@ -52,7 +52,7 @@ public class ContinuousCrawler extends WebCrawler {
 	@Override
 	public boolean shouldVisit(WebURL url) {
 		String href = url.getURL().toLowerCase();
-		return !filters.matcher(href).matches() && href.startsWith("http://www.cdiscount.com/");
+		return !filters.matcher(href).matches() && href.startsWith(ContinuousController.seed);
 	}
 
 	@Override
@@ -71,7 +71,6 @@ public class ContinuousCrawler extends WebCrawler {
 		if (info == null){
 			info =new URLinfo();
 		}		
-
 		// filling up url regexp attributes
 		info.setPage_type(page_type);
 		info.setMagasin(magasin);

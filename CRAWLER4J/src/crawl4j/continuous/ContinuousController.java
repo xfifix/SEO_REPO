@@ -17,11 +17,11 @@ public class ContinuousController {
 	public static Properties properties;
 	public static boolean isBlobStored = false;
 	public static boolean isXPATHparsed = true;
+	public static String seed;
 	public static void main(String[] args)   {
 		System.setProperty("http.agent", "");
 		System.out.println("Getting the crawl configuration from : "+crawl_conf_path);	
 		// parameter to fill
-		String seed="";
 		int numberOfCrawlers=0;
 		String rootFolder="";
 		int maxDepthOfCrawling=0;
