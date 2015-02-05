@@ -935,13 +935,15 @@ public class CrawlDataManagement {
 	}
 	// we here perform upsert to keep up to date our crawl referential
 	public void updateData(){
+		// warning the upsert method in the PostgreSQL database will empty the cache
+		// you have to update Solr first
+		updateSolrData();
 		// we here choose wether or not we store all the page source code
 		if (ContinuousController.isBlobStored){
 			updateDatabaseWithBlobData();
 		} else {
 			updateDatabaseData();
 		}
-		updateSolrData();
 		// clear cache
 		crawledContent.clear();
 	}
