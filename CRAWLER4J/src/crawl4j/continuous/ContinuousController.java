@@ -13,7 +13,7 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
 public class ContinuousController {
-	public static String crawl_conf_path = "/home/sduprey/My_Data/My_ContinuousCrawl_Conf/xpath.conf";
+	public static String crawl_conf_path = "/home/sduprey/My_Data/My_ContinuousCrawl_Conf/crawl.conf";
 	public static Properties properties;
 	public static boolean isBlobStored = false;
 	public static boolean isXPATHparsed = true;
