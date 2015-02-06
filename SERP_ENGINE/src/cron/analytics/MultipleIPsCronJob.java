@@ -137,7 +137,7 @@ public class MultipleIPsCronJob {
 				// we wait between x and xx seconds
 				Thread.sleep(randInt(min_number_of_wait_times,max_number_of_wait_times)*1000);
 				System.out.println("Fetching a new page");
-				String constructed_url ="http://www.google.fr/search?q="+keyword+"&start="+Integer.toString(depth*10);
+				String constructed_url ="https://www.google.fr/search?q="+keyword+"&start="+Integer.toString(depth*10);
                 // we here use our properly configured squid proxy on port 3128 on localhost
 				Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", 3128));
 				URL url = new URL(constructed_url);
