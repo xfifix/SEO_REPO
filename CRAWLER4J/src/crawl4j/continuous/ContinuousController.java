@@ -58,7 +58,21 @@ public class ContinuousController {
 			seed = args[0];
 			numberOfCrawlers=Integer.valueOf(args[1]);
 		} 
-
+		System.out.println("Seed URL : "+seed);
+		System.out.println("Number of threads : "+numberOfCrawlers);
+		System.out.println("Blob stored : "+isBlobStored);
+		System.out.println("XPATH parsed : "+isXPATHparsed);
+		System.out.println("User-agent : "+user_agent_name);
+		System.out.println("Max depth of crawling : "+maxDepthOfCrawling);
+		System.out.println("Cache bulk size per thread : "+ContinuousCrawler.bulk_size);
+		System.out.println("XPATH conf file path : "+XPathUtility.xpathconf_path);
+		System.out.println("Database conf file path : "+CrawlDataManagement.database_con_path);		
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		CrawlConfig config = new CrawlConfig();
 		config.setCrawlStorageFolder(rootFolder);
 		config.setUserAgentString(user_agent_name);

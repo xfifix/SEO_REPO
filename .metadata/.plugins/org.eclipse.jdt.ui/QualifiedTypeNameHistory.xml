@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="com.crawljax.browser.EmbeddedBrowser.BrowserType"/>
 <fullyQualifiedTypeName name="vsm.URLContentInfo"/>
 <fullyQualifiedTypeName name="vsm.RayonLevelDoublon"/>
 <fullyQualifiedTypeName name="java.util.logging.Logger"/>
@@ -60,4 +59,5 @@
 <fullyQualifiedTypeName name="java.sql.Statement"/>
 <fullyQualifiedTypeName name="crawl4j.xpathutility.XPathUtility"/>
 <fullyQualifiedTypeName name="crawl4j.continuous.CrawlDataManagement"/>
+<fullyQualifiedTypeName name="crawl4j.continuous.ContinuousController"/>
 </qualifiedTypeNameHistroy>
