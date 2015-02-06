@@ -44,6 +44,7 @@ public class ProxyTesting {
 			
 			URL url = new URL("http://www.cdiscount.com");
 			HttpURLConnection connection = (HttpURLConnection)url.openConnection(proxy);
+			connection.setConnectTimeout(1000000000);
 			connection.connect();
 			System.out.println("Connection established");
 			InputStreamReader in = new InputStreamReader((InputStream) connection.getContent());
