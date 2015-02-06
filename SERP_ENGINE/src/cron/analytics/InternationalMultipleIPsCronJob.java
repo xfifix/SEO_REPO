@@ -1,6 +1,7 @@
 package cron.analytics;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 
 import org.jsoup.Jsoup;
@@ -25,12 +27,21 @@ public class InternationalMultipleIPsCronJob {
 	private static int min_number_of_wait_times = 5;
 	private static int max_number_of_wait_times = 10;
 	private static List<String> user_agents = new ArrayList<String>();
+	public static Properties properties;
 	private static String user_agent_path = "/home/sduprey/My_Data/My_User_Agents/user-agent.txt";
+	private static String serposcope_conf_file_path = "/home/sduprey/My_Data/My_International_SERPOSCOPE_Conf/international_serp.conf";
 	public static void main(String[] args){
-		String international_domain = "fr";
-		if (args.length >= 1){
-			international_domain=args[0];
+		String international_domain = "";
+		try{
+			loadProperties();
+			international_domain=properties.getProperty("serposcope.country_extension"); 
+			user_agent_path=properties.getProperty("serposcope.user_agent_path"); 
+		} catch (Exception e){
+			e.printStackTrace();
+			System.out.println("Trouble reading configuration file : "+serposcope_conf_file_path);
+			System.exit(0);
 		}
+
 		System.setProperty("http.agent", "");
 		try {
 			loadUserAgents();
@@ -142,7 +153,7 @@ public class InternationalMultipleIPsCronJob {
 				Thread.sleep(randInt(min_number_of_wait_times,max_number_of_wait_times)*1000);
 				System.out.println("Fetching a new page");
 				String constructed_url ="https://www.google."+international_domain+"/search?q="+keyword+"&start="+Integer.toString(depth*10);
-                // we here use our properly configured squid proxy on port 3128 on localhost
+				// we here use our properly configured squid proxy on port 3128 on localhost
 				Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", 3128));
 				URL url = new URL(constructed_url);
 				HttpURLConnection connection = (HttpURLConnection)url.openConnection(proxy);
@@ -217,5 +228,15 @@ public class InternationalMultipleIPsCronJob {
 		// so add 1 to make it inclusive
 		int randomNum = rand.nextInt((max - min) + 1) + min;
 		return randomNum;
+	}
+
+	private static void loadProperties(){
+		properties = new Properties();
+		try {
+			properties.load(new FileReader(new File(serposcope_conf_file_path)));
+		} catch (Exception e) {
+			System.out.println("Failed to load properties file!!");
+			e.printStackTrace();
+		}
 	}
 }
