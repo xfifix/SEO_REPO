@@ -74,8 +74,8 @@ public class ContinuousCrawler extends WebCrawler {
 		// filling up url regexp attributes
 		info.setPage_type(page_type);
 		info.setMagasin(magasin);
-		info.setProduit(rayon);
-		info.setRayon(produit);
+		info.setProduit(produit);
+		info.setRayon(rayon);
 		// filling up url parameters
 		info.setUrl(url);
 		info.setDepth((int)page.getWebURL().getDepth());
