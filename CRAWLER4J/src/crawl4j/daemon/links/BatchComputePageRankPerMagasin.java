@@ -122,34 +122,40 @@ public class BatchComputePageRankPerMagasin {
 			System.exit(0);
 		}
 
+		int beginning_magasin_index =0;
+		if (args.length == 1) {
+			beginning_magasin_index=Integer.valueOf(args[0]);
+		} 
 
 		// looping over all distinct magasins to compute page rank
 		for (int i=0;i<magasins.length;i++){
-			String magasin = magasins[i];
-			// we here loop over depths
-			try{
-				// fetching data from the Postgresql data base and looping over
-				looping_over_urls(magasin);
-			} catch (SQLException e){
-				e.printStackTrace();
-				System.out.println("Trouble with the POSTGRESQL database");
-				System.exit(0);
+			if (i>=beginning_magasin_index){
+				String magasin = magasins[i];
+				// we here loop over depths
+				try{
+					// fetching data from the Postgresql data base and looping over
+					looping_over_urls(magasin);
+				} catch (SQLException e){
+					e.printStackTrace();
+					System.out.println("Trouble with the POSTGRESQL database");
+					System.exit(0);
+				}
+
+				try {
+					building_database();
+				} catch (SQLException e) {
+					e.printStackTrace();
+					System.out.println("Trouble with the POSTGRESQL database");
+					System.exit(0);
+				}		
+
+				// flushing all data
+				nodes_infos.clear();
+				node_locator.clear();
+
+				// computing the page rank inside the magasin
+				compute_page_rank_and_update_database();
 			}
-
-			try {
-				building_database();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				System.out.println("Trouble with the POSTGRESQL database");
-				System.exit(0);
-			}		
-
-			// flushing all data
-			nodes_infos.clear();
-			node_locator.clear();
-			
-			// computing the page rank inside the magasin
-			compute_page_rank_and_update_database();
 		}
 	}
 
@@ -243,10 +249,10 @@ public class BatchComputePageRankPerMagasin {
 
 					local_counter++;
 				}
-//				else {
-//					System.out.println("Trouble with url : "+url);
-//					System.out.println("One node has not been found : "+url+total_size);
-//				}
+				//				else {
+				//					System.out.println("Trouble with url : "+url);
+				//					System.out.println("One node has not been found : "+url+total_size);
+				//				}
 			}
 			System.out.println("Having proccess node number"+nodes_counter+" over the whole tally of "+whole_lot_size_to_process);
 			nodes_counter++;
