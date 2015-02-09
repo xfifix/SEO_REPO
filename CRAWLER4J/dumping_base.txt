@@ -1,0 +1,1 @@
+/usr/bin/pg_dump --host localhost --port 5432 --username "postgres" --no-password  --format custom --verbose --file "/home/sduprey/My_Data/My_Outgoing_Data/My_PostGre_Backup/crawl_results.backup" --table "public.crawl_results" "CRAWL4J"
