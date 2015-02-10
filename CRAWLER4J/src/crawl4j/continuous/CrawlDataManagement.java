@@ -27,13 +27,13 @@ import crawl4j.xpathutility.XPathUtility;
 public class CrawlDataManagement {
 	public static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
 	private static String insert_statement="INSERT INTO CRAWL_RESULTS(URL,WHOLE_TEXT,TITLE,LINKS_SIZE,"
-			+ "LINKS,H1,FOOTER_EXTRACT,ZTD_EXTRACT,SHORT_DESCRIPTION,XPATH1,XPATH2,XPATH3,XPATH4,XPATH5,XPATH6,XPATH7,XPATH8,XPATH9,XPATH10,CDISCOUNT_VENDOR,YOUTUBE_REFERENCED,ATTRIBUTES,NB_ATTRIBUTES,STATUS_CODE,HEADERS,DEPTH,PAGE_TYPE,MAGASIN,RAYON,PRODUIT,LAST_UPDATE)"
-			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			+ "LINKS,H1,FOOTER_EXTRACT,ZTD_EXTRACT,SHORT_DESCRIPTION,XPATH1,XPATH2,XPATH3,XPATH4,XPATH5,XPATH6,XPATH7,XPATH8,XPATH9,XPATH10,CDISCOUNT_VENDOR,YOUTUBE_REFERENCED,ATTRIBUTES,NB_ATTRIBUTES,STATUS_CODE,HEADERS,DEPTH,PAGE_TYPE,MAGASIN,RAYON,PRODUIT,BRAND,CATEGORY,LAST_UPDATE)"
+			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	private static String insert_statement_with_oid="INSERT INTO CRAWL_RESULTS(URL,WHOLE_TEXT,TITLE,LINKS_SIZE,"
-			+ "LINKS,H1,FOOTER_EXTRACT,ZTD_EXTRACT,SHORT_DESCRIPTION,XPATH1,XPATH2,XPATH3,XPATH4,XPATH5,XPATH6,XPATH7,XPATH8,XPATH9,XPATH10,CDISCOUNT_VENDOR,YOUTUBE_REFERENCED,ATTRIBUTES,NB_ATTRIBUTES,STATUS_CODE,HEADERS,DEPTH,PAGE_TYPE,MAGASIN,RAYON,PRODUIT,BLOBOID,LAST_UPDATE)"
-			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-	private static String update_statement ="UPDATE CRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,LINKS_SIZE=?,LINKS=?,H1=?,FOOTER_EXTRACT=?,ZTD_EXTRACT=?,SHORT_DESCRIPTION=?,XPATH1=?,XPATH2=?,XPATH3=?,XPATH4=?,XPATH5=?,XPATH6=?,XPATH7=?,XPATH8=?,XPATH9=?,XPATH10=?,CDISCOUNT_VENDOR=?,YOUTUBE_REFERENCED=?,ATTRIBUTES=?,NB_ATTRIBUTES=?,STATUS_CODE=?,HEADERS=?,DEPTH=?,PAGE_TYPE=?,MAGASIN=?,RAYON=?,PRODUIT=?,LAST_UPDATE=? WHERE URL=?";
-	private static String update_statement_with_oid ="UPDATE CRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,LINKS_SIZE=?,LINKS=?,H1=?,FOOTER_EXTRACT=?,ZTD_EXTRACT=?,SHORT_DESCRIPTION=?,XPATH1=?,XPATH2=?,XPATH3=?,XPATH4=?,XPATH5=?,XPATH6=?,XPATH7=?,XPATH8=?,XPATH9=?,XPATH10=?,CDISCOUNT_VENDOR=?,YOUTUBE_REFERENCED=?,ATTRIBUTES=?,NB_ATTRIBUTES=?,STATUS_CODE=?,HEADERS=?,DEPTH=?,PAGE_TYPE=?,MAGASIN=?,RAYON=?,PRODUIT=?,BLOBOID=?,LAST_UPDATE=? WHERE URL=?";
+			+ "LINKS,H1,FOOTER_EXTRACT,ZTD_EXTRACT,SHORT_DESCRIPTION,XPATH1,XPATH2,XPATH3,XPATH4,XPATH5,XPATH6,XPATH7,XPATH8,XPATH9,XPATH10,CDISCOUNT_VENDOR,YOUTUBE_REFERENCED,ATTRIBUTES,NB_ATTRIBUTES,STATUS_CODE,HEADERS,DEPTH,PAGE_TYPE,MAGASIN,RAYON,PRODUIT,BRAND,CATEGORY,BLOBOID,LAST_UPDATE)"
+			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+	private static String update_statement ="UPDATE CRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,LINKS_SIZE=?,LINKS=?,H1=?,FOOTER_EXTRACT=?,ZTD_EXTRACT=?,SHORT_DESCRIPTION=?,XPATH1=?,XPATH2=?,XPATH3=?,XPATH4=?,XPATH5=?,XPATH6=?,XPATH7=?,XPATH8=?,XPATH9=?,XPATH10=?,CDISCOUNT_VENDOR=?,YOUTUBE_REFERENCED=?,ATTRIBUTES=?,NB_ATTRIBUTES=?,STATUS_CODE=?,HEADERS=?,DEPTH=?,PAGE_TYPE=?,MAGASIN=?,RAYON=?,PRODUIT=?,BRAND=?,CATEGORY=?,LAST_UPDATE=? WHERE URL=?";
+	private static String update_statement_with_oid ="UPDATE CRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,LINKS_SIZE=?,LINKS=?,H1=?,FOOTER_EXTRACT=?,ZTD_EXTRACT=?,SHORT_DESCRIPTION=?,XPATH1=?,XPATH2=?,XPATH3=?,XPATH4=?,XPATH5=?,XPATH6=?,XPATH7=?,XPATH8=?,XPATH9=?,XPATH10=?,CDISCOUNT_VENDOR=?,YOUTUBE_REFERENCED=?,ATTRIBUTES=?,NB_ATTRIBUTES=?,STATUS_CODE=?,HEADERS=?,DEPTH=?,PAGE_TYPE=?,MAGASIN=?,RAYON=?,PRODUIT=?,BRAND=?,CATEGORY=?,BLOBOID=?,LAST_UPDATE=? WHERE URL=?";
 
 	private static String get_blob_oid = "SELECT BLOBOID FROM CRAWL_RESULTS WHERE URL = ?";
 	private int totalProcessedPages;
@@ -211,6 +211,8 @@ public class CrawlDataManagement {
 					doc.addField("magasin", info.getMagasin());
 					doc.addField("rayon", info.getRayon());
 					doc.addField("produit", info.getProduit());
+					doc.addField("categorie", info.getCategory());
+					doc.addField("marque", info.getBrand());
 					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
 					doc.addField("last_update", sqlDate.toString());	
 					try{
@@ -282,8 +284,7 @@ public class CrawlDataManagement {
 			insert_st.setString(7,info.getFooter());
 			insert_st.setString(8,info.getZtd());
 			insert_st.setString(9,info.getShort_desc());
-
-
+			
 			String[] XPATHRESULTS = info.getXPATH_results();
 			if (XPATHRESULTS != null){	
 				if (XPATHRESULTS[0] != null){
@@ -359,9 +360,11 @@ public class CrawlDataManagement {
 			insert_st.setString(28, info.getMagasin());
 			insert_st.setString(29, info.getRayon());
 			insert_st.setString(30, info.getProduit());
-			insert_st.setInt(31,oid);
+			insert_st.setString(31, info.getBrand());
+			insert_st.setString(32, info.getCategory());	
+			insert_st.setInt(33,oid);
 			java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-			insert_st.setDate(32,sqlDate);
+			insert_st.setDate(34,sqlDate);
 			insert_st.executeUpdate(); 	
 			insert_st.close();
 		} else {
@@ -471,10 +474,12 @@ public class CrawlDataManagement {
 			update_st.setString(27, info.getMagasin());
 			update_st.setString(28, info.getRayon());
 			update_st.setString(29, info.getProduit());
-			update_st.setInt(30, oid);
+			update_st.setString(30, info.getBrand());
+			update_st.setString(31, info.getCategory());
+			update_st.setInt(32, oid);
 			java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-			update_st.setDate(31,sqlDate);
-			update_st.setString(32,url);
+			update_st.setDate(33,sqlDate);
+			update_st.setString(34,url);
 			// we here don't care about wether or not the line has been found and updated
 			// as we have found the blob oid, the line is present and should be updated
 			//int affected_row = update_st.executeUpdate();
@@ -596,9 +601,11 @@ public class CrawlDataManagement {
 				st.setString(27, info.getMagasin());
 				st.setString(28, info.getRayon());
 				st.setString(29, info.getProduit());
+				st.setString(30, info.getBrand());
+				st.setString(31, info.getCategory());
 				java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-				st.setDate(30,sqlDate);
-				st.setString(31,url);
+				st.setDate(32,sqlDate);
+				st.setString(33,url);
 				st.addBatch();
 			}
 			st.executeBatch();
@@ -703,8 +710,10 @@ public class CrawlDataManagement {
 				insert_st.setString(28, info.getMagasin());
 				insert_st.setString(29, info.getRayon());
 				insert_st.setString(30, info.getProduit());
+				insert_st.setString(31, info.getBrand());
+				insert_st.setString(32, info.getCategory());						
 				java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-				insert_st.setDate(31,sqlDate);
+				insert_st.setDate(33,sqlDate);
 				insert_st.addBatch();
 			}
 			insert_st.executeBatch();
@@ -822,9 +831,11 @@ public class CrawlDataManagement {
 					st.setString(27, info.getMagasin());
 					st.setString(28, info.getRayon());
 					st.setString(29, info.getProduit());
+					st.setString(30, info.getBrand());
+					st.setString(31, info.getCategory());
 					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-					st.setDate(30,sqlDate);
-					st.setString(31,url);
+					st.setDate(32,sqlDate);
+					st.setString(33,url);
 					int affected_row = st.executeUpdate();
 					st.close();
 					// if the row has not been updated, we have to insert it !
@@ -913,7 +924,9 @@ public class CrawlDataManagement {
 						insert_st.setString(28, info.getMagasin());
 						insert_st.setString(29, info.getRayon());
 						insert_st.setString(30, info.getProduit());
-						insert_st.setDate(31,sqlDate);
+						insert_st.setString(31, info.getBrand());
+						insert_st.setString(32, info.getCategory());
+						insert_st.setDate(33,sqlDate);
 						insert_st.executeUpdate();
 						insert_st.close();
 					}
@@ -945,124 +958,6 @@ public class CrawlDataManagement {
 			updateDatabaseData();
 		}
 		// clear cache
-		crawledContent.clear();
-	}
-
-	// old and brute force way : we insert all URLs
-	public void saveData(){
-		try{
-			Iterator<Entry<String, URLinfo>> it = crawledContent.entrySet().iterator();
-			int local_counter = 0;
-			if (it.hasNext()){
-				local_counter++;
-				con.setAutoCommit(false);
-				PreparedStatement st = con.prepareStatement(insert_statement);
-
-				do {
-					local_counter ++;
-					Map.Entry<String, URLinfo> pairs = it.next();
-					String url=pairs.getKey();
-					URLinfo info = pairs.getValue();
-					st.setString(1,url);
-					st.setString(2,info.getText());
-					st.setString(3,info.getTitle());
-					st.setInt(4,info.getLinks_size());
-					st.setString(5,info.getOut_links());
-					st.setString(6,info.getH1());
-					st.setString(7,info.getFooter());
-					st.setString(8,info.getZtd());
-					st.setString(9,info.getShort_desc());
-					String[] XPATHRESULTS = info.getXPATH_results();		
-					if (XPATHRESULTS != null){	
-						if (XPATHRESULTS[0] != null){
-							st.setString(10, XPATHRESULTS[0]);
-						} else {
-							st.setString(10, "");
-						}
-						if (XPATHRESULTS[1] != null){
-							st.setString(11, XPATHRESULTS[1]);
-						} else {
-							st.setString(11, "");
-						}
-						if (XPATHRESULTS[2] != null){
-							st.setString(12, XPATHRESULTS[2]);
-						} else {
-							st.setString(12, "");
-						}
-						if (XPATHRESULTS[3] != null){
-							st.setString(13, XPATHRESULTS[3]);
-						} else {
-							st.setString(13, "");
-						}
-						if (XPATHRESULTS[4] != null){
-							st.setString(14, XPATHRESULTS[4]);
-						} else {
-							st.setString(14, "");
-						}
-						if (XPATHRESULTS[5] != null){
-							st.setString(15, XPATHRESULTS[5]);
-						} else {
-							st.setString(15, "");
-						}
-						if (XPATHRESULTS[6] != null){
-							st.setString(16, XPATHRESULTS[6]);
-						} else {
-							st.setString(16, "");
-						}
-						if (XPATHRESULTS[7] != null){
-							st.setString(17, XPATHRESULTS[7]);
-						} else {
-							st.setString(17, "");
-						}
-						if (XPATHRESULTS[8] != null){
-							st.setString(18, XPATHRESULTS[8]);
-						} else {
-							st.setString(18, "");
-						}
-						if (XPATHRESULTS[9] != null){
-							st.setString(19, XPATHRESULTS[9]);
-						} else {
-							st.setString(19, "");
-						}
-					}else {
-						st.setString(10, "");
-						st.setString(11, "");
-						st.setString(12, "");
-						st.setString(13, "");
-						st.setString(14, "");
-						st.setString(15, "");
-						st.setString(16, "");
-						st.setString(17, "");
-						st.setString(18, "");
-						st.setString(19, "");
-					}
-					st.setBoolean(20,info.isCdiscountBestBid());
-					st.setBoolean(21,info.isYoutubeVideoReferenced());
-					st.setString(22,info.getAtt_desc());
-					st.setInt(23,info.getAtt_number());
-					st.setInt(24,info.getStatus_code());
-					st.setString(25,info.getResponse_headers());		
-					st.setInt(26,info.getDepth());
-					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-					st.setDate(27,sqlDate);
-					st.addBatch();
-				}while (it.hasNext());	
-				st.executeBatch();		 
-				con.commit();
-				st.close();
-				System.out.println(Thread.currentThread()+"Committed " + local_counter + " updates");
-			}
-		} catch (SQLException e){
-			//System.out.println("Line already inserted : "+nb_lines);
-			e.printStackTrace();  
-			if (con != null) {
-				try {
-					con.rollback();
-				} catch (SQLException ex1) {
-					ex1.printStackTrace();
-				}
-			}	
-		}	
 		crawledContent.clear();
 	}
 

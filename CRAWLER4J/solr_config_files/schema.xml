@@ -208,6 +208,8 @@
    <field name="magasin" type="string" indexed="true" stored="true" required="true" multiValued="false" /> 
    <field name="rayon" type="string" indexed="true" stored="true" required="true" multiValued="false" /> 
    <field name="produit" type="string" indexed="true" stored="true" required="true" multiValued="false" /> 
+   <field name="marque" type="string" indexed="true" stored="true" required="true" multiValued="false" /> 
+   <field name="categorie" type="string" indexed="true" stored="true" required="true" multiValued="false" /> 
    <!--
      Some fields such as popularity and manu_exact could be modified to
      leverage doc values:

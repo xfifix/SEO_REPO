@@ -4,6 +4,8 @@ public class URLinfo {
 	private String url="";
 	private String text="";
 	private String title="";
+	private String brand ="";
+	private String category="";
 	private int links_size=0;
 	private String out_links="";
 	private String h1="";
@@ -162,5 +164,17 @@ public class URLinfo {
 	}
 	public void setVendor(String vendor) {
 		this.vendor = vendor;
+	}
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
+	}
+	public String getBrand() {
+		return brand;
+	}
+	public void setBrand(String brand) {
+		this.brand = brand;
 	}
 }		

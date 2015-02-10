@@ -39,7 +39,10 @@ public class ContinuousCrawler extends WebCrawler {
 	//private static int bulk_size = 5;
 	// debugging size
 	//private static int bulk_size = 10;
-
+    private static String category_name = "Catégorie";
+    private static String product_name = "Nom du produit";
+    private static String brand_name = "Marque";
+    
 	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg|jpg" + "|png|tiff|mid|mp2|mp3|mp4"
 			+ "|wav|avi|mov|mpeg|ram|m4v|ico|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 
@@ -62,7 +65,6 @@ public class ContinuousCrawler extends WebCrawler {
 		String page_type = URL_Utilities.checkTypeFullUrl(fullUrl);
 		String magasin = URL_Utilities.checkMagasinFullUrl(fullUrl);
 		String rayon = URL_Utilities.checkRayonFullUrl(fullUrl);
-		String produit = URL_Utilities.checkProduitFullUrl(fullUrl);
 
 		String url=URL_Utilities.clean(fullUrl);
 		System.out.println(Thread.currentThread()+": Visiting URL : "+url);
@@ -74,7 +76,6 @@ public class ContinuousCrawler extends WebCrawler {
 		// filling up url regexp attributes
 		info.setPage_type(page_type);
 		info.setMagasin(magasin);
-		info.setProduit(produit);
 		info.setRayon(rayon);
 		// filling up url parameters
 		info.setUrl(url);
@@ -154,6 +155,15 @@ public class ContinuousCrawler extends WebCrawler {
 					String description = td_elements.get(1).text();                                    
 					arguments_text.append(description);		
 					arguments_text.append("@@");
+					if (category_name.equals(category)){
+						info.setCategory(description);
+					}
+					if (brand_name.equals(category)){
+						info.setBrand(description);
+					}
+					if (product_name.equals(category)){
+						info.setProduit(description);
+					}
 				}
 			}
 			info.setAtt_number(nb_arguments);

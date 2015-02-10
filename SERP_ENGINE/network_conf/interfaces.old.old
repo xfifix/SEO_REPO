@@ -20,6 +20,78 @@ iface eth0 inet6 static
 	post-up /sbin/ip -f inet6 route add default via 2001:41D0:2:F0ff:ff:ff:ff:ff
 	pre-down /sbin/ip -f inet6 route del default via 2001:41D0:2:F0ff:ff:ff:ff:ff
 	pre-down /sbin/ip -f inet6 route del 2001:41D0:2:F0ff:ff:ff:ff:ff dev eth0
+    post-up /sbin/ifconfig eth0:0 5.39.42.20 netmask 255.255.255.255 broadcast 5.39.42.20
+    post-down /sbin/ifconfig eth0:0 down
+    post-up /sbin/ifconfig eth0:1 5.39.42.21 netmask 255.255.255.255 broadcast 5.39.42.21
+    post-down /sbin/ifconfig eth0:1 down
+    post-up /sbin/ifconfig eth0:2 5.39.42.22 netmask 255.255.255.255 broadcast 5.39.42.22
+    post-down /sbin/ifconfig eth0:2 down
+    post-up /sbin/ifconfig eth0:3 5.39.42.23 netmask 255.255.255.255 broadcast 5.39.42.23
+    post-down /sbin/ifconfig eth0:3 down
+    post-up /sbin/ifconfig eth0:4 151.80.68.232 netmask 255.255.255.255 broadcast 151.80.68.232
+    post-down /sbin/ifconfig eth0:4 down
+    post-up /sbin/ifconfig eth0:5 151.80.68.233 netmask 255.255.255.255 broadcast 151.80.68.233
+    post-down /sbin/ifconfig eth0:5 down
+    post-up /sbin/ifconfig eth0:6 151.80.68.234 netmask 255.255.255.255 broadcast 151.80.68.234
+    post-down /sbin/ifconfig eth0:6 down
+    post-up /sbin/ifconfig eth0:7 151.80.68.235 netmask 255.255.255.255 broadcast 151.80.68.235
+    post-down /sbin/ifconfig eth0:7 down
+    post-up /sbin/ifconfig eth0:8 151.80.68.236 netmask 255.255.255.255 broadcast 151.80.68.236
+    post-down /sbin/ifconfig eth0:8 down
+    post-up /sbin/ifconfig eth0:9 151.80.68.237 netmask 255.255.255.255 broadcast 151.80.68.237
+    post-down /sbin/ifconfig eth0:9 down
+    post-up /sbin/ifconfig eth0:10 151.80.68.238 netmask 255.255.255.255 broadcast 151.80.68.238
+    post-down /sbin/ifconfig eth0:10 down
+    post-up /sbin/ifconfig eth0:11 151.80.68.239 netmask 255.255.255.255 broadcast 151.80.68.239
+    post-down /sbin/ifconfig eth0:11 down
+    post-up /sbin/ifconfig eth0:12 151.80.70.0 netmask 255.255.255.255 broadcast 151.80.70.0
+    post-down /sbin/ifconfig eth0:12 down
+    post-up /sbin/ifconfig eth0:13 151.80.70.1 netmask 255.255.255.255 broadcast 151.80.70.1
+    post-down /sbin/ifconfig eth0:13 down
+    post-up /sbin/ifconfig eth0:14 151.80.70.2 netmask 255.255.255.255 broadcast 151.80.70.2
+    post-down /sbin/ifconfig eth0:14 down
+    post-up /sbin/ifconfig eth0:15 151.80.70.3 netmask 255.255.255.255 broadcast 151.80.70.3
+    post-down /sbin/ifconfig eth0:15 down
+    post-up /sbin/ifconfig eth0:16 151.80.70.8 netmask 255.255.255.255 broadcast 151.80.70.8
+    post-down /sbin/ifconfig eth0:16 down
+    post-up /sbin/ifconfig eth0:17 151.80.70.9 netmask 255.255.255.255 broadcast 151.80.70.9
+    post-down /sbin/ifconfig eth0:17 down
+    post-up /sbin/ifconfig eth0:18 151.80.70.10 netmask 255.255.255.255 broadcast 151.80.70.10
+    post-down /sbin/ifconfig eth0:18 down
+    post-up /sbin/ifconfig eth0:19 151.80.70.11 netmask 255.255.255.255 broadcast 151.80.70.11
+    post-down /sbin/ifconfig eth0:19 down
+    post-up /sbin/ifconfig eth0:20 151.80.70.12 netmask 255.255.255.255 broadcast 151.80.70.12
+    post-down /sbin/ifconfig eth0:20 down
+    post-up /sbin/ifconfig eth0:21 151.80.70.13 netmask 255.255.255.255 broadcast 151.80.70.13
+    post-down /sbin/ifconfig eth0:21 down
+    post-up /sbin/ifconfig eth0:22 151.80.70.14 netmask 255.255.255.255 broadcast 151.80.70.14
+    post-down /sbin/ifconfig eth0:22 down
+    post-up /sbin/ifconfig eth0:23 151.80.70.15 netmask 255.255.255.255 broadcast 151.80.70.15
+    post-down /sbin/ifconfig eth0:23 down
+    post-up /sbin/ifconfig eth0:24 151.80.70.24 netmask 255.255.255.255 broadcast 151.80.70.24
+    post-down /sbin/ifconfig eth0:24 down
+    post-up /sbin/ifconfig eth0:25 151.80.70.25 netmask 255.255.255.255 broadcast 151.80.70.25
+    post-down /sbin/ifconfig eth0:25 down
+    post-up /sbin/ifconfig eth0:26 151.80.70.26 netmask 255.255.255.255 broadcast 151.80.70.26
+    post-down /sbin/ifconfig eth0:26 down
+    post-up /sbin/ifconfig eth0:27 151.80.70.27 netmask 255.255.255.255 broadcast 151.80.70.27
+    post-down /sbin/ifconfig eth0:27 down
+    post-up /sbin/ifconfig eth0:28 151.80.70.40 netmask 255.255.255.255 broadcast 151.80.70.40
+    post-down /sbin/ifconfig eth0:28 down
+    post-up /sbin/ifconfig eth0:29 151.80.70.41 netmask 255.255.255.255 broadcast 151.80.70.41
+    post-down /sbin/ifconfig eth0:29 down
+    post-up /sbin/ifconfig eth0:30 151.80.70.42 netmask 255.255.255.255 broadcast 151.80.70.42
+    post-down /sbin/ifconfig eth0:30 down
+    post-up /sbin/ifconfig eth0:31 151.80.70.43 netmask 255.255.255.255 broadcast 151.80.70.43
+    post-down /sbin/ifconfig eth0:31 down
+    post-up /sbin/ifconfig eth0:32 151.80.70.44 netmask 255.255.255.255 broadcast 151.80.70.44
+    post-down /sbin/ifconfig eth0:32 down
+    post-up /sbin/ifconfig eth0:33 151.80.70.45 netmask 255.255.255.255 broadcast 151.80.70.45
+    post-down /sbin/ifconfig eth0:33 down
+    post-up /sbin/ifconfig eth0:34 151.80.70.46 netmask 255.255.255.255 broadcast 151.80.70.46
+    post-down /sbin/ifconfig eth0:34 down
+    post-up /sbin/ifconfig eth0:35 151.80.70.47 netmask 255.255.255.255 broadcast 151.80.70.47
+    post-down /sbin/ifconfig eth0:35 down
 
 auto eth0:0
 iface eth0:0 inet static
