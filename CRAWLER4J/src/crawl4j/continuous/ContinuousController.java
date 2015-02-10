@@ -52,12 +52,14 @@ public class ContinuousController {
 			System.exit(0);
 		}	
 
-		// downsizing to test/debug
-		//int numberOfCrawlers =  1;
 		if (args.length == 2) {
 			seed = args[0];
 			numberOfCrawlers=Integer.valueOf(args[1]);
 		} 
+		// downsizing to test/debug
+		numberOfCrawlers =  1;
+		ContinuousCrawler.bulk_size = 5;
+		
 		System.out.println("Seed URL : "+seed);
 		System.out.println("Number of threads : "+numberOfCrawlers);
 		System.out.println("Blob stored : "+isBlobStored);

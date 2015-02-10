@@ -34,12 +34,10 @@ public class ContinuousCrawler extends WebCrawler {
 	// depending wether or not you store the whole page source code
 	// this cache size is important
 	// if you don't save blob and store the page source code you can go up to 200
-	public static int bulk_size = 100;	
 	// blob cache size
-	//private static int bulk_size = 5;
-	// debugging size
-	//private static int bulk_size = 10;
-    private static String category_name = "Catégorie";
+	public static int bulk_size = 100;	
+
+	private static String category_name = "Catégorie";
     private static String product_name = "Nom du produit";
     private static String brand_name = "Marque";
     
