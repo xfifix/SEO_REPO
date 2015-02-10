@@ -57,8 +57,8 @@ public class ContinuousController {
 			numberOfCrawlers=Integer.valueOf(args[1]);
 		} 
 		// downsizing to test/debug
-		numberOfCrawlers =  1;
-		ContinuousCrawler.bulk_size = 5;
+		//		numberOfCrawlers =  1;
+		//		ContinuousCrawler.bulk_size = 5;
 		
 		System.out.println("Seed URL : "+seed);
 		System.out.println("Number of threads : "+numberOfCrawlers);
