@@ -29,23 +29,19 @@ public class ProcessContinuousCrawl {
 			+ " VALUES(?,?,?,?,?,?,?)";
 	private static String select_statement = "select title, url, magasin, rayon, cdiscount_vendor, page_type from crawl_results";
 	private static Map<String, List<URLTitleInfo>> titles_data = new HashMap<String, List<URLTitleInfo>>();
-
+	private static String drop_CURRENT_CONTINUOUS_DUPLICATES_table = "DROP TABLE IF EXISTS CURRENT_CONTINUOUS_DUPLICATES";
+	private static String create_CURRENT_CONTINUOUS_DUPLICATESs_table = "CREATE TABLE IF NOT EXISTS CURRENT_CONTINUOUS_DUPLICATES (TITLE TEXT,NB_URLS INT, URLS TEXT, DUPLICATE_TIME DATE, MAGASIN TEXT, RAYON TEXT) TABLESPACE mydbspace";
 	public static void main(String[] args) {
-
 		// Reading the property of our database for the continuous crawl
 		Properties props = new Properties();
 		FileInputStream in = null;      
 		try {
 			in = new FileInputStream(database_crawl4j_con_path);
 			props.load(in);
-
 		} catch (IOException ex) {
-
 			Logger lgr = Logger.getLogger(CurrentBatchTitlePopulatingClass.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
-
 		} finally {
-
 			try {
 				if (in != null) {
 					in.close();
@@ -65,6 +61,7 @@ public class ProcessContinuousCrawl {
 		try {
 			con = DriverManager.getConnection(url, user, passwd);
 			fetch_titles_from_continuous_crawl();
+			System.out.println("Titles fetched");
 			con.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -99,7 +96,9 @@ public class ProcessContinuousCrawl {
 		// we will here sabe all metrics to the duplicated title database
 		try {
 			con = DriverManager.getConnection(url, user, passwd);
-			//	save_titles_duplication_metrics();
+			cleaning_database();
+			System.out.println("Saving Titles metrics");
+			save_titles_duplication_metrics();
 			con.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -109,6 +108,16 @@ public class ProcessContinuousCrawl {
 		}
 	}
 
+	private static void cleaning_database() throws SQLException{
+		PreparedStatement drop_nodes_table_st = con.prepareStatement(drop_CURRENT_CONTINUOUS_DUPLICATES_table);
+		drop_nodes_table_st.executeUpdate();
+		System.out.println("Dropping the old CURRENT_CONTINUOUS_DUPLICATES table");
+
+		PreparedStatement create_nodes_table_st = con.prepareStatement(create_CURRENT_CONTINUOUS_DUPLICATESs_table);
+		create_nodes_table_st.executeUpdate();
+		System.out.println("Creating the new CURRENT_CONTINUOUS_DUPLICATES table");
+	}
+	
 	public static void save_titles_duplication_metrics() throws SQLException{
 		con.setAutoCommit(false);
 		PreparedStatement pst = con.prepareStatement(insert_statement);
@@ -153,10 +162,11 @@ public class ProcessContinuousCrawl {
 			field_pst  = con.prepareStatement(select_statement);
 			System.out.println("I am requesting the database, please wait a few seconds");
 			ResultSet field_rs = field_pst.executeQuery();
+			System.out.println("Processing all titles");
 			while (field_rs.next()) {
 				URLTitleInfo url_info = new URLTitleInfo();
 				String title = field_rs.getString(1);
-				System.out.println("Adding title : "+title);
+				//System.out.println("Adding title : "+title);
 				String url = field_rs.getString(2);
 				String magasin = field_rs.getString(3);
 				String rayon = field_rs.getString(4);
