@@ -17,7 +17,6 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.populating.CurrentBatchTitlePopulatingClass;
 import com.urlutilities.URLTitleInfo;
 
 public class ProcessContinuousCrawl {
@@ -26,7 +25,7 @@ public class ProcessContinuousCrawl {
 	private static String database_crawl4j_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
 	private static int batch_size = 10000;
 	private static String insert_statement = "INSERT INTO CURRENT_CONTINUOUS_DUPLICATES(TITLE,NB_URLS,URLS,DUPLICATE_TIME,MAGASIN,RAYON)"
-			+ " VALUES(?,?,?,?,?,?,?)";
+			+ " VALUES(?,?,?,?,?,?)";
 	private static String select_statement = "select title, url, magasin, rayon, cdiscount_vendor, page_type from crawl_results";
 	private static Map<String, List<URLTitleInfo>> titles_data = new HashMap<String, List<URLTitleInfo>>();
 	private static String drop_CURRENT_CONTINUOUS_DUPLICATES_table = "DROP TABLE IF EXISTS CURRENT_CONTINUOUS_DUPLICATES";
@@ -39,7 +38,7 @@ public class ProcessContinuousCrawl {
 			in = new FileInputStream(database_crawl4j_con_path);
 			props.load(in);
 		} catch (IOException ex) {
-			Logger lgr = Logger.getLogger(CurrentBatchTitlePopulatingClass.class.getName());
+			Logger lgr = Logger.getLogger(ProcessContinuousCrawl.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		} finally {
 			try {
@@ -47,7 +46,7 @@ public class ProcessContinuousCrawl {
 					in.close();
 				}
 			} catch (IOException ex) {
-				Logger lgr = Logger.getLogger(CurrentBatchTitlePopulatingClass.class.getName());
+				Logger lgr = Logger.getLogger(ProcessContinuousCrawl.class.getName());
 				lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -77,7 +76,7 @@ public class ProcessContinuousCrawl {
 			in = new FileInputStream(database_duplication_con_path);
 			props.load(in);
 		} catch (IOException ex) {
-			Logger lgr = Logger.getLogger(CurrentBatchTitlePopulatingClass.class.getName());
+			Logger lgr = Logger.getLogger(ProcessContinuousCrawl.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		} finally {
 			try {
@@ -85,7 +84,7 @@ public class ProcessContinuousCrawl {
 					in.close();
 				}
 			} catch (IOException ex) {
-				Logger lgr = Logger.getLogger(CurrentBatchTitlePopulatingClass.class.getName());
+				Logger lgr = Logger.getLogger(ProcessContinuousCrawl.class.getName());
 				lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -117,7 +116,7 @@ public class ProcessContinuousCrawl {
 		create_nodes_table_st.executeUpdate();
 		System.out.println("Creating the new CURRENT_CONTINUOUS_DUPLICATES table");
 	}
-	
+
 	public static void save_titles_duplication_metrics() throws SQLException{
 		con.setAutoCommit(false);
 		PreparedStatement pst = con.prepareStatement(insert_statement);
@@ -131,10 +130,10 @@ public class ProcessContinuousCrawl {
 			List<URLTitleInfo> duplicated_urls =pairs.getValue();
 			int nb_urls = duplicated_urls.size();
 			// we have at least two urls with the same title
-			if (nb_urls>=1){
+			if (nb_urls>=2 && (!"".equals(title))){
 				pst.setString(1,title);
 				pst.setInt(2,nb_urls);
-				pst.setString(3,duplicated_urls.toString());
+				pst.setString(3,translate_to_url(duplicated_urls));
 				Date current_date = new Date();
 				java.sql.Date sqlDate = new java.sql.Date(current_date.getTime());
 				pst.setDate(4,sqlDate);
@@ -153,6 +152,14 @@ public class ProcessContinuousCrawl {
 		System.out.println("Inserting the last batch");
 		pst.executeBatch();		 
 		con.commit();
+	}
+
+	private static String translate_to_url(List<URLTitleInfo> to_translate){
+		StringBuilder to_append = new StringBuilder();
+		for (URLTitleInfo info : to_translate){
+			to_append.append(info.getUrl() +";");
+		}
+		return to_append.toString();
 	}
 
 	public static void fetch_titles_from_continuous_crawl(){

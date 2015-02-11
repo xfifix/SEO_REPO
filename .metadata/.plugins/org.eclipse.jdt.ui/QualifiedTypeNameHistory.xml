@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="vsm.URLContentInfo"/>
 <fullyQualifiedTypeName name="vsm.RayonLevelDoublon"/>
 <fullyQualifiedTypeName name="java.util.logging.Logger"/>
 <fullyQualifiedTypeName name="java.sql.Date"/>
@@ -54,10 +53,11 @@
 <fullyQualifiedTypeName name="crawl4j.arbo.semantic.SemanticArboController"/>
 <fullyQualifiedTypeName name="org.apache.commons.lang3.StringUtils"/>
 <fullyQualifiedTypeName name="com.parsing.utility.XPathUtility"/>
-<fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="java.sql.Statement"/>
 <fullyQualifiedTypeName name="crawl4j.xpathutility.XPathUtility"/>
 <fullyQualifiedTypeName name="crawl4j.continuous.CrawlDataManagement"/>
 <fullyQualifiedTypeName name="crawl4j.continuous.ContinuousController"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="com.urlutilities.URLTitleInfo"/>
 </qualifiedTypeNameHistroy>
