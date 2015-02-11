@@ -19,9 +19,19 @@ FastBatchPostGresLinksByLevelLowMemoryDaemon
 #Computing the page rank on the whole NODES, EDGES database and updating CRAWL_RESULTS database
 ComputePageRank
 
+# compute the page rank inside each magasin (recreate edges and nodes table per magasin and update crawl_results)
+BatchComputePageRankPerMagasin
+
+
+
 #Attributes completion metrics for one magasin
 ProcessOneMagasinQualityScore
 
-#Attributes completion metrics for one magasin aggregated by metrics
+#Attributes completion metrics for one magasin aggregated by category
 ProcessMagasinAttributesCompletionPerCategoryMetrics
 
+#Attributes completion metrics for one magasin aggregated by category and vendor
+ProcessMagasinAttributesCompletionPerCategoryPerVendorMetrics
+
+#Attributes completion metrics for one magasin aggregated by rayon and by category and by vendor
+ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetrics
