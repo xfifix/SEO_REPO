@@ -6,7 +6,6 @@
 <fullyQualifiedTypeName name="java.sql.Date"/>
 <fullyQualifiedTypeName name="java.util.HashMap"/>
 <fullyQualifiedTypeName name="vsm.URL_Utilities"/>
-<fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="com.urlutilities.URL_Utilities"/>
 <fullyQualifiedTypeName name="crawl4j.daemon.links.URLNode"/>
 <fullyQualifiedTypeName name="edu.uci.ics.crawler4j.url.WebURL"/>
@@ -60,4 +59,5 @@
 <fullyQualifiedTypeName name="crawl4j.xpathutility.XPathUtility"/>
 <fullyQualifiedTypeName name="crawl4j.continuous.CrawlDataManagement"/>
 <fullyQualifiedTypeName name="crawl4j.continuous.ContinuousController"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
 </qualifiedTypeNameHistroy>

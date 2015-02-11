@@ -35,7 +35,7 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 	// threshold above which we deem the content too much similar !!
 	//	private static double threshold = 0;
 	private static Connection con = null;
-	private static Map<String,List<URLContentInfo>> magasins_datas_per_rayon = new HashMap<String,List<URLContentInfo>>();
+	private static List<URLContentInfo> magasins_datas = new ArrayList<URLContentInfo>();
 	private static Map<String, String> properties_map = new HashMap<String, String>();
 
 	private static String categoryString = "Catégorie";
@@ -49,15 +49,19 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		if (args.length >= 1){
 			magasin_to_analyse = args[0];
 		} 
+
 		if (args.length == 0) {
 			System.out.println("No magasin specified by parameters : choosing "+magasin_to_analyse);
 		}
+
 		if (args.length == 2){
 			output_directory = args[1];
 		}
+
 		if (args.length == 1){
 			System.out.println("No output directory specified : choosing "+output_directory);
 		}
+
 		loadProperties();
 		// getting the french stop words 
 		stop_words = new File(properties.getProperty("config.stop_words_path"));
@@ -67,11 +71,12 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		String user = properties.getProperty("db.user");
 		String mdp = properties.getProperty("db.passwd");    
 		// database variables
+
 		System.out.println("Parsing the ID Model/Property referential file");
 		parse_model_properties(properties_file_path);
 		try {
 			con = DriverManager.getConnection(url, user, mdp);
-			fetch_magasin_rayon_info(magasin_to_analyse);
+			fetch_magasin_info(magasin_to_analyse);
 			//fetch_rayon();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -81,10 +86,8 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		}
 		System.out.println("Launching the attributes completion metrics computation per category and per vendor for magasin : "+magasin_to_analyse);
 		System.out.println("The result will be saved in the following directory : "+output_directory);				
-		System.out.println("We first make the analysis for Cdiscount and Market place together");
-		analyse_magasin_per_category_per_rayon(magasin_to_analyse,output_directory);
-		System.out.println("We then dissociate Cdiscount and Market place");
-	//	analyse_magasin_per_category_per_vendor(magasin_to_analyse,output_directory);
+		System.out.println("We dissociate Cdiscount and Market place");
+		analyse_magasin_per_rayon_per_category_per_vendor(magasin_to_analyse,output_directory);
 	}
 
 	private static void parse_model_properties(String property_path_file){
@@ -124,148 +127,69 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 			}
 		}
 	}
+	
+	private static void analyse_magasin_per_rayon_per_category_per_vendor(String magasin_to_analyse, String output_directory){
+		// Map to store the counter of product occurence for a certain category	and for a certain type of vendor	
+		Map<String, Integer> category_vendor_counter = new HashMap<String, Integer>();
+		// Map to store for each attribut of a category its own counter
+		Map<String, Map<String, Integer>> attributs_count_inside_category_vendor_map = new HashMap<String, Map<String, Integer>>();
 
+		System.out.println("Assessing " +magasins_datas.size()  + " URLs" );
+		// Looping over the collected datas for the magasin
+		for (URLContentInfo fiche_info : magasins_datas){
+			String attributes_listing = fiche_info.getAttributes();
+			String checkType = fiche_info.getPageType();
+			String vendor = fiche_info.isCdiscountVendor() ? "Cdiscount" : "Market place";
+			String rayon = fiche_info.getRayon();
+			// we handle only the <Fiche product>
+			if ("FicheProduit".equals(checkType)){
+				// we make sure that attributes were found for our <Fiche product>
+				if (attributes_listing.contains("|||")){
+					// we parse the found attribute
+					Map<String,String> arguments_map = parse_arguments(attributes_listing);
+					// we locate the <Category> value in the list of our arguments 
+					String category = arguments_map.get(categoryString);
+					if (category == null){
+						category=unknownCategory;
+					}
+					String keyValue = rayon + ";" + category + ";" + vendor;
+					System.out.println("Adding a product to the rayon & category & vendor : "+keyValue);
+					Integer counter = category_vendor_counter.get(keyValue);
+					if (counter == null){
+						counter = new Integer(1);
+						category_vendor_counter.put(keyValue,counter);
+					} else {
+						counter=counter+1;
+						category_vendor_counter.put(keyValue,counter);
+					}
+					System.out.println("Incrementing counter for each attribute inside the following category & vendor : "+keyValue);
 
-//	private static void analyse_magasin_per_category_per_vendor(String magasin_to_analyse, String output_directory){
-//		// Map to store the counter of product occurence for a certain category	and for a certain type of vendor	
-//		Map<String, Integer> category_vendor_counter = new HashMap<String, Integer>();
-//		// Map to store for each attribut of a category its own counter
-//		Map<String, Map<String, Integer>> attributs_count_inside_category_vendor_map = new HashMap<String, Map<String, Integer>>();
-//
-//		System.out.println("Assessing " +magasins_datas.size()  + " URLs" );
-//		// Looping over the collected datas for the magasin
-//		for (URLContentInfo fiche_info : magasins_datas){
-//			String attributes_listing = fiche_info.getAttributes();
-//			String checkType = fiche_info.getPageType();
-//			String vendor = fiche_info.isCdiscountVendor() ? "Cdiscount" : "Market place";
-//			// we handle only the <Fiche product>
-//			if ("FicheProduit".equals(checkType)){
-//				// we make sure that attributes were found for our <Fiche product>
-//				if (attributes_listing.contains("|||")){
-//					// we parse the found attribute
-//					Map<String,String> arguments_map = parse_arguments(attributes_listing);
-//					// we locate the <Category> value in the list of our arguments 
-//					String category = arguments_map.get(categoryString);
-//					if (category == null){
-//						category=unknownCategory;
-//					}
-//					String keyValue = category + "_" + vendor;
-//					System.out.println("Adding a product to the category & vendor : "+keyValue);
-//					Integer counter = category_vendor_counter.get(keyValue);
-//					if (counter == null){
-//						counter = new Integer(1);
-//						category_vendor_counter.put(keyValue,counter);
-//					} else {
-//						counter=counter+1;
-//						category_vendor_counter.put(keyValue,counter);
-//					}
-//					System.out.println("Incrementing counter for each attribute inside the following category & vendor : "+keyValue);
-//
-//					Map<String, Integer> attributs_count_inside_category = attributs_count_inside_category_vendor_map.get(keyValue);
-//					if (attributs_count_inside_category == null){
-//						attributs_count_inside_category = new HashMap<String, Integer>();
-//						attributs_count_inside_category_vendor_map.put(keyValue,attributs_count_inside_category);
-//					} 
-//					// iterating over every attribut found
-//					Iterator<Map.Entry<String,String>> arg_it = arguments_map.entrySet().iterator();
-//					while (arg_it.hasNext()) {
-//						Map.Entry<String,String> pairs = (Map.Entry<String,String>)arg_it.next();
-//						// we are here just interested by our argument naming
-//						String argument_name=pairs.getKey();
-//						Integer arg_counter = attributs_count_inside_category.get(argument_name);
-//						if (arg_counter == null){
-//							arg_counter = new Integer(1);
-//							attributs_count_inside_category.put(argument_name,arg_counter);
-//						} else {
-//							arg_counter=arg_counter+1;
-//							attributs_count_inside_category.put(argument_name,arg_counter);
-//						}
-//					}
-//				}
-//			}
-//		}
-//		// to do : save the results for the rayon
-//		System.out.println("Saving the results for magasin : "+magasin_to_analyse + " as a csv file in : " + output_directory);
-//		savingDataArguments(category_vendor_counter,attributs_count_inside_category_vendor_map,magasin_to_analyse,output_directory);
-//	}
-
-	private static void analyse_magasin_per_category_per_rayon(String magasin_to_analyse, String output_directory){
-		// we here loop over all the found rayons
-		// and we compute for each rayon the filling metrics per category
-		Iterator<Map.Entry<String,List<URLContentInfo>>> rayon_iterator = magasins_datas_per_rayon.entrySet().iterator();
-		while (rayon_iterator.hasNext()) {
-			Map.Entry<String,List<URLContentInfo>> rayon_pairs = (Map.Entry<String,List<URLContentInfo>>)rayon_iterator.next();
-			// we are here just interested by our argument naming
-			String rayon_name=rayon_pairs.getKey();
-			List<URLContentInfo> rayon_datas = rayon_pairs.getValue();
-			// doing the actual computation here for the specified rayon
-			// Map to store the counter of product occurrence for a certain category		
-			Map<String, Integer> category_counter = new HashMap<String, Integer>();
-			// Map to store for each attribut of a category its own counter
-			Map<String, Map<String, Integer>> attributs_count_inside_category_map = new HashMap<String, Map<String, Integer>>();
-
-			System.out.println("Assessing " +rayon_datas.size()  + " URLs for rayon : "+rayon_name);
-			// Looping over the collected datas for the magasin
-			for (URLContentInfo rayon_info : rayon_datas){
-				String attributes_listing = rayon_info.getAttributes();
-				String checkType = rayon_info.getPageType();
-				// we handle only the <Fiche product>
-				if ("FicheProduit".equals(checkType)){
-					// we make sure that attributes were found for our <Fiche product>
-					if (attributes_listing.contains("|||")){
-						// we parse the found attribute
-						Map<String,String> arguments_map = parse_arguments(attributes_listing);
-						// we locate the <Category> value in the list of our arguments 
-						String category_value = arguments_map.get(categoryString);
-						if (category_value == null){
-							category_value=unknownCategory;
-						}
-						System.out.println("Adding a product to the category : "+category_value);
-						Integer counter = category_counter.get(category_value);
-						if (counter == null){
-							counter = new Integer(1);
-							category_counter.put(category_value,counter);
+					Map<String, Integer> attributs_count_inside_category = attributs_count_inside_category_vendor_map.get(keyValue);
+					if (attributs_count_inside_category == null){
+						attributs_count_inside_category = new HashMap<String, Integer>();
+						attributs_count_inside_category_vendor_map.put(keyValue,attributs_count_inside_category);
+					} 
+					// iterating over every attribut found
+					Iterator<Map.Entry<String,String>> arg_it = arguments_map.entrySet().iterator();
+					while (arg_it.hasNext()) {
+						Map.Entry<String,String> pairs = (Map.Entry<String,String>)arg_it.next();
+						// we are here just interested by our argument naming
+						String argument_name=pairs.getKey();
+						Integer arg_counter = attributs_count_inside_category.get(argument_name);
+						if (arg_counter == null){
+							arg_counter = new Integer(1);
+							attributs_count_inside_category.put(argument_name,arg_counter);
 						} else {
-							counter=counter+1;
-							category_counter.put(category_value,counter);
-						}
-						System.out.println("Incrementing counter for each attribute inside the following category : "+category_value);
-
-						Map<String, Integer> attributs_count_inside_category = attributs_count_inside_category_map.get(category_value);
-						if (attributs_count_inside_category == null){
-							attributs_count_inside_category = new HashMap<String, Integer>();
-							attributs_count_inside_category_map.put(category_value,attributs_count_inside_category);
-						} 
-						// iterating over every attribut found
-						Iterator<Map.Entry<String,String>> arg_it = arguments_map.entrySet().iterator();
-						while (arg_it.hasNext()) {
-							Map.Entry<String,String> pairs = (Map.Entry<String,String>)arg_it.next();
-							// we are here just interested by our argument naming
-							String argument_name=pairs.getKey();
-							Integer arg_counter = attributs_count_inside_category.get(argument_name);
-							if (arg_counter == null){
-								arg_counter = new Integer(1);
-								attributs_count_inside_category.put(argument_name,arg_counter);
-							} else {
-								arg_counter=arg_counter+1;
-								attributs_count_inside_category.put(argument_name,arg_counter);
-							}
+							arg_counter=arg_counter+1;
+							attributs_count_inside_category.put(argument_name,arg_counter);
 						}
 					}
 				}
 			}
-			// to do : save the results for the rayon
-			System.out.println("Saving the results for magasin : "+magasin_to_analyse + " as a csv file in : " + output_directory);
-
-			savingDataArguments(category_counter,attributs_count_inside_category_map,magasin_to_analyse,output_directory);
-
-
-
-
 		}
-
-
-
+		// to do : save the results for the rayon
+		System.out.println("Saving the results for magasin : "+magasin_to_analyse + " as a csv file in : " + output_directory);
+		savingSingleFileDataArguments(category_vendor_counter,attributs_count_inside_category_vendor_map,magasin_to_analyse,output_directory);
 	}
 
 	private static Map<String,String> parse_arguments(String arguments_listing){
@@ -288,7 +212,7 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		return output;
 	}
 
-	private static void savingDataArguments(Map<String, Integer> global_counter, Map<String, Map<String, Integer>> arguments_counter, String magasin_to_analyse, String output_directory){
+	private static void savingSingleFileDataArguments(Map<String, Integer> global_counter, Map<String, Map<String, Integer>> arguments_counter, String magasin_to_analyse, String output_directory){
 		System.out.println("Displaying attributs counting results for magasin : "+magasin_to_analyse+ "\n");	
 
 		// we loop over each category and create the matching result file
@@ -333,9 +257,8 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		}
 	}
 
-	private static void fetch_magasin_rayon_info(String magasin_to_analyse){
-		// getting the URLs infos for the whole magasin
-		// we then store every thing per rayon in a global hashmap
+	private static void fetch_magasin_info(String magasin_to_analyse){
+		// getting the URLs infos for each rayon
 		PreparedStatement field_pst;
 		try {
 			field_pst  = con.prepareStatement("SELECT NB_ATTRIBUTES,ATTRIBUTES,URL,MAGASIN,RAYON,PRODUIT,PAGE_TYPE,CDISCOUNT_VENDOR FROM CRAWL_RESULTS WHERE MAGASIN='" +magasin_to_analyse+ "'");
@@ -360,12 +283,7 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 				url_info.setProduit(my_produit);
 				url_info.setPageType(my_page_type);
 				url_info.setCdiscountVendor(isCdiscountVendor);
-				List<URLContentInfo> rayon_data = magasins_datas_per_rayon.get(my_rayon);
-				if (rayon_data == null){
-					rayon_data = new ArrayList<URLContentInfo>();
-					magasins_datas_per_rayon.put(my_rayon, rayon_data);
-				}
-				rayon_data.add(url_info);
+				magasins_datas.add(url_info);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
