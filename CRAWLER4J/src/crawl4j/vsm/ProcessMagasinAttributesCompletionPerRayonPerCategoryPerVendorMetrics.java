@@ -4,13 +4,11 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -127,7 +125,7 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 			}
 		}
 	}
-	
+
 	private static void analyse_magasin_per_rayon_per_category_per_vendor(String magasin_to_analyse, String output_directory){
 		// Map to store the counter of product occurence for a certain category	and for a certain type of vendor	
 		Map<String, Integer> category_vendor_counter = new HashMap<String, Integer>();
@@ -189,7 +187,14 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		}
 		// to do : save the results for the rayon
 		System.out.println("Saving the results for magasin : "+magasin_to_analyse + " as a csv file in : " + output_directory);
-		savingSingleFileDataArguments(category_vendor_counter,attributs_count_inside_category_vendor_map,magasin_to_analyse,output_directory);
+		try {
+			savingSingleFileDataArguments(category_vendor_counter,attributs_count_inside_category_vendor_map,magasin_to_analyse,output_directory);
+		} catch (IOException e) {
+			String output_file = output_directory+"/"+magasin_to_analyse+".csv";
+			System.out.println("Trouble writing the output path : "+output_file);
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private static Map<String,String> parse_arguments(String arguments_listing){
@@ -212,9 +217,15 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		return output;
 	}
 
-	private static void savingSingleFileDataArguments(Map<String, Integer> global_counter, Map<String, Map<String, Integer>> arguments_counter, String magasin_to_analyse, String output_directory){
+	private static void savingSingleFileDataArguments(Map<String, Integer> global_counter, Map<String, Map<String, Integer>> arguments_counter, String magasin_to_analyse, String output_directory) throws IOException{
 		System.out.println("Displaying attributs counting results for magasin : "+magasin_to_analyse+ "\n");	
-
+		System.out.println("Writing a single file from magasin  : "+magasin_to_analyse+ "\n");	
+		BufferedWriter writer;
+		String output_file = output_directory+"/"+magasin_to_analyse+".csv";
+		System.out.println("Writing the file : "+output_file);
+		writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_file), "UTF-8"));
+		// we write the header
+		writer.write("RAYON;CATEGORY;VENDOR;ATTRIBUTE_NAME*;FILLED_PERCENTAGE\n");
 		// we loop over each category and create the matching result file
 		Iterator<Map.Entry<String,Integer>> cat_counter_it = global_counter.entrySet().iterator();
 		while (cat_counter_it.hasNext()) {
@@ -223,38 +234,32 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 			String category_name =pairs.getKey();
 			Integer global_count =pairs.getValue();
 			Map<String, Integer> rayon_argument_counting = arguments_counter.get(category_name);
-			BufferedWriter writer;
-			try {
-				String category_name_for_file = category_name.replace(" ", "_");
-				String output_file = output_directory+"/"+magasin_to_analyse+"_"+category_name_for_file+".csv";
-				System.out.println("Writing the file : "+output_file);
-				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_file), "UTF-8"));
-				// we write the header
-				writer.write("ATTRIBUTE_NAME;FILLED_PERCENTAGE\n");
-				Iterator<Map.Entry<String,Integer>> it = rayon_argument_counting.entrySet().iterator();
-				while (it.hasNext()) {
-					Map.Entry<String,Integer> local_pairs = (Map.Entry<String,Integer>)it.next();
-					String argument_name=local_pairs.getKey();
-					Integer count=local_pairs.getValue();
-					System.out.println("Attribut name : " +argument_name);
-					double filled_percent =((double)count)/((double)global_count)*100;
-					System.out.println("Filled percentage : " +filled_percent +"%");
-					if (filled_percent>= 100){
-						System.out.println("Trouble greater than 100%");
-						filled_percent=100;
-					}
-					String associated_properties = properties_map.get(argument_name);
-					writer.write(argument_name+";"+Double.toString(filled_percent)+";"+associated_properties+"\n");
-				}	
-				writer.close();	
-			} catch (UnsupportedEncodingException | FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			String category_name_to_write = category_name.replace(" ","_");
+			// we write the rayon;category;vendor
+			writer.write(category_name_to_write);
+			// we then write the attributes : beware the rows won't have the same number of parameters
+			Iterator<Map.Entry<String,Integer>> it = rayon_argument_counting.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry<String,Integer> local_pairs = (Map.Entry<String,Integer>)it.next();
+				String argument_name=local_pairs.getKey();
+				Integer count=local_pairs.getValue();
+				System.out.println("Attribut name : " +argument_name);
+				double filled_percent =((double)count)/((double)global_count)*100;
+				System.out.println("Filled percentage : " +filled_percent +"%");
+				if (filled_percent>= 100){
+					System.out.println("Trouble greater than 100%");
+					filled_percent=100;
+				}
+				// we here don't write the properties of the attribute
+				//String associated_properties = properties_map.get(argument_name);
+				//writer.write(argument_name+";"+Double.toString(filled_percent)+";"+associated_properties+"\n");
+				// we just write the attribute
+				String argument_name_to_write = argument_name.replace("\n", " ");
+				writer.write(argument_name_to_write+";"+Double.toString(filled_percent));
 			}	
-		}
+			writer.write("\n");
+		} 
+		writer.close();	
 	}
 
 	private static void fetch_magasin_info(String magasin_to_analyse){
