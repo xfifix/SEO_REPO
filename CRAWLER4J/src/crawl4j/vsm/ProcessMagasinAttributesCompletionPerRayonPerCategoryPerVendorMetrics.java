@@ -79,7 +79,7 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		System.out.println("Parsing the ID Model/Property referential file");
 		parse_model_properties(properties_file_path);
 		build_category_mapping(category_mapping_file_path);
-
+		
 		try {
 			con = DriverManager.getConnection(url, user, mdp);
 			fetch_magasin_info(magasin_to_analyse);
@@ -120,6 +120,7 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 				row_info.setNiv3(fields[4]);
 				row_info.setNiv4(fields[5]);
 				row_info.setModelid(fields[6]);
+				row_info.setName(fields[7]);
 				category_datas.add(row_info);
 			} 
 		}catch (IOException ex) {
@@ -144,7 +145,7 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		boolean found = false;
 		for (CategoryInfo category_infos : category_datas){
 			if (category_infos.getNiv4().contains(front_category_text)){
-				categoryIds.add(category_infos.getCategoryId()+category_infos.getName());
+				categoryIds.add(category_infos.getCategoryId()+":"+category_infos.getName());
 				modelIds.add(category_infos.getModelid());
 				found=true;
 			}
@@ -153,7 +154,7 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		if (!found){
 			for (CategoryInfo category_infos : category_datas){
 				if (category_infos.getNiv3().contains(front_category_text)){
-					categoryIds.add(category_infos.getCategoryId());
+					categoryIds.add(category_infos.getCategoryId()+":"+category_infos.getName());
 					modelIds.add(category_infos.getModelid());
 					found=true;
 				}
@@ -163,7 +164,7 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		if (!found){
 			for (CategoryInfo category_infos : category_datas){
 				if (category_infos.getNiv2().contains(front_category_text)){
-					categoryIds.add(category_infos.getCategoryId());
+					categoryIds.add(category_infos.getCategoryId()+":"+category_infos.getName());
 					modelIds.add(category_infos.getModelid());
 					found=true;
 				}
@@ -173,7 +174,7 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		if (!found){
 			for (CategoryInfo category_infos : category_datas){
 				if (category_infos.getNiv1().contains(front_category_text)){
-					categoryIds.add(category_infos.getCategoryId());
+					categoryIds.add(category_infos.getCategoryId()+":"+category_infos.getName());
 					modelIds.add(category_infos.getModelid());
 					found=true;
 				}
