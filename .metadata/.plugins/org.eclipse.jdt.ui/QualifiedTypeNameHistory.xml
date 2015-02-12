@@ -37,7 +37,6 @@
 <fullyQualifiedTypeName name="crawl4j.arbo.ArboController"/>
 <fullyQualifiedTypeName name="java.util.Iterator"/>
 <fullyQualifiedTypeName name="crawl4j.urlutilities.MultiArboInfo"/>
-<fullyQualifiedTypeName name="java.util.Set"/>
 <fullyQualifiedTypeName name="crawl4j.urlutilities.URL_Utilities"/>
 <fullyQualifiedTypeName name="org.jsoup.nodes.Element"/>
 <fullyQualifiedTypeName name="java.io.ByteArrayInputStream"/>
@@ -60,4 +59,5 @@
 <fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="com.urlutilities.URLTitleInfo"/>
 <fullyQualifiedTypeName name="crawl4j.vsm.ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetrics.CategoryInfo"/>
+<fullyQualifiedTypeName name="java.util.Set"/>
 </qualifiedTypeNameHistroy>
