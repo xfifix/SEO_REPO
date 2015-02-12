@@ -1,6 +1,10 @@
-config.senses_log = falseconfig.senses_log_dir = data/reuters21578/test_results/Representations
-config.stop_words_path = /home/sduprey/My_Code/My_Java_Workspace/SIMILARITY_METRICS/config/stopwords
-config.properties_path = /home/sduprey/My_Data/My_Conf/ID_properties.csv
+config.senses_log=false
+config.senses_log_dir=data/reuters21578/test_results/Representations
+config.stop_words_path=/home/sduprey/My_Data/My_Semantics_Data/stopwords_fr.txt
+config.properties_path=/home/sduprey/My_Data/My_Similarity_Conf/ID_properties.csv
+config.category_model_mappping=/home/sduprey/My_Data/My_Similarity_Conf/ASSOCIATION_MODELE_CATEGORIE_20150130.csv
+config.default_magasin=musique-instruments
+config.output_directory=/home/sduprey/My_Data/My_Outgoing_Data/My_Attributes_Filling
 # to get synonyms in frech you do need a word net database
 #config.concept_level = synonyms
 config.concept_level = nosynonyms

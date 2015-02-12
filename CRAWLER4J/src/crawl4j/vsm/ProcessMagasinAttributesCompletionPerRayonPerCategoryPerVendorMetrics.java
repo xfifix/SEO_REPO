@@ -25,7 +25,8 @@ import java.util.StringTokenizer;
 
 public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetrics {
 
-	private static String config_path = "/home/sduprey/My_Code/My_Java_Workspace/SIMILARITY_METRICS/config/";
+	
+	private static String similarity_conf_path = "/home/sduprey/My_Data/My_Similarity_Conf/similarity_properties";
 	public static Properties properties;
 	public  static File stop_words;
 	public  static String properties_file_path;
@@ -40,10 +41,12 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 	private static String unknownCategory = "UNKNOWN";
 
 	public static void main(String[] args) {
+		loadProperties();
 		//String magasin_to_analyse ="informatique";
-		String magasin_to_analyse ="musique-instruments";
+		//String magasin_to_analyse ="musique-instruments";
 		//String magasin_to_analyse ="dvd";
-		String output_directory="/home/sduprey/My_Data/My_Outgoing_Data/My_Attributes_Filling";
+		String magasin_to_analyse =properties.getProperty("config.default_magasin");
+		String output_directory=properties.getProperty("config.output_directory");
 		if (args.length >= 1){
 			magasin_to_analyse = args[0];
 		} 
@@ -59,8 +62,6 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		if (args.length == 1){
 			System.out.println("No output directory specified : choosing "+output_directory);
 		}
-
-		loadProperties();
 		// getting the french stop words 
 		stop_words = new File(properties.getProperty("config.stop_words_path"));
 		properties_file_path = properties.getProperty("config.properties_path");
@@ -236,7 +237,7 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 			Map<String, Integer> rayon_argument_counting = arguments_counter.get(category_name);
 			String category_name_to_write = category_name.replace(" ","_");
 			// we write the rayon;category;vendor
-			writer.write(category_name_to_write);
+			writer.write(category_name_to_write+";");
 			// we then write the attributes : beware the rows won't have the same number of parameters
 			Iterator<Map.Entry<String,Integer>> it = rayon_argument_counting.entrySet().iterator();
 			while (it.hasNext()) {
@@ -255,7 +256,7 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 				//writer.write(argument_name+";"+Double.toString(filled_percent)+";"+associated_properties+"\n");
 				// we just write the attribute
 				String argument_name_to_write = argument_name.replace("\n", " ");
-				writer.write(argument_name_to_write+";"+Double.toString(filled_percent));
+				writer.write(argument_name_to_write+";"+Double.toString(filled_percent)+";");
 			}	
 			writer.write("\n");
 		} 
@@ -300,7 +301,7 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 	private static void loadProperties(){
 		properties = new Properties();
 		try {
-			properties.load(new FileReader(new File(config_path+"properties")));
+			properties.load(new FileReader(new File(similarity_conf_path)));
 		} catch (Exception e) {
 			System.out.println("Failed to load properties file!!");
 			e.printStackTrace();

@@ -35,3 +35,6 @@ ProcessMagasinAttributesCompletionPerCategoryPerVendorMetrics
 
 #Attributes completion metrics for one magasin aggregated by rayon and by category and by vendor
 ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetrics
+
+# compute the duplicated titles from the continuous crawl
+ProcessContinuousCrawl
