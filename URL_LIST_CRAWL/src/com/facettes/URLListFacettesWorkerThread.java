@@ -1,19 +1,22 @@
 package com.facettes;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class URLListFacettesWorkerThread implements Runnable {
+	
+	private static Pattern bracketPattern = Pattern.compile("\\(.*?\\)");
 	private int batch_size = 100;
 	private static String select_statement = "SELECT URL, ID FROM FACETTES_LIST WHERE TO_FETCH = TRUE and ID in ";
 	private static String updateStatement ="UPDATE HTTPINFOS_LIST SET STATUS=?, H1=?, TITLE=?, XPATH1=?, XPATH2=?, XPATH3=?, XPATH4=?, XPATH5=?, TO_FETCH=FALSE WHERE ID=?";
@@ -162,15 +165,27 @@ public class URLListFacettesWorkerThread implements Runnable {
 						.get();
 				FacettesInfo my_info = new FacettesInfo();
 				my_info.setId(idUrl);
+				
 				Elements facette_elements = doc.select("div.mvFilter");			
 				for (Element facette : facette_elements ){
 					//System.out.println(e.toString());
 					Elements facette_name = facette.select("div.mvFTit");
 					my_info.setFacetteName(facette_name.text());
-		
 					Elements facette_values = facette.select("a");
 					for (Element facette_value : facette_values){
-						my_info.setFacetteValue(facette_value.text());
+						String categorie_value = facette_value.text();
+						Matcher matchPattern = bracketPattern.matcher(categorie_value);
+						String categorieCount ="";
+						while (matchPattern.find()) {		
+							categorieCount=matchPattern.group();
+						}
+						categorie_value=categorie_value.replace(categorieCount,"");
+						categorieCount=categorieCount.replace("(", "");
+						categorieCount=categorieCount.replace(")", "");
+						System.out.println(categorie_value);
+						System.out.println(Integer.valueOf(categorieCount));	
+						my_info.setFacetteValue(categorie_value);
+						my_info.setFacetteCount(Integer.valueOf(categorieCount));
 						my_fetched_infos.add(my_info);
 						my_info = new FacettesInfo();
 						my_info.setId(idUrl);
@@ -179,8 +194,7 @@ public class URLListFacettesWorkerThread implements Runnable {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-			
+			}	
 		}
 		return my_fetched_infos;
 	}
@@ -202,12 +216,11 @@ public class URLListFacettesWorkerThread implements Runnable {
 		}
 	}
 
-
 	class FacettesInfo{
 		private int id;
 		private String facetteName;
 		private String facetteValue;
-		private String facetteCount;
+		private int facetteCount;
 		public String getFacetteName() {
 			return facetteName;
 		}
@@ -220,10 +233,10 @@ public class URLListFacettesWorkerThread implements Runnable {
 		public void setFacetteValue(String facetteValue) {
 			this.facetteValue = facetteValue;
 		}
-		public String getFacetteCount() {
+		public int getFacetteCount() {
 			return facetteCount;
 		}
-		public void setFacetteCount(String facetteCount) {
+		public void setFacetteCount(int facetteCount) {
 			this.facetteCount = facetteCount;
 		}
 		public int getId() {
@@ -233,5 +246,4 @@ public class URLListFacettesWorkerThread implements Runnable {
 			this.id = id;
 		}
 	}
-
 }

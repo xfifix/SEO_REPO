@@ -6,6 +6,6 @@ Prix du produit : //p[@class="fpPrice price"]/text()
 Resume des offres (nombre d offres neuf et occasion + prix associe) : //div[@class="fpSell"]/p[@class="fpDel"]
 Delais de livraison : //div[@class="fpDel jsOverlay"]
 Le bloc detail sur cette offre : //div[@class="fpSlrName"]
-ZTD= //div[@class= “ztdNew “ or @class= “ztdNewR”  or @class=”lpZtdTxt” or @class=”lptZZd” or @class=”lpTop”]//text()
-Footer = //div[@class=”ftMention”]/p/text()
+ZTD= //div[@class="ztdNew" or @class="ztdNewR" or @class="lpZtdTxt" or @class="lptZZd" or @class="lpTop"]//text()
+Footer = //div[@class="ftMention"]/p/text()
 Geoloc : //form/p[1]/a/text()
