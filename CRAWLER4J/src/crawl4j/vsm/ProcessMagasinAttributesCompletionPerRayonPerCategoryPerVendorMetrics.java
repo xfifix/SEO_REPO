@@ -28,8 +28,9 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 	
 	private static String similarity_conf_path = "/home/sduprey/My_Data/My_Similarity_Conf/similarity_properties";
 	public static Properties properties;
-	public  static File stop_words;
-	public  static String properties_file_path;
+	public static File stop_words;
+	public static String properties_file_path;
+	public static String category_mapping_file_path;
 
 	// threshold above which we deem the content too much similar !!
 	//	private static double threshold = 0;
@@ -37,6 +38,9 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 	private static List<URLContentInfo> magasins_datas = new ArrayList<URLContentInfo>();
 	private static Map<String, String> properties_map = new HashMap<String, String>();
 
+	// category mapping cache
+	private static List<CategoryInfo> category_datas = new ArrayList<CategoryInfo>();
+	
 	private static String categoryString = "Catégorie";
 	private static String unknownCategory = "UNKNOWN";
 
@@ -65,14 +69,15 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		// getting the french stop words 
 		stop_words = new File(properties.getProperty("config.stop_words_path"));
 		properties_file_path = properties.getProperty("config.properties_path");
+		category_mapping_file_path = properties.getProperty("config.category_model_mappping");
 		//magasin_to_filter=properties.getProperty("data.magasintofilter");
 		String url = properties.getProperty("db.url");
 		String user = properties.getProperty("db.user");
 		String mdp = properties.getProperty("db.passwd");    
 		// database variables
-
 		System.out.println("Parsing the ID Model/Property referential file");
 		parse_model_properties(properties_file_path);
+		build_category_mapping(category_mapping_file_path);
 		try {
 			con = DriverManager.getConnection(url, user, mdp);
 			fetch_magasin_info(magasin_to_analyse);
@@ -89,6 +94,53 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		analyse_magasin_per_rayon_per_category_per_vendor(magasin_to_analyse,output_directory);
 	}
 
+	private static void build_category_mapping(String category_mapping_file_path){
+		//reading the file
+		FileInputStream in = null;     
+		BufferedReader br = null;
+		String line = "";
+		String header = null;
+		String[] column_names = null;
+		System.out.println("Column headers : "+column_names);
+		String cvsSplitBy = ";";
+		try {
+			in = new FileInputStream(category_mapping_file_path);
+			br = new BufferedReader(new InputStreamReader(in, "UTF-8"));	
+			// we skip the first line : the headers
+			header = br.readLine();
+			column_names = header.split(cvsSplitBy);
+			while ((line = br.readLine()) != null) {
+				String[] fields = line.split(cvsSplitBy);		
+				CategoryInfo row_info = new CategoryInfo();
+				row_info.setCategoryId(fields[0]);
+				row_info.setCode(fields[1]);
+				row_info.setNiv1(fields[2]);
+				row_info.setNiv2(fields[3]);
+				row_info.setNiv3(fields[4]);
+				row_info.setNiv4(fields[5]);
+				row_info.setModelid(fields[6]);
+			    category_datas.add(row_info);
+			} 
+		}catch (IOException ex) {
+			ex.printStackTrace();
+			System.out.println("Trouble reading the property file : "+category_mapping_file_path);
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException ex) {
+				ex.printStackTrace();
+				System.out.println("Trouble reading the property file : "+category_mapping_file_path);		
+			}
+		}
+	}
+	
+	
+	private static String find_relevant_category_model(String front_category_text){
+		return "";
+	}
+	
 	private static void parse_model_properties(String property_path_file){
 		FileInputStream in = null;     
 		BufferedReader br = null;
@@ -226,7 +278,7 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		System.out.println("Writing the file : "+output_file);
 		writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_file), "UTF-8"));
 		// we write the header
-		writer.write("RAYON;CATEGORY;VENDOR;ATTRIBUTE_NAME*;FILLED_PERCENTAGE\n");
+		writer.write("CATEGORYID*;MODELID;RAYON;CATEGORY;VENDOR;ATTRIBUTE_NAME*;FILLED_PERCENTAGE*\n");
 		// we loop over each category and create the matching result file
 		Iterator<Map.Entry<String,Integer>> cat_counter_it = global_counter.entrySet().iterator();
 		while (cat_counter_it.hasNext()) {
@@ -235,9 +287,10 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 			String category_name =pairs.getKey();
 			Integer global_count =pairs.getValue();
 			Map<String, Integer> rayon_argument_counting = arguments_counter.get(category_name);
+			String category_model_id =find_relevant_category_model(category_name);
 			String category_name_to_write = category_name.replace(" ","_");
 			// we write the rayon;category;vendor
-			writer.write(category_name_to_write+";");
+			writer.write(category_model_id+";"+category_name_to_write+";");
 			// we then write the attributes : beware the rows won't have the same number of parameters
 			Iterator<Map.Entry<String,Integer>> it = rayon_argument_counting.entrySet().iterator();
 			while (it.hasNext()) {
@@ -313,5 +366,65 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 	}
 	public Properties getProperties(){
 		return properties;
+	}
+	
+	
+	static class CategoryInfo{
+		private String categoryId;
+		private String code;
+		private String niv1;
+		private String niv2;
+		private String niv3;
+		private String niv4;
+		private String modelid;
+		private String name;
+		public String getCategoryId() {
+			return categoryId;
+		}
+		public void setCategoryId(String categoryId) {
+			this.categoryId = categoryId;
+		}
+		public String getCode() {
+			return code;
+		}
+		public void setCode(String code) {
+			this.code = code;
+		}
+		public String getNiv1() {
+			return niv1;
+		}
+		public void setNiv1(String niv1) {
+			this.niv1 = niv1;
+		}
+		public String getNiv2() {
+			return niv2;
+		}
+		public void setNiv2(String niv2) {
+			this.niv2 = niv2;
+		}
+		public String getNiv3() {
+			return niv3;
+		}
+		public void setNiv3(String niv3) {
+			this.niv3 = niv3;
+		}
+		public String getNiv4() {
+			return niv4;
+		}
+		public void setNiv4(String niv4) {
+			this.niv4 = niv4;
+		}
+		public String getModelid() {
+			return modelid;
+		}
+		public void setModelid(String modelid) {
+			this.modelid = modelid;
+		}
+		public String getName() {
+			return name;
+		}
+		public void setName(String name) {
+			this.name = name;
+		}
 	}
 }
