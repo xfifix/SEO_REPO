@@ -25,7 +25,6 @@ import java.util.StringTokenizer;
 
 public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetrics {
 
-	
 	private static String similarity_conf_path = "/home/sduprey/My_Data/My_Similarity_Conf/similarity_properties";
 	public static Properties properties;
 	public static File stop_words;
@@ -40,7 +39,7 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 
 	// category mapping cache
 	private static List<CategoryInfo> category_datas = new ArrayList<CategoryInfo>();
-	
+
 	private static String categoryString = "Catégorie";
 	private static String unknownCategory = "UNKNOWN";
 
@@ -78,10 +77,10 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		System.out.println("Parsing the ID Model/Property referential file");
 		parse_model_properties(properties_file_path);
 		build_category_mapping(category_mapping_file_path);
+
 		try {
 			con = DriverManager.getConnection(url, user, mdp);
 			fetch_magasin_info(magasin_to_analyse);
-			//fetch_rayon();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -119,7 +118,7 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 				row_info.setNiv3(fields[4]);
 				row_info.setNiv4(fields[5]);
 				row_info.setModelid(fields[6]);
-			    category_datas.add(row_info);
+				category_datas.add(row_info);
 			} 
 		}catch (IOException ex) {
 			ex.printStackTrace();
@@ -135,12 +134,62 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 			}
 		}
 	}
-	
-	
+
 	private static String find_relevant_category_model(String front_category_text){
-		return "";
+		// we search the level 4
+		List<String> modelIds = new ArrayList<String>();
+		List<String> categoryIds = new ArrayList<String>();		
+		boolean found = false;
+		for (CategoryInfo category_infos : category_datas){
+			if (category_infos.getNiv4().contains(front_category_text)){
+				categoryIds.add(category_infos.getCategoryId());
+				modelIds.add(category_infos.getModelid());
+				found=true;
+			}
+		}
+
+		if (!found){
+			for (CategoryInfo category_infos : category_datas){
+				if (category_infos.getNiv3().contains(front_category_text)){
+					categoryIds.add(category_infos.getCategoryId());
+					modelIds.add(category_infos.getModelid());
+					found=true;
+				}
+			}
+		}
+
+		if (!found){
+			for (CategoryInfo category_infos : category_datas){
+				if (category_infos.getNiv2().contains(front_category_text)){
+					categoryIds.add(category_infos.getCategoryId());
+					modelIds.add(category_infos.getModelid());
+					found=true;
+				}
+			}
+		}
+
+		if (!found){
+			for (CategoryInfo category_infos : category_datas){
+				if (category_infos.getNiv1().contains(front_category_text)){
+					categoryIds.add(category_infos.getCategoryId());
+					modelIds.add(category_infos.getModelid());
+					found=true;
+				}
+			}
+		}
+		
+		StringBuilder response = new StringBuilder();
+		for (String catIds : categoryIds){
+			response.append(catIds);
+			response.append(";");
+		}
+		for (String modIds : modelIds){
+			response.append(modIds);
+			response.append(";");
+		}
+		return response.toString();
 	}
-	
+
 	private static void parse_model_properties(String property_path_file){
 		FileInputStream in = null;     
 		BufferedReader br = null;
@@ -287,7 +336,8 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 			String category_name =pairs.getKey();
 			Integer global_count =pairs.getValue();
 			Map<String, Integer> rayon_argument_counting = arguments_counter.get(category_name);
-			String category_model_id =find_relevant_category_model(category_name);
+			String category_text = extract_category_from_name(category_name);
+			String category_model_id =find_relevant_category_model(category_text);
 			String category_name_to_write = category_name.replace(" ","_");
 			// we write the rayon;category;vendor
 			writer.write(category_model_id+";"+category_name_to_write+";");
@@ -314,6 +364,11 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 			writer.write("\n");
 		} 
 		writer.close();	
+	}
+	
+	private static String extract_category_from_name(String category_key){
+		String[] listing = category_key.split(";");
+		return listing[1];
 	}
 
 	private static void fetch_magasin_info(String magasin_to_analyse){
@@ -367,8 +422,8 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 	public Properties getProperties(){
 		return properties;
 	}
-	
-	
+
+
 	static class CategoryInfo{
 		private String categoryId;
 		private String code;

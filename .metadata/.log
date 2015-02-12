@@ -6472,3 +6472,116 @@ Binding(CTRL+D,
 		,,true),null),
 	org.eclipse.ui.defaultAcceleratorConfiguration,
 	org.eclipse.ui.textEditorScope,,,system)
+!SESSION 2015-02-12 09:54:37.661 -----------------------------------------------
+eclipse.buildId=4.4.0.I20140606-1215
+java.version=1.7.0_72
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_GB
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.jface 2 0 2015-02-12 10:11:18.238
+!MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
+!SUBENTRY 1 org.eclipse.jface 2 0 2015-02-12 10:11:18.238
+!MESSAGE A conflict occurred for CTRL+D:
+Binding(CTRL+D,
+	ParameterizedCommand(Command(org.eclipse.debug.ui.commands.eof,EOF,
+		Send end of file,
+		Category(org.eclipse.debug.ui.category.run,Run/Debug,Run/Debug command category,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@3527d024,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.debug.ui.console,,,system)
+Binding(CTRL+D,
+	ParameterizedCommand(Command(org.eclipse.ui.edit.text.delete.line,Delete Line,
+		Delete a line of text,
+		Category(org.eclipse.ui.category.textEditor,Text Editing,Text Editing Commands,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@48d206bf,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.textEditorScope,,,system)
+!SESSION 2015-02-12 10:47:15.029 -----------------------------------------------
+eclipse.buildId=4.4.0.I20140606-1215
+java.version=1.7.0_72
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_GB
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.jface 2 0 2015-02-12 11:00:49.238
+!MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
+!SUBENTRY 1 org.eclipse.jface 2 0 2015-02-12 11:00:49.238
+!MESSAGE A conflict occurred for CTRL+D:
+Binding(CTRL+D,
+	ParameterizedCommand(Command(org.eclipse.debug.ui.commands.eof,EOF,
+		Send end of file,
+		Category(org.eclipse.debug.ui.category.run,Run/Debug,Run/Debug command category,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@1899bd9,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.debug.ui.console,,,system)
+Binding(CTRL+D,
+	ParameterizedCommand(Command(org.eclipse.ui.edit.text.delete.line,Delete Line,
+		Delete a line of text,
+		Category(org.eclipse.ui.category.textEditor,Text Editing,Text Editing Commands,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@7156c458,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.textEditorScope,,,system)
+
+!ENTRY org.eclipse.jdt.debug 4 125 2015-02-12 11:03:32.576
+!MESSAGE Internal error logged from JDI Debug: 
+!STACK 0
+org.eclipse.jdi.TimeoutException: Timeout occurred while waiting for packet 787.
+	at org.eclipse.jdi.internal.connect.PacketReceiveManager.getReply(PacketReceiveManager.java:186)
+	at org.eclipse.jdi.internal.connect.PacketReceiveManager.getReply(PacketReceiveManager.java:197)
+	at org.eclipse.jdi.internal.MirrorImpl.requestVM(MirrorImpl.java:191)
+	at org.eclipse.jdi.internal.MirrorImpl.requestVM(MirrorImpl.java:226)
+	at org.eclipse.jdi.internal.MirrorImpl.requestVM(MirrorImpl.java:258)
+	at org.eclipse.jdi.internal.ReferenceTypeImpl.methods(ReferenceTypeImpl.java:1101)
+	at org.eclipse.jdi.internal.ReferenceTypeImpl.locationsOfLine(ReferenceTypeImpl.java:1581)
+	at org.eclipse.jdi.internal.ReferenceTypeImpl.locationsOfLine(ReferenceTypeImpl.java:1079)
+	at org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint.determineLocations(JavaLineBreakpoint.java:352)
+	at org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint.newRequests(JavaLineBreakpoint.java:291)
+	at org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint.createRequest(JavaBreakpoint.java:486)
+	at org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint.createRequests(JavaBreakpoint.java:626)
+	at org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint.addToTarget(JavaBreakpoint.java:584)
+	at org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint.addToTarget(JavaLineBreakpoint.java:175)
+	at org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget.breakpointAdded(JDIDebugTarget.java:1291)
+	at org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget.reinstallBreakpointsIn(JDIDebugTarget.java:922)
+	at org.eclipse.jdt.internal.debug.core.hcr.JavaHotCodeReplaceManager.redefineTypesJDK(JavaHotCodeReplaceManager.java:675)
+	at org.eclipse.jdt.internal.debug.core.hcr.JavaHotCodeReplaceManager.doHotCodeReplace(JavaHotCodeReplaceManager.java:489)
+	at org.eclipse.jdt.internal.debug.core.hcr.JavaHotCodeReplaceManager.access$0(JavaHotCodeReplaceManager.java:443)
+	at org.eclipse.jdt.internal.debug.core.hcr.JavaHotCodeReplaceManager$1.run(JavaHotCodeReplaceManager.java:315)
+	at org.eclipse.debug.core.DebugPlugin$AsynchRunner.run(DebugPlugin.java:1106)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.debug.core.DebugPlugin$AsynchRunner.async(DebugPlugin.java:1087)
+	at org.eclipse.debug.core.DebugPlugin$EventDispatchJob.run(DebugPlugin.java:429)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY org.eclipse.jdt.debug 4 125 2015-02-12 11:03:35.588
+!MESSAGE Internal error logged from JDI Debug: 
+!STACK 0
+org.eclipse.jdi.TimeoutException: Timeout occurred while waiting for packet 789.
+	at org.eclipse.jdi.internal.connect.PacketReceiveManager.getReply(PacketReceiveManager.java:186)
+	at org.eclipse.jdi.internal.connect.PacketReceiveManager.getReply(PacketReceiveManager.java:197)
+	at org.eclipse.jdi.internal.MirrorImpl.requestVM(MirrorImpl.java:191)
+	at org.eclipse.jdi.internal.MirrorImpl.requestVM(MirrorImpl.java:226)
+	at org.eclipse.jdi.internal.VirtualMachineImpl.classesBySignature(VirtualMachineImpl.java:638)
+	at org.eclipse.jdi.internal.VirtualMachineImpl.classesByName(VirtualMachineImpl.java:667)
+	at org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget.jdiClassesByName(JDIDebugTarget.java:1602)
+	at org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint.addToTargetForLocalType(JavaBreakpoint.java:653)
+	at org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint.createRequests(JavaBreakpoint.java:632)
+	at org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint.addToTarget(JavaBreakpoint.java:584)
+	at org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint.addToTarget(JavaLineBreakpoint.java:175)
+	at org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget.breakpointAdded(JDIDebugTarget.java:1291)
+	at org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget.reinstallBreakpointsIn(JDIDebugTarget.java:922)
+	at org.eclipse.jdt.internal.debug.core.hcr.JavaHotCodeReplaceManager.redefineTypesJDK(JavaHotCodeReplaceManager.java:675)
+	at org.eclipse.jdt.internal.debug.core.hcr.JavaHotCodeReplaceManager.doHotCodeReplace(JavaHotCodeReplaceManager.java:489)
+	at org.eclipse.jdt.internal.debug.core.hcr.JavaHotCodeReplaceManager.access$0(JavaHotCodeReplaceManager.java:443)
+	at org.eclipse.jdt.internal.debug.core.hcr.JavaHotCodeReplaceManager$1.run(JavaHotCodeReplaceManager.java:315)
+	at org.eclipse.debug.core.DebugPlugin$AsynchRunner.run(DebugPlugin.java:1106)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.debug.core.DebugPlugin$AsynchRunner.async(DebugPlugin.java:1087)
+	at org.eclipse.debug.core.DebugPlugin$EventDispatchJob.run(DebugPlugin.java:429)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)

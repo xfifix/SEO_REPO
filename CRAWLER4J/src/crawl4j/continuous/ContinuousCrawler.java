@@ -94,8 +94,10 @@ public class ContinuousCrawler extends WebCrawler {
 		// XPATH parsing
 		if (ContinuousController.isXPATHparsed){
 			try {
-				String[] solrOutput = XPathUtility.parse_page_code_source(str_source_code,myCrawlDataManager.getXpath_expression());
-				info.setXPATH_results(solrOutput);
+				String[] xpathOutput = XPathUtility.parse_page_code_source(str_source_code,myCrawlDataManager.getXpath_expression());
+				info.setXPATH_results(xpathOutput);
+				info.setZtd(xpathOutput[8]);
+				info.setFooter(xpathOutput[9]);
 			} catch (XPathExpressionException | ParserConfigurationException
 					| SAXException | IOException e) {
 				// TODO Auto-generated catch block
@@ -129,13 +131,13 @@ public class ContinuousCrawler extends WebCrawler {
 			// fetching the H1 element
 			Elements h1el = doc.select("h1");
 			info.setH1(h1el.text());
-			// finding the footer
-			Elements footerel = doc.select("div.ftMention");
-			info.setFooter(footerel.text());
-			// finding the ztd
-			Elements ztdunfolded = doc.select("p.scZtdTxt");
-			Elements ztdfolded = doc.select("p.scZtdH");
-			info.setZtd((ztdunfolded==null? "":ztdunfolded.text())+(ztdfolded==null? "":ztdfolded.text()));
+			// finding the footer with jQuery
+			//			Elements footerel = doc.select("div.ftMention");
+			//			info.setFooter(footerel.text());
+			// finding the ztd with jQuery
+			//			Elements ztdunfolded = doc.select("p.scZtdTxt");
+			//			Elements ztdfolded = doc.select("p.scZtdH");
+			//			info.setZtd((ztdunfolded==null? "":ztdunfolded.text())+(ztdfolded==null? "":ztdfolded.text()));
 			// finding the short description
 			Elements short_desc_el = doc.select("p.fpMb");
 			info.setShort_desc((short_desc_el==null? "":short_desc_el.text()));
