@@ -20,10 +20,10 @@ public class URLListFacettesThreadPool {
 	private static String create_facettes_list_results_table = "CREATE TABLE IF NOT EXISTS FACETTES_LIST_RESULTS (URL TEXT, FACETTE_NAME VARCHAR(400), FACETTE_VALUE VARCHAR(250), FACETTE_COUNT INT) TABLESPACE mydbspace";
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/url_list_infos.properties";
 	private static String select_statement = "SELECT ID FROM FACETTES_LIST WHERE TO_FETCH = TRUE";
-//	private static int fixed_pool_size = 100;
-//	private static int size_bucket = 50;
-	private static int fixed_pool_size = 1;
-	private static int size_bucket = 10;
+	private static int fixed_pool_size = 100;
+	private static int size_bucket = 50;
+//	private static int fixed_pool_size = 1;
+//	private static int size_bucket = 10;
 	private static List<Integer> tofetch_list = new ArrayList<Integer>();
 
 	public static void main(String[] args) {
