@@ -15,11 +15,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class URLListFacettesWorkerThread implements Runnable {
-	
+
 	private static Pattern bracketPattern = Pattern.compile("\\(.*?\\)");
 	private int batch_size = 100;
+	
 	private static String select_statement = "SELECT URL, ID FROM FACETTES_LIST WHERE TO_FETCH = TRUE and ID in ";
-	private static String updateStatement ="UPDATE HTTPINFOS_LIST SET STATUS=?, H1=?, TITLE=?, XPATH1=?, XPATH2=?, XPATH3=?, XPATH4=?, XPATH5=?, TO_FETCH=FALSE WHERE ID=?";
+	private static String insertStatement ="INSERT INTO FACETTES_LIST_RESULTS (URL,FACETTE_NAME,FACETTE_VALUE,FACETTE_COUNT) VALUES(?, ?, ?, ?)";
 	private String user_agent;
 	private List<ULRId> my_urls_to_fetch = new ArrayList<ULRId>();
 	private Connection con;
@@ -66,13 +67,15 @@ public class URLListFacettesWorkerThread implements Runnable {
 				line_infos = new ArrayList<ULRId>();
 			}
 		}
+		runBatch(line_infos);
 		close_connection();
 		System.out.println(Thread.currentThread().getName()+" closed connection");
 	}
 
 	public void runBatch(List<ULRId> line_infos){
 		List<FacettesInfo> infos=processCommand(line_infos);
-		//updateStatus(infos);
+		updateStatus(infos);
+		//updateStatusStepByStep(infos);
 		System.out.println(Thread.currentThread().getName()+" End");
 	}
 
@@ -86,66 +89,61 @@ public class URLListFacettesWorkerThread implements Runnable {
 	}
 
 	// batched update
-//	private void updateStatus(List<URLInfo> infos){
-//		System.out.println("Adding to batch : " + infos.size() + "ULRs into database");
-//		try {
-//			//Statement st = con.createStatement();
-//			con.setAutoCommit(false); 
-//			PreparedStatement st = con.prepareStatement(updateStatement);
-//			for (int i=0;i<infos.size();i++){
-//				String H1= infos.get(i).getH1().replace("'", "");
-//				String TITLE = infos.get(i).getTitle().replace("'", "");
-//				String[] XPATHRESULTS = infos.get(i).getXpathResults();
-//				st.setInt(1, infos.get(i).getStatus());
-//				st.setString(2, H1);
-//				st.setString(3, TITLE);
-//				if (XPATHRESULTS != null){
-//					st.setString(4, XPATHRESULTS[0]);
-//					st.setString(5, XPATHRESULTS[1]);
-//					st.setString(6, XPATHRESULTS[2]);
-//					st.setString(7, XPATHRESULTS[3]);
-//					st.setString(8, XPATHRESULTS[4]);
-//				}else {
-//					st.setString(4, "");
-//					st.setString(5, "");
-//					st.setString(6, "");
-//					st.setString(7, "");
-//					st.setString(8, "");
-//				}
-//				st.setInt(9, infos.get(i).getId());
-//				//UPDATE HTTPINFOS_LIST SET STATUS=?, H1=?, TITLE=?, XPATH1=?, XPATH2=?, XPATH3=?, XPATH4=?, XPATH5=?, TO_FETCH=FALSE WHERE ID=?";
-//				//	String batch ="UPDATE HTTPINFOS_LIST SET STATUS="+infos.get(i).getStatus()+", H1='"+H1+"', TITLE='"+TITLE+ "',TO_FETCH=FALSE WHERE ID="+infos.get(i).getId();
-//				st.addBatch();		
-//			}      
-//			//int counts[] = st.executeBatch();
-//			System.out.println("Beginning to insert : " + infos.size() + "ULRs into database");
-//			st.executeBatch();
-//			con.commit();
-//			st.close();
-//			System.out.println("Having inserted : " + infos.size() + "ULRs into database");
-//		} catch (SQLException e){
-//			e.printStackTrace();
-//			System.out.println("Trouble inserting batch ");
-//		}
-//	}
+	private void updateStatus(List<FacettesInfo> infos){
+		System.out.println("Adding to batch : " + infos.size() + "ULRs into database");
+		try {
+			//Statement st = con.createStatement();
+			con.setAutoCommit(false); 
+			PreparedStatement st = con.prepareStatement(insertStatement);
+			for (FacettesInfo info_to_update : infos){
+				String url_to_update = info_to_update.getUrl();
+				String facette_name = info_to_update.getFacetteName();
+				String facette_value = info_to_update.getFacetteValue();
+				int facette_count = info_to_update.getFacetteCount();
+				st.setString(1, url_to_update);
+				st.setString(2, facette_name);
+				st.setString(3, facette_value);
+				st.setInt(4, facette_count);
+				st.addBatch();		
+			}      
+			//int counts[] = st.executeBatch();
+			System.out.println("Beginning to insert : " + infos.size() + "ULRs into database");
+			st.executeBatch();
+			con.commit();
+			st.close();
+			System.out.println("Having inserted : " + infos.size() + "ULRs into database");
+		} catch (SQLException e){
+			e.printStackTrace();
+			System.out.println("Trouble inserting batch ");
+		}
+	}
 
 	// update step by step
-	//	private void updateStatus(List<URLInfo> infos){
-	//		for (int i=0;i<infos.size();i++){
-	//			String H1= infos.get(i).getH1().replace("'", "");
-	//			String TITLE = infos.get(i).getTitle().replace("'", "");
-	//			String batch ="UPDATE HTTPINFOS_LIST SET STATUS="+infos.get(i).getStatus()+", H1='"+H1+"', TITLE='"+TITLE+ "',TO_FETCH=FALSE WHERE ID="+thread_fetch_ids.get(i);
-	//			try{
-	//				PreparedStatement insert_st = con.prepareStatement(batch);
-	//				insert_st.executeUpdate();
-	//			} catch (SQLException e){
-	//				System.out.println("Trouble inserting : "+batch);
-	//				e.printStackTrace();
-	//			}
-	//
-	//		}      
-	//		System.out.println("Inserting : " + infos.size() + "ULRs into database");
-	//	}
+	private void updateStatusStepByStep(List<FacettesInfo> infos){
+		System.out.println("Adding to batch : " + infos.size() + "ULRs into database");
+		try {
+			//Statement st = con.createStatement();
+			PreparedStatement st = con.prepareStatement(insertStatement);
+			for (FacettesInfo info_to_update : infos){
+				String url_to_update = info_to_update.getUrl();
+				String facette_name = info_to_update.getFacetteName();
+				String facette_value = info_to_update.getFacetteValue();
+				int facette_count = info_to_update.getFacetteCount();
+				st.setString(1, url_to_update);
+				st.setString(2, facette_name);
+				st.setString(3, facette_value);
+				st.setInt(4, facette_count);
+				st.executeUpdate();		
+			}      
+			//int counts[] = st.executeBatch();
+			System.out.println("Beginning to insert : " + infos.size() + "ULRs into database");
+			st.close();
+			System.out.println("Having inserted : " + infos.size() + "ULRs into database");
+		} catch (SQLException e){
+			e.printStackTrace();
+			System.out.println("Trouble inserting batch ");
+		}
+	}
 
 	private List<FacettesInfo> processCommand(List<ULRId> line_infos) {
 		List<FacettesInfo> my_fetched_infos = new ArrayList<FacettesInfo>();
@@ -165,7 +163,8 @@ public class URLListFacettesWorkerThread implements Runnable {
 						.get();
 				FacettesInfo my_info = new FacettesInfo();
 				my_info.setId(idUrl);
-				
+				my_info.setUrl(url);
+
 				Elements facette_elements = doc.select("div.mvFilter");			
 				for (Element facette : facette_elements ){
 					//System.out.println(e.toString());
@@ -189,6 +188,8 @@ public class URLListFacettesWorkerThread implements Runnable {
 						my_fetched_infos.add(my_info);
 						my_info = new FacettesInfo();
 						my_info.setId(idUrl);
+						my_info.setUrl(url);
+						my_info.setFacetteName(facette_name.text());
 					}		
 				}
 			} catch (IOException e) {
@@ -218,9 +219,16 @@ public class URLListFacettesWorkerThread implements Runnable {
 
 	class FacettesInfo{
 		private int id;
+		private String url;
 		private String facetteName;
 		private String facetteValue;
 		private int facetteCount;
+		public String getUrl() {
+			return url;
+		}
+		public void setUrl(String url) {
+			this.url = url;
+		}
 		public String getFacetteName() {
 			return facetteName;
 		}

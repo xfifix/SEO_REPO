@@ -16,6 +16,8 @@ import java.util.logging.Logger;
 
 public class URLListFacettesThreadPool {
 
+	private static String drop_facettes_list_results_table = "DROP TABLE IF EXISTS FACETTES_LIST_RESULTS";
+	private static String create_facettes_list_results_table = "CREATE TABLE IF NOT EXISTS FACETTES_LIST_RESULTS (URL TEXT, FACETTE_NAME VARCHAR(400), FACETTE_VALUE VARCHAR(250), FACETTE_COUNT INT) TABLESPACE mydbspace";
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/url_list_infos.properties";
 	private static String select_statement = "SELECT ID FROM FACETTES_LIST WHERE TO_FETCH = TRUE";
 //	private static int fixed_pool_size = 100;
@@ -85,6 +87,15 @@ public class URLListFacettesThreadPool {
 
 		try {  
 			con = DriverManager.getConnection(url, user, passwd);
+			// cleaning up the database results
+			PreparedStatement drop_table_st = con.prepareStatement(drop_facettes_list_results_table);
+			drop_table_st.executeUpdate();
+			System.out.println("Dropping the old facettes results table");
+
+			PreparedStatement create_table_st = con.prepareStatement(create_facettes_list_results_table);
+			create_table_st.executeUpdate();
+			System.out.println("Creating the new RESULTS table");
+	
 			// getting the number of URLs to fetch
 			pst = con.prepareStatement(select_statement);
 			rs = pst.executeQuery();

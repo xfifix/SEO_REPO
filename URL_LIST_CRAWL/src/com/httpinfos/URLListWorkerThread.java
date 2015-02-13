@@ -70,6 +70,7 @@ public class URLListWorkerThread implements Runnable {
 				line_infos = new ArrayList<ULRId>();
 			}
 		}
+		runBatch(line_infos);
 		close_connection();
 		System.out.println(Thread.currentThread().getName()+" closed connection");
 	}
