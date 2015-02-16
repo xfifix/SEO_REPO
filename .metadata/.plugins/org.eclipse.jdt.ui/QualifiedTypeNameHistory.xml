@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="java.util.HashMap"/>
 <fullyQualifiedTypeName name="vsm.URL_Utilities"/>
 <fullyQualifiedTypeName name="com.urlutilities.URL_Utilities"/>
 <fullyQualifiedTypeName name="crawl4j.daemon.links.URLNode"/>
@@ -60,4 +59,5 @@
 <fullyQualifiedTypeName name="org.jsoup.select.Elements"/>
 <fullyQualifiedTypeName name="org.jsoup.nodes.Element"/>
 <fullyQualifiedTypeName name="com.facettes.URLListFacettesWorkerThread.FacettesInfo"/>
+<fullyQualifiedTypeName name="java.lang.NumberFormatException"/>
 </qualifiedTypeNameHistroy>

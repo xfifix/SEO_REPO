@@ -173,16 +173,26 @@ public class URLListFacettesWorkerThread implements Runnable {
 					Elements facette_values = facette.select("a");
 					for (Element facette_value : facette_values){
 						String categorie_value = facette_value.text();
+						if ("".equals(categorie_value)){
+							categorie_value = facette_value.attr("title");
+						}
 						Matcher matchPattern = bracketPattern.matcher(categorie_value);
 						String categorieCount ="";
 						while (matchPattern.find()) {		
 							categorieCount=matchPattern.group();
 						}
-						categorie_value=categorie_value.replace(categorieCount,"");
-						categorieCount=categorieCount.replace("(", "");
-						categorieCount=categorieCount.replace(")", "");
+						
+							categorie_value=categorie_value.replace(categorieCount,"");
+							categorieCount=categorieCount.replace("(", "");
+							categorieCount=categorieCount.replace(")", "");	
+				
+
 						System.out.println(categorie_value);
+						try{
 						System.out.println(Integer.valueOf(categorieCount));	
+						} catch (NumberFormatException e){
+							e.printStackTrace();
+						}
 						my_info.setFacetteValue(categorie_value);
 						my_info.setFacetteCount(Integer.valueOf(categorieCount));
 						my_fetched_infos.add(my_info);

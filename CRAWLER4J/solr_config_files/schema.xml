@@ -179,7 +179,7 @@
    <field name="payloads" type="payloads" indexed="true" stored="true"/>
 
    <!-- my added fields --> 
-   <field name="id" type="text_general" indexed="true" stored="true" required="true" multiValued="false" /> 
+   <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" /> 
    <field name="whole_text" type="text_general" indexed="true" stored="true" multiValued="false"/>
    <field name="h1" type="text_general" indexed="true" stored="true" required="true" multiValued="false" /> 
    <field name="footer_extract" type="text_general" indexed="true" stored="true" required="true" multiValued="false" /> 

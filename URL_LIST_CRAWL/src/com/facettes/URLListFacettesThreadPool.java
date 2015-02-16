@@ -20,7 +20,7 @@ public class URLListFacettesThreadPool {
 	private static String create_facettes_list_results_table = "CREATE TABLE IF NOT EXISTS FACETTES_LIST_RESULTS (URL TEXT, FACETTE_NAME VARCHAR(400), FACETTE_VALUE VARCHAR(250), FACETTE_COUNT INT) TABLESPACE mydbspace";
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/url_list_infos.properties";
 	private static String select_statement = "SELECT ID FROM FACETTES_LIST WHERE TO_FETCH = TRUE";
-	private static int fixed_pool_size = 100;
+	private static int fixed_pool_size = 200;
 	private static int size_bucket = 50;
 //	private static int fixed_pool_size = 1;
 //	private static int size_bucket = 10;
@@ -34,13 +34,13 @@ public class URLListFacettesThreadPool {
 			System.out.println("You didn't specify any user agent, we'll use : "+my_user_agent);
 		}
 		if (args.length>=2){
-			fixed_pool_size= Integer.valueOf(args[2]);
+			fixed_pool_size= Integer.valueOf(args[1]);
 			System.out.println("You specified "+fixed_pool_size + " threads");
 		}else {
 			System.out.println("You didn't specify any threads number, we'll use : "+fixed_pool_size);
 		}
 		if (args.length>=3){
-			size_bucket= Integer.valueOf(args[3]);
+			size_bucket= Integer.valueOf(args[2]);
 			System.out.println("You specified a "+size_bucket + " bucket size");
 		}else {
 			System.out.println("You didn't specify any bucket size, we'll use : "+size_bucket);
