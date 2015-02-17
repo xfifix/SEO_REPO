@@ -575,7 +575,7 @@ public class BatchComparingURLListWorkerThread implements Runnable {
 				getSolr.setHeader("User-Agent", user_agent);
 				DefaultHttpClient clientSolr = new DefaultHttpClient();		
 				HttpContext HTTP_CONTEXT_SOLR = new BasicHttpContext();
-				HTTP_CONTEXT_SOLR.setAttribute(CoreProtocolPNames.USER_AGENT, "CdiscountBot-crawler");
+				HTTP_CONTEXT_SOLR.setAttribute(CoreProtocolPNames.USER_AGENT, user_agent);
 				//getSolr.setHeader("Referer", "http://www.google.com");
 				getSolr.setHeader("User-Agent", "CdiscountBot-crawler");
 				// set the cookies
@@ -602,7 +602,7 @@ public class BatchComparingURLListWorkerThread implements Runnable {
 				System.out.println(Thread.currentThread().getName()+" fetching URL : "+exaleadurl + " with cookie value to tap Exalead");
 				HttpGet getExalead = new HttpGet(exaleadurl);
 				HttpContext HTTP_CONTEXT_EXALEAD = new BasicHttpContext();
-				HTTP_CONTEXT_EXALEAD.setAttribute(CoreProtocolPNames.USER_AGENT, "CdiscountBot-crawler");
+				HTTP_CONTEXT_EXALEAD.setAttribute(CoreProtocolPNames.USER_AGENT, user_agent);
 				//getSolr.setHeader("Referer", "http://www.google.com");
 				getExalead.setHeader("User-Agent", user_agent);
 				DefaultHttpClient clientExalead = new DefaultHttpClient();

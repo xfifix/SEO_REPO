@@ -43,13 +43,13 @@ public class BatchComparingURLListThreadPoolLauncher {
 			System.out.println("You didn't specify any user agent, we'll use : "+my_user_agent);
 		}
 		if (args.length>=2){
-			fixed_pool_size= Integer.valueOf(args[2]);
+			fixed_pool_size= Integer.valueOf(args[1]);
 			System.out.println("You specified "+fixed_pool_size + " threads");
 		}else {
 			System.out.println("You didn't specify any threads number, we'll use : "+fixed_pool_size);
 		}
 		if (args.length>=3){
-			size_bucket= Integer.valueOf(args[3]);
+			size_bucket= Integer.valueOf(args[2]);
 			System.out.println("You specified a "+size_bucket + " bucket size");
 		}else {
 			System.out.println("You didn't specify any bucket size, we'll use : "+size_bucket);

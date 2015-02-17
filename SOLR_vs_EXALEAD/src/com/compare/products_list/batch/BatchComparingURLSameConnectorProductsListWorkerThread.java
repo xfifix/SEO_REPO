@@ -11,7 +11,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.params.ClientPNames;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.cookie.BasicClientCookie;
@@ -23,7 +22,7 @@ import org.apache.http.util.EntityUtils;
 import com.parsing.utility.ProductsListParseUtility;
 import com.parsing.utility.URLComparisonListProductsInfo;
 
-public class BatchComparingURLProductsListWorkerThread implements Runnable {
+public class BatchComparingURLSameConnectorProductsListWorkerThread implements Runnable {
 	private static int batch_size = 100;
 	private static String selectStatement ="SELECT URL, ID FROM SOLR_VS_EXALEAD_PRODUCT_LIST WHERE TO_FETCH = TRUE and ID in ";
 	private static String updateStatement ="UPDATE SOLR_VS_EXALEAD_PRODUCT_LIST SET STATUS=?, H1_SOLR=?, TITLE_SOLR=?, XPATH1_SOLR=?, XPATH2_SOLR=?, XPATH3_SOLR=?, XPATH4_SOLR=?, XPATH5_SOLR=?, XPATH6_SOLR=?, XPATH7_SOLR=?, XPATH8_SOLR=?, XPATH9_SOLR=?, XPATH10_SOLR=?, H1_EXALEAD=?, TITLE_EXALEAD=?, XPATH1_EXALEAD=?, XPATH2_EXALEAD=?, XPATH3_EXALEAD=?, XPATH4_EXALEAD=?, XPATH5_EXALEAD=?, XPATH6_EXALEAD=?, XPATH7_EXALEAD=?, XPATH8_EXALEAD=?, XPATH9_EXALEAD=?, XPATH10_EXALEAD=?, H1_COMPARISON=?, TITLE_COMPARISON=?, XPATH1_COMPARISON=?, XPATH2_COMPARISON=?, XPATH3_COMPARISON=?, XPATH4_COMPARISON=?, XPATH5_COMPARISON=?, XPATH6_COMPARISON=?, XPATH7_COMPARISON=?, XPATH8_COMPARISON=?, XPATH9_COMPARISON=?, XPATH10_COMPARISON=?, TO_FETCH=FALSE WHERE ID=?";
@@ -31,7 +30,7 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 	private List<ULRId> my_urls_to_fetch = new ArrayList<ULRId>();
 	private Connection con;
 
-	public BatchComparingURLProductsListWorkerThread(Connection con ,List<Integer> to_fetch, String my_user_agent) throws SQLException{
+	public BatchComparingURLSameConnectorProductsListWorkerThread(Connection con ,List<Integer> to_fetch, String my_user_agent) throws SQLException{
 		this.user_agent=my_user_agent;
 		this.con = con;
 		String my_url="";
@@ -147,7 +146,6 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 				HttpGet getSolr = new HttpGet(solrurl);
 				getSolr.setHeader("User-Agent", user_agent);
 				DefaultHttpClient clientSolr = new DefaultHttpClient();		
-				clientSolr.getParams().setParameter(ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true);
 				HttpContext HTTP_CONTEXT_SOLR = new BasicHttpContext();
 				HTTP_CONTEXT_SOLR.setAttribute(CoreProtocolPNames.USER_AGENT, user_agent);
 				//getSolr.setHeader("Referer", "http://www.google.com");
@@ -167,40 +165,22 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 				// and ensure it is fully consumed
 				String page_source_codeSolr = EntityUtils.toString(entitySolr);
 				EntityUtils.consume(entitySolr);
+				// Getting the source code for pagination number 2
+				HttpGet getPage2Solr = new HttpGet(solrpage_two_url);
+				HttpResponse responsePage2Solr = clientSolr.execute(getPage2Solr,HTTP_CONTEXT_SOLR);        
+				HttpEntity entityPage2Solr = responsePage2Solr.getEntity();
+				// do something useful with the response body
+				// and ensure it is fully consumed
+				String page2_source_codeSolr = EntityUtils.toString(entityPage2Solr);
+				EntityUtils.consume(entityPage2Solr);
 				// closing the solr client
 				clientSolr.close();
 
-				// Getting the source code for pagination number 2
-				HttpGet getPage2Solr = new HttpGet(solrpage_two_url);
-				getPage2Solr.setHeader("User-Agent", user_agent);
-				DefaultHttpClient clientPage2Solr = new DefaultHttpClient();		
-				clientPage2Solr.getParams().setParameter(ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true);
-				getPage2Solr.setHeader("User-Agent", "CdiscountBot-crawler");
-				// set the cookies
-				CookieStore cookieStorePage2Solr = new BasicCookieStore();
-				BasicClientCookie cookiePage2Solr = new BasicClientCookie("_$hidden", "666.1");
-				cookiePage2Solr.setDomain("cdiscount.com");
-				cookiePage2Solr.setPath("/");
-				cookieStorePage2Solr.addCookie(cookiePage2Solr);    
-				clientPage2Solr.setCookieStore(cookieStoreSolr);
-				// get the cookies
-				HttpResponse responseSolrPage2 = clientPage2Solr.execute(getPage2Solr,HTTP_CONTEXT_SOLR);
-		
-				HttpEntity entitySolrPage2 = responseSolrPage2.getEntity();
-				// do something useful with the response body
-				// and ensure it is fully consumed
-				String page2_source_codeSolr = EntityUtils.toString(entitySolrPage2);
-				EntityUtils.consume(entitySolrPage2);
-				// closing the solr client
-				clientPage2Solr.close();
-			
 				// we now extract information from our page source code
 				URLComparisonListProductsInfo solrOutput = ProductsListParseUtility.parse_page_source_code(page_source_codeSolr);
 				ProductsListParseUtility.parse_page2_source_code(solrOutput,page2_source_codeSolr);
 				solrOutput.setStatus(solr_status);
 				my_info.setSolrOutput(solrOutput);
-				
-				// we now do the same with Exalead
 				String exaleadurl = url + "?a";
 				String exaleadpage_two_url = page_two_url + "?a";
 				System.out.println(Thread.currentThread().getName()+" fetching URL : "+exaleadurl + " with cookie value to tap Exalead");
@@ -210,7 +190,6 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 				//getSolr.setHeader("Referer", "http://www.google.com");
 				getExalead.setHeader("User-Agent", user_agent);
 				DefaultHttpClient clientExalead = new DefaultHttpClient();
-				clientExalead.getParams().setParameter(ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true);
 				// set the cookies
 				CookieStore cookieStoreExalead = new BasicCookieStore();
 				BasicClientCookie cookieExalead = new BasicClientCookie("_$hidden", "666.0");
@@ -226,30 +205,16 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 				// and ensure it is fully consumed
 				String page_source_codeExalead = EntityUtils.toString(entityExalead);
 				EntityUtils.consume(entityExalead);
-				clientExalead.close();
+
 				// Getting the source code for pagination number 2
 				HttpGet getPage2Exalead = new HttpGet(exaleadpage_two_url);
-				getPage2Exalead.setHeader("User-Agent", user_agent);
-				DefaultHttpClient clientPage2Exalead = new DefaultHttpClient();	
-				clientPage2Exalead.getParams().setParameter(ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true);
-				// set the cookies
-				CookieStore cookieStorePage2Exalead = new BasicCookieStore();
-				BasicClientCookie cookiePage2Exalead = new BasicClientCookie("_$hidden", "666.1");
-				cookiePage2Exalead.setDomain("cdiscount.com");
-				cookiePage2Exalead.setPath("/");
-				cookieStorePage2Exalead.addCookie(cookiePage2Exalead);    
-				clientPage2Exalead.setCookieStore(cookieStorePage2Exalead);
-				// get the cookies
-				HttpResponse responseExaleadPage2 = clientPage2Exalead.execute(getPage2Exalead,HTTP_CONTEXT_EXALEAD);
-		
-				HttpEntity entityExaleadPage2 = responseExaleadPage2.getEntity();
+				HttpResponse responsePage2Exalead = clientExalead.execute(getPage2Exalead,HTTP_CONTEXT_EXALEAD);        
+				HttpEntity entityPage2Exalead = responsePage2Exalead.getEntity();
 				// do something useful with the response body
 				// and ensure it is fully consumed
-				String page2_source_codeExalead = EntityUtils.toString(entityExaleadPage2);
-				EntityUtils.consume(entityExaleadPage2);
-				// closing the solr client
-				clientPage2Exalead.close();
-
+				String page2_source_codeExalead = EntityUtils.toString(entityPage2Exalead);
+				EntityUtils.consume(entityPage2Exalead);
+				clientExalead.close();
 				// we now extract information from our page source code
 				URLComparisonListProductsInfo exaleadOutput = ProductsListParseUtility.parse_page_source_code(page_source_codeExalead);
 				ProductsListParseUtility.parse_page2_source_code(exaleadOutput,page2_source_codeExalead);

@@ -14,18 +14,15 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.parsing.utility.XPathUtility;
-
 public class BatchComparingURLProductsListThreadPoolLauncher {
 
-	private static String select_url_to_fetch = "SELECT ID FROM SOLR_VS_EXALEAD WHERE TO_FETCH = TRUE";
+	private static String select_url_to_fetch = "SELECT ID FROM SOLR_VS_EXALEAD_PRODUCT_LIST WHERE TO_FETCH = TRUE";
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/url_list_infos.properties";
 
-	private static String[] xpath_expression;
 //	private static int fixed_pool_size = 1000;
 //	private static int size_bucket = 10000;
-	private static int fixed_pool_size = 100;
-	private static int size_bucket = 50;
+	private static int fixed_pool_size = 50;
+	private static int size_bucket = 500;
 	
 	// debugging parameters
 	//private static int fixed_pool_size = 10;
@@ -33,7 +30,6 @@ public class BatchComparingURLProductsListThreadPoolLauncher {
 	private static List<Integer> tofetch_list = new ArrayList<Integer>();
 
 	public static void main(String[] args) {
-		xpath_expression=XPathUtility.loadXPATHConf();
 		//String my_user_agent= "CdiscountBot-crawler";
 		// we don't want to it the cache
 		String my_user_agent= "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
@@ -43,13 +39,13 @@ public class BatchComparingURLProductsListThreadPoolLauncher {
 			System.out.println("You didn't specify any user agent, we'll use : "+my_user_agent);
 		}
 		if (args.length>=2){
-			fixed_pool_size= Integer.valueOf(args[2]);
+			fixed_pool_size= Integer.valueOf(args[1]);
 			System.out.println("You specified "+fixed_pool_size + " threads");
 		}else {
 			System.out.println("You didn't specify any threads number, we'll use : "+fixed_pool_size);
 		}
 		if (args.length>=3){
-			size_bucket= Integer.valueOf(args[3]);
+			size_bucket= Integer.valueOf(args[2]);
 			System.out.println("You specified a "+size_bucket + " bucket size");
 		}else {
 			System.out.println("You didn't specify any bucket size, we'll use : "+size_bucket);
@@ -119,7 +115,7 @@ public class BatchComparingURLProductsListThreadPoolLauncher {
 					// one new connection per task
 					Connection local_con = DriverManager.getConnection(url, user, passwd);
 					System.out.println("Launching another thread with "+local_count+ " URLs to fetch");
-					Runnable worker = new BatchComparingURLProductsListWorkerThread(local_con,thread_list,my_user_agent,xpath_expression);
+					Runnable worker = new BatchComparingURLProductsListWorkerThread(local_con,thread_list,my_user_agent);
 					executor.execute(worker);		
 					// we initialize everything for the next thread
 					local_count=0;
@@ -131,7 +127,7 @@ public class BatchComparingURLProductsListThreadPoolLauncher {
 				// one new connection per task
 				Connection local_con = DriverManager.getConnection(url, user, passwd);
 				System.out.println("Launching another thread with "+local_count+ " URLs to fetch");
-				Runnable worker = new BatchComparingURLProductsListWorkerThread(local_con,thread_list,my_user_agent,xpath_expression);
+				Runnable worker = new BatchComparingURLProductsListWorkerThread(local_con,thread_list,my_user_agent);
 				executor.execute(worker);
 			}
 			tofetch_list.clear();
