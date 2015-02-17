@@ -104,7 +104,7 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 			for (int i=0;i<infos.size();i++){
 				URLInfo local_info = infos.get(i);
 
-				st.setInt(1, local_info.getStatus());
+			//	st.setInt(1, local_info.getStatus());
 
 				st.setInt(38, local_info.getId());
 				//UPDATE HTTPINFOS_LIST SET STATUS=?, H1=?, TITLE=?, XPATH1=?, XPATH2=?, XPATH3=?, XPATH4=?, XPATH5=?, TO_FETCH=FALSE WHERE ID=?";
@@ -137,9 +137,11 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 			my_info.setId(line_info.getId());
 			// getting the URL
 			String url = line_info.getUrl();
+			String page_two_url = line_info.getUrl().replace(".html", "-2.html");
 			try{
 				// fetching the solr version
 				String solrurl = url + "?b";
+				String solrpage_two_url = page_two_url + "?b";
 				System.out.println(Thread.currentThread().getName()+" fetching URL : "+solrurl + " with cookie value to tap Solr");
 				HttpGet getSolr = new HttpGet(solrurl);
 				getSolr.setHeader("User-Agent", user_agent);
@@ -157,20 +159,30 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 				clientSolr.setCookieStore(cookieStoreSolr);
 				// get the cookies
 				HttpResponse responseSolr = clientSolr.execute(getSolr,HTTP_CONTEXT_SOLR);
-
-				System.out.println(responseSolr.getStatusLine());
+		        int solr_status = responseSolr.getStatusLine().getStatusCode();
 				HttpEntity entitySolr = responseSolr.getEntity();
 				// do something useful with the response body
 				// and ensure it is fully consumed
 				String page_source_codeSolr = EntityUtils.toString(entitySolr);
 				EntityUtils.consume(entitySolr);
+				// Getting the source code for pagination number 2
+				HttpGet getPage2Solr = new HttpGet(solrpage_two_url);
+				HttpResponse responsePage2Solr = clientSolr.execute(getPage2Solr,HTTP_CONTEXT_SOLR);        
+				HttpEntity entityPage2Solr = responsePage2Solr.getEntity();
+				// do something useful with the response body
+				// and ensure it is fully consumed
+				String page2_source_codeSolr = EntityUtils.toString(entityPage2Solr);
+				EntityUtils.consume(entityPage2Solr);
+				// closing the solr client
 				clientSolr.close();
+				
 				// we now extract information from our page source code
 				URLComparisonListProductsInfo solrOutput = ProductsListParseUtility.parse_page_source_code(page_source_codeSolr);
+				ProductsListParseUtility.parse_page2_source_code(solrOutput,page2_source_codeSolr);
+				solrOutput.setStatus(solr_status);
 				my_info.setSolrOutput(solrOutput);
-
-				my_info.setStatus(responseSolr.getStatusLine().getStatusCode());
 				String exaleadurl = url + "?a";
+				String exaleadpage_two_url = page_two_url + "?a";
 				System.out.println(Thread.currentThread().getName()+" fetching URL : "+exaleadurl + " with cookie value to tap Exalead");
 				HttpGet getExalead = new HttpGet(exaleadurl);
 				HttpContext HTTP_CONTEXT_EXALEAD = new BasicHttpContext();
@@ -187,15 +199,26 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 				clientExalead.setCookieStore(cookieStoreExalead);
 				// get the cookies
 				HttpResponse responseExalead = clientExalead.execute(getExalead,HTTP_CONTEXT_EXALEAD);
-				System.out.println(responseExalead.getStatusLine());
+		        int exalead_status = responseExalead.getStatusLine().getStatusCode();
 				HttpEntity entityExalead = responseExalead.getEntity();
 				// do something useful with the response body
 				// and ensure it is fully consumed
 				String page_source_codeExalead = EntityUtils.toString(entityExalead);
 				EntityUtils.consume(entityExalead);
+				
+				// Getting the source code for pagination number 2
+				HttpGet getPage2Exalead = new HttpGet(exaleadpage_two_url);
+				HttpResponse responsePage2Exalead = clientSolr.execute(getPage2Exalead,HTTP_CONTEXT_SOLR);        
+				HttpEntity entityPage2Exalead = responsePage2Exalead.getEntity();
+				// do something useful with the response body
+				// and ensure it is fully consumed
+				String page2_source_codeExalead = EntityUtils.toString(entityPage2Exalead);
+				EntityUtils.consume(entityPage2Exalead);
 				clientExalead.close();
 				// we now extract information from our page source code
 				URLComparisonListProductsInfo exaleadOutput = ProductsListParseUtility.parse_page_source_code(page_source_codeExalead);
+				ProductsListParseUtility.parse_page2_source_code(exaleadOutput,page2_source_codeExalead);
+				exaleadOutput.setStatus(exalead_status);
 				my_info.setExaleadOutput(exaleadOutput);
 			} catch (Exception e){
 				System.out.println("Trouble fetching URL : "+url);
@@ -208,7 +231,6 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 
 	class URLInfo{
 		private int id;
-		private int status=-1;
 		private URLComparisonListProductsInfo solrOutput;
 		private URLComparisonListProductsInfo exaleadOutput;
 		public int getId() {
@@ -216,12 +238,6 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 		}
 		public void setId(int id) {
 			this.id = id;
-		}
-		public int getStatus() {
-			return status;
-		}
-		public void setStatus(int status) {
-			this.status = status;
 		}
 		public URLComparisonListProductsInfo getSolrOutput() {
 			return solrOutput;

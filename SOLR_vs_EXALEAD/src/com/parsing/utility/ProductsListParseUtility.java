@@ -27,12 +27,18 @@ public class ProductsListParseUtility {
 		}
 		return facettesArray.toJSONString();
 	}
-
+	
+	public static void parse_page2_source_code(URLComparisonListProductsInfo tofillup, String page2_code){
+		org.jsoup.nodes.Document doc =  Jsoup.parse(page2_code);
+		// body page 2 blocks
+		Elements core_listed_page2_blocs = doc.getElementsByAttribute("data-sku");
+		tofillup.setBody_page_two_products(core_listed_page2_blocs.toString());
+	}
+	
 	public static URLComparisonListProductsInfo parse_page_source_code(String page_code){
 		// fetching data using Jsoup and jQuery
 		URLComparisonListProductsInfo url_info = new URLComparisonListProductsInfo();
 		org.jsoup.nodes.Document doc =  Jsoup.parse(page_code);
-
 		// geolocalisation
 		Elements geoloc_elems = doc.select("#lpGeoloc");
 		url_info.setGeoloc_selection(geoloc_elems.toString());
@@ -49,11 +55,9 @@ public class ProductsListParseUtility {
 		// number of products on the first page
 		Elements number_of_products_blocs = doc.select("div.lpStTit");
 		url_info.setNumber_of_products(number_of_products_blocs.toString());
-
 		// facettes summary aggregation
 		List<FacettesInfo> list_facettes = new ArrayList<FacettesInfo>();
 		FacettesInfo my_info = new FacettesInfo();
-
 		Elements facette_elements = doc.select("div.mvFilter");			
 		for (Element facette : facette_elements ){
 			//System.out.println(e.toString());
@@ -87,7 +91,6 @@ public class ProductsListParseUtility {
 				my_info.setFacetteName(facette_name.text());
 			}		
 		}
-
 		String facette_json=ProductsListParseUtility.getJSONStringToStore(list_facettes);
 		url_info.setFacette_summary(facette_json);
 		return url_info;
