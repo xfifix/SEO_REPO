@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="crawl4j.daemon.links.URLNode"/>
-<fullyQualifiedTypeName name="edu.uci.ics.crawler4j.url.WebURL"/>
 <fullyQualifiedTypeName name="java.net.Proxy"/>
 <fullyQualifiedTypeName name="java.lang.StringBuilder"/>
 <fullyQualifiedTypeName name="java.net.Proxy.Type"/>
@@ -48,7 +46,6 @@
 <fullyQualifiedTypeName name="crawl4j.continuous.CrawlDataManagement"/>
 <fullyQualifiedTypeName name="crawl4j.continuous.ContinuousController"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
-<fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="com.urlutilities.URLTitleInfo"/>
 <fullyQualifiedTypeName name="crawl4j.vsm.ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetrics.CategoryInfo"/>
 <fullyQualifiedTypeName name="java.util.Set"/>
@@ -60,4 +57,7 @@
 <fullyQualifiedTypeName name="com.parsing.utility.URLComparisonListProductsInfo"/>
 <fullyQualifiedTypeName name="org.jsoup.select.Elements"/>
 <fullyQualifiedTypeName name="org.jsoup.nodes.Element"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="org.apache.http.client.params.ClientPNames"/>
+<fullyQualifiedTypeName name="org.apache.http.client.params.HttpClientParams"/>
 </qualifiedTypeNameHistroy>

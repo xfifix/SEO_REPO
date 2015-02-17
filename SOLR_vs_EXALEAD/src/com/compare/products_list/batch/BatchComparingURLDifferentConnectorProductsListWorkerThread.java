@@ -12,14 +12,10 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.params.ClientPNames;
-import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.cookie.BasicClientCookie;
-import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreProtocolPNames;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
@@ -27,15 +23,15 @@ import org.apache.http.util.EntityUtils;
 import com.parsing.utility.ProductsListParseUtility;
 import com.parsing.utility.URLComparisonListProductsInfo;
 
-public class BatchComparingURLProductsListWorkerThread implements Runnable {
-	private static int batch_size = 50;
+public class BatchComparingURLDifferentConnectorProductsListWorkerThread implements Runnable {
+	private static int batch_size = 10;
 	private static String selectStatement ="SELECT URL, ID FROM SOLR_VS_EXALEAD_PRODUCT_LIST WHERE TO_FETCH = TRUE and ID in ";
 	private static String updateStatement ="UPDATE SOLR_VS_EXALEAD_PRODUCT_LIST SET STATUS_SOLR=?, MEILLEUR_VENTE_PRODUCTS_SOLR=?, PAGE_BODY_PRODUCTS_SOLR=?,PAGE2_BODY_PRODUCTS_SOLR=?,NUMBER_OF_PRODUCTS_SOLR=?,FACETTES_SOLR=?,GEOLOC_SOLR=?,STATUS_EXALEAD=?,MEILLEUR_VENTE_PRODUCTS_EXALEAD=?, PAGE_BODY_PRODUCTS_EXALEAD=?,PAGE2_BODY_PRODUCTS_EXALEAD=?,NUMBER_OF_PRODUCTS_EXALEAD=?,FACETTES_EXALEAD=?,GEOLOC_EXALEAD=?,STATUS_COMPARISON=?,MEILLEUR_VENTE_PRODUCTS_COMPARISON=?,PAGE_BODY_PRODUCTS_COMPARISON=?,PAGE2_BODY_PRODUCTS_COMPARISON=?,NUMBER_OF_PRODUCTS_COMPARISON=?,FACETTES_COMPARISON=?,GEOLOC_COMPARISON=?,TO_FETCH=FALSE WHERE ID=?";	
 	private String user_agent;
 	private List<ULRId> my_urls_to_fetch = new ArrayList<ULRId>();
 	private Connection con;
 
-	public BatchComparingURLProductsListWorkerThread(Connection con ,List<Integer> to_fetch, String my_user_agent) throws SQLException{
+	public BatchComparingURLDifferentConnectorProductsListWorkerThread(Connection con ,List<Integer> to_fetch, String my_user_agent) throws SQLException{
 		this.user_agent=my_user_agent;
 		this.con = con;
 		String my_url="";
@@ -84,8 +80,9 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 
 	public void runBatch(List<ULRId> line_infos){
 		List<URLInfo> infos=processComparison(line_infos);
-		updateStatus(infos);
-		//updateStatusStepByStep(infos);
+		//
+		//updateStatus(infos);
+		updateStatusStepByStep(infos);
 		System.out.println(Thread.currentThread().getName()+" End");
 	}
 
@@ -274,19 +271,16 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 			url=url.replace(" ", "%20");
 			String page_two_url = url.replace(".html", "-2.html");
 			try{
+				// fetching the solr version
 				String solrurl = url + "?b";
 				String solrpage_two_url = page_two_url + "?b";
 				System.out.println(Thread.currentThread().getName()+" fetching URL : "+solrurl + " with cookie value to tap Solr");
 				HttpGet getSolr = new HttpGet(solrurl);
 				getSolr.setHeader("User-Agent", user_agent);
-				HttpParams my_httpParams_solr = new BasicHttpParams();
-				HttpClientParams.setRedirecting(my_httpParams_solr, true);
-				HttpConnectionParams.setConnectionTimeout(my_httpParams_solr, 300000000);
-				HttpConnectionParams.setSoTimeout(my_httpParams_solr, 1500000000);
-				DefaultHttpClient clientSolr = new DefaultHttpClient(my_httpParams_solr);		
+				DefaultHttpClient clientSolr = new DefaultHttpClient();		
 				clientSolr.getParams().setParameter(ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true);
 				HttpContext HTTP_CONTEXT_SOLR = new BasicHttpContext();
-				HTTP_CONTEXT_SOLR.setAttribute(CoreProtocolPNames.USER_AGENT, "CdiscountBot-crawler");
+				HTTP_CONTEXT_SOLR.setAttribute(CoreProtocolPNames.USER_AGENT, user_agent);
 				//getSolr.setHeader("Referer", "http://www.google.com");
 				getSolr.setHeader("User-Agent", "CdiscountBot-crawler");
 				// set the cookies
@@ -304,37 +298,49 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 				// and ensure it is fully consumed
 				String page_source_codeSolr = EntityUtils.toString(entitySolr);
 				EntityUtils.consume(entitySolr);
-				// Getting the source code for pagination number 2
-				HttpGet getPage2Solr = new HttpGet(solrpage_two_url);
-				HttpResponse responsePage2Solr = clientSolr.execute(getPage2Solr,HTTP_CONTEXT_SOLR);        
-				HttpEntity entityPage2Solr = responsePage2Solr.getEntity();
-				// do something useful with the response body
-				// and ensure it is fully consumed
-				String page2_source_codeSolr = EntityUtils.toString(entityPage2Solr);
-				EntityUtils.consume(entityPage2Solr);
 				// closing the solr client
 				clientSolr.close();
+
+				// Getting the source code for pagination number 2
+				HttpGet getPage2Solr = new HttpGet(solrpage_two_url);
+				getPage2Solr.setHeader("User-Agent", user_agent);
+				DefaultHttpClient clientPage2Solr = new DefaultHttpClient();		
+				clientPage2Solr.getParams().setParameter(ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true);
+				getPage2Solr.setHeader("User-Agent", "CdiscountBot-crawler");
+				// set the cookies
+				CookieStore cookieStorePage2Solr = new BasicCookieStore();
+				BasicClientCookie cookiePage2Solr = new BasicClientCookie("_$hidden", "666.1");
+				cookiePage2Solr.setDomain("cdiscount.com");
+				cookiePage2Solr.setPath("/");
+				cookieStorePage2Solr.addCookie(cookiePage2Solr);    
+				clientPage2Solr.setCookieStore(cookieStoreSolr);
+				// get the cookies
+				HttpResponse responseSolrPage2 = clientPage2Solr.execute(getPage2Solr,HTTP_CONTEXT_SOLR);
+
+				HttpEntity entitySolrPage2 = responseSolrPage2.getEntity();
+				// do something useful with the response body
+				// and ensure it is fully consumed
+				String page2_source_codeSolr = EntityUtils.toString(entitySolrPage2);
+				EntityUtils.consume(entitySolrPage2);
+				// closing the solr client
+				clientPage2Solr.close();
 
 				// we now extract information from our page source code
 				URLComparisonListProductsInfo solrOutput = ProductsListParseUtility.parse_page_source_code(page_source_codeSolr);
 				ProductsListParseUtility.parse_page2_source_code(solrOutput,page2_source_codeSolr);
 				solrOutput.setStatus(solr_status);
-				// inspecting the output
 				my_info.setSolrOutput(solrOutput);
-				
+
+				// we now do the same with Exalead
 				String exaleadurl = url + "?a";
 				String exaleadpage_two_url = page_two_url + "?a";
 				System.out.println(Thread.currentThread().getName()+" fetching URL : "+exaleadurl + " with cookie value to tap Exalead");
 				HttpGet getExalead = new HttpGet(exaleadurl);
 				HttpContext HTTP_CONTEXT_EXALEAD = new BasicHttpContext();
-				HTTP_CONTEXT_EXALEAD.setAttribute(CoreProtocolPNames.USER_AGENT, "CdiscountBot-crawler");
+				HTTP_CONTEXT_EXALEAD.setAttribute(CoreProtocolPNames.USER_AGENT, user_agent);
 				//getSolr.setHeader("Referer", "http://www.google.com");
 				getExalead.setHeader("User-Agent", user_agent);
-				HttpParams my_httpParams_exalead = new BasicHttpParams();
-				HttpClientParams.setRedirecting(my_httpParams_exalead, true);
-				HttpConnectionParams.setConnectionTimeout(my_httpParams_exalead, 300000000);
-				HttpConnectionParams.setSoTimeout(my_httpParams_exalead, 1500000000);
-				DefaultHttpClient clientExalead = new DefaultHttpClient(my_httpParams_exalead);
+				DefaultHttpClient clientExalead = new DefaultHttpClient();
 				clientExalead.getParams().setParameter(ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true);
 				// set the cookies
 				CookieStore cookieStoreExalead = new BasicCookieStore();
@@ -351,22 +357,34 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 				// and ensure it is fully consumed
 				String page_source_codeExalead = EntityUtils.toString(entityExalead);
 				EntityUtils.consume(entityExalead);
-
+				clientExalead.close();
 				// Getting the source code for pagination number 2
 				HttpGet getPage2Exalead = new HttpGet(exaleadpage_two_url);
-				HttpResponse responsePage2Exalead = clientExalead.execute(getPage2Exalead,HTTP_CONTEXT_SOLR);        
-				HttpEntity entityPage2Exalead = responsePage2Exalead.getEntity();
+				getPage2Exalead.setHeader("User-Agent", user_agent);
+				DefaultHttpClient clientPage2Exalead = new DefaultHttpClient();	
+				clientPage2Exalead.getParams().setParameter(ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true);
+				// set the cookies
+				CookieStore cookieStorePage2Exalead = new BasicCookieStore();
+				BasicClientCookie cookiePage2Exalead = new BasicClientCookie("_$hidden", "666.1");
+				cookiePage2Exalead.setDomain("cdiscount.com");
+				cookiePage2Exalead.setPath("/");
+				cookieStorePage2Exalead.addCookie(cookiePage2Exalead);    
+				clientPage2Exalead.setCookieStore(cookieStorePage2Exalead);
+				// get the cookies
+				HttpResponse responseExaleadPage2 = clientPage2Exalead.execute(getPage2Exalead,HTTP_CONTEXT_EXALEAD);
+
+				HttpEntity entityExaleadPage2 = responseExaleadPage2.getEntity();
 				// do something useful with the response body
 				// and ensure it is fully consumed
-				String page2_source_codeExalead = EntityUtils.toString(entityPage2Exalead);
-				EntityUtils.consume(entityPage2Exalead);
-				clientExalead.close();
+				String page2_source_codeExalead = EntityUtils.toString(entityExaleadPage2);
+				EntityUtils.consume(entityExaleadPage2);
+				// closing the solr client
+				clientPage2Exalead.close();
+
 				// we now extract information from our page source code
 				URLComparisonListProductsInfo exaleadOutput = ProductsListParseUtility.parse_page_source_code(page_source_codeExalead);
 				ProductsListParseUtility.parse_page2_source_code(exaleadOutput,page2_source_codeExalead);
 				exaleadOutput.setStatus(exalead_status);
-				// inspecting the output
-			    
 				my_info.setExaleadOutput(exaleadOutput);
 			} catch (Exception e){
 				System.out.println("Trouble fetching URL : "+url);
