@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="vsm.URL_Utilities"/>
-<fullyQualifiedTypeName name="com.urlutilities.URL_Utilities"/>
 <fullyQualifiedTypeName name="crawl4j.daemon.links.URLNode"/>
 <fullyQualifiedTypeName name="edu.uci.ics.crawler4j.url.WebURL"/>
 <fullyQualifiedTypeName name="java.net.Proxy"/>
@@ -55,9 +53,11 @@
 <fullyQualifiedTypeName name="crawl4j.vsm.ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetrics.CategoryInfo"/>
 <fullyQualifiedTypeName name="java.util.Set"/>
 <fullyQualifiedTypeName name="org.jsoup.Jsoup"/>
-<fullyQualifiedTypeName name="org.jsoup.select.Elements"/>
-<fullyQualifiedTypeName name="org.jsoup.nodes.Element"/>
 <fullyQualifiedTypeName name="com.facettes.URLListFacettesWorkerThread.FacettesInfo"/>
 <fullyQualifiedTypeName name="java.lang.NumberFormatException"/>
 <fullyQualifiedTypeName name="java.sql.Statement"/>
+<fullyQualifiedTypeName name="com.parsing.utility.ProductsListParseUtility"/>
+<fullyQualifiedTypeName name="com.parsing.utility.URLComparisonListProductsInfo"/>
+<fullyQualifiedTypeName name="org.jsoup.select.Elements"/>
+<fullyQualifiedTypeName name="org.jsoup.nodes.Element"/>
 </qualifiedTypeNameHistroy>
