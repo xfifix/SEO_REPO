@@ -1,10 +1,11 @@
-package com.facettes;
+package com.facettes.update;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -14,18 +15,20 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class URLListFacettesWorkerThread implements Runnable {
+public class URLListFacettesUpdatingWorkerThread implements Runnable {
 
 	private static Pattern bracketPattern = Pattern.compile("\\(.*?\\)");
 	private int batch_size = 100;
-	
+
 	private static String select_statement = "SELECT URL, ID FROM FACETTES_LIST WHERE TO_FETCH = TRUE and ID in ";
 	private static String insertStatement ="INSERT INTO FACETTES_LIST_RESULTS (URL,FACETTE_NAME,FACETTE_VALUE,FACETTE_COUNT) VALUES(?, ?, ?, ?)";
+	private static String updateStatement ="UPDATE FACETTES_LIST SET TO_FETCH=FALSE WHERE ID=";
+
 	private String user_agent;
 	private List<ULRId> my_urls_to_fetch = new ArrayList<ULRId>();
 	private Connection con;
 
-	public URLListFacettesWorkerThread(Connection con ,List<Integer> to_fetch, String my_user_agent) throws SQLException{
+	public URLListFacettesUpdatingWorkerThread(Connection con ,List<Integer> to_fetch, String my_user_agent) throws SQLException{
 		this.user_agent=my_user_agent;
 		this.con = con;
 		String my_url="";
@@ -74,7 +77,9 @@ public class URLListFacettesWorkerThread implements Runnable {
 
 	public void runBatch(List<ULRId> line_infos){
 		List<FacettesInfo> infos=processCommand(line_infos);
+		updateResults(infos);
 		updateStatus(infos);
+		
 		//updateStatusStepByStep(infos);
 		System.out.println(Thread.currentThread().getName()+" End");
 	}
@@ -88,8 +93,7 @@ public class URLListFacettesWorkerThread implements Runnable {
 		}
 	}
 
-	// batched update
-	private void updateStatus(List<FacettesInfo> infos){
+	private void updateResults(List<FacettesInfo> infos){
 		System.out.println("Adding to batch : " + infos.size() + "ULRs into database");
 		try {
 			//Statement st = con.createStatement();
@@ -118,8 +122,28 @@ public class URLListFacettesWorkerThread implements Runnable {
 		}
 	}
 
+	
+	// batched update
+	private void updateStatus(List<FacettesInfo> infos){
+		try{
+		Statement st = con.createStatement();       
+		con.setAutoCommit(false);      
+		for (int i=0;i<infos.size();i++){
+			String batch =updateStatement+infos.get(i).getId();
+			st.addBatch(batch);
+		}      
+		//int counts[] = st.executeBatch();
+		st.executeBatch();
+		con.commit();
+		System.out.println("Inserting : " + infos.size() + "ULRs into database");
+		} catch (SQLException e){
+			e.printStackTrace();
+			System.out.println("Trouble inserting batch ");
+		}
+	}
+
 	// update step by step
-	private void updateStatusStepByStep(List<FacettesInfo> infos){
+	private void updateResultsStepByStep(List<FacettesInfo> infos){
 		System.out.println("Adding to batch : " + infos.size() + "ULRs into database");
 		try {
 			//Statement st = con.createStatement();
@@ -150,7 +174,6 @@ public class URLListFacettesWorkerThread implements Runnable {
 		for(ULRId line_info : line_infos){
 			int idUrl = line_info.getId();
 			String url = line_info.getUrl();
-
 			System.out.println(Thread.currentThread().getName()+" fetching URL : "+url);
 			// fetching the URL and parsing the results
 			org.jsoup.nodes.Document doc;
@@ -181,20 +204,18 @@ public class URLListFacettesWorkerThread implements Runnable {
 						while (matchPattern.find()) {		
 							categorieCount=matchPattern.group();
 						}
-						
-							categorie_value=categorie_value.replace(categorieCount,"");
-							categorieCount=categorieCount.replace("(", "");
-							categorieCount=categorieCount.replace(")", "");	
-				
-
-						System.out.println(categorie_value);
+						categorie_value=categorie_value.replace(categorieCount,"");
+						categorieCount=categorieCount.replace("(", "");
+						categorieCount=categorieCount.replace(")", "");	
+						//System.out.println(categorie_value);
 						try{
-						System.out.println(Integer.valueOf(categorieCount));	
+							my_info.setFacetteCount(Integer.valueOf(categorieCount));
+							//System.out.println(Integer.valueOf(categorieCount));	
 						} catch (NumberFormatException e){
 							e.printStackTrace();
+							System.out.println("Trouble with urls : "+url);
 						}
 						my_info.setFacetteValue(categorie_value);
-						my_info.setFacetteCount(Integer.valueOf(categorieCount));
 						my_fetched_infos.add(my_info);
 						my_info = new FacettesInfo();
 						my_info.setId(idUrl);

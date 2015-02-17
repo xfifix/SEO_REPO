@@ -1,4 +1,4 @@
-package com.facettes;
+package com.facettes.update;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class URLListFacettesThreadPool {
+public class URLListFacettesUpdatingThreadPool {
 
 	private static String drop_facettes_list_results_table = "DROP TABLE IF EXISTS FACETTES_LIST_RESULTS";
 	private static String create_facettes_list_results_table = "CREATE TABLE IF NOT EXISTS FACETTES_LIST_RESULTS (URL TEXT, FACETTE_NAME VARCHAR(400), FACETTE_VALUE VARCHAR(250), FACETTE_COUNT INT) TABLESPACE mydbspace";
@@ -87,14 +87,6 @@ public class URLListFacettesThreadPool {
 
 		try {  
 			con = DriverManager.getConnection(url, user, passwd);
-			// cleaning up the database results
-			PreparedStatement drop_table_st = con.prepareStatement(drop_facettes_list_results_table);
-			drop_table_st.executeUpdate();
-			System.out.println("Dropping the old facettes results table");
-
-			PreparedStatement create_table_st = con.prepareStatement(create_facettes_list_results_table);
-			create_table_st.executeUpdate();
-			System.out.println("Creating the new RESULTS table");
 	
 			// getting the number of URLs to fetch
 			pst = con.prepareStatement(select_statement);
@@ -117,7 +109,7 @@ public class URLListFacettesThreadPool {
 					// one new connection per task
 					Connection local_con = DriverManager.getConnection(url, user, passwd);
 					System.out.println("Launching another thread with "+local_count+ " URLs to fetch");
-					Runnable worker = new URLListFacettesWorkerThread(local_con,thread_list,my_user_agent);
+					Runnable worker = new URLListFacettesUpdatingWorkerThread(local_con,thread_list,my_user_agent);
 					executor.execute(worker);		
 					// we initialize everything for the next thread
 					local_count=0;
@@ -129,12 +121,12 @@ public class URLListFacettesThreadPool {
 				// one new connection per task
 				Connection local_con = DriverManager.getConnection(url, user, passwd);
 				System.out.println("Launching another thread with "+local_count+ " URLs to fetch");
-				Runnable worker = new URLListFacettesWorkerThread(local_con,thread_list,my_user_agent);
+				Runnable worker = new URLListFacettesUpdatingWorkerThread(local_con,thread_list,my_user_agent);
 				executor.execute(worker);
 			}
 			tofetch_list.clear();
 		} catch (SQLException ex) {
-			Logger lgr = Logger.getLogger(URLListFacettesThreadPool.class.getName());
+			Logger lgr = Logger.getLogger(URLListFacettesUpdatingThreadPool.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		} finally {
 			try {
@@ -149,7 +141,7 @@ public class URLListFacettesThreadPool {
 				}
 
 			} catch (SQLException ex) {
-				Logger lgr = Logger.getLogger(URLListFacettesThreadPool.class.getName());
+				Logger lgr = Logger.getLogger(URLListFacettesUpdatingThreadPool.class.getName());
 				lgr.log(Level.WARNING, ex.getMessage(), ex);
 			}
 		}

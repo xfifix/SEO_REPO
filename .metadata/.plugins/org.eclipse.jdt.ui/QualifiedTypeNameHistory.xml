@@ -46,7 +46,6 @@
 <fullyQualifiedTypeName name="crawl4j.arbo.semantic.SemanticArboController"/>
 <fullyQualifiedTypeName name="org.apache.commons.lang3.StringUtils"/>
 <fullyQualifiedTypeName name="com.parsing.utility.XPathUtility"/>
-<fullyQualifiedTypeName name="java.sql.Statement"/>
 <fullyQualifiedTypeName name="crawl4j.xpathutility.XPathUtility"/>
 <fullyQualifiedTypeName name="crawl4j.continuous.CrawlDataManagement"/>
 <fullyQualifiedTypeName name="crawl4j.continuous.ContinuousController"/>
@@ -60,4 +59,5 @@
 <fullyQualifiedTypeName name="org.jsoup.nodes.Element"/>
 <fullyQualifiedTypeName name="com.facettes.URLListFacettesWorkerThread.FacettesInfo"/>
 <fullyQualifiedTypeName name="java.lang.NumberFormatException"/>
+<fullyQualifiedTypeName name="java.sql.Statement"/>
 </qualifiedTypeNameHistroy>
