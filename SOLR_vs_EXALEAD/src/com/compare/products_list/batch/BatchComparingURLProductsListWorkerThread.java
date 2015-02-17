@@ -165,9 +165,7 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 				String page_source_codeSolr = EntityUtils.toString(entitySolr);
 				EntityUtils.consume(entitySolr);
 				clientSolr.close();
-
 				// we now extract information from our page source code
-				//@@@@@@ todo parse page_source_codeSolr
 				URLComparisonListProductsInfo solrOutput = ProductsListParseUtility.parse_page_source_code(page_source_codeSolr);
 				my_info.setSolrOutput(solrOutput);
 
@@ -197,7 +195,6 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 				EntityUtils.consume(entityExalead);
 				clientExalead.close();
 				// we now extract information from our page source code
-				//@@@@@@ todo parse page_source_codeExalead
 				URLComparisonListProductsInfo exaleadOutput = ProductsListParseUtility.parse_page_source_code(page_source_codeExalead);
 				my_info.setExaleadOutput(exaleadOutput);
 			} catch (Exception e){
