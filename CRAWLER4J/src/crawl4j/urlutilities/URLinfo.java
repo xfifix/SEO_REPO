@@ -26,7 +26,7 @@ public class URLinfo {
 	private String produit="";
 	private byte[] page_source_code;
 	private String[] XPATH_results;
-	private String facettes;
+	private String facettes="";
 	
 	public String[] getXPATH_results() {
 		return XPATH_results;

@@ -202,8 +202,8 @@ public class ContinuousCrawler extends WebCrawler {
 							my_info.setFacetteCount(Integer.valueOf(categorieCount));
 							//System.out.println(Integer.valueOf(categorieCount));	
 						} catch (NumberFormatException e){
-							e.printStackTrace();
 							System.out.println("Trouble while formatting a facette");
+							my_info.setFacetteCount(0);
 						}
 						my_info.setFacetteValue(categorie_value);
 						list_facettes.add(my_info);
