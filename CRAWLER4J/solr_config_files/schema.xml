@@ -195,6 +195,7 @@
    <field name="xpath8" type="text_general" indexed="true" stored="true" required="true" multiValued="false" /> 
    <field name="xpath9" type="text_general" indexed="true" stored="true" required="true" multiValued="false" /> 
    <field name="xpath10" type="text_general" indexed="true" stored="true" required="true" multiValued="false" /> 
+   <field name="facettes" type="text_general" indexed="true" stored="true" required="true" multiValued="false" />  
    <field name="vendor" type="string" indexed="true" stored="true" required="true" multiValued="false" /> 
    <field name="nb_attributes" type="string" indexed="true" stored="true" required="true" multiValued="false" /> 
    <field name="attributes" type="text_general" indexed="true" stored="true" required="true" multiValued="false" /> 

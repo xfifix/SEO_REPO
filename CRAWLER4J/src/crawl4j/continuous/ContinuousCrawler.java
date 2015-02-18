@@ -3,9 +3,11 @@ package crawl4j.continuous;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
 
@@ -20,6 +22,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.xml.sax.SAXException;
 
+import crawl4j.facettesutility.FacettesInfo;
+import crawl4j.facettesutility.FacettesUtility;
 import crawl4j.urlutilities.URL_Utilities;
 import crawl4j.urlutilities.URLinfo;
 import crawl4j.xpathutility.XPathUtility;
@@ -36,11 +40,11 @@ public class ContinuousCrawler extends WebCrawler {
 	// if you don't save blob and store the page source code you can go up to 200
 	// blob cache size
 	public static int bulk_size = 100;	
-
+	private static Pattern bracketPattern = Pattern.compile("\\(.*?\\)");
 	private static String category_name = "Catégorie";
-    private static String product_name = "Nom du produit";
-    private static String brand_name = "Marque";
-    
+	private static String product_name = "Nom du produit";
+	private static String brand_name = "Marque";
+
 	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg|jpg" + "|png|tiff|mid|mp2|mp3|mp4"
 			+ "|wav|avi|mov|mpeg|ram|m4v|ico|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 
@@ -141,33 +145,75 @@ public class ContinuousCrawler extends WebCrawler {
 			// finding the short description
 			Elements short_desc_el = doc.select("p.fpMb");
 			info.setShort_desc((short_desc_el==null? "":short_desc_el.text()));
-
 			// finding the number of attributes
-			Elements attributes = doc.select(".fpDescTb tr");
-			int nb_arguments = 0 ;
-			StringBuilder arguments_text = new StringBuilder();
-			for (Element tr_element : attributes){
-				Elements td_elements = tr_element.select("td");
-				if (td_elements.size() == 2){
-					nb_arguments++;
-					String category = td_elements.get(0).text();
-					arguments_text.append(category+"|||");	
-					String description = td_elements.get(1).text();                                    
-					arguments_text.append(description);		
-					arguments_text.append("@@");
-					if (category_name.equals(category)){
-						info.setCategory(description);
-					}
-					if (brand_name.equals(category)){
-						info.setBrand(description);
-					}
-					if (product_name.equals(category)){
-						info.setProduit(description);
+			if ("FicheProduit".equals(page_type)){		
+				Elements attributes = doc.select(".fpDescTb tr");
+				int nb_arguments = 0 ;
+				StringBuilder arguments_text = new StringBuilder();
+				for (Element tr_element : attributes){
+					Elements td_elements = tr_element.select("td");
+					if (td_elements.size() == 2){
+						nb_arguments++;
+						String category = td_elements.get(0).text();
+						arguments_text.append(category+"|||");	
+						String description = td_elements.get(1).text();                                    
+						arguments_text.append(description);		
+						arguments_text.append("@@");
+						if (category_name.equals(category)){
+							info.setCategory(description);
+						}
+						if (brand_name.equals(category)){
+							info.setBrand(description);
+						}
+						if (product_name.equals(category)){
+							info.setProduit(description);
+						}
 					}
 				}
+				info.setAtt_number(nb_arguments);
+				info.setAtt_desc(arguments_text.toString());
 			}
-			info.setAtt_number(nb_arguments);
-			info.setAtt_desc(arguments_text.toString());
+			// parsing the facettes
+			if (("ListeProduit".equals(page_type))|| ("ListeProduitFiltre".equals(page_type))){
+				// finding the number of attributes
+				List<FacettesInfo> list_facettes = new ArrayList<FacettesInfo>();
+				FacettesInfo my_info = new FacettesInfo();
+				Elements facette_elements = doc.select("div.mvFilter");			
+				for (Element facette : facette_elements ){
+					//System.out.println(e.toString());
+					Elements facette_name = facette.select("div.mvFTit");
+					my_info.setFacetteName(facette_name.text());
+					Elements facette_values = facette.select("a");
+					for (Element facette_value : facette_values){
+						String categorie_value = facette_value.text();
+						if ("".equals(categorie_value)){
+							categorie_value = facette_value.attr("title");
+						}
+						Matcher matchPattern = bracketPattern.matcher(categorie_value);
+						String categorieCount ="";
+						while (matchPattern.find()) {		
+							categorieCount=matchPattern.group();
+						}
+						categorie_value=categorie_value.replace(categorieCount,"");
+						categorieCount=categorieCount.replace("(", "");
+						categorieCount=categorieCount.replace(")", "");	
+						//System.out.println(categorie_value);
+						try{
+							my_info.setFacetteCount(Integer.valueOf(categorieCount));
+							//System.out.println(Integer.valueOf(categorieCount));	
+						} catch (NumberFormatException e){
+							e.printStackTrace();
+							System.out.println("Trouble while formatting a facette");
+						}
+						my_info.setFacetteValue(categorie_value);
+						list_facettes.add(my_info);
+						my_info = new FacettesInfo();
+						my_info.setFacetteName(facette_name.text());
+					}		
+				}
+				String facette_json=FacettesUtility.getFacettesJSONStringToStore(list_facettes);
+				info.setFacettes(facette_json);
+			}
 		}
 
 		Header[] responseHeaders = page.getFetchResponseHeaders();
@@ -178,9 +224,7 @@ public class ContinuousCrawler extends WebCrawler {
 			}
 			info.setResponse_headers(conc.toString());	
 		}
-
 		myCrawlDataManager.getCrawledContent().put(url,info);
-
 		// We save this crawler data after processing every bulk_sizes pages
 		if (myCrawlDataManager.getTotalProcessedPages() % bulk_size == 0) {
 			saveData();

@@ -26,6 +26,7 @@ public class URLinfo {
 	private String produit="";
 	private byte[] page_source_code;
 	private String[] XPATH_results;
+	private String facettes;
 	
 	public String[] getXPATH_results() {
 		return XPATH_results;
@@ -176,5 +177,11 @@ public class URLinfo {
 	}
 	public void setBrand(String brand) {
 		this.brand = brand;
+	}
+	public String getFacettes() {
+		return facettes;
+	}
+	public void setFacettes(String facettes) {
+		this.facettes = facettes;
 	}
 }		
