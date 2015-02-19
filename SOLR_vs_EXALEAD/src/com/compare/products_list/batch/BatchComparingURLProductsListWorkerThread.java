@@ -280,15 +280,15 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 				HttpGet getSolr = new HttpGet(solrurl);
 				getSolr.setHeader("User-Agent", user_agent);
 				HttpParams my_httpParams_solr = new BasicHttpParams();
-				HttpClientParams.setRedirecting(my_httpParams_solr, true);
+				HttpClientParams.setRedirecting(my_httpParams_solr, false);
 				HttpConnectionParams.setConnectionTimeout(my_httpParams_solr, 300000000);
 				HttpConnectionParams.setSoTimeout(my_httpParams_solr, 1500000000);
 				DefaultHttpClient clientSolr = new DefaultHttpClient(my_httpParams_solr);		
 				clientSolr.getParams().setParameter(ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true);
 				HttpContext HTTP_CONTEXT_SOLR = new BasicHttpContext();
-				HTTP_CONTEXT_SOLR.setAttribute(CoreProtocolPNames.USER_AGENT, "CdiscountBot-crawler");
+				HTTP_CONTEXT_SOLR.setAttribute(CoreProtocolPNames.USER_AGENT, user_agent);
 				//getSolr.setHeader("Referer", "http://www.google.com");
-				getSolr.setHeader("User-Agent", "CdiscountBot-crawler");
+				getSolr.setHeader("User-Agent", user_agent);
 				// set the cookies
 				CookieStore cookieStoreSolr = new BasicCookieStore();
 				BasicClientCookie cookieSolr = new BasicClientCookie("_$hidden", "666.1");
@@ -327,11 +327,11 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 				System.out.println(Thread.currentThread().getName()+" fetching URL : "+exaleadurl + " with cookie value to tap Exalead");
 				HttpGet getExalead = new HttpGet(exaleadurl);
 				HttpContext HTTP_CONTEXT_EXALEAD = new BasicHttpContext();
-				HTTP_CONTEXT_EXALEAD.setAttribute(CoreProtocolPNames.USER_AGENT, "CdiscountBot-crawler");
+				HTTP_CONTEXT_EXALEAD.setAttribute(CoreProtocolPNames.USER_AGENT, user_agent);
 				//getSolr.setHeader("Referer", "http://www.google.com");
 				getExalead.setHeader("User-Agent", user_agent);
 				HttpParams my_httpParams_exalead = new BasicHttpParams();
-				HttpClientParams.setRedirecting(my_httpParams_exalead, true);
+				HttpClientParams.setRedirecting(my_httpParams_exalead, false);
 				HttpConnectionParams.setConnectionTimeout(my_httpParams_exalead, 300000000);
 				HttpConnectionParams.setSoTimeout(my_httpParams_exalead, 1500000000);
 				DefaultHttpClient clientExalead = new DefaultHttpClient(my_httpParams_exalead);
