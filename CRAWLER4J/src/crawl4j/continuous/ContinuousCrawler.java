@@ -57,7 +57,7 @@ public class ContinuousCrawler extends WebCrawler {
 	@Override
 	public boolean shouldVisit(WebURL url) {
 		String href = url.getURL().toLowerCase();
-		return !filters.matcher(href).matches() && href.startsWith(ContinuousController.seed);
+		return !filters.matcher(href).matches() && href.startsWith(ContinuousController.crawl_restrainer_start_with);
 	}
 
 	@Override
@@ -70,6 +70,7 @@ public class ContinuousCrawler extends WebCrawler {
 
 		String url=URL_Utilities.clean(fullUrl);
 		System.out.println(Thread.currentThread()+": Visiting URL : "+url);
+		
 		// the static Map cache is based upon the shortened and cleaned URL
 		URLinfo info =myCrawlDataManager.getCrawledContent().get(url);
 		if (info == null){

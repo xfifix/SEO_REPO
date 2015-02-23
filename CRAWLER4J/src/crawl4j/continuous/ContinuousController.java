@@ -18,6 +18,7 @@ public class ContinuousController {
 	public static boolean isBlobStored = false;
 	public static boolean isXPATHparsed = true;
 	public static String seed;
+	public static String crawl_restrainer_start_with;
 	public static void main(String[] args)   {
 		System.setProperty("http.agent", "");
 		System.out.println("Getting the crawl configuration from : "+crawl_conf_path);	
@@ -28,8 +29,8 @@ public class ContinuousController {
 		String user_agent_name="";		
 		try{
 			loadProperties();
-			//String seed = "http://www.cdiscount.com/";
 			seed = properties.getProperty("crawl.seed"); 
+			crawl_restrainer_start_with =  properties.getProperty("crawl.crawl_restrainer_start_with"); 
 			isBlobStored = Boolean.parseBoolean(properties.getProperty("crawl.isBlobStored"));
 			isXPATHparsed = Boolean.parseBoolean(properties.getProperty("crawl.isXPATHparsed"));
 			//int// numberOfCrawlers =  400;	
@@ -59,7 +60,8 @@ public class ContinuousController {
 		// downsizing to test/debug
 		//		numberOfCrawlers =  1;
 		//		ContinuousCrawler.bulk_size = 5;
-		
+		//overiding seed for debug
+		//seed="http://www.cdiscount.com/maison/v-117-0.html";
 		System.out.println("Seed URL : "+seed);
 		System.out.println("Number of threads : "+numberOfCrawlers);
 		System.out.println("Blob stored : "+isBlobStored);

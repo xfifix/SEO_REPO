@@ -127,7 +127,7 @@ public class CrawlDataManagement {
 					String url=pairs.getKey();
 					URLinfo info =pairs.getValue();
 					SolrInputDocument doc = new SolrInputDocument();
-					doc.addField("id",url.replace("http://www.cdiscount.com/",""));
+					doc.addField("id",url);
 					doc.addField("url",url);
 					doc.addField("whole_text",info.getText());
 					doc.addField("title",info.getTitle());
@@ -510,6 +510,7 @@ public class CrawlDataManagement {
 	}
 
 	public void updateDatabaseData(){
+
 		try{
 			Iterator<Entry<String, URLinfo>> it = crawledContent.entrySet().iterator();
 			int local_counter = 0;
