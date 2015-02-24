@@ -1,6 +1,5 @@
 package crawl4j.continuous;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.GZIPOutputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -39,11 +37,6 @@ public class ContinuousCrawler extends WebCrawler {
 	// this cache size is important
 	// if you don't save blob and store the page source code you can go up to 200
 	// blob cache size
-	
-	private static Pattern bracketPattern = Pattern.compile("\\(.*?\\)");
-	private static String category_name = "Catégorie";
-	private static String product_name = "Nom du produit";
-	private static String brand_name = "Marque";
 
 	Pattern filters = Pattern.compile(".*(\\.(css|js|bmp|gif|jpeg|jpg" + "|png|tiff|mid|mp2|mp3|mp4"
 			+ "|wav|avi|mov|mpeg|ram|m4v|ico|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
@@ -70,7 +63,7 @@ public class ContinuousCrawler extends WebCrawler {
 
 		String url=URL_Utilities.clean(fullUrl);
 		System.out.println(Thread.currentThread()+": Visiting URL : "+url);
-		
+
 		// the static Map cache is based upon the shortened and cleaned URL
 		URLinfo info =myCrawlDataManager.getCrawledContent().get(url);
 		if (info == null){
@@ -90,10 +83,10 @@ public class ContinuousCrawler extends WebCrawler {
 
 		// finding the appropriate vendor
 		String str_source_code = new String(page.getContentData(), Charsets.UTF_8);
-		boolean vendor = is_cdiscount_best_vendor_from_page_source_code(str_source_code);
+		boolean vendor = CrawlerUtility.is_cdiscount_best_vendor_from_page_source_code(str_source_code);
 		info.setCdiscountBestBid(vendor);
 		info.setVendor(vendor ? "Cdiscount" : "Market Place");
-		boolean youtube = is_youtube_referenced_from_page_source_code(str_source_code);
+		boolean youtube = CrawlerUtility.is_youtube_referenced_from_page_source_code(str_source_code);
 		info.setYoutubeVideoReferenced(youtube);
 
 		// XPATH parsing
@@ -113,7 +106,7 @@ public class ContinuousCrawler extends WebCrawler {
 
 		// filling up entity to be cached with page source code
 		if (ContinuousController.isBlobStored){
-			byte[] compressedPageContent = gzip_compress_byte_stream(page.getContentData());
+			byte[] compressedPageContent = CrawlerUtility.gzip_compress_byte_stream(page.getContentData());
 			info.setPage_source_code(compressedPageContent);
 		}
 
@@ -160,13 +153,13 @@ public class ContinuousCrawler extends WebCrawler {
 						String description = td_elements.get(1).text();                                    
 						arguments_text.append(description);		
 						arguments_text.append("@@");
-						if (category_name.equals(category)){
+						if (CrawlerUtility.category_name.equals(category)){
 							info.setCategory(description);
 						}
-						if (brand_name.equals(category)){
+						if (CrawlerUtility.brand_name.equals(category)){
 							info.setBrand(description);
 						}
-						if (product_name.equals(category)){
+						if (CrawlerUtility.product_name.equals(category)){
 							info.setProduit(description);
 						}
 					}
@@ -190,7 +183,7 @@ public class ContinuousCrawler extends WebCrawler {
 						if ("".equals(categorie_value)){
 							categorie_value = facette_value.attr("title");
 						}
-						Matcher matchPattern = bracketPattern.matcher(categorie_value);
+						Matcher matchPattern = CrawlerUtility.bracketPattern.matcher(categorie_value);
 						String categorieCount ="";
 						while (matchPattern.find()) {		
 							categorieCount=matchPattern.group();
@@ -232,60 +225,6 @@ public class ContinuousCrawler extends WebCrawler {
 		}
 	}
 
-	public boolean is_cdiscount_best_vendor_from_page_source_code(String str_source_code){
-		int cdiscount_index = str_source_code.indexOf("<p class='fpSellBy'>Vendu et expédié par <span class='logoCDS'>");
-		if (cdiscount_index >0){
-			return true;
-		}else{
-			return false;
-		}
-	}
-
-	public boolean is_youtube_referenced_from_page_source_code(String str_source_code){
-		int youtube_index = str_source_code.indexOf("http://www.youtube.com/");
-		if (youtube_index >0){
-			return true;
-		}else{
-			return false;
-		}
-	}
-
-	// compressing the byte stream
-	public byte[] gzip_compress_byte_stream(byte[] dataToCompress ){
-		ByteArrayOutputStream byteStream = null;
-		try{
-			byteStream =
-					new ByteArrayOutputStream(dataToCompress.length);
-			GZIPOutputStream zipStream = new GZIPOutputStream(byteStream);
-			try
-			{
-				zipStream.write(dataToCompress);
-			}
-			finally
-			{
-				zipStream.close();
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		finally
-		{
-			if (byteStream != null){
-				try {
-					byteStream.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		byte[] compressedData = new byte[0];
-		if (byteStream != null){
-			compressedData = byteStream.toByteArray();
-		}	
-		return compressedData;
-	}
 
 	public Set<String> filter_out_links(List<WebURL> links){
 		Set<String> outputSet = new HashSet<String>();

@@ -24,13 +24,15 @@ public class NoMatchThreadPool {
 	public static String crawl_conf_path = "/home/sduprey/My_Data/My_ContinuousCrawl_Conf/crawl.conf";
 	public static Properties properties;
 
-	private static boolean isBlobStored=false;
-	private static boolean isXPATHparsed=true;
+	public static boolean isBlobStored=false;
+	public static boolean isXPATHparsed=true;
 	private static int nomatch_fixed_pool_size = 200;
 	private static int nomatch_size_bucket = 800;
 
 	private static List<Integer> tofetch_list = new ArrayList<Integer>();
 
+	private static String nomatch_select = "SELECT ID FROM NOMATCH WHERE TO_FETCH = TRUE";
+	
 	public static void main(String[] args) {
 		System.setProperty("http.agent", "");
 		System.out.println("Getting the crawl configuration from : "+crawl_conf_path);	
@@ -97,14 +99,15 @@ public class NoMatchThreadPool {
 		try {  
 			con = DriverManager.getConnection(url, user, passwd);
 			// getting the number of URLs to fetch
-			pst = con.prepareStatement("SELECT ID FROM HTTPINFOS_LIST WHERE TO_FETCH = TRUE");
+			pst = con.prepareStatement(nomatch_select);
 			rs = pst.executeQuery();
 			while (rs.next()) {
 				tofetch_list.add(rs.getInt(1));
 			}
+			rs.close();
+			pst.close();
 			int size=tofetch_list.size();
-
-			System.out.println("We have : " +size + " URL status to fetch according to the database \n");
+			System.out.println("We have : " +size + " URL status to fetch according to the NOMATCH database \n");
 			// we add one for the euclidean remainder
 			int local_count=0;
 			List<Integer> thread_list = new ArrayList<Integer>();
@@ -115,9 +118,10 @@ public class NoMatchThreadPool {
 				}
 				if (local_count==nomatch_size_bucket){
 					// one new connection per task
-					Connection local_con = DriverManager.getConnection(url, user, passwd);
+					CrawlDataManagement loc_crawl_data_manager = new CrawlDataManagement();
+
 					System.out.println("Launching another thread with "+local_count+ " URLs to fetch");
-					Runnable worker = new NoMatchWorkerThread(local_con,thread_list,my_user_agent);
+					Runnable worker = new NoMatchWorkerThread(loc_crawl_data_manager,thread_list,my_user_agent);
 					executor.execute(worker);		
 					// we initialize everything for the next thread
 					local_count=0;
@@ -127,9 +131,9 @@ public class NoMatchThreadPool {
 			// there might be a last task with the euclidean remainder
 			if (thread_list.size()>0){
 				// one new connection per task
-				Connection local_con = DriverManager.getConnection(url, user, passwd);
+				CrawlDataManagement loc_crawl_data_manager = new CrawlDataManagement();
 				System.out.println("Launching another thread with "+local_count+ " URLs to fetch");
-				Runnable worker = new NoMatchWorkerThread(local_con,thread_list,my_user_agent);
+				Runnable worker = new NoMatchWorkerThread(loc_crawl_data_manager,thread_list,my_user_agent);
 				executor.execute(worker);
 			}
 			tofetch_list.clear();
@@ -153,13 +157,10 @@ public class NoMatchThreadPool {
 				lgr.log(Level.WARNING, ex.getMessage(), ex);
 			}
 		}
-
 		executor.shutdown();
 		while (!executor.isTerminated()) {
 		}
-
 		System.out.println("Finished all threads");
-
 	}
 
 

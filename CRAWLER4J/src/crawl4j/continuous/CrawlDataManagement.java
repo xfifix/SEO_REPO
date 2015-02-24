@@ -80,6 +80,8 @@ public class CrawlDataManagement {
 		}
 	}
 
+	
+	
 	public int getTotalProcessedPages() {
 		return totalProcessedPages;
 	}
