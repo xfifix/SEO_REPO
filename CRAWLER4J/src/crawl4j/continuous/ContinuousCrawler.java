@@ -39,7 +39,7 @@ public class ContinuousCrawler extends WebCrawler {
 	// this cache size is important
 	// if you don't save blob and store the page source code you can go up to 200
 	// blob cache size
-	public static int bulk_size = 100;	
+	
 	private static Pattern bracketPattern = Pattern.compile("\\(.*?\\)");
 	private static String category_name = "Catégorie";
 	private static String product_name = "Nom du produit";
@@ -227,7 +227,7 @@ public class ContinuousCrawler extends WebCrawler {
 		}
 		myCrawlDataManager.getCrawledContent().put(url,info);
 		// We save this crawler data after processing every bulk_sizes pages
-		if (myCrawlDataManager.getTotalProcessedPages() % bulk_size == 0) {
+		if (myCrawlDataManager.getTotalProcessedPages() % CrawlDataManagement.bulk_size == 0) {
 			saveData();
 		}
 	}

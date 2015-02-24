@@ -42,7 +42,7 @@ public class ContinuousController {
 			//String user_agent_name = "CdiscountBot-crawler";
 			user_agent_name=properties.getProperty("crawl.user_agent_name"); 
 			//int maxDepthOfCrawling = 300;
-			ContinuousCrawler.bulk_size = Integer.valueOf(properties.getProperty("crawl.cache_bulk_size")); 
+			CrawlDataManagement.bulk_size = Integer.valueOf(properties.getProperty("crawl.cache_bulk_size")); 
 			//String user_agent_name = "CdiscountBot-crawler";
 			XPathUtility.xpathconf_path=properties.getProperty("crawl.xpathconf_path"); 
 			CrawlDataManagement.database_con_path=properties.getProperty("crawl.database_con_path"); 
@@ -62,13 +62,14 @@ public class ContinuousController {
 		//		ContinuousCrawler.bulk_size = 5;
 		//overiding seed for debug
 		//seed="http://www.cdiscount.com/maison/v-117-0.html";
+		seed="http://www.cdiscount.com/bagages/sac-cabas-de-plage-en-silicone-femme/f-143-got3613140277651.html";
 		System.out.println("Seed URL : "+seed);
 		System.out.println("Number of threads : "+numberOfCrawlers);
 		System.out.println("Blob stored : "+isBlobStored);
 		System.out.println("XPATH parsed : "+isXPATHparsed);
 		System.out.println("User-agent : "+user_agent_name);
 		System.out.println("Max depth of crawling : "+maxDepthOfCrawling);
-		System.out.println("Cache bulk size per thread : "+ContinuousCrawler.bulk_size);
+		System.out.println("Cache bulk size per thread : "+CrawlDataManagement.bulk_size);
 		System.out.println("XPATH conf file path : "+XPathUtility.xpathconf_path);
 		System.out.println("Database conf file path : "+CrawlDataManagement.database_con_path);		
 		try {

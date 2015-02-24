@@ -25,6 +25,7 @@ import crawl4j.urlutilities.URLinfo;
 import crawl4j.xpathutility.XPathUtility;
 
 public class CrawlDataManagement {
+	public static int bulk_size = 100;
 	public static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
 	private static String insert_statement="INSERT INTO CRAWL_RESULTS(URL,WHOLE_TEXT,TITLE,LINKS_SIZE,"
 			+ "LINKS,H1,FOOTER_EXTRACT,ZTD_EXTRACT,SHORT_DESCRIPTION,XPATH1,XPATH2,XPATH3,XPATH4,XPATH5,XPATH6,XPATH7,XPATH8,XPATH9,XPATH10,FACETTES,CDISCOUNT_VENDOR,YOUTUBE_REFERENCED,ATTRIBUTES,NB_ATTRIBUTES,STATUS_CODE,HEADERS,DEPTH,PAGE_TYPE,MAGASIN,RAYON,PRODUIT,BRAND,CATEGORY,LAST_UPDATE)"
