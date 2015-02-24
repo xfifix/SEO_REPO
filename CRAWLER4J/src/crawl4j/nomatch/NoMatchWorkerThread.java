@@ -73,13 +73,28 @@ public class NoMatchWorkerThread implements Runnable {
 		}
 	}
 
-	public void run(){
-		List<ULRId> infos=processCommand(my_urls_to_fetch);
-		updateStatus(infos);
-		System.out.println(Thread.currentThread().getName()+" End");
+	public void run() {
+		List<ULRId> line_infos = new ArrayList<ULRId>();
+		for (ULRId id :my_urls_to_fetch){
+			line_infos.add(id);
+			if (line_infos.size() !=0 && line_infos.size() % batch_size ==0) {
+				runBatch(line_infos);	
+				line_infos.clear();
+				line_infos = new ArrayList<ULRId>();
+			}
+		}
+		runBatch(line_infos);
 		close_connection();
 		System.out.println(Thread.currentThread().getName()+" closed connection");
 	}
+
+	public void runBatch(List<ULRId> line_infos){
+		List<ULRId> infos=processCommand(line_infos);
+		updateStatus(infos);
+		//updateStatusStepByStep(infos);
+		System.out.println(Thread.currentThread().getName()+" End");
+	}
+
 	
 	private void updateStatus(List<ULRId> infos){
 		System.out.println("Adding to batch : " + infos.size() + "ULRs into database");

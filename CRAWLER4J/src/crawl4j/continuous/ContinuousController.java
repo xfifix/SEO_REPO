@@ -62,7 +62,6 @@ public class ContinuousController {
 		//		ContinuousCrawler.bulk_size = 5;
 		//overiding seed for debug
 		//seed="http://www.cdiscount.com/maison/v-117-0.html";
-		seed="http://www.cdiscount.com/bagages/sac-cabas-de-plage-en-silicone-femme/f-143-got3613140277651.html";
 		System.out.println("Seed URL : "+seed);
 		System.out.println("Number of threads : "+numberOfCrawlers);
 		System.out.println("Blob stored : "+isBlobStored);
