@@ -58,6 +58,10 @@ public class NoMatchThreadPool {
 			System.exit(0);
 		}	
 
+		//		// debug value
+		//		nomatch_fixed_pool_size = 1;
+		//		nomatch_size_bucket=200;
+		//		NoMatchWorkerThread.batch_size=1;
 		System.out.println("User agent selected : "+my_user_agent);
 		System.out.println("Number of threads : "+nomatch_fixed_pool_size);
 		System.out.println("Bucket size : "+nomatch_size_bucket);

@@ -95,7 +95,7 @@ public class NoMatchWorkerThread implements Runnable {
 		System.out.println(Thread.currentThread().getName()+" End");
 	}
 
-	
+
 	private void updateStatus(List<ULRId> infos){
 		System.out.println("Adding to batch : " + infos.size() + "ULRs into database");
 		try {
@@ -134,6 +134,7 @@ public class NoMatchWorkerThread implements Runnable {
 		for(ULRId line_info : line_infos){
 			String url_string = line_info.getUrl();
 			HttpURLConnection connection = null;
+			int status_code = 0;
 			try{
 				System.out.println(Thread.currentThread().getName()+" fetching URL : "+line_info.getUrl());
 				URL url = new URL(url_string);
@@ -144,26 +145,30 @@ public class NoMatchWorkerThread implements Runnable {
 				connection.setConnectTimeout(3000);
 				connection.connect();
 				// getting the status from the connection
-				int status_code = connection.getResponseCode();
+				status_code = connection.getResponseCode();
 
-				// getting the content to parse
-				InputStreamReader in = new InputStreamReader((InputStream) connection.getContent());
-				BufferedReader buff = new BufferedReader(in);
-				String content_line;
-				StringBuilder builder=new StringBuilder();
-				do {
-					content_line = buff.readLine();
-					builder.append(content_line);
-				} while (content_line != null);
-				String html = builder.toString();
-				parseMyPage(html,status_code,url_string);
-				// we managed to parse the URL and put it into cache
-				my_fetched_infos.add(line_info);
+				if (status_code == 301 || status_code == 400 || status_code == 404){
+					my_fetched_infos.add(line_info);
+				} else {
+					// getting the content to parse
+					InputStreamReader in = new InputStreamReader((InputStream) connection.getContent());
+					BufferedReader buff = new BufferedReader(in);
+					String content_line;
+					StringBuilder builder=new StringBuilder();
+					do {
+						content_line = buff.readLine();
+						builder.append(content_line);
+					} while (content_line != null);
+					String html = builder.toString();
+					parseMyPage(html,status_code,url_string);
+					// we managed to parse the URL and put it into cache
+					my_fetched_infos.add(line_info);
+				}
 				if (connection != null){
 					connection.disconnect();
 				}
 			} catch (Exception e){
-				System.out.println("Error parsing with "+line_info);
+				System.out.println("Error parsing with "+line_info+" status code "+status_code);
 				e.printStackTrace();
 			}
 

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="java.util.Date"/>
 <fullyQualifiedTypeName name="org.jsoup.nodes.Document"/>
 <fullyQualifiedTypeName name="java.io.IOException"/>
 <fullyQualifiedTypeName name="org.gephi.project.api.ProjectController"/>
@@ -59,5 +58,6 @@
 <fullyQualifiedTypeName name="java.io.FileReader"/>
 <fullyQualifiedTypeName name="java.io.File"/>
 <fullyQualifiedTypeName name="crawl4j.continuous.CrawlDataManagement"/>
+<fullyQualifiedTypeName name="crawl4j.nomatch.NoMatchWorkerThread"/>
 <fullyQualifiedTypeName name="crawl4j.nomatch.NoMatchThreadPool"/>
 </qualifiedTypeNameHistroy>

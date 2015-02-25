@@ -228,7 +228,7 @@ public class CrawlDataManagement {
 					}
 				}while (it.hasNext());	
 				solr_server.commit();
-				System.out.println(Thread.currentThread()+"Committed " + local_counter + " updates");
+				System.out.println(Thread.currentThread()+"Committed to Solr : " + local_counter + " updates");
 			}
 		} catch (Exception e){
 			//System.out.println("Line already inserted : "+nb_lines);
