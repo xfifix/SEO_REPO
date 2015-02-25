@@ -21,6 +21,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.postgresql.largeobject.LargeObject;
 import org.postgresql.largeobject.LargeObjectManager;
 
+import crawl4j.nomatch.NoMatchThreadPool;
 import crawl4j.urlutilities.URLinfo;
 import crawl4j.xpathutility.XPathUtility;
 
@@ -963,7 +964,7 @@ public class CrawlDataManagement {
 		// you have to update Solr first
 		updateSolrData();
 		// we here choose wether or not we store all the page source code
-		if (ContinuousController.isBlobStored){
+		if (NoMatchThreadPool.isBlobStored){
 			updateDatabaseWithBlobData();
 		} else {
 			updateDatabaseData();

@@ -32,7 +32,7 @@ public class NoMatchThreadPool {
 	private static List<Integer> tofetch_list = new ArrayList<Integer>();
 
 	private static String nomatch_select = "SELECT ID FROM NOMATCH WHERE TO_FETCH = TRUE";
-	
+
 	public static void main(String[] args) {
 		System.setProperty("http.agent", "");
 		System.out.println("Getting the crawl configuration from : "+crawl_conf_path);	
@@ -50,7 +50,7 @@ public class NoMatchThreadPool {
 			//int maxDepthOfCrawling = 300;
 			XPathUtility.xpathconf_path=properties.getProperty("crawl.xpathconf_path"); 
 			CrawlDataManagement.database_con_path=properties.getProperty("crawl.database_con_path"); 
-			CrawlDataManagement.bulk_size = Integer.valueOf(properties.getProperty("crawl.cache_bulk_size")); 
+			NoMatchWorkerThread.batch_size = Integer.valueOf(properties.getProperty("crawl.cache_bulk_size")); 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

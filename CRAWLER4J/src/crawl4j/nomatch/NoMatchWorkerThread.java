@@ -32,7 +32,7 @@ import crawl4j.xpathutility.XPathUtility;
 
 
 public class NoMatchWorkerThread implements Runnable {
-	private int batch_size = 100;
+	public static int batch_size = 100;
 
 	private static String nomatchUpdateStatement ="UPDATE NOMATCH SET TO_FETCH=FALSE WHERE ID=?";
 	private static String nomatchSelectStatement ="SELECT URL, ID FROM NOMATCH WHERE TO_FETCH = TRUE and ID in ";
@@ -320,12 +320,6 @@ public class NoMatchWorkerThread implements Runnable {
 		}
 
 		loc_data_manager.getCrawledContent().put(url,info);
-		// We save this crawler data after processing every bulk_sizes pages
-		if (loc_data_manager.getTotalProcessedPages() % CrawlDataManagement.bulk_size == 0) {
-			System.out.println("Processed Pages: " + loc_data_manager.getTotalProcessedPages());
-			System.out.println("Total Text Size: " + loc_data_manager.getTotalTextSize());
-			loc_data_manager.updateData();	
-		}
 	}
 
 	public boolean is_cdiscount_best_vendor_from_page_source_code(String str_source_code){
