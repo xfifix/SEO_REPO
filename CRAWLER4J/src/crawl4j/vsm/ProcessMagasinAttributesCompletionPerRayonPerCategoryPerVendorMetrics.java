@@ -390,7 +390,7 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 
 	private static String extract_category_from_name(String category_key){
 		String[] listing = category_key.split(";");
-		return listing[1];
+		return listing[2];
 	}
 	
 	private static String extract_rayon_from_name(String category_key){
