@@ -58,10 +58,11 @@ public class ContinuousController {
 			numberOfCrawlers=Integer.valueOf(args[1]);
 		} 
 		// downsizing to test/debug
-		//		numberOfCrawlers =  1;
-		//		ContinuousCrawler.bulk_size = 5;
 		//overiding seed for debug
+		//numberOfCrawlers =  1;
+		//CrawlDataManagement.bulk_size = 5;
 		//seed="http://www.cdiscount.com/maison/v-117-0.html";
+		//seed="http://www.cdiscount.com/livres-bd/livres-religion-esoterisme/billy-graham-pape-protestant/f-105210806-9782226135605.html";
 		System.out.println("Seed URL : "+seed);
 		System.out.println("Number of threads : "+numberOfCrawlers);
 		System.out.println("Blob stored : "+isBlobStored);

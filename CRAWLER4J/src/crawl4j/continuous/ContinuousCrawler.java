@@ -266,6 +266,8 @@ public class ContinuousCrawler extends WebCrawler {
 		if (info == null){
 			info =new URLinfo();
 		}	
+		// very important to override the previously good 200 URLs when changed to 301
+		info.setUrl(url);
 		info.setStatus_code(statusCode);
 		myCrawlDataManager.getCrawledContent().put(url,info);
 		//		if (statusCode != HttpStatus.SC_OK) {

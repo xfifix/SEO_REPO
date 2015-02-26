@@ -57,7 +57,7 @@
 <fullyQualifiedTypeName name="java.util.regex.Matcher"/>
 <fullyQualifiedTypeName name="java.io.FileReader"/>
 <fullyQualifiedTypeName name="java.io.File"/>
-<fullyQualifiedTypeName name="crawl4j.continuous.CrawlDataManagement"/>
 <fullyQualifiedTypeName name="crawl4j.nomatch.NoMatchWorkerThread"/>
 <fullyQualifiedTypeName name="crawl4j.nomatch.NoMatchThreadPool"/>
+<fullyQualifiedTypeName name="crawl4j.continuous.CrawlDataManagement"/>
 </qualifiedTypeNameHistroy>
