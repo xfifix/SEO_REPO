@@ -1,0 +1,60 @@
+# the database for the continuous crawl
+# create the database if it does not already exists
+use CRAWL4J
+# creating the continuous crawl collection
+# we here by the way create an index on _id
+#db.createCollection("CRAWL_RESULTS", {autoIndexID : true})
+db.createCollection('CRAWL_RESULTS')
+db.CRAWL_RESULTS.ensureIndex({"url":1})
+# Finding elements already presents
+db.CRAWL_RESULTS.find().pretty
+# inserting an URL
+db.CRAWL_RESULTS.insert(
+id : '/maison/linge-maison/chemin-de-table-en-bambou-30cm-x-140cm-noir/f-117620202-auc3662800034158.html',
+whole_text : 'En continuant à naviguer sur notre site, vous acceptez l'utilisation de cookies pour vous proposer des services et offres adaptés à vos centres d'intérêts.            > En savoir plusx        Carte Cdiscount : -20%Kiosque PresseService PhotoBons de réducti (...)',
+title : 'Chemin de table en bambou 30cm x 140cm - Noir - Achat / Vente CHEMIN ET SET DE TABLE    - Cdiscount'
+links : ['/maison/v-117-0.html, /m-12401-beauville.html',
+         '/maison/linge-maison/linge-de-table/protections-pour-table/l-117620209.html',
+         '/maison/linge-maison/centre-de-table-brode-main-renaissance-sur-lin-78c/f-117620202-auc2009976066940.html',
+         '/maison/r-rouleau+chemin (...)'],
+h1 : 'Chemin de table en bambou 30cm x 140cm - Noir',
+footer_extract :' Cap sur les bonnes affaires  avec le rayon maison Cdiscount ! Il est grand temps de se faire plaisir, le tout au meilleur prix ! Pour arriver ici, rien de plus simple, les internautes en qu&ecirc;te du meilleur de l&rsquo;&eacute;quipement pour la maison  (...)',
+ztd_extract :'Chemin de table en bambou 30cm x 140cm - Noir - Pour une décoration de table zen et naturelle ! Dimensions du chemin de table : 140 cm x 30 cm… Voir la présentation Chemin de table en bambou 30cm x 140cm - Noir - Pour une décoration de table zen et naturel (...)',
+short_description :'"Chemin de table en bambou 30cm x 140cm - Noir - Pour une décoration de table zen et naturelle ! Dimensions du chemin de table : 140 cm x 30 cm… Voir la présentation Chemin de table en bambou 30cm x 140cm - Noir - Pour une décoration de table zen et naturel (...)',
+attributes :  [{attribute_name  = 'Nom du produit',
+                attribute_value = 'Chemin de table en bambou 30cm x 140cm - Noir'},
+               {attribute_name  = 'Catégorie',
+                attribute_value = 'CHEMIN ET SET DE TABLE'},
+               {attribute_name  = 'Marque',
+                attribute_value = 'AUCUNE'}],
+nb_attributes : 4,
+status_code : 200,
+headers : 'Cache-Control: private@Cteonnt-Length: 59640@Content-Type: text/html; charset=utf-8@Vary: User-Agent@Set-Cookie: CdiscountPers=PRODUCT_HISTORY=26%2f02%2f2015+18%3a45%3a02:&DEPARTMENT_HISTORY=26%2f02%2f2015+18%3a45%3a02:1033011%02%2fjeux-pc-video-console%2f (...)',
+depth : 5,
+page_type : 'FicheProduit',
+magasin : 'maison',
+rayon : 'linge-maison',
+page_rank : 0,
+last_update : 'now'
+cdiscount_vendor : false,
+youtube_referenced : false,
+xpath1 : '    Chemin de table en bambou 30cm x 140cm - Noir',
+xpath2 : ' ',
+xpath3 : ' ',
+xpath4 : ' ',
+xpath5 : ' ',
+xpath6 : ' ',
+xpath7 : ' ',
+xpath8 : ' ',
+xpath9 : ' ',
+xpath10 : ' ',
+produit : 'Chemin de table en bambou 30cm x 140cm - Noir',
+category : 'CHEMIN ET SET DE TABLE',
+brand : 'AUCUNE',
+facettes : [{facette_name : 'COULEUR',
+             facette_value : 'ROSE',
+             facette_count : 3},
+             {facette_name : 'MARQUE',
+             facette_value : 'SAMSUNG',
+             facette_count : 90}
+])

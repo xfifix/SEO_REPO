@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -130,7 +131,6 @@ public class CrawlDataManagement {
 	}
 
 	public void updateMongoDB(){
-
 		// we here fetch the matching table
 		DB db = mongo_client.getDB(mongoContinuousCrawlDBName);
 		DBCollection coll = db.getCollection(mongoContinuousCrawlCollectionName);
@@ -145,7 +145,7 @@ public class CrawlDataManagement {
 					Map.Entry<String, URLinfo> pairs = (Map.Entry<String, URLinfo>)it.next();
 					String url=pairs.getKey();
 					URLinfo info =pairs.getValue();
-					BasicDBObject replacingObject = new BasicDBObject("id", url);
+					BasicDBObject replacingObject = new BasicDBObject("url", url);
 					replacingObject.append("whole_text",info.getText());
 					replacingObject.append("title",info.getTitle());
 					replacingObject.append("links_size",info.getLinks_size());
@@ -231,10 +231,9 @@ public class CrawlDataManagement {
 					replacingObject.append("produit", info.getProduit());
 					replacingObject.append("categorie", info.getCategory());
 					replacingObject.append("marque", info.getBrand());
-					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
-					replacingObject.append("last_update", sqlDate.toString());	
+					replacingObject.append("last_update", new Date());	
 					try{
-						builder.find(new BasicDBObject("id", url)).replaceOne(replacingObject);
+						builder.find(new BasicDBObject("url", url)).replaceOne(replacingObject);
 					}catch (Exception e){
 						System.out.println("Trouble inserting : "+url);
 						e.printStackTrace();  
