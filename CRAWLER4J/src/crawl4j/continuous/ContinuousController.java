@@ -67,6 +67,7 @@ public class ContinuousController {
 		//seed="http://www.cdiscount.com/livres-bd/livres-religion-esoterisme/billy-graham-pape-protestant/f-105210806-9782226135605.html";
 		System.out.println("Seed URL : "+seed);
 		System.out.println("Number of threads : "+numberOfCrawlers);
+		System.out.println("MongoDB stored : "+isMongoDBStored);
 		System.out.println("Blob stored : "+isBlobStored);
 		System.out.println("XPATH parsed : "+isXPATHparsed);
 		System.out.println("User-agent : "+user_agent_name);

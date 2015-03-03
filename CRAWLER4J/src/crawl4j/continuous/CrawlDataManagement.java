@@ -233,7 +233,7 @@ public class CrawlDataManagement {
 					replacingObject.append("marque", info.getBrand());
 					replacingObject.append("last_update", new Date());	
 					try{
-						builder.find(new BasicDBObject("url", url)).replaceOne(replacingObject);
+						builder.find(new BasicDBObject("url", url)).upsert().replaceOne(replacingObject);
 					}catch (Exception e){
 						System.out.println("Trouble inserting : "+url);
 						e.printStackTrace();  
