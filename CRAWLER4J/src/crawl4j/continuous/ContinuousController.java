@@ -16,6 +16,7 @@ public class ContinuousController {
 	public static String crawl_conf_path = "/home/sduprey/My_Data/My_ContinuousCrawl_Conf/crawl.conf";
 	public static Properties properties;
 	public static boolean isBlobStored = false;
+	public static boolean isMongoDBStored = false;
 	public static boolean isXPATHparsed = true;
 	public static String seed;
 	public static String crawl_restrainer_start_with;
@@ -32,6 +33,7 @@ public class ContinuousController {
 			seed = properties.getProperty("crawl.seed"); 
 			crawl_restrainer_start_with =  properties.getProperty("crawl.crawl_restrainer_start_with"); 
 			isBlobStored = Boolean.parseBoolean(properties.getProperty("crawl.isBlobStored"));
+			isMongoDBStored = Boolean.parseBoolean(properties.getProperty("crawl.isMongoDBStored"));
 			isXPATHparsed = Boolean.parseBoolean(properties.getProperty("crawl.isXPATHparsed"));
 			//int// numberOfCrawlers =  400;	
 			numberOfCrawlers=Integer.valueOf(properties.getProperty("crawl.numberOfCrawlers")); 

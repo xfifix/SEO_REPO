@@ -21,7 +21,13 @@ import org.apache.solr.common.SolrInputDocument;
 import org.postgresql.largeobject.LargeObject;
 import org.postgresql.largeobject.LargeObjectManager;
 
-import crawl4j.nomatch.NoMatchThreadPool;
+import com.mongodb.BasicDBObject;
+import com.mongodb.BulkWriteOperation;
+import com.mongodb.BulkWriteResult;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.MongoClient;
+
 import crawl4j.urlutilities.URLinfo;
 import crawl4j.xpathutility.XPathUtility;
 
@@ -36,13 +42,16 @@ public class CrawlDataManagement {
 			+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	private static String update_statement ="UPDATE CRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,LINKS_SIZE=?,LINKS=?,H1=?,FOOTER_EXTRACT=?,ZTD_EXTRACT=?,SHORT_DESCRIPTION=?,XPATH1=?,XPATH2=?,XPATH3=?,XPATH4=?,XPATH5=?,XPATH6=?,XPATH7=?,XPATH8=?,XPATH9=?,XPATH10=?,FACETTES=?,CDISCOUNT_VENDOR=?,YOUTUBE_REFERENCED=?,ATTRIBUTES=?,NB_ATTRIBUTES=?,STATUS_CODE=?,HEADERS=?,DEPTH=?,PAGE_TYPE=?,MAGASIN=?,RAYON=?,PRODUIT=?,BRAND=?,CATEGORY=?,LAST_UPDATE=? WHERE URL=?";
 	private static String update_statement_with_oid ="UPDATE CRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,LINKS_SIZE=?,LINKS=?,H1=?,FOOTER_EXTRACT=?,ZTD_EXTRACT=?,SHORT_DESCRIPTION=?,XPATH1=?,XPATH2=?,XPATH3=?,XPATH4=?,XPATH5=?,XPATH6=?,XPATH7=?,XPATH8=?,XPATH9=?,XPATH10=?,FACETTES=?,CDISCOUNT_VENDOR=?,YOUTUBE_REFERENCED=?,ATTRIBUTES=?,NB_ATTRIBUTES=?,STATUS_CODE=?,HEADERS=?,DEPTH=?,PAGE_TYPE=?,MAGASIN=?,RAYON=?,PRODUIT=?,BRAND=?,CATEGORY=?,BLOBOID=?,LAST_UPDATE=? WHERE URL=?";
-
 	private static String get_blob_oid = "SELECT BLOBOID FROM CRAWL_RESULTS WHERE URL = ?";
+
+	private static String mongoContinuousCrawlDBName = "CRAWL4J";
+	private static String mongoContinuousCrawlCollectionName = "CRAWL_RESULTS";
 	private int totalProcessedPages;
 	private long totalLinks;
 	private long totalTextSize;
 	private Connection con;
 	private HttpSolrServer solr_server;
+	private MongoClient mongo_client;
 	private Map<String, URLinfo> crawledContent = new HashMap<String, URLinfo>();
 	private static String[] xpath_expression;
 
@@ -75,14 +84,15 @@ public class CrawlDataManagement {
 		try{
 			con = DriverManager.getConnection(url, user, passwd);
 			solr_server = new HttpSolrServer("http://localhost:8983/solr");
+			mongo_client =  new MongoClient( "localhost",27017);
 		} catch (Exception e){
 			System.out.println("Error instantiating either database or solr server");
 			e.printStackTrace();
 		}
 	}
 
-	
-	
+
+
 	public int getTotalProcessedPages() {
 		return totalProcessedPages;
 	}
@@ -117,6 +127,126 @@ public class CrawlDataManagement {
 
 	public void incTotalTextSize(int count) {
 		this.totalTextSize += count;
+	}
+
+	public void updateMongoDB(){
+
+		// we here fetch the matching table
+		DB db = mongo_client.getDB(mongoContinuousCrawlDBName);
+		DBCollection coll = db.getCollection(mongoContinuousCrawlCollectionName);
+		BulkWriteOperation builder = coll.initializeUnorderedBulkOperation();
+		try{
+			Iterator<Entry<String, URLinfo>> it = crawledContent.entrySet().iterator();
+			int local_counter = 0;
+			if (it.hasNext()){
+				local_counter++;
+				do {
+					local_counter ++;
+					Map.Entry<String, URLinfo> pairs = (Map.Entry<String, URLinfo>)it.next();
+					String url=pairs.getKey();
+					URLinfo info =pairs.getValue();
+					BasicDBObject replacingObject = new BasicDBObject("id", url);
+					replacingObject.append("whole_text",info.getText());
+					replacingObject.append("title",info.getTitle());
+					replacingObject.append("links_size",info.getLinks_size());
+					replacingObject.append("links",info.getOut_links());
+					replacingObject.append("h1",info.getH1());
+					replacingObject.append("footer_extract",info.getFooter());
+					replacingObject.append("ztd_extract",info.getZtd());
+					replacingObject.append("short_description",info.getShort_desc());		
+					replacingObject.append("vendor",info.getVendor());
+					String[] XPATHRESULTS = info.getXPATH_results();
+					if (XPATHRESULTS != null){	
+						if (XPATHRESULTS[0] != null){
+							replacingObject.append("xpath1",XPATHRESULTS[0]);	
+						} else {
+							replacingObject.append("xpath1","");
+						}
+						if (XPATHRESULTS[1] != null){
+							replacingObject.append("xpath2",XPATHRESULTS[1]);
+						} else {
+							replacingObject.append("xpath2","");
+						}
+						if (XPATHRESULTS[2] != null){
+							replacingObject.append("xpath3",XPATHRESULTS[2]);
+						} else {
+							replacingObject.append("xpath3","");
+						}
+						if (XPATHRESULTS[3] != null){
+							replacingObject.append("xpath4",XPATHRESULTS[3]);
+						} else {
+							replacingObject.append("xpath4","");
+						}
+						if (XPATHRESULTS[4] != null){
+							replacingObject.append("xpath5",XPATHRESULTS[4]);
+						} else {
+							replacingObject.append("xpath5","");
+						}
+						if (XPATHRESULTS[5] != null){
+							replacingObject.append("xpath6",XPATHRESULTS[5]);
+						} else {
+							replacingObject.append("xpath6","");
+						}
+						if (XPATHRESULTS[6] != null){
+							replacingObject.append("xpath7",XPATHRESULTS[6]);
+						} else {
+							replacingObject.append("xpath7","");
+						}
+						if (XPATHRESULTS[7] != null){
+							replacingObject.append("xpath8",XPATHRESULTS[7]);
+						} else {
+							replacingObject.append("xpath8","");
+						}
+						if (XPATHRESULTS[8] != null){
+							replacingObject.append("xpath9",XPATHRESULTS[8]);
+						} else {
+							replacingObject.append("xpath9","");
+						}
+						if (XPATHRESULTS[9] != null){
+							replacingObject.append("xpath10",XPATHRESULTS[9]);
+						} else {
+							replacingObject.append("xpath10","");
+						}
+					}else {
+						replacingObject.append("xpath1","");
+						replacingObject.append("xpath2","");
+						replacingObject.append("xpath3","");
+						replacingObject.append("xpath4","");
+						replacingObject.append("xpath5","");
+						replacingObject.append("xpath6","");
+						replacingObject.append("xpath7","");
+						replacingObject.append("xpath8","");
+						replacingObject.append("xpath9","");
+						replacingObject.append("xpath10","");
+					}
+					replacingObject.append("facettes",info.getFacettes());
+					replacingObject.append("attributes",info.getAtt_desc());
+					replacingObject.append("nb_attributes",info.getAtt_number());
+					replacingObject.append("status_code", info.getStatus_code());
+					replacingObject.append("headers", info.getResponse_headers());
+					replacingObject.append("depth", info.getDepth());
+					replacingObject.append("page_type", info.getPage_type());
+					replacingObject.append("magasin", info.getMagasin());
+					replacingObject.append("rayon", info.getRayon());
+					replacingObject.append("produit", info.getProduit());
+					replacingObject.append("categorie", info.getCategory());
+					replacingObject.append("marque", info.getBrand());
+					java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
+					replacingObject.append("last_update", sqlDate.toString());	
+					try{
+						builder.find(new BasicDBObject("id", url)).replaceOne(replacingObject);
+					}catch (Exception e){
+						System.out.println("Trouble inserting : "+url);
+						e.printStackTrace();  
+					}
+				}while (it.hasNext());	
+				BulkWriteResult result = builder.execute();
+				System.out.println(Thread.currentThread()+"Committed to MongoDB : " + local_counter + " updates : "+result);
+			}
+		} catch (Exception e){
+			//System.out.println("Line already inserted : "+nb_lines);
+			e.printStackTrace();  
+		}
 	}
 
 	public void updateSolrData() {
@@ -963,8 +1093,12 @@ public class CrawlDataManagement {
 		// warning the upsert method in the PostgreSQL database will empty the cache
 		// you have to update Solr first
 		updateSolrData();
+		//you have to update Solr first 
+		if (ContinuousController.isMongoDBStored){
+			updateMongoDB();
+		}
 		// we here choose wether or not we store all the page source code
-		if (NoMatchThreadPool.isBlobStored){
+		if (ContinuousController.isBlobStored){
 			updateDatabaseWithBlobData();
 		} else {
 			updateDatabaseData();
