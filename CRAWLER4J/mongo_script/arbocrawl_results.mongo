@@ -1,0 +1,13 @@
+# the database for the continuous crawl
+# create the database if it does not already exists
+use CRAWL4J
+# creating the continuous crawl collection
+# we here by the way create an index on _id
+#db.createCollection("ARBOCRAWL_RESULTS", {autoIndexID : true})
+db.createCollection('ARBOCRAWL_RESULTS')
+db.ARBOCRAWL_RESULTS.ensureIndex({"url":1})
+# Finding elements already presents
+db.ARBOCRAWL_RESULTS.find().pretty
+# inserting an URL
+# removing every thing from the collection
+db.CRAWL_RESULTS.remove({})
