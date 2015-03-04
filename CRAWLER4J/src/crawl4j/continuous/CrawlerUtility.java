@@ -2,17 +2,20 @@ package crawl4j.continuous;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
 
+import org.json.simple.JSONArray;
+
 public class CrawlerUtility {
-	
+
 	public static Pattern bracketPattern = Pattern.compile("\\(.*?\\)");
-	
+
 	public static String category_name = "Catégorie";
 	public static String product_name = "Nom du produit";
 	public static String brand_name = "Marque";
-	
+
 	public static boolean is_cdiscount_best_vendor_from_page_source_code(String str_source_code){
 		int cdiscount_index = str_source_code.indexOf("<p class='fpSellBy'>Vendu et expédié par <span class='logoCDS'>");
 		if (cdiscount_index >0){
@@ -66,5 +69,14 @@ public class CrawlerUtility {
 			compressedData = byteStream.toByteArray();
 		}	
 		return compressedData;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static String linksSettoJSON(Set<String> linksSet){
+		JSONArray setsArray = new JSONArray();
+		for (String link : linksSet){
+			setsArray.add(link);
+		}
+		return setsArray.toJSONString();
 	}
 }

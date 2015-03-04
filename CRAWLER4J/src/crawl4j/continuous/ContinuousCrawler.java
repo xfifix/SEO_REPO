@@ -20,6 +20,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.xml.sax.SAXException;
 
+import crawl4j.attributesutility.AttributesInfo;
+import crawl4j.attributesutility.AttributesUtility;
 import crawl4j.facettesutility.FacettesInfo;
 import crawl4j.facettesutility.FacettesUtility;
 import crawl4j.urlutilities.URL_Utilities;
@@ -119,9 +121,9 @@ public class ContinuousCrawler extends WebCrawler {
 			myCrawlDataManager.incTotalTextSize(htmlParseData.getText().length());	
 
 			// we here filter the outlinks we want to keep (they must be internal and they must respect the robot.txt
-			Set<String> filtered_links = filter_out_links(links);
+			Set<String> filtered_links = continuous_crawl_filter_out_links(links);
 			info.setLinks_size(filtered_links.size());
-			info.setOut_links(filtered_links.toString());
+			info.setOut_links(CrawlerUtility.linksSettoJSON(filtered_links));
 
 			Document doc = Jsoup.parse(html);
 			Elements titleel = doc.select("title");
@@ -141,18 +143,19 @@ public class ContinuousCrawler extends WebCrawler {
 			info.setShort_desc((short_desc_el==null? "":short_desc_el.text()));
 			// finding the number of attributes
 			if ("FicheProduit".equals(page_type)){		
+				List<AttributesInfo> attributesList = new ArrayList<AttributesInfo>();
 				Elements attributes = doc.select(".fpDescTb tr");
 				int nb_arguments = 0 ;
-				StringBuilder arguments_text = new StringBuilder();
 				for (Element tr_element : attributes){
 					Elements td_elements = tr_element.select("td");
 					if (td_elements.size() == 2){
 						nb_arguments++;
+						AttributesInfo toAdd = new AttributesInfo();
 						String category = td_elements.get(0).text();
-						arguments_text.append(category+"|||");	
+						toAdd.setData_name(category);
 						String description = td_elements.get(1).text();                                    
-						arguments_text.append(description);		
-						arguments_text.append("@@");
+						toAdd.setData(description);
+						attributesList.add(toAdd);
 						if (CrawlerUtility.category_name.equals(category)){
 							info.setCategory(description);
 						}
@@ -165,7 +168,8 @@ public class ContinuousCrawler extends WebCrawler {
 					}
 				}
 				info.setAtt_number(nb_arguments);
-				info.setAtt_desc(arguments_text.toString());
+				String attribute_json=AttributesUtility.getAttributesJSONStringToStore(attributesList);
+				info.setAtt_desc(attribute_json);
 			}
 			// parsing the facettes
 			if (("ListeProduit".equals(page_type))|| ("ListeProduitFiltre".equals(page_type))){
@@ -225,8 +229,7 @@ public class ContinuousCrawler extends WebCrawler {
 		}
 	}
 
-
-	public Set<String> filter_out_links(List<WebURL> links){
+	public Set<String> continuous_crawl_filter_out_links(List<WebURL> links){
 		Set<String> outputSet = new HashSet<String>();
 		for (WebURL url_out : links){
 			// the should visit is done upon the full URL

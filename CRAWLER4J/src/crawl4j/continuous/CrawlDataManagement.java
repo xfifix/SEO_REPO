@@ -27,7 +27,9 @@ import com.mongodb.BulkWriteOperation;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.util.JSON;
 
 import crawl4j.urlutilities.URLinfo;
 import crawl4j.xpathutility.XPathUtility;
@@ -219,8 +221,10 @@ public class CrawlDataManagement {
 						replacingObject.append("xpath9","");
 						replacingObject.append("xpath10","");
 					}
-					replacingObject.append("facettes",info.getFacettes());
-					replacingObject.append("attributes",info.getAtt_desc());
+					DBObject facettesDBObject = (DBObject) JSON.parse(info.getFacettes());
+					replacingObject.append("facettes",facettesDBObject);
+					DBObject attributesDBObject = (DBObject) JSON.parse(info.getAtt_desc());
+					replacingObject.append("attributes",attributesDBObject);
 					replacingObject.append("nb_attributes",info.getAtt_number());
 					replacingObject.append("status_code", info.getStatus_code());
 					replacingObject.append("headers", info.getResponse_headers());

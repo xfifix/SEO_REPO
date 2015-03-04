@@ -65,6 +65,7 @@ public class ContinuousController {
 		//CrawlDataManagement.bulk_size = 5;
 		//seed="http://www.cdiscount.com/maison/v-117-0.html";
 		//seed="http://www.cdiscount.com/livres-bd/livres-religion-esoterisme/billy-graham-pape-protestant/f-105210806-9782226135605.html";
+		//seed="http://www.cdiscount.com/pret-a-porter/vetements-enfant/folia-trench-fille-beige/f-113236602-wmh85433k.html";
 		System.out.println("Seed URL : "+seed);
 		System.out.println("Number of threads : "+numberOfCrawlers);
 		System.out.println("MongoDB stored : "+isMongoDBStored);
