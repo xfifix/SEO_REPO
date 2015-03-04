@@ -94,7 +94,7 @@ public class SemanticArboCrawler extends WebCrawler {
 			info.setTitle(title);
 
 			Map<String, Integer> title_tfMap = CorpusCache.computePageTFVector(title);
-			String title_semantic = CorpusCache.formatTFMap(title_tfMap);
+			String title_semantic = CorpusCache.formatTFMapJSON(title_tfMap);
 			info.setTitle_semantic(title_semantic);
 			info.setText(htmlParseData.getText());
 			String html = htmlParseData.getHtml();
@@ -195,7 +195,7 @@ public class SemanticArboCrawler extends WebCrawler {
 			// extracting the semantic most relevant words with TF/IDF indicators
 			// this step needs to put the semantics corpus frequency in cache at the crawling set up				
 			Map<String, Double> tfIdfMap = CorpusCache.computePageTFIDFVector(text_to_parse);
-			String semantics_hit_to_store = CorpusCache.formatTFIDFMapBestHits(tfIdfMap);
+			String semantics_hit_to_store = CorpusCache.formatTFIDFMapBestHitsJSON(tfIdfMap);
 			info.setSemantics_hit(semantics_hit_to_store);
 		}
 		myCrawlDataManager.getCrawledContent().put(url,info);

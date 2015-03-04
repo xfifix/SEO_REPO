@@ -20,6 +20,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 public class CorpusCache {
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
@@ -28,7 +30,7 @@ public class CorpusCache {
 
 	private static Map<String, Double> corpus_idf = new HashMap<String, Double>();
 	private static int nb_total_documents = 1;
-	private static int nb_semantic_hits_threshold = 10;
+	private static int nb_semantic_hits_threshold = 20;
 	
 	private static String semantic_hit_separator = " ";
 
@@ -171,6 +173,22 @@ public class CorpusCache {
 		return StringUtils.join(orderedKeysTenHits,semantic_hit_separator);
 	}
 
+	public static String formatTFIDFMapBestHitsJSON(Map<String, Double> tfIdfMap){
+		Map<String, Double> tfIdfMapSortedMap = sortByValueDescendingly( tfIdfMap );
+		String orderedKeysTenHits=getOrderedKeysBestHitsJSON(tfIdfMapSortedMap);
+		return orderedKeysTenHits;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static String formatTFMapJSON(Map<String, Integer> tfMap){
+		String[] keys=getKeys(tfMap);
+		JSONArray termsArray = new JSONArray();
+		for (String key : keys){
+			termsArray.add(key);
+		}
+		return termsArray.toJSONString();
+	}
+	
 	public static String formatTFMap(Map<String, Integer> tfMap){
 		String[] keys=getKeys(tfMap);
 		return StringUtils.join(keys,semantic_hit_separator);
@@ -180,6 +198,39 @@ public class CorpusCache {
 		Map<String, Double> tfIdfMapSortedMap = sortByValueDescendingly( tfIdfMap );
 		String[] orderedKeys=getKeys(tfIdfMapSortedMap);
 		return StringUtils.join(orderedKeys,semantic_hit_separator);
+	}
+//	facetteObject.put("facette_name", info.getFacetteName());
+//	facetteObject.put("facette_value", info.getFacetteValue());
+//	facetteObject.put("facette_count", info.getFacetteCount());
+//	facettesArray.add(facetteObject);
+	@SuppressWarnings("unchecked")
+	public static String getOrderedKeysBestHitsJSON(Map<String, Double> tfIdfMapSortedMap){
+		JSONArray tfidfsArray = new JSONArray();
+		if (tfIdfMapSortedMap.size() <= nb_semantic_hits_threshold){
+			Iterator<Entry<String, Double>> it = tfIdfMapSortedMap.entrySet().iterator();
+			// we go forward as the Map has been sorted descending
+			while (it.hasNext()){
+				Map.Entry<String, Double> pairs = (Map.Entry<String, Double>)it.next();
+				JSONObject tfidfObject = new JSONObject();
+				tfidfObject.put("term", pairs.getKey());
+				tfidfObject.put("frequency", pairs.getValue());
+				tfidfsArray.add(tfidfObject);
+			}
+		} else {
+			// we limit the number of hits up to ten
+			Iterator<Entry<String, Double>> it = tfIdfMapSortedMap.entrySet().iterator();
+			// we go forward as the Map has been sorted descending
+			int counter = 0;
+			while (it.hasNext() && counter <nb_semantic_hits_threshold){
+				Map.Entry<String, Double> pairs = (Map.Entry<String, Double>)it.next();
+				JSONObject tfidfObject = new JSONObject();
+				tfidfObject.put("term", pairs.getKey());
+				tfidfObject.put("frequency", pairs.getValue());
+				tfidfsArray.add(tfidfObject);
+				counter ++;
+			}
+		}
+		return tfidfsArray.toJSONString();
 	}
 
 	public static String[] getOrderedKeysBestHits(Map<String, Double> tfIdfMapSortedMap){

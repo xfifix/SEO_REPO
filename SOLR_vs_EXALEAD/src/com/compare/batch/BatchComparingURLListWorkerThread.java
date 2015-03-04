@@ -580,7 +580,7 @@ public class BatchComparingURLListWorkerThread implements Runnable {
 				getSolr.setHeader("User-Agent", "CdiscountBot-crawler");
 				// set the cookies
 				CookieStore cookieStoreSolr = new BasicCookieStore();
-				BasicClientCookie cookieSolr = new BasicClientCookie("_$hidden", "666.1");
+				BasicClientCookie cookieSolr = new BasicClientCookie("_$hidden", "229.1");
 				cookieSolr.setDomain("cdiscount.com");
 				cookieSolr.setPath("/");
 				cookieStoreSolr.addCookie(cookieSolr);    
@@ -608,7 +608,7 @@ public class BatchComparingURLListWorkerThread implements Runnable {
 				DefaultHttpClient clientExalead = new DefaultHttpClient();
 				// set the cookies
 				CookieStore cookieStoreExalead = new BasicCookieStore();
-				BasicClientCookie cookieExalead = new BasicClientCookie("_$hidden", "666.0");
+				BasicClientCookie cookieExalead = new BasicClientCookie("_$hidden", "229.0");
 				cookieExalead.setDomain("cdiscount.com");
 				cookieExalead.setPath("/");
 				cookieStoreExalead.addCookie(cookieExalead);    

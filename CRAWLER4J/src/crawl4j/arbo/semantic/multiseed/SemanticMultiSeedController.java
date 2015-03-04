@@ -7,8 +7,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,8 +16,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.BulkWriteOperation;
@@ -32,6 +28,7 @@ import crawl4j.arbo.semantic.LinkInfo;
 import crawl4j.arbo.semantic.SemanticArboController;
 import crawl4j.arbo.semantic.SemanticArboCrawlDataCache;
 import crawl4j.arbo.semantic.SemanticArboCrawler;
+import crawl4j.arbo.semantic.utility.SemanticCrawlerUtility;
 import crawl4j.urlutilities.MultiSeedSemanticArboInfo;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
@@ -71,7 +68,7 @@ public class SemanticMultiSeedController {
 		String user_agent_name = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
 		System.setProperty("http.agent",user_agent_name);
 		System.out.println("Starting the crawl configuration for Crawler1, Crawler2, Crawler3, Crawler4");
-		int maxDepthOfCrawling = 6; // common for all
+		int maxDepthOfCrawling = 2; // common for all
 		// Managing data for every crawlers for every site
 		// instantiating the seeds for our multiple crawlers
 		String nameCrawler1 = "delamaison";
@@ -237,8 +234,8 @@ public class SemanticMultiSeedController {
 		for (Object localData : crawlersLocalData) {
 			SemanticArboCrawlDataCache stat = (SemanticArboCrawlDataCache) localData;
 			Map<String, MultiSeedSemanticArboInfo> local_thread_cache = stat.getCrawledContent();
-			updateOrInsertSQLDatabaseData(local_thread_cache,name);
 			updateOrInsertMongoDBDatabaseData(local_thread_cache,name);
+			updateOrInsertSQLDatabaseData(local_thread_cache,name);
 		}
 	}
 
@@ -302,18 +299,18 @@ public class SemanticMultiSeedController {
 				replacingObject.append("outlinks_size",info.getLinks_size());
 
 				Integer nb_inlinks = 0;
-				String inLinksSemantic="";
-				Map<String, Integer> inLinksSemanticCountMap = new HashMap<String, Integer>();
+				String inLinksSemanticJSON="";
+				String inLinksSemanticCountMapJSON = "";
 				Set<LinkInfo> inlinksURL = inlinks_cache.get(url);
 				if ( inlinksURL != null){
 					nb_inlinks = inlinksURL.size();
-					inLinksSemanticCountMap = getIncomingLinkSemanticCount(inlinksURL);
-					inLinksSemantic = formatIncomingLinkSemantic(inLinksSemanticCountMap.keySet());
+					inLinksSemanticCountMapJSON = SemanticCrawlerUtility.getIncomingLinkSemanticCountJSON(inlinksURL);
+					inLinksSemanticJSON = SemanticCrawlerUtility.getIncomingLinkSemanticJSON(inlinksURL);
 				}
 
 				replacingObject.append("inlinks_size",nb_inlinks);
-				replacingObject.append("inlinks_semantic",inLinksSemantic);
-				replacingObject.append("inlinks_semantic_count",inLinksSemanticCountMap.toString());
+				replacingObject.append("inlinks_semantic",inLinksSemanticJSON);
+				replacingObject.append("inlinks_semantic_count",inLinksSemanticCountMapJSON);
 				replacingObject.append("nb_breadcrumbs",info.getNb_breadcrumbs());
 				replacingObject.append("nb_aggregated_ratings",info.getNb_aggregated_rating());
 				replacingObject.append("nb_ratings_values",info.getNb_ratings());
@@ -379,8 +376,8 @@ public class SemanticMultiSeedController {
 					Set<LinkInfo> inlinksURL = inlinks_cache.get(url);
 					if ( inlinksURL != null){
 						nb_inlinks = inlinksURL.size();
-						inLinksSemanticCountMap = getIncomingLinkSemanticCount(inlinksURL);
-						inLinksSemantic = formatIncomingLinkSemantic(inLinksSemanticCountMap.keySet());
+						inLinksSemanticCountMap = SemanticCrawlerUtility.getIncomingLinkSemanticCount(inlinksURL);
+						inLinksSemantic = SemanticCrawlerUtility.formatIncomingLinkSemantic(inLinksSemanticCountMap.keySet());
 					}
 					st.setInt(8,nb_inlinks);
 					st.setString(9,inLinksSemantic);
@@ -519,8 +516,8 @@ public class SemanticMultiSeedController {
 					Set<LinkInfo> inlinksURL = inlinks_cache.get(url);
 					if ( inlinksURL != null){
 						nb_inlinks = inlinksURL.size();
-						inLinksSemanticCountMap = getIncomingLinkSemanticCount(inlinksURL);
-						inLinksSemantic = formatIncomingLinkSemantic(inLinksSemanticCountMap.keySet());
+						inLinksSemanticCountMap = SemanticCrawlerUtility.getIncomingLinkSemanticCount(inlinksURL);
+						inLinksSemantic = SemanticCrawlerUtility.formatIncomingLinkSemantic(inLinksSemanticCountMap.keySet());
 					}
 					st.setInt(9,nb_inlinks);
 					st.setString(10,inLinksSemantic);
@@ -606,23 +603,7 @@ public class SemanticMultiSeedController {
 		mongo_client =  new MongoClient( "localhost",27017);
 	}
 
-	public static String formatIncomingLinkSemantic(Set<String> entry_set){
-		return StringUtils.join(entry_set,"@");
-	}
 
-	public static Map<String, Integer> getIncomingLinkSemanticCount(Set<LinkInfo> infos){
-		List<String> anchor_list = new ArrayList<String>();
-		for (LinkInfo info : infos){
-			String linkAnchor = info.getAnchor();
-			if (linkAnchor != null){
-				anchor_list.add(linkAnchor);
-			}
-		}
-		Map<String, Integer> counting_map = new HashMap<String, Integer>();
-		Set<String> unique = new HashSet<String>(anchor_list);
-		for (String key : unique) {
-			counting_map.put(key, Collections.frequency(anchor_list, key));
-		}
-		return counting_map;
-	}
+
+
 }
