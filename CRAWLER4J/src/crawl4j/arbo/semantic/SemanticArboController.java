@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,6 +20,14 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.BulkWriteOperation;
+import com.mongodb.BulkWriteResult;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.MongoClient;
+
+import crawl4j.arbo.semantic.utility.SemanticCrawlerUtility;
 import crawl4j.urlutilities.MultiSeedSemanticArboInfo;
 import crawl4j.vsm.CorpusCache;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
@@ -28,6 +37,7 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
 public class SemanticArboController {
+	
 	public static boolean magasin_limited = true;
 	public static String magasin_site_stub="http://www.cdiscount.com/maison/";
 	public static String site_stub="http://www.cdiscount.com/";
@@ -46,6 +56,11 @@ public class SemanticArboController {
 	// only shallow crawl will go through this step
 	// counting the number of inlinks forces us to wait for the very end
 	// of the crawl before we update the database	
+	
+	private static String mongoSemanticCrawlDBName = "CRAWL4J";
+	private static String mongoSemanticCrawlCollectionName = "ARBOCRAWL_RESULTS";
+	private static MongoClient mongo_client;
+	
 	private static Map<String, Set<LinkInfo>> inlinks_cache = new HashMap<String, Set<LinkInfo>>();
 	private static Connection con;
 
@@ -82,7 +97,7 @@ public class SemanticArboController {
 		// we here launch just a few threads, enough for a shallow crawl
 		// maximum twenty otherwise the concurrent update of the Map might get really too slow
 		// and become a bottleneck rather than a 
-		int numberOfCrawlers =  50;	
+		int numberOfCrawlers =  10;	
 		// downsizing to test
 		//int numberOfCrawlers =  1;
 
@@ -188,6 +203,85 @@ public class SemanticArboController {
 		}
 	}
 
+	public static void updateOrInsertMongoDBDatabaseData(Map<String, MultiSeedSemanticArboInfo> local_thread_cache, String name){
+		// we here fetch the matching table
+		DB db = mongo_client.getDB(mongoSemanticCrawlDBName);
+		DBCollection coll = db.getCollection(mongoSemanticCrawlCollectionName);
+		BulkWriteOperation builder = coll.initializeUnorderedBulkOperation();
+
+		Iterator<Entry<String, MultiSeedSemanticArboInfo>> it = local_thread_cache.entrySet().iterator();
+		int local_counter = 0;
+		if (it.hasNext()){
+			local_counter++;
+
+			do {
+				local_counter ++;
+				Map.Entry<String, MultiSeedSemanticArboInfo> pairs = (Map.Entry<String, MultiSeedSemanticArboInfo>)it.next();
+				String url=pairs.getKey();
+				MultiSeedSemanticArboInfo info = pairs.getValue();
+				// equivalent mongo upsert code analog to the following update statement
+				//UPDATE ARBOCRAWL_RESULTS SET WHOLE_TEXT=?,TITLE=?,H1=?,SHORT_DESCRIPTION=?,STATUS_CODE=?,DEPTH=?,OUTLINKS_SIZE=?,INLINKS_SIZE=?,INLINKS_SEMANTIC=?,INLINKS_SEMANTIC_COUNT=?,NB_BREADCRUMBS=?,NB_AGGREGATED_RATINGS=?,NB_RATINGS_VALUES=?,NB_PRICES=?,NB_AVAILABILITIES=?,NB_REVIEWS=?,NB_REVIEWS_COUNT=?,NB_IMAGES=?,NB_SEARCH_IN_URL=?,NB_ADD_IN_TEXT=?,NB_FILTER_IN_TEXT=?,NB_SEARCH_IN_TEXT=?,NB_GUIDE_ACHAT_IN_TEXT=?,NB_PRODUCT_INFO_IN_TEXT=?,NB_LIVRAISON_IN_TEXT=?,NB_GARANTIES_IN_TEXT=?,NB_PRODUITS_SIMILAIRES_IN_TEXT=?,NB_IMAGES_TEXT=?,WIDTH_AVERAGE=?,HEIGHT_AVERAGE=?,PAGE_TYPE=?,SEMANTIC_HITS=?,SEMANTIC_TITLE=?,CONCURRENT_NAME=?,LAST_UPDATE=? WHERE URL=?"; 
+				//                                  1         2      3         4                   5          6            7             8               9                      10                    11                 12                     13               14            15              16             17                18              19               20                  21                 22                      23                       24                      25                      26                      27                          28              29             30              31             32             33               34              35               36
+				BasicDBObject replacingObject = new BasicDBObject("url", url);
+				replacingObject.append("whole_text",info.getText());
+				replacingObject.append("title",info.getTitle());
+				replacingObject.append("h1",info.getH1());
+				replacingObject.append("short_description",info.getShort_desc());
+				replacingObject.append("status_code",info.getStatus_code());
+				replacingObject.append("depth",info.getDepth());
+				replacingObject.append("outlinks_size",info.getLinks_size());
+
+				Integer nb_inlinks = 0;
+				String inLinksSemanticJSON="";
+				String inLinksSemanticCountMapJSON = "";
+				Set<LinkInfo> inlinksURL = inlinks_cache.get(url);
+				if ( inlinksURL != null){
+					nb_inlinks = inlinksURL.size();
+					inLinksSemanticCountMapJSON = SemanticCrawlerUtility.getIncomingLinkSemanticCountJSON(inlinksURL);
+					inLinksSemanticJSON = SemanticCrawlerUtility.getIncomingLinkSemanticJSON(inlinksURL);
+				}
+
+				replacingObject.append("inlinks_size",nb_inlinks);
+				replacingObject.append("inlinks_semantic",inLinksSemanticJSON);
+				replacingObject.append("inlinks_semantic_count",inLinksSemanticCountMapJSON);
+				replacingObject.append("nb_breadcrumbs",info.getNb_breadcrumbs());
+				replacingObject.append("nb_aggregated_ratings",info.getNb_aggregated_rating());
+				replacingObject.append("nb_ratings_values",info.getNb_ratings());
+				replacingObject.append("nb_prices",info.getNb_prices());
+				replacingObject.append("nb_availabilities",info.getNb_availabilities());
+				replacingObject.append("nb_reviews",info.getNb_reviews());
+				replacingObject.append("nb_reviews_count",info.getNb_reviews_count());
+				replacingObject.append("nb_images",info.getNb_images());
+				replacingObject.append("nb_search_in_url",info.getNb_search_in_url());
+				replacingObject.append("nb_add_in_text",info.getNb_add_in_text());
+				replacingObject.append("nb_filter_in_text",info.getNb_filter_in_text());
+				replacingObject.append("nb_search_in_text",info.getNb_search_in_text());
+				replacingObject.append("nb_guide_achat_int_text",info.getNb_guide_achat_in_text());
+				replacingObject.append("nb_product_info_in_text",info.getNb_product_info_in_text());
+				replacingObject.append("nb_livraison_in_text",info.getNb_livraison_in_text());
+				replacingObject.append("nb_garanties_in_text",info.getNb_garanties_in_text());
+				replacingObject.append("nb_produits_similaires_in_text",info.getNb_produits_similaires_in_text());
+				replacingObject.append("nb_images_text",info.getNb_total_images());
+				replacingObject.append("width_average",info.getWidth_average());
+				replacingObject.append("height_average",info.getHeight_average());
+				replacingObject.append("page_type",info.getPage_type());
+				replacingObject.append("semantic_hits",info.getSemantics_hit());
+				replacingObject.append("semantic_title",info.getTitle_semantic());
+				replacingObject.append("concurrent_name",name);
+				replacingObject.append("last_update",new Date());
+				try{
+					builder.find(new BasicDBObject("url", url)).upsert().replaceOne(replacingObject);
+				}catch (Exception e){
+					System.out.println("Trouble inserting : "+url);
+					e.printStackTrace();  
+				}
+			}while (it.hasNext());	
+			BulkWriteResult result = builder.execute();
+			System.out.println(Thread.currentThread()+"Committed to MongoDB : " + local_counter + " updates : "+result);
+		}
+	}
+
+	
 	public static void updateOrInsertDatabaseData(Map<String, MultiSeedSemanticArboInfo> local_thread_cache, String name){
 		try{
 			Iterator<Entry<String, MultiSeedSemanticArboInfo>> it = local_thread_cache.entrySet().iterator();
