@@ -102,7 +102,7 @@ public class SemanticArboCrawler extends WebCrawler {
 			myCrawlDataManager.incTotalLinks(links.size());
 			myCrawlDataManager.incTotalTextSize(htmlParseData.getText().length());	
 
-			Set<LinkInfo> filtered_links = filter_out_links(links);
+			Set<LinkInfo> filtered_links = semantic_filter_out_links(links);
 			info.setOutgoingLinks(filtered_links);
 			info.setLinks_size(filtered_links.size());
 			// parsing the document to get the predictor of our model			
@@ -201,7 +201,7 @@ public class SemanticArboCrawler extends WebCrawler {
 		myCrawlDataManager.getCrawledContent().put(url,info);
 	}
 
-	public Set<LinkInfo> filter_out_links(List<WebURL> links){
+	public Set<LinkInfo> semantic_filter_out_links(List<WebURL> links){
 		Set<LinkInfo> outputSet = new HashSet<LinkInfo>();
 		for (WebURL url_out : links){
 			if ((shouldVisit(url_out)) && (getMyController().getRobotstxtServer().allows(url_out))){
