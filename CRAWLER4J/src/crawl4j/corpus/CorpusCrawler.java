@@ -37,22 +37,10 @@ public class CorpusCrawler extends WebCrawler {
 		String url = page.getWebURL().getURL();
 		System.out.println(url);
 		System.out.println(Thread.currentThread()+": Visiting URL : "+url);
-
 		if (page.getParseData() instanceof HtmlParseData) {
-			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();			
-			String semantic_text = CorpusCache.preprocessSemanticText(htmlParseData.getText());
-			VectorStateSpringRepresentation vector_rep = new VectorStateSpringRepresentation(semantic_text);
-			Map<String, Integer> word_map = vector_rep.getWordFrequencies();
-			Iterator<Map.Entry<String, Integer>> it = word_map.entrySet().iterator();
-			while (it.hasNext()) {
-				Map.Entry<String, Integer> pairs = (Map.Entry<String, Integer>)it.next();
-				String word=pairs.getKey();
-				// we here don't want any number
-				if (!word.matches(".*\\d+.*")){
-					System.out.println("Word to add to the corpus : "+word);
-					myCrawlDataManager.updateWord(word, url);
-				}
-			}	
+			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();		
+			myCrawlDataManager.updateText(htmlParseData.getText(), url);
+
 		}
 	}
 

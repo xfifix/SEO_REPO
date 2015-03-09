@@ -8,8 +8,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
+import crawl4j.vsm.CorpusCache;
+import crawl4j.vsm.VectorStateSpringRepresentation;
 
 public class CorpusCrawlDataManagement {
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/crawler4j.properties";
@@ -64,6 +69,22 @@ public class CorpusCrawlDataManagement {
 		return outputSet;
 	}
 
+	public void updateText(String text, String currentUrl){
+		String semantic_text = CorpusCache.preprocessSemanticText(text);
+		VectorStateSpringRepresentation vector_rep = new VectorStateSpringRepresentation(semantic_text);
+		Map<String, Integer> word_map = vector_rep.getWordFrequencies();
+		Iterator<Map.Entry<String, Integer>> it = word_map.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<String, Integer> pairs = (Map.Entry<String, Integer>)it.next();
+			String word=pairs.getKey();
+			// we here don't want any number
+			if (!word.matches(".*\\d+.*")){
+				System.out.println("Word to add to the corpus : "+word);
+				this.updateWord(word, currentUrl);
+			}
+		}	
+	}
+
 	public void updateWord(String word, String currentUrl){
 		try{
 			// finding if the world is already present in our database dictionary
@@ -112,14 +133,14 @@ public class CorpusCrawlDataManagement {
 		} catch (SQLException e){
 			e.printStackTrace();
 			System.out.println("Trouble inserting "+word + " for URL : "+currentUrl);
-//			if (con != null) {
-//				try {
-//					con.rollback();
-//				} catch (SQLException ex1) {
-//					ex1.printStackTrace();
-//					System.out.println("Trouble inserting "+word + " for URL : "+currentUrl);
-//				}
-//			}
+			//			if (con != null) {
+			//				try {
+			//					con.rollback();
+			//				} catch (SQLException ex1) {
+			//					ex1.printStackTrace();
+			//					System.out.println("Trouble inserting "+word + " for URL : "+currentUrl);
+			//				}
+			//			}
 		}	
 	}
 

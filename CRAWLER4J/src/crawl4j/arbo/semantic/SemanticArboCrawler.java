@@ -12,6 +12,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import crawl4j.corpus.CorpusCrawlDataManagement;
 import crawl4j.urlutilities.MultiSeedSemanticArboInfo;
 import crawl4j.urlutilities.URL_Utilities;
 import crawl4j.vsm.CorpusCache;
@@ -41,9 +42,11 @@ public class SemanticArboCrawler extends WebCrawler {
 			+ "|wav|avi|mov|mpeg|ram|m4v|ico|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 
 	SemanticArboCrawlDataCache myCrawlDataManager;
+	CorpusCrawlDataManagement myCorpusDataManager;
 
 	public SemanticArboCrawler() {
 		myCrawlDataManager = new SemanticArboCrawlDataCache();
+		myCorpusDataManager = new CorpusCrawlDataManagement();
 	}
 
 	// we don't visit media URLs and we keep inside Cdiscount
@@ -193,7 +196,8 @@ public class SemanticArboCrawler extends WebCrawler {
 			info.setHeight_average(height_result/height_count);
 			info.setWidth_average(width_result/width_count);	
 			// extracting the semantic most relevant words with TF/IDF indicators
-			// this step needs to put the semantics corpus frequency in cache at the crawling set up				
+			// this step needs to put the semantics corpus frequency in cache at the crawling set up
+			myCorpusDataManager.updateText(text_to_parse,url);
 			Map<String, Double> tfIdfMap = CorpusCache.computePageTFIDFVector(text_to_parse);
 			String semantics_hit_to_store = CorpusCache.formatTFIDFMapBestHitsJSON(tfIdfMap);
 			info.setSemantics_hit(semantics_hit_to_store);

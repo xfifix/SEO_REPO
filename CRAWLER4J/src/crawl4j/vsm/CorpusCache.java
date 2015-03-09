@@ -318,6 +318,7 @@ public class CorpusCache {
 		semanticText=semanticText.replace("n'", "");
 		semanticText=semanticText.replace("d'", "");
 		semanticText=semanticText.replace("m'", "");
+		semanticText=semanticText.replace("s'", "");
 		return semanticText;
 	}
 	
