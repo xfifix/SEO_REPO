@@ -107,7 +107,8 @@ public class CorpusCache {
 	public static Map<String, Double> computePageTFIDFVector(String pageText){
 		pageText = CorpusCache.preprocessSemanticText(pageText);
 		VectorStateSpringRepresentation vs =new VectorStateSpringRepresentation(pageText);
-		Map<String, Double> tfidfMap = addTFIDF(vs.getWordFrequencies());
+		Map<String,Integer> cleanedTfMap = cleanTFMap(vs.getWordFrequencies());
+		Map<String, Double> tfidfMap = addTFIDF(cleanedTfMap);
 		return tfidfMap;
 	}
 
@@ -121,6 +122,18 @@ public class CorpusCache {
 		return cosine_tfidfsimilarity(firstMap,secondMap);
 	}
 
+	public static Map<String, Integer> cleanTFMap(Map<String, Integer> to_clean){
+		Iterator<Entry<String, Integer>> clean_it = to_clean.entrySet().iterator();
+		while (clean_it.hasNext()) {
+			Map.Entry<String, Integer> pairs = clean_it.next();
+			String word=pairs.getKey();
+			if (word.matches(".*\\d+.*")){
+				clean_it.remove();
+			}
+		}
+		return to_clean;
+	}
+	
 	public static Map<String, Double> addTFIDF(Map<String, Integer> v1){
 		Map<String, Double> output = new HashMap<String, Double>();
 		Iterator<Entry<String, Integer>> it = v1.entrySet().iterator();
