@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="java.sql.ResultSet"/>
-<fullyQualifiedTypeName name="java.net.HttpURLConnection"/>
-<fullyQualifiedTypeName name="javax.xml.parsers.DocumentBuilderFactory"/>
-<fullyQualifiedTypeName name="javax.xml.parsers.DocumentBuilder"/>
-<fullyQualifiedTypeName name="java.io.StringReader"/>
-<fullyQualifiedTypeName name="org.xml.sax.InputSource"/>
-<fullyQualifiedTypeName name="javax.xml.xpath.XPath"/>
 <fullyQualifiedTypeName name="javax.xml.xpath.XPathFactory"/>
 <fullyQualifiedTypeName name="org.htmlcleaner.HtmlCleaner"/>
 <fullyQualifiedTypeName name="org.htmlcleaner.TagNode"/>
@@ -60,4 +53,11 @@
 <fullyQualifiedTypeName name="crawl4j.attributesutility.AttributesUtility"/>
 <fullyQualifiedTypeName name="java.util.Set"/>
 <fullyQualifiedTypeName name="org.json.simple.JSONObject"/>
+<fullyQualifiedTypeName name="org.apache.http.cookie.Cookie"/>
+<fullyQualifiedTypeName name="org.apache.http.config.Registry"/>
+<fullyQualifiedTypeName name="org.apache.http.client.CookieStore"/>
+<fullyQualifiedTypeName name="org.apache.http.client.methods.HttpGet"/>
+<fullyQualifiedTypeName name="org.apache.http.HttpResponse"/>
+<fullyQualifiedTypeName name="org.apache.http.client.methods.CloseableHttpResponse"/>
+<fullyQualifiedTypeName name="org.apache.http.protocol.HttpContext"/>
 </qualifiedTypeNameHistroy>

@@ -3,23 +3,30 @@ package cron.analytics;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.http.HttpHost;
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.cookie.BasicClientCookie;
+import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class MultipleIPsCronJob {
+public class MultipleIPsCookieCronJob {
 	//	private static int min_number_of_wait_times = 40;
 	//	private static int max_number_of_wait_times = 60;
 	private static int min_number_of_wait_times = 20;
@@ -138,24 +145,39 @@ public class MultipleIPsCronJob {
 				Thread.sleep(randInt(min_number_of_wait_times,max_number_of_wait_times)*1000);
 				System.out.println("Fetching a new page");
 				String constructed_url ="https://www.google.fr/search?q="+keyword+"&start="+Integer.toString(depth*10);
-                // we here use our properly configured squid proxy on port 3128 on localhost
-				Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", 3128));
-				URL url = new URL(constructed_url);
-				HttpURLConnection connection = (HttpURLConnection)url.openConnection(proxy);
-				connection.setConnectTimeout(1000000000);
+				
+				// adding a fake cookie
+				CookieStore cookieStoreSolr = new BasicCookieStore();
+				BasicClientCookie cookieSolr = new BasicClientCookie("_$hidden", "230.1");
+				cookieSolr.setDomain("cdiscount.com");
+				cookieSolr.setPath("/");
+				cookieStoreSolr.addCookie(cookieSolr);    
+				CloseableHttpClient httpclient = HttpClients.custom()
+						.setDefaultCookieStore(cookieStoreSolr)
+						.build();
+				//HttpClientContext context = HttpClientContext.create();
+				HttpContext context = new BasicHttpContext();
 				String randomAgent = randomUserAgent();
-				connection.setRequestProperty("User-Agent",randomAgent);
-				connection.connect();
-				InputStreamReader in = new InputStreamReader((InputStream) connection.getContent());
-				BufferedReader buff = new BufferedReader(in);
-				StringBuilder builder = new StringBuilder();
-				String line;
-				do {
-					line = buff.readLine();
-					builder.append(line);
-				} while (line != null);
-				String pageString = builder.toString();
-				connection.disconnect();		
+				context.setAttribute(CoreProtocolPNames.USER_AGENT,randomAgent);
+				// request.setHeader("Referer", "http://www.google.com");
+
+				HttpGet getSERPrequest = new HttpGet(constructed_url);
+				// we here use our properly configured squid proxy on port 3128 on localhost
+
+				HttpHost squid_proxy = new HttpHost("localhost", 3128, "http");
+
+				RequestConfig config = RequestConfig.custom()
+						.setProxy(squid_proxy)
+						.build();
+				getSERPrequest.setConfig(config);
+
+				CloseableHttpResponse responseSERP = httpclient.execute(getSERPrequest,context);
+
+				System.out.println("----------------------------------------");
+				System.out.println(responseSERP.getStatusLine());
+				// and ensure it is fully consumed
+				String pageString = EntityUtils.toString(responseSERP.getEntity());
+				EntityUtils.consume(responseSERP.getEntity());
 
 				doc =  Jsoup.parse(pageString);
 				Elements serps = doc.select("h3[class=r]");
@@ -214,4 +236,7 @@ public class MultipleIPsCronJob {
 		int randomNum = rand.nextInt((max - min) + 1) + min;
 		return randomNum;
 	}
+
+
+
 }

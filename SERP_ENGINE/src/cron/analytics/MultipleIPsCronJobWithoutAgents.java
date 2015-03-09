@@ -19,7 +19,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class MultipleIPsCronJob {
+public class MultipleIPsCronJobWithoutAgents {
 	//	private static int min_number_of_wait_times = 40;
 	//	private static int max_number_of_wait_times = 60;
 	private static int min_number_of_wait_times = 20;
@@ -28,15 +28,9 @@ public class MultipleIPsCronJob {
 	private static String user_agent_path = "/home/sduprey/My_Data/My_User_Agents/user-agent.txt";
 	public static void main(String[] args){
 		System.setProperty("http.agent", "");
-		try {
-			loadUserAgents();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			System.out.println("Trouble loading all user-agents");
-			// we'll do with just one user agent
-			user_agents.add("Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)");
-		}
+		// we here add just a single  user agent
+		user_agents.add("Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)");
+		
 		try{	
 			DataBaseManagement.instantiante_connection();
 			int counter = DataBaseManagement.check_alive_run();
