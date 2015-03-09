@@ -173,8 +173,6 @@ public class MultipleIPsCookieCronJob {
 
 				CloseableHttpResponse responseSERP = httpclient.execute(getSERPrequest,context);
 
-				System.out.println("----------------------------------------");
-				System.out.println(responseSERP.getStatusLine());
 				// and ensure it is fully consumed
 				String pageString = EntityUtils.toString(responseSERP.getEntity());
 				EntityUtils.consume(responseSERP.getEntity());
