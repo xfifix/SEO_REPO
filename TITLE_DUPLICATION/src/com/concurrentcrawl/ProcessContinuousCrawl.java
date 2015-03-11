@@ -26,7 +26,7 @@ public class ProcessContinuousCrawl {
 	private static int batch_size = 10000;
 	private static String insert_statement = "INSERT INTO CURRENT_CONTINUOUS_DUPLICATES(TITLE,NB_URLS,URLS,DUPLICATE_TIME,MAGASIN,RAYON)"
 			+ " VALUES(?,?,?,?,?,?)";
-	private static String select_statement = "select title, url, magasin, rayon, cdiscount_vendor, page_type from crawl_results";
+	private static String select_statement = "select title, url, magasin, rayon, cdiscount_vendor, page_type from crawl_results  where now()-last_update > INTERVAL '10 days'";
 	private static Map<String, List<URLTitleInfo>> titles_data = new HashMap<String, List<URLTitleInfo>>();
 	private static String drop_CURRENT_CONTINUOUS_DUPLICATES_table = "DROP TABLE IF EXISTS CURRENT_CONTINUOUS_DUPLICATES";
 	private static String create_CURRENT_CONTINUOUS_DUPLICATESs_table = "CREATE TABLE IF NOT EXISTS CURRENT_CONTINUOUS_DUPLICATES (TITLE TEXT,NB_URLS INT, URLS TEXT, DUPLICATE_TIME DATE, MAGASIN TEXT, RAYON TEXT) TABLESPACE mydbspace";

@@ -29,11 +29,26 @@ import org.jsoup.select.Elements;
 public class MultipleIPsCookieCronJob {
 	//	private static int min_number_of_wait_times = 40;
 	//	private static int max_number_of_wait_times = 60;
-	private static int min_number_of_wait_times = 20;
-	private static int max_number_of_wait_times = 25;
+	private static int min_number_of_wait_times = 15;
+	private static int max_number_of_wait_times = 20;
 	private static List<String> user_agents = new ArrayList<String>();
 	private static String user_agent_path = "/home/sduprey/My_Data/My_User_Agents/user-agent.txt";
 	public static void main(String[] args){
+
+		if (args.length == 1 ){
+			try{
+				min_number_of_wait_times = Integer.parseInt(args[0]);
+				max_number_of_wait_times = min_number_of_wait_times + 5;
+			} catch (NumberFormatException e){
+				e.printStackTrace();
+				System.out.println("Minimum number of waiting times : " + min_number_of_wait_times);
+				System.out.println("Maximum number of waiting times : " + max_number_of_wait_times);
+			}
+		}
+
+		System.out.println("Minimum number of waiting times : " + min_number_of_wait_times);
+		System.out.println("Maximum number of waiting times : " + max_number_of_wait_times);
+
 		System.setProperty("http.agent", "");
 		try {
 			loadUserAgents();
@@ -145,7 +160,7 @@ public class MultipleIPsCookieCronJob {
 				Thread.sleep(randInt(min_number_of_wait_times,max_number_of_wait_times)*1000);
 				System.out.println("Fetching a new page");
 				String constructed_url ="https://www.google.fr/search?q="+keyword+"&start="+Integer.toString(depth*10);
-				
+
 				// adding a fake cookie
 				CookieStore cookieStoreSolr = new BasicCookieStore();
 				BasicClientCookie cookieSolr = new BasicClientCookie("_$hidden", "230.1");
