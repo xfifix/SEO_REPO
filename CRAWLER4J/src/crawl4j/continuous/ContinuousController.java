@@ -75,7 +75,9 @@ public class ContinuousController {
 		System.out.println("Max depth of crawling : "+maxDepthOfCrawling);
 		System.out.println("Cache bulk size per thread : "+CrawlDataManagement.bulk_size);
 		System.out.println("XPATH conf file path : "+XPathUtility.xpathconf_path);
-		System.out.println("Database conf file path : "+CrawlDataManagement.database_con_path);		
+		System.out.println("Database conf file path : "+CrawlDataManagement.database_con_path);
+		// loading XPATH expression
+		XPathUtility.loadXPATHConf();
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e1) {

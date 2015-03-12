@@ -16,6 +16,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import crawl4j.continuous.ContinuousController;
 import crawl4j.continuous.CrawlDataManagement;
 import crawl4j.xpathutility.XPathUtility;
 
@@ -24,8 +25,6 @@ public class NoMatchThreadPool {
 	public static String crawl_conf_path = "/home/sduprey/My_Data/My_ContinuousCrawl_Conf/crawl.conf";
 	public static Properties properties;
 
-	public static boolean isBlobStored=false;
-	public static boolean isXPATHparsed=true;
 	private static int nomatch_fixed_pool_size = 200;
 	private static int nomatch_size_bucket = 800;
 
@@ -43,8 +42,8 @@ public class NoMatchThreadPool {
 			loadProperties();
 			nomatch_fixed_pool_size = Integer.valueOf(properties.getProperty("crawl.nomatch_pool_size")); 
 			nomatch_size_bucket = Integer.valueOf(properties.getProperty("crawl.nomatch_size_bucket"));
-			isBlobStored = Boolean.parseBoolean(properties.getProperty("crawl.isBlobStored"));
-			isXPATHparsed = Boolean.parseBoolean(properties.getProperty("crawl.isXPATHparsed"));
+			ContinuousController.isBlobStored = Boolean.parseBoolean(properties.getProperty("crawl.isBlobStored"));
+			ContinuousController.isXPATHparsed = Boolean.parseBoolean(properties.getProperty("crawl.isXPATHparsed"));
 			//String user_agent_name = "CdiscountBot-crawler";
 			my_user_agent=properties.getProperty("crawl.user_agent_name"); 
 			//int maxDepthOfCrawling = 300;
@@ -65,7 +64,8 @@ public class NoMatchThreadPool {
 		System.out.println("User agent selected : "+my_user_agent);
 		System.out.println("Number of threads : "+nomatch_fixed_pool_size);
 		System.out.println("Bucket size : "+nomatch_size_bucket);
-
+		// loading XPATH expression
+		XPathUtility.loadXPATHConf();
 		// it would be best to use a property file to store MD5 password
 		//		// Getting the database property
 		Properties props = new Properties();

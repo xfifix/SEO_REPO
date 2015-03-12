@@ -45,10 +45,8 @@
 <fullyQualifiedTypeName name="java.io.File"/>
 <fullyQualifiedTypeName name="crawl4j.nomatch.NoMatchWorkerThread"/>
 <fullyQualifiedTypeName name="crawl4j.nomatch.NoMatchThreadPool"/>
-<fullyQualifiedTypeName name="crawl4j.continuous.ContinuousController"/>
 <fullyQualifiedTypeName name="java.util.Date"/>
 <fullyQualifiedTypeName name="crawl4j.continuous.CrawlDataManagement"/>
-<fullyQualifiedTypeName name="crawl4j.continuous.CrawlerUtility"/>
 <fullyQualifiedTypeName name="crawl4j.attributesutility.AttributesInfo"/>
 <fullyQualifiedTypeName name="crawl4j.attributesutility.AttributesUtility"/>
 <fullyQualifiedTypeName name="java.util.Set"/>
@@ -60,4 +58,6 @@
 <fullyQualifiedTypeName name="org.apache.http.HttpResponse"/>
 <fullyQualifiedTypeName name="org.apache.http.client.methods.CloseableHttpResponse"/>
 <fullyQualifiedTypeName name="org.apache.http.protocol.HttpContext"/>
+<fullyQualifiedTypeName name="crawl4j.continuous.CrawlerUtility"/>
+<fullyQualifiedTypeName name="crawl4j.continuous.ContinuousController"/>
 </qualifiedTypeNameHistroy>

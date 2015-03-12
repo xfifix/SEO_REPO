@@ -17,6 +17,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import crawl4j.continuous.ContinuousController;
 import crawl4j.continuous.CrawlDataManagement;
 import crawl4j.xpathutility.XPathUtility;
 
@@ -25,8 +26,6 @@ public class ListThreadPool {
 	public static String crawl_conf_path = "/home/sduprey/My_Data/My_ContinuousCrawl_Conf/crawl.conf";
 	private static String site_radical = "http://www.cdiscount.com";
 	public static Properties properties;
-	public static boolean isBlobStored=false;
-	public static boolean isXPATHparsed=true;
 	private static int list_fixed_pool_size = 250;
 	private static int list_size_bucket = 40000;
 	private static String select_all_urls = "SELECT URL FROM CRAWL_RESULTS";
@@ -40,8 +39,8 @@ public class ListThreadPool {
 			loadProperties();
 			list_fixed_pool_size = Integer.valueOf(properties.getProperty("crawl.list_pool_size")); 
 			list_size_bucket = Integer.valueOf(properties.getProperty("crawl.list_size_bucket"));
-			isBlobStored = Boolean.parseBoolean(properties.getProperty("crawl.isBlobStored"));
-			isXPATHparsed = Boolean.parseBoolean(properties.getProperty("crawl.isXPATHparsed"));
+			ContinuousController.isBlobStored = Boolean.parseBoolean(properties.getProperty("crawl.isBlobStored"));
+			ContinuousController.isXPATHparsed = Boolean.parseBoolean(properties.getProperty("crawl.isXPATHparsed"));
 			//String user_agent_name = "CdiscountBot-crawler";
 			my_user_agent=properties.getProperty("crawl.user_agent_name"); 
 			XPathUtility.xpathconf_path=properties.getProperty("crawl.xpathconf_path"); 
@@ -60,7 +59,8 @@ public class ListThreadPool {
 		System.out.println("User agent selected : "+my_user_agent);
 		System.out.println("Number of threads for list crawler : "+list_fixed_pool_size);
 		System.out.println("Bucket size for list crawler : "+list_size_bucket);
-
+		// loading XPATH expression
+		XPathUtility.loadXPATHConf();
 		// it would be best to use a property file to store MD5 password
 		//		// Getting the database property
 		Properties props = new Properties();

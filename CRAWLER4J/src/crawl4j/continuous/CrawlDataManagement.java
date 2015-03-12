@@ -59,8 +59,6 @@ public class CrawlDataManagement {
 
 
 	public CrawlDataManagement() {
-		// loading XPATH expression
-		XPathUtility.loadXPATHConf();
 		// Reading the property of our database
 		Properties props = new Properties();
 		FileInputStream in = null;      

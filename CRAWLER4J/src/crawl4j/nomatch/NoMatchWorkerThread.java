@@ -22,6 +22,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.xml.sax.SAXException;
 
+import crawl4j.continuous.ContinuousController;
 import crawl4j.continuous.CrawlDataManagement;
 import crawl4j.continuous.CrawlerUtility;
 import crawl4j.facettesutility.FacettesInfo;
@@ -217,9 +218,9 @@ public class NoMatchWorkerThread implements Runnable {
 		info.setYoutubeVideoReferenced(youtube);
 
 		// XPATH parsing
-		if (NoMatchThreadPool.isXPATHparsed){
+		if (ContinuousController.isXPATHparsed){
 			try {
-				String[] xpathOutput = XPathUtility.parse_page_code_source(html,loc_data_manager.getXpath_expression());
+				String[] xpathOutput = XPathUtility.parse_page_code_source(html);
 				info.setXPATH_results(xpathOutput);
 				info.setZtd(xpathOutput[8]);
 				info.setFooter(xpathOutput[9]);
@@ -232,7 +233,7 @@ public class NoMatchWorkerThread implements Runnable {
 		}
 
 		// filling up entity to be cached with page source code
-		if (NoMatchThreadPool.isBlobStored){
+		if (ContinuousController.isBlobStored){
 			byte[] compressedPageContent = CrawlerUtility.gzip_compress_byte_stream(html.getBytes());
 			info.setPage_source_code(compressedPageContent);
 		}

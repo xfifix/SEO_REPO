@@ -1,7 +1,6 @@
 package crawl4j.continuous.list;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -9,24 +8,11 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.xml.sax.SAXException;
 
 import crawl4j.continuous.CrawlDataManagement;
 import crawl4j.continuous.CrawlerUtility;
-import crawl4j.facettesutility.FacettesInfo;
-import crawl4j.facettesutility.FacettesUtility;
 import crawl4j.urlutilities.URL_Utilities;
 import crawl4j.urlutilities.URLinfo;
-import crawl4j.xpathutility.XPathUtility;
 
 
 public class ListWorkerThread implements Runnable {
@@ -83,7 +69,7 @@ public class ListWorkerThread implements Runnable {
 				connection.setRequestMethod("GET");
 				connection.setRequestProperty("User-Agent",this.user_agent);
 				connection.setInstanceFollowRedirects(false);
-				connection.setConnectTimeout(3000);
+				connection.setConnectTimeout(30000);
 				connection.connect();
 				// getting the status from the connection
 				status_code = connection.getResponseCode();
