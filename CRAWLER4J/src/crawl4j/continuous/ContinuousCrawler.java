@@ -59,161 +59,41 @@ public class ContinuousCrawler extends WebCrawler {
 	public void visit(Page page) {		
 		String fullUrl = page.getWebURL().getURL();
 		// we drop the unnecessary pieces of the URL
-		String page_type = URL_Utilities.checkTypeFullUrl(fullUrl);
-		String magasin = URL_Utilities.checkMagasinFullUrl(fullUrl);
-		String rayon = URL_Utilities.checkRayonFullUrl(fullUrl);
-
 		String url=URL_Utilities.clean(fullUrl);
 		System.out.println(Thread.currentThread()+": Visiting URL : "+url);
-
 		// the static Map cache is based upon the shortened and cleaned URL
 		URLinfo info =myCrawlDataManager.getCrawledContent().get(url);
 		if (info == null){
 			info =new URLinfo();
-		}		
-		// filling up url regexp attributes
-		info.setPage_type(page_type);
-		info.setMagasin(magasin);
-		info.setRayon(rayon);
+		}			
 		// filling up url parameters
-		info.setUrl(url);
+		info.setUrl(url);	
 		info.setDepth((int)page.getWebURL().getDepth());
 
+		// basic magasin, rayon, page type parsing
+		info=CrawlerUtility.basicParsing(info,fullUrl);
+
 		myCrawlDataManager.incProcessedPages();	
-
-		List<WebURL> links = null;
-
 		// finding the appropriate vendor
-		String str_source_code = new String(page.getContentData(), Charsets.UTF_8);
-		boolean vendor = CrawlerUtility.is_cdiscount_best_vendor_from_page_source_code(str_source_code);
-		info.setCdiscountBestBid(vendor);
-		info.setVendor(vendor ? "Cdiscount" : "Market Place");
-		boolean youtube = CrawlerUtility.is_youtube_referenced_from_page_source_code(str_source_code);
-		info.setYoutubeVideoReferenced(youtube);
-
-		// XPATH parsing
-		if (ContinuousController.isXPATHparsed){
-			try {
-				String[] xpathOutput = XPathUtility.parse_page_code_source(str_source_code,myCrawlDataManager.getXpath_expression());
-				info.setXPATH_results(xpathOutput);
-				info.setZtd(xpathOutput[8]);
-				info.setFooter(xpathOutput[9]);
-			} catch (XPathExpressionException | ParserConfigurationException
-					| SAXException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				System.out.println("Trouble parsing XPATH expressions for URL : "+url);
-			}
-		}
-
-		// filling up entity to be cached with page source code
-		if (ContinuousController.isBlobStored){
-			byte[] compressedPageContent = CrawlerUtility.gzip_compress_byte_stream(page.getContentData());
-			info.setPage_source_code(compressedPageContent);
-		}
+		// advanced parsing
+		List<WebURL> links = null;
 
 		if (page.getParseData() instanceof HtmlParseData) {
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
-			info.setText(htmlParseData.getText());
 			String html = htmlParseData.getHtml();
+			// Outgoing links from CRAWL4J
 			links = htmlParseData.getOutgoingUrls();
 			myCrawlDataManager.incTotalLinks(links.size());
 			myCrawlDataManager.incTotalTextSize(htmlParseData.getText().length());	
-
 			// we here filter the outlinks we want to keep (they must be internal and they must respect the robot.txt
 			Set<String> filtered_links = continuous_crawl_filter_out_links(links);
 			info.setLinks_size(filtered_links.size());
 			info.setOut_links(CrawlerUtility.linksSettoJSON(filtered_links));
-
-			Document doc = Jsoup.parse(html);
-			Elements titleel = doc.select("title");
-			info.setTitle(titleel.text());
-			// fetching the H1 element
-			Elements h1el = doc.select("h1");
-			info.setH1(h1el.text());
-			// finding the footer with jQuery
-			//			Elements footerel = doc.select("div.ftMention");
-			//			info.setFooter(footerel.text());
-			// finding the ztd with jQuery
-			//			Elements ztdunfolded = doc.select("p.scZtdTxt");
-			//			Elements ztdfolded = doc.select("p.scZtdH");
-			//			info.setZtd((ztdunfolded==null? "":ztdunfolded.text())+(ztdfolded==null? "":ztdfolded.text()));
-			// finding the short description
-			Elements short_desc_el = doc.select("p.fpMb");
-			info.setShort_desc((short_desc_el==null? "":short_desc_el.text()));
-			// finding the number of attributes
-			if ("FicheProduit".equals(page_type)){		
-				List<AttributesInfo> attributesList = new ArrayList<AttributesInfo>();
-				Elements attributes = doc.select(".fpDescTb tr");
-				int nb_arguments = 0 ;
-				for (Element tr_element : attributes){
-					Elements td_elements = tr_element.select("td");
-					if (td_elements.size() == 2){
-						nb_arguments++;
-						AttributesInfo toAdd = new AttributesInfo();
-						String category = td_elements.get(0).text();
-						toAdd.setData_name(category);
-						String description = td_elements.get(1).text();                                    
-						toAdd.setData(description);
-						attributesList.add(toAdd);
-						if (CrawlerUtility.category_name.equals(category)){
-							info.setCategory(description);
-						}
-						if (CrawlerUtility.brand_name.equals(category)){
-							info.setBrand(description);
-						}
-						if (CrawlerUtility.product_name.equals(category)){
-							info.setProduit(description);
-						}
-					}
-				}
-				info.setAtt_number(nb_arguments);
-				String attribute_json=AttributesUtility.getAttributesJSONStringToStore(attributesList);
-				info.setAtt_desc(attribute_json);
-			}
-			// parsing the facettes
-			if (("ListeProduit".equals(page_type))|| ("ListeProduitFiltre".equals(page_type))){
-				// finding the number of attributes
-				List<FacettesInfo> list_facettes = new ArrayList<FacettesInfo>();
-				FacettesInfo my_info = new FacettesInfo();
-				Elements facette_elements = doc.select("div.mvFilter");			
-				for (Element facette : facette_elements ){
-					//System.out.println(e.toString());
-					Elements facette_name = facette.select("div.mvFTit");
-					my_info.setFacetteName(facette_name.text());
-					Elements facette_values = facette.select("a");
-					for (Element facette_value : facette_values){
-						String categorie_value = facette_value.text();
-						if ("".equals(categorie_value)){
-							categorie_value = facette_value.attr("title");
-						}
-						Matcher matchPattern = CrawlerUtility.bracketPattern.matcher(categorie_value);
-						String categorieCount ="";
-						while (matchPattern.find()) {		
-							categorieCount=matchPattern.group();
-						}
-						categorie_value=categorie_value.replace(categorieCount,"");
-						categorieCount=categorieCount.replace("(", "");
-						categorieCount=categorieCount.replace(")", "");	
-						//System.out.println(categorie_value);
-						try{
-							my_info.setFacetteCount(Integer.valueOf(categorieCount));
-							//System.out.println(Integer.valueOf(categorieCount));	
-						} catch (NumberFormatException e){
-							System.out.println("Trouble while formatting a facette");
-							my_info.setFacetteCount(0);
-						}
-						my_info.setFacetteValue(categorie_value);
-						list_facettes.add(my_info);
-						my_info = new FacettesInfo();
-						my_info.setFacetteName(facette_name.text());
-					}		
-				}
-				String facette_json=FacettesUtility.getFacettesJSONStringToStore(list_facettes);
-				info.setFacettes(facette_json);
-			}
+			// usual common html text parsing
+			info=CrawlerUtility.advancedTextParsing(info,html);
 		}
 
+		// page header fetching from crawl4j
 		Header[] responseHeaders = page.getFetchResponseHeaders();
 		StringBuilder conc = new StringBuilder();
 		if (responseHeaders != null) {

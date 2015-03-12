@@ -56,11 +56,11 @@ public class CrawlDataManagement {
 	private HttpSolrServer solr_server;
 	private MongoClient mongo_client;
 	private Map<String, URLinfo> crawledContent = new HashMap<String, URLinfo>();
-	private static String[] xpath_expression;
+
 
 	public CrawlDataManagement() {
 		// loading XPATH expression
-		setXpath_expression(XPathUtility.loadXPATHConf());
+		XPathUtility.loadXPATHConf();
 		// Reading the property of our database
 		Properties props = new Properties();
 		FileInputStream in = null;      
@@ -1126,11 +1126,5 @@ public class CrawlDataManagement {
 		this.crawledContent = crawledContent;
 	}
 
-	public String[] getXpath_expression() {
-		return xpath_expression;
-	}
 
-	public static void setXpath_expression(String[] xpath_expression) {
-		CrawlDataManagement.xpath_expression = xpath_expression;
-	}
 }

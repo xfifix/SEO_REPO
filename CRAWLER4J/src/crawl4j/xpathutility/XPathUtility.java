@@ -20,6 +20,7 @@ public class XPathUtility {
 
 	public static String xpathconf_path = "/home/sduprey/My_Data/My_Xpath_Conf/xpath.conf";
 	private static int xpath_size = 10;
+	private static String[] xpath_expression;
 	public static String parseContent(String content, String xpathExpression) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException{
 		TagNode tagNode = new HtmlCleaner().clean(content);
 		org.w3c.dom.Document doc = new DomSerializer(
@@ -34,8 +35,8 @@ public class XPathUtility {
 		return str;
 	}
 
-	public static String[] loadXPATHConf(){
-		String[] xpath_expression = new String[xpath_size];
+	public static void loadXPATHConf(){
+		xpath_expression = new String[xpath_size];
 		BufferedReader br;
 		try {
 			br = new BufferedReader(new FileReader(xpathconf_path));
@@ -51,13 +52,12 @@ public class XPathUtility {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return xpath_expression;
 	}
 
-	public static String[] parse_page_code_source(String page_source_code, String[] xpathExpressions) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
+	public static String[] parse_page_code_source(String page_source_code) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
 		String[] xpathResults = new String[xpath_size];
 		int local_counter = 0;
-		for (String xpath : xpathExpressions){
+		for (String xpath : xpath_expression){
 			String content = XPathUtility.parseContent(page_source_code, xpath);
 			xpathResults[local_counter]=content;
 			local_counter++;
