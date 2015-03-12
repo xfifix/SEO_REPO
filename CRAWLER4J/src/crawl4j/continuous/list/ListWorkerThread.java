@@ -93,7 +93,6 @@ public class ListWorkerThread implements Runnable {
 			} catch (Exception e){
 				System.out.println("Error parsing with "+url_string+" status code "+status_code);
 				e.printStackTrace();
-				parseMyPage(html,status_code,url_string);
 			}
 		}
 		// updating the very last batch of our data
