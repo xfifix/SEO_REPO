@@ -26,12 +26,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class MultipleIPsCookieCronJob {
+public class MultipleIPsCookieBunchByBunchCronJob {
 	//	private static int min_number_of_wait_times = 40;
 	//	private static int max_number_of_wait_times = 60;
-	private static int min_number_of_wait_times = 10;
-	private static int max_number_of_wait_times = 15;
-	private static int bunch_size = 30;
+	private static int min_number_of_wait_times = 15;
+	private static int max_number_of_wait_times = 20;
 	private static List<String> user_agents = new ArrayList<String>();
 	private static String user_agent_path = "/home/sduprey/My_Data/My_User_Agents/user-agent.txt";
 	public static void main(String[] args){
@@ -147,85 +146,88 @@ public class MultipleIPsCookieCronJob {
 		keyword=keyword.replace(" ","%20");
 		info.setKeyword(keyword);
 		// we here fetch up to three paginations
-
+		int nb_depth = 3;
 		long startTimeMs = System.currentTimeMillis( );
 		org.jsoup.nodes.Document doc;
-		int my_rank=30;
+		int depth=0;
 		int nb_results=0;
-
+		int my_rank=30;
 		String my_url = "";
 		boolean found = false;
-		try{
-			// we wait between x and xx seconds
-			Thread.sleep(randInt(min_number_of_wait_times,max_number_of_wait_times)*1000);
-			System.out.println("Fetching a new page");
-			String constructed_url ="https://www.google.fr/search?q="+keyword+"&num="+bunch_size;
+		while (depth<nb_depth && !found){
+			try{
+				// we wait between x and xx seconds
+				Thread.sleep(randInt(min_number_of_wait_times,max_number_of_wait_times)*1000);
+				System.out.println("Fetching a new page");
+				String constructed_url ="https://www.google.fr/search?q="+keyword+"&start="+Integer.toString(depth*10);
 
-			// adding a fake cookie
-			CookieStore cookieStoreSolr = new BasicCookieStore();
-			BasicClientCookie cookieSolr = new BasicClientCookie("_$hidden", "230.1");
-			cookieSolr.setDomain("cdiscount.com");
-			cookieSolr.setPath("/");
-			cookieStoreSolr.addCookie(cookieSolr);    
-			CloseableHttpClient httpclient = HttpClients.custom()
-					.setDefaultCookieStore(cookieStoreSolr)
-					.build();
-			//HttpClientContext context = HttpClientContext.create();
-			HttpContext context = new BasicHttpContext();
-			String randomAgent = randomUserAgent();
-			context.setAttribute(CoreProtocolPNames.USER_AGENT,randomAgent);
-			// request.setHeader("Referer", "http://www.google.com");
+				// adding a fake cookie
+				CookieStore cookieStoreSolr = new BasicCookieStore();
+				BasicClientCookie cookieSolr = new BasicClientCookie("_$hidden", "230.1");
+				cookieSolr.setDomain("cdiscount.com");
+				cookieSolr.setPath("/");
+				cookieStoreSolr.addCookie(cookieSolr);    
+				CloseableHttpClient httpclient = HttpClients.custom()
+						.setDefaultCookieStore(cookieStoreSolr)
+						.build();
+				//HttpClientContext context = HttpClientContext.create();
+				HttpContext context = new BasicHttpContext();
+				String randomAgent = randomUserAgent();
+				context.setAttribute(CoreProtocolPNames.USER_AGENT,randomAgent);
+				// request.setHeader("Referer", "http://www.google.com");
 
-			HttpGet getSERPrequest = new HttpGet(constructed_url);
-			// we here use our properly configured squid proxy on port 3128 on localhost
+				HttpGet getSERPrequest = new HttpGet(constructed_url);
+				// we here use our properly configured squid proxy on port 3128 on localhost
 
-			HttpHost squid_proxy = new HttpHost("localhost", 3128, "http");
+				HttpHost squid_proxy = new HttpHost("localhost", 3128, "http");
 
-			RequestConfig config = RequestConfig.custom()
-					.setProxy(squid_proxy)
-					.build();
-			getSERPrequest.setConfig(config);
+				RequestConfig config = RequestConfig.custom()
+						.setProxy(squid_proxy)
+						.build();
+				getSERPrequest.setConfig(config);
 
-			CloseableHttpResponse responseSERP = httpclient.execute(getSERPrequest,context);
+				CloseableHttpResponse responseSERP = httpclient.execute(getSERPrequest,context);
 
-			// and ensure it is fully consumed
-			String pageString = EntityUtils.toString(responseSERP.getEntity());
-			EntityUtils.consume(responseSERP.getEntity());
+				// and ensure it is fully consumed
+				String pageString = EntityUtils.toString(responseSERP.getEntity());
+				EntityUtils.consume(responseSERP.getEntity());
 
-			doc =  Jsoup.parse(pageString);
-			Elements serps = doc.select("h3[class=r]");
-			for (Element serp : serps) {
-				Element link = serp.getElementsByTag("a").first();
-				if (link != null){
-					String linkref = link.attr("href");
-					if (linkref.startsWith("/url?q=") || linkref.startsWith("http://")){
-						nb_results++;
-						if (linkref.startsWith("/url?q=")){
-							linkref = linkref.substring(7,linkref.indexOf("&"));
-						} else {
-							if (linkref.indexOf("&") != -1){
-								linkref = linkref.substring(0,linkref.indexOf("&"));
+				doc =  Jsoup.parse(pageString);
+				Elements serps = doc.select("h3[class=r]");
+				for (Element serp : serps) {
+					Element link = serp.getElementsByTag("a").first();
+					if (link != null){
+						String linkref = link.attr("href");
+						if (linkref.startsWith("/url?q=") || linkref.startsWith("http://")){
+							nb_results++;
+							if (linkref.startsWith("/url?q=")){
+								linkref = linkref.substring(7,linkref.indexOf("&"));
+							} else {
+								if (linkref.indexOf("&") != -1){
+									linkref = linkref.substring(0,linkref.indexOf("&"));
+								}
 							}
 						}
+						if (linkref.contains(targe_name) && !found){
+							my_rank=nb_results;
+							my_url=linkref;
+							found=true;
+						}			
 					}
-					if (linkref.contains(targe_name) && !found){
-						my_rank=nb_results;
-						my_url=linkref;
-						found=true;
-					}			
 				}
+				if (nb_results == 0){
+					System.out.println("Warning captcha");
+				}
+				depth++;
 			}
-			if (nb_results == 0){
-				System.out.println("Warning captcha");
+			catch (IOException e) {
+				e.printStackTrace();
+			}catch (InterruptedException e){
+				e.printStackTrace();
 			}
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}catch (InterruptedException e){
-			e.printStackTrace();
 		}
 		long taskTimeMs  = System.currentTimeMillis( ) - startTimeMs;
-		System.out.println("Overall google requesting time : "+taskTimeMs);
+		//System.out.println(taskTimeMs);
 		info.setPosition(my_rank);
 		info.setUrl(my_url);
 		if (nb_results == 0){
@@ -247,4 +249,7 @@ public class MultipleIPsCookieCronJob {
 		int randomNum = rand.nextInt((max - min) + 1) + min;
 		return randomNum;
 	}
+
+
+
 }
