@@ -1,32 +1,15 @@
 package crawl4j.continuous;
 
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-
-import org.apache.commons.io.Charsets;
 import org.apache.http.Header;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.xml.sax.SAXException;
 
-import crawl4j.attributesutility.AttributesInfo;
-import crawl4j.attributesutility.AttributesUtility;
-import crawl4j.facettesutility.FacettesInfo;
-import crawl4j.facettesutility.FacettesUtility;
 import crawl4j.urlutilities.URL_Utilities;
 import crawl4j.urlutilities.URLinfo;
-import crawl4j.xpathutility.XPathUtility;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
@@ -80,6 +63,7 @@ public class ContinuousCrawler extends WebCrawler {
 
 		if (page.getParseData() instanceof HtmlParseData) {
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
+			// the html string is here the page source code
 			String html = htmlParseData.getHtml();
 			// Outgoing links from CRAWL4J
 			links = htmlParseData.getOutgoingUrls();

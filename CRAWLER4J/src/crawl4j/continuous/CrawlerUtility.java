@@ -12,7 +12,6 @@ import java.util.zip.GZIPOutputStream;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.apache.commons.io.Charsets;
 import org.json.simple.JSONArray;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

@@ -14,7 +14,6 @@ import crawl4j.continuous.CrawlerUtility;
 import crawl4j.urlutilities.URL_Utilities;
 import crawl4j.urlutilities.URLinfo;
 
-
 public class ListWorkerThread implements Runnable {
 	public static int batch_size = 100;
 	private String user_agent;

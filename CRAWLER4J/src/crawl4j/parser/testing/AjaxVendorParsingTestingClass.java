@@ -7,13 +7,13 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import crawl4j.continuous.CrawlerUtility;
+import crawl4j.urlutilities.URLinfo;
+import crawl4j.xpathutility.XPathUtility;
 
 public class AjaxVendorParsingTestingClass {
 	public static void main(String[] args){
-		
+		XPathUtility.loadXPATHConf();
 		// the commented approach doesn't work
 		
 //		String my_url_to_fetch = "http://www.cdiscount.com/electromenager/tous-nos-accessoires/joint-hublot-d-30-30-cm/f-11029-ind3662734065501.html";
@@ -58,13 +58,23 @@ public class AjaxVendorParsingTestingClass {
 				contentbuilder.append(line);
 			} while (line != null);
 
-			int cdiscount_index = contentbuilder.toString().indexOf("<p class='fpSellBy'>Vendu et expédié par <span class='logoCDS'>");
+			String code_source = contentbuilder.toString();
+			int cdiscount_index = code_source.indexOf("<p class='fpSellBy'>Vendu et expédié par <span class='logoCDS'>");
 
 			if (cdiscount_index >0){
 				System.out.println("Cdiscount");
 			}else{
 				System.out.println("Market Place");
 			}
+			
+			URLinfo info =new URLinfo();		
+			// basic magasin, rayon, page type parsing
+			// info has to be instantiated
+			info=CrawlerUtility.basicParsing(info,my_url_to_fetch);
+			info=CrawlerUtility.advancedTextParsing(info,code_source);
+			
+			System.out.println("Is Cdiscount best bid ? : "+info.isCdiscountBestBid());
+			
 		}
 		catch (IOException e) {
 			e.printStackTrace();

@@ -32,7 +32,6 @@ import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
 
 import crawl4j.urlutilities.URLinfo;
-import crawl4j.xpathutility.XPathUtility;
 
 public class CrawlDataManagement {
 	public static int bulk_size = 100;

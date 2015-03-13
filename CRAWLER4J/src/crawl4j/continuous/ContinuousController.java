@@ -60,12 +60,14 @@ public class ContinuousController {
 			numberOfCrawlers=Integer.valueOf(args[1]);
 		} 
 		// downsizing to test/debug
-		//overiding seed for debug
+		// overiding seed for debug
 		//numberOfCrawlers =  1;
 		//CrawlDataManagement.bulk_size = 5;
 		//seed="http://www.cdiscount.com/maison/v-117-0.html";
 		//seed="http://www.cdiscount.com/livres-bd/livres-religion-esoterisme/billy-graham-pape-protestant/f-105210806-9782226135605.html";
 		//seed="http://www.cdiscount.com/pret-a-porter/vetements-enfant/folia-trench-fille-beige/f-113236602-wmh85433k.html";
+		//seed = "http://www.cdiscount.com/electromenager/lavage-sechage/bosch-wak24160ff-lave-linge-frontal-8-kg/f-11001040406-bos4242002781082.html";		
+
 		System.out.println("Seed URL : "+seed);
 		System.out.println("Number of threads : "+numberOfCrawlers);
 		System.out.println("MongoDB stored : "+isMongoDBStored);
