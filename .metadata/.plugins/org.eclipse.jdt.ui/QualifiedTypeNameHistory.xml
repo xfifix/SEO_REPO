@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="javax.xml.xpath.XPathFactory"/>
 <fullyQualifiedTypeName name="org.htmlcleaner.HtmlCleaner"/>
 <fullyQualifiedTypeName name="org.htmlcleaner.TagNode"/>
 <fullyQualifiedTypeName name="org.htmlcleaner.DomSerializer"/>
@@ -8,9 +7,7 @@
 <fullyQualifiedTypeName name="javax.xml.xpath.XPathConstants"/>
 <fullyQualifiedTypeName name="crawl4j.urlutilities.ArboInfo"/>
 <fullyQualifiedTypeName name="java.util.concurrent.ConcurrentHashMap"/>
-<fullyQualifiedTypeName name="java.sql.PreparedStatement"/>
 <fullyQualifiedTypeName name="crawl4j.arbo.ArboController"/>
-<fullyQualifiedTypeName name="java.util.Iterator"/>
 <fullyQualifiedTypeName name="crawl4j.urlutilities.MultiArboInfo"/>
 <fullyQualifiedTypeName name="crawl4j.urlutilities.URL_Utilities"/>
 <fullyQualifiedTypeName name="java.io.ByteArrayInputStream"/>
@@ -60,4 +57,7 @@
 <fullyQualifiedTypeName name="crawl4j.continuous.CrawlerUtility"/>
 <fullyQualifiedTypeName name="crawl4j.continuous.ContinuousController"/>
 <fullyQualifiedTypeName name="crawl4j.xpathutility.XPathUtility"/>
+<fullyQualifiedTypeName name="java.util.Iterator"/>
+<fullyQualifiedTypeName name="java.util.Map.Entry"/>
+<fullyQualifiedTypeName name="java.sql.PreparedStatement"/>
 </qualifiedTypeNameHistroy>
