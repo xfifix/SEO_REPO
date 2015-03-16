@@ -50,7 +50,7 @@ public class StatisticsComputingThreadPool {
 		String user = props.getProperty("db.user");
 		String passwd = props.getProperty("db.passwd");
 
-		System.out.println("You'll connect to the postgresql CRAWL4J database as "+user);
+		System.out.println("You'll connect to the postgresql KRITERDB database as "+user);
 		// Instantiating the pool thread
 		ExecutorService executor = Executors.newFixedThreadPool(list_fixed_pool_size);
 

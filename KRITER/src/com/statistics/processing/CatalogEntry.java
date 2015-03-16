@@ -1,22 +1,22 @@
 package com.statistics.processing;
 
 public class CatalogEntry {
-    private String MAGASIN;
-    private String RAYON;
-    private String CATEGORIE_NIVEAU_1;
-    private String CATEGORIE_NIVEAU_2;
-    private String CATEGORIE_NIVEAU_3;
-    private String CATEGORIE_NIVEAU_4;
-    private String CATEGORIE_NIVEAU_5;
-    private String SKU;
-    private String LIBELLE_PRODUIT;
-    private String MARQUE;
-    private String DESCRIPTION_LONGUEUR50;
-    private String DESCRIPTION_LONGUEUR80;
-    private String URL;
-    private String LIEN_IMAGE ;
-    private String VENDEUR;
-    private String ETAT;
+    private String MAGASIN="";
+    private String RAYON="";
+    private String CATEGORIE_NIVEAU_1="";
+    private String CATEGORIE_NIVEAU_2="";
+    private String CATEGORIE_NIVEAU_3="";
+    private String CATEGORIE_NIVEAU_4="";
+    private String CATEGORIE_NIVEAU_5="";
+    private String SKU="";
+    private String LIBELLE_PRODUIT="";
+    private String MARQUE="";
+    private String DESCRIPTION_LONGUEUR50="";
+    private String DESCRIPTION_LONGUEUR80="";
+    private String URL="";
+    private String LIEN_IMAGE="";
+    private String VENDEUR="";
+    private String ETAT="";
 	public String getMAGASIN() {
 		return MAGASIN;
 	}
