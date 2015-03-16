@@ -25,7 +25,7 @@ public class ParsingInputFile {
 			nb_line++;
 			System.out.println("Line number : "+nb_line);
 			String[] fields= line.split(cvsSplitBy);
-			System.out.println("Fields : "+Arrays.toString(fields));;
+			System.out.println("Fields : "+Arrays.toString(fields));
 		}
 		br.close();
 		System.out.println("Having found : "+nb_line+" products");
