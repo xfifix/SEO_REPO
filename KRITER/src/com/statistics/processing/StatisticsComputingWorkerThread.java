@@ -30,7 +30,7 @@ public class StatisticsComputingWorkerThread implements Runnable {
 					select_statement = con.prepareStatement(select_parameters);
 					select_statement.setString(1, sku);
 					ResultSet rs = select_statement.executeQuery();
-					while (rs.next()) {
+					if (rs.next()) {
 						CatalogEntry entry = new CatalogEntry();
 						entry.setSKU(sku);
 						String MAGASIN = rs.getString(1);
@@ -92,12 +92,12 @@ public class StatisticsComputingWorkerThread implements Runnable {
 		update_st.setString(4, measures.getDistinct_category5());
 		update_st.setString(5, measures.getDistinct_category4());
 		update_st.setString(6, measures.getDistinct_brands());
-		update_st.setString(7, measures.getTf_distances_libelle().toString());
-		update_st.setString(8, measures.getTf_idf_distances_libelle().toString());
-		update_st.setString(9, measures.getLevenshtein_distances_libelle().toString());
-		update_st.setString(10, measures.getTf_description80().toString());
-		update_st.setString(11, measures.getTf_idf_description80().toString());
-		update_st.setString(12, measures.getLevenshtein_description80().toString());
+		update_st.setString(7,Arrays.toString(measures.getTf_distances_libelle()));
+		update_st.setString(8,Arrays.toString(measures.getTf_idf_distances_libelle()));
+		update_st.setString(9,Arrays.toString(measures.getLevenshtein_distances_libelle()));
+		update_st.setString(10,Arrays.toString(measures.getTf_description80()));
+		update_st.setString(11,Arrays.toString(measures.getTf_idf_description80()));
+		update_st.setString(12,Arrays.toString(measures.getLevenshtein_description80()));
 		update_st.setString(13,measures.getCurrentSku());
 		update_st.executeUpdate();
 	}

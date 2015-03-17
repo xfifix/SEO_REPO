@@ -111,6 +111,14 @@ public class StatisticsUtility {
 		measures.setNb_distinct_brands(distinct_brand.size());
 		measures.setDistinct_category5(distinct_category5.toString());
 		measures.setDistinct_category4(distinct_category4.toString());
+		
+		measures.setLevenshtein_distances_libelle(levenshtein_libelle_distances);
+		measures.setLevenshtein_description80(levenshtein_description80_distances);
+		measures.setTf_description80(tf_description80_distances);
+		measures.setTf_distances_libelle(tf_libelle_distances);
+		measures.setTf_idf_description80(tf_idf_description80_distances);
+		measures.setTf_idf_distances_libelle(tf_idf_libelle_distances);
+		
 		measures.setDistinct_brands(distinct_brand.toString());
 		measures.setCurrentSku(current_sku.getSKU());
 		measures.setCurrentVendor(current_sku.getVENDEUR());

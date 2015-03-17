@@ -9,27 +9,27 @@ public class StatisticsMeasures {
 	private String distinct_brands;
 	private Double[] tf_distances_libelle = new Double[0];
 	private Double[] tf_idf_distances_libelle = new Double[0];
-	private Double[] levenshtein_distances_libelle = new Double[0];
+	private Integer[] levenshtein_distances_libelle = new Integer[0];
 	private Double[] tf_description80 = new Double[0];
 	private Double[] tf_idf_description80 = new Double[0];
-	private Double[] levenshtein_description80 = new Double[0];
+	private Integer[] levenshtein_description80 = new Integer[0];
 	private String currentSku;
 	private String currentVendor;
 	private String state;
 	private String magasin;
 	private String rayon;
 	
-	public Double[] getLevenshtein_distances_libelle() {
+	public Integer[] getLevenshtein_distances_libelle() {
 		return levenshtein_distances_libelle;
 	}
 	public void setLevenshtein_distances_libelle(
-			Double[] levenshtein_distances_libelle) {
+			Integer[] levenshtein_distances_libelle) {
 		this.levenshtein_distances_libelle = levenshtein_distances_libelle;
 	}
-	public Double[] getLevenshtein_description80() {
+	public Integer[] getLevenshtein_description80() {
 		return levenshtein_description80;
 	}
-	public void setLevenshtein_description80(Double[] levenshtein_description80) {
+	public void setLevenshtein_description80(Integer[] levenshtein_description80) {
 		this.levenshtein_description80 = levenshtein_description80;
 	}
 
