@@ -8,6 +8,12 @@ public class StatisticsMeasures {
 	private int nb_distinct_brands;
 	private int nb_distinct_brands_without_default;
 	private String distinct_brands;
+	private int nb_distinct_states;
+	private String distinct_states;
+	private String distinct_magasins;
+	private int nb_distinct_magasins;
+	private String distinct_vendors;	
+	private int nb_distinct_vendors;
 	private Double[] tf_distances_libelle = new Double[0];
 	private Double[] tf_idf_distances_libelle = new Double[0];
 	private Integer[] levenshtein_distances_libelle = new Integer[0];
@@ -19,7 +25,42 @@ public class StatisticsMeasures {
 	private String state;
 	private String magasin;
 	private String rayon;
-	
+	public int getNb_distinct_states() {
+		return nb_distinct_states;
+	}
+	public void setNb_distinct_states(int nb_distinct_states) {
+		this.nb_distinct_states = nb_distinct_states;
+	}
+	public String getDistinct_states() {
+		return distinct_states;
+	}
+	public void setDistinct_states(String distinct_states) {
+		this.distinct_states = distinct_states;
+	}
+	public String getDistinct_magasins() {
+		return distinct_magasins;
+	}
+	public void setDistinct_magasins(String distinct_magasins) {
+		this.distinct_magasins = distinct_magasins;
+	}
+	public int getNb_distinct_magasins() {
+		return nb_distinct_magasins;
+	}
+	public void setNb_distinct_magasins(int nb_distinct_magasins) {
+		this.nb_distinct_magasins = nb_distinct_magasins;
+	}
+	public String getDistinct_vendors() {
+		return distinct_vendors;
+	}
+	public void setDistinct_vendors(String distinct_vendors) {
+		this.distinct_vendors = distinct_vendors;
+	}
+	public int getNb_distinct_vendors() {
+		return nb_distinct_vendors;
+	}
+	public void setNb_distinct_vendors(int nb_distinct_vendors) {
+		this.nb_distinct_vendors = nb_distinct_vendors;
+	}
 	public Integer[] getLevenshtein_distances_libelle() {
 		return levenshtein_distances_libelle;
 	}

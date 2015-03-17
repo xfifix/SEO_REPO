@@ -16,7 +16,7 @@ public class StatisticsComputingWorkerThread implements Runnable {
 	private Connection con;
 	private List<String[]> my_skus_to_fetch = new ArrayList<String[]>();
 	private static String select_parameters = " select MAGASIN, RAYON, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4, CATEGORIE_NIVEAU_5, LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, URL, LIEN_IMAGE, VENDEUR, ETAT FROM CATALOG where SKU=?";
-	private static String update_statement = "UPDATE CATALOG SET NB_DISTINCT_CAT5=?, NB_DISTINCT_CAT4=?, NB_DISTINCT_BRAND=?, NB_DISTINCT_BRAND_WITHOUT_DEFAULT=?, DISTINCT_CAT5=?, DISTINCT_CAT4=?, DISTINCT_BRAND=?, TF_DISTANCE_LIBELLE=?, TF_IDF_DISTANCE_LIBELLE=?, LEVENSHTEIN_DISTANCE_LIBELLE=?, TF_DISTANCE_DESCRIPTION80=?, TF_IDF_DISTANCE_DESCRIPTION80=?, LEVENSHTEIN_DISTANCE_DESCRIPTION80=? where SKU=?";
+	private static String update_statement = "UPDATE CATALOG SET NB_DISTINCT_CAT5=?, NB_DISTINCT_CAT4=?, NB_DISTINCT_BRAND=?, NB_DISTINCT_BRAND_WITHOUT_DEFAULT=?, NB_DISTINCT_VENDOR=?, NB_DISTINCT_MAGASIN=?, NB_DISTINCT_STATE=?, DISTINCT_CAT5=?, DISTINCT_CAT4=?, DISTINCT_BRAND=?, DISTINCT_VENDOR=?, DISTINCT_MAGASIN=?, DISTINCT_STATE=?, TF_DISTANCE_LIBELLE=?, TF_IDF_DISTANCE_LIBELLE=?, LEVENSHTEIN_DISTANCE_LIBELLE=?, TF_DISTANCE_DESCRIPTION80=?, TF_IDF_DISTANCE_DESCRIPTION80=?, LEVENSHTEIN_DISTANCE_DESCRIPTION80=? where SKU=?";
 	public StatisticsComputingWorkerThread(Connection con, List<String[]> to_fetch) throws SQLException{
 		this.con = con;
 		this.my_skus_to_fetch = to_fetch;
@@ -95,21 +95,27 @@ public class StatisticsComputingWorkerThread implements Runnable {
 
 	public void update_statistics(StatisticsMeasures measures) throws SQLException{
 		PreparedStatement update_st = con.prepareStatement(update_statement);
-		// udpate set NB_DISTINCT_CAT5=?, NB_DISTINCT_CAT4=?, NB_DISTINCT_BRAND=?, DISTINCT_CAT5=?, DISTINCT_CAT4=?, DISTINCT_BRAND=?, TF_DISTANCE_LIBELLE=?, TF_IDF_DISTANCE_LIBELLE=?, LEVENSHTEIN_DISTANCE_LIBELLE=?, TF_DISTANCE_DESCRIPTION80=?, TF_IDF_DISTANCE_DESCRIPTION80=?, LEVENSHTEIN_DISTANCE_DESCRIPTION80=? where SKU=?";
+		// UPDATE CATALOG SET NB_DISTINCT_CAT5=?, NB_DISTINCT_CAT4=?, NB_DISTINCT_BRAND=?, NB_DISTINCT_BRAND_WITHOUT_DEFAULT=?, NB_DISTINCT_VENDOR=?, NB_DISTINCT_MAGASIN=?, NB_DISTINCT_STATE=?, DISTINCT_CAT5=?, DISTINCT_CAT4=?, DISTINCT_BRAND=?, DISTINCT_VENDOR=?, DISTINCT_MAGASIN=?, DISTINCT_STATE=?, TF_DISTANCE_LIBELLE=?, TF_IDF_DISTANCE_LIBELLE=?, LEVENSHTEIN_DISTANCE_LIBELLE=?, TF_DISTANCE_DESCRIPTION80=?, TF_IDF_DISTANCE_DESCRIPTION80=?, LEVENSHTEIN_DISTANCE_DESCRIPTION80=? where SKU=?";
 		update_st.setInt(1, measures.getNb_distinct_category5());
 		update_st.setInt(2, measures.getNb_distinct_category4());
 		update_st.setInt(3, measures.getNb_distinct_brands());
 		update_st.setInt(4, measures.getNb_distinct_brands_without_default());
-		update_st.setString(5, measures.getDistinct_category5());
-		update_st.setString(6, measures.getDistinct_category4());
-		update_st.setString(7, measures.getDistinct_brands());
-		update_st.setString(8,Arrays.toString(measures.getTf_distances_libelle()));
-		update_st.setString(9,Arrays.toString(measures.getTf_idf_distances_libelle()));
-		update_st.setString(10,Arrays.toString(measures.getLevenshtein_distances_libelle()));
-		update_st.setString(11,Arrays.toString(measures.getTf_description80()));
-		update_st.setString(12,Arrays.toString(measures.getTf_idf_description80()));
-		update_st.setString(13,Arrays.toString(measures.getLevenshtein_description80()));
-		update_st.setString(14,measures.getCurrentSku());
+		update_st.setInt(5, measures.getNb_distinct_vendors());
+		update_st.setInt(6, measures.getNb_distinct_magasins());
+		update_st.setInt(7, measures.getNb_distinct_states());			
+		update_st.setString(8, measures.getDistinct_category5());
+		update_st.setString(9, measures.getDistinct_category4());
+		update_st.setString(10, measures.getDistinct_brands());
+		update_st.setString(11, measures.getDistinct_vendors());
+		update_st.setString(12, measures.getDistinct_magasins());
+		update_st.setString(13, measures.getDistinct_states());
+		update_st.setString(14,Arrays.toString(measures.getTf_distances_libelle()));
+		update_st.setString(15,Arrays.toString(measures.getTf_idf_distances_libelle()));
+		update_st.setString(16,Arrays.toString(measures.getLevenshtein_distances_libelle()));
+		update_st.setString(17,Arrays.toString(measures.getTf_description80()));
+		update_st.setString(18,Arrays.toString(measures.getTf_idf_description80()));
+		update_st.setString(19,Arrays.toString(measures.getLevenshtein_description80()));
+		update_st.setString(20,measures.getCurrentSku());
 		update_st.executeUpdate();
 		update_st.close();
 	}

@@ -8194,3 +8194,79 @@ org.eclipse.jdi.TimeoutException: Timeout occurred while waiting for packet 2979
 	at org.eclipse.jdt.internal.debug.core.EventDispatcher.access$0(EventDispatcher.java:100)
 	at org.eclipse.jdt.internal.debug.core.EventDispatcher$1.run(EventDispatcher.java:249)
 	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+!SESSION 2015-03-17 15:18:49.585 -----------------------------------------------
+eclipse.buildId=4.4.0.I20140606-1215
+java.version=1.7.0_72
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_GB
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.jface 2 0 2015-03-17 15:26:41.731
+!MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
+!SUBENTRY 1 org.eclipse.jface 2 0 2015-03-17 15:26:41.731
+!MESSAGE A conflict occurred for CTRL+D:
+Binding(CTRL+D,
+	ParameterizedCommand(Command(org.eclipse.debug.ui.commands.eof,EOF,
+		Send end of file,
+		Category(org.eclipse.debug.ui.category.run,Run/Debug,Run/Debug command category,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@1a8e9cca,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.debug.ui.console,,,system)
+Binding(CTRL+D,
+	ParameterizedCommand(Command(org.eclipse.ui.edit.text.delete.line,Delete Line,
+		Delete a line of text,
+		Category(org.eclipse.ui.category.textEditor,Text Editing,Text Editing Commands,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@8d79f65,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.textEditorScope,,,system)
+
+!ENTRY org.eclipse.core.jobs 4 2 2015-03-17 15:33:29.225
+!MESSAGE An internal error occurred during: "JDI thread evaluations".
+!STACK 0
+java.lang.OutOfMemoryError: Java heap space
+	at java.util.Arrays.copyOf(Arrays.java:2367)
+	at java.lang.AbstractStringBuilder.expandCapacity(AbstractStringBuilder.java:130)
+	at java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:114)
+	at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:587)
+	at java.lang.StringBuffer.append(StringBuffer.java:332)
+	at org.eclipse.jdi.internal.jdwp.JdwpString.read(JdwpString.java:37)
+	at org.eclipse.jdi.internal.MirrorImpl.readString(MirrorImpl.java:451)
+	at org.eclipse.jdi.internal.StringReferenceImpl.value(StringReferenceImpl.java:61)
+	at org.eclipse.jdt.internal.debug.core.model.JDIValue.getValueString(JDIValue.java:123)
+	at org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager$EvaluationListener.appendJDIValueString(JavaDetailFormattersManager.java:727)
+	at org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager$EvaluationListener.appendObjectDetail(JavaDetailFormattersManager.java:745)
+	at org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager$EvaluationListener$1.run(JavaDetailFormattersManager.java:658)
+	at org.eclipse.jdt.internal.debug.core.model.JDIThread.runEvaluation(JDIThread.java:765)
+	at org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager$EvaluationListener.valueToString(JavaDetailFormattersManager.java:665)
+	at org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager.resolveFormatter(JavaDetailFormattersManager.java:166)
+	at org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager.access$1(JavaDetailFormattersManager.java:139)
+	at org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager$1.run(JavaDetailFormattersManager.java:134)
+	at org.eclipse.jdt.internal.debug.core.model.JDIThread$ThreadJob.run(JDIThread.java:3158)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY org.eclipse.core.jobs 4 2 2015-03-17 15:33:34.433
+!MESSAGE An internal error occurred during: "JDI thread evaluations".
+!STACK 0
+java.lang.OutOfMemoryError: Java heap space
+	at java.util.Arrays.copyOf(Arrays.java:2367)
+	at java.lang.AbstractStringBuilder.expandCapacity(AbstractStringBuilder.java:130)
+	at java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:114)
+	at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:587)
+	at java.lang.StringBuffer.append(StringBuffer.java:332)
+	at org.eclipse.jdi.internal.jdwp.JdwpString.read(JdwpString.java:37)
+	at org.eclipse.jdi.internal.MirrorImpl.readString(MirrorImpl.java:451)
+	at org.eclipse.jdi.internal.StringReferenceImpl.value(StringReferenceImpl.java:61)
+	at org.eclipse.jdt.internal.debug.core.model.JDIValue.getValueString(JDIValue.java:123)
+	at org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager$EvaluationListener.appendJDIValueString(JavaDetailFormattersManager.java:727)
+	at org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager$EvaluationListener.appendObjectDetail(JavaDetailFormattersManager.java:745)
+	at org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager$EvaluationListener$1.run(JavaDetailFormattersManager.java:658)
+	at org.eclipse.jdt.internal.debug.core.model.JDIThread.runEvaluation(JDIThread.java:765)
+	at org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager$EvaluationListener.valueToString(JavaDetailFormattersManager.java:665)
+	at org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager.resolveFormatter(JavaDetailFormattersManager.java:166)
+	at org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager.access$1(JavaDetailFormattersManager.java:139)
+	at org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager$1.run(JavaDetailFormattersManager.java:134)
+	at org.eclipse.jdt.internal.debug.core.model.JDIThread$ThreadJob.run(JDIThread.java:3158)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)

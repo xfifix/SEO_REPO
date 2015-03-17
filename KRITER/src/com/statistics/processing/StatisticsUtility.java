@@ -21,7 +21,10 @@ public class StatisticsUtility {
 		Set<String> distinct_category5 = new HashSet<String>();
 		Set<String> distinct_category4 = new HashSet<String>();
 		Set<String> distinct_brand = new HashSet<String>();
-
+		Set<String> distinct_vendor = new HashSet<String>();
+		Set<String> distinct_magasin = new HashSet<String>();
+		Set<String> distinct_states = new HashSet<String>();
+		
 		Double[] tf_libelle_distances = new Double[6];
 		Double[] tf_idf_libelle_distances = new Double[6];
 		Integer[] levenshtein_libelle_distances = new Integer[6];
@@ -35,6 +38,10 @@ public class StatisticsUtility {
 			distinct_category5.add(sku1.getCATEGORIE_NIVEAU_5());
 			distinct_category4.add(sku1.getCATEGORIE_NIVEAU_4());
 			distinct_brand.add(sku1.getMARQUE());
+			distinct_vendor.add(sku1.getVENDEUR());
+			distinct_magasin.add(sku1.getMAGASIN());
+			distinct_states.add(sku1.getETAT());
+			
 			tf_libelle_distances[0] = computeTFdistance(current_sku.getLIBELLE_PRODUIT(),sku1.getLIBELLE_PRODUIT());
 			//tf_idf_libelle_distances[0] = computeTFIDFdistance(current_sku.getLIBELLE_PRODUIT(),sku1.getLIBELLE_PRODUIT());
 			levenshtein_libelle_distances[0] = computeLevenshteindistance(current_sku.getLIBELLE_PRODUIT(),sku1.getLIBELLE_PRODUIT());
@@ -49,7 +56,10 @@ public class StatisticsUtility {
 			distinct_category5.add(sku2.getCATEGORIE_NIVEAU_5());
 			distinct_category4.add(sku2.getCATEGORIE_NIVEAU_4());
 			distinct_brand.add(sku2.getMARQUE());
-
+			distinct_vendor.add(sku2.getVENDEUR());
+			distinct_magasin.add(sku2.getMAGASIN());
+			distinct_states.add(sku2.getETAT());
+			
 			tf_libelle_distances[1] = computeTFdistance(current_sku.getLIBELLE_PRODUIT(),sku2.getLIBELLE_PRODUIT());
 			//tf_idf_libelle_distances[1] = computeTFIDFdistance(current_sku.getLIBELLE_PRODUIT(),sku2.getLIBELLE_PRODUIT());
 			levenshtein_libelle_distances[1] = computeLevenshteindistance(current_sku.getLIBELLE_PRODUIT(),sku2.getLIBELLE_PRODUIT());
@@ -64,6 +74,9 @@ public class StatisticsUtility {
 			distinct_category5.add(sku3.getCATEGORIE_NIVEAU_5());
 			distinct_category4.add(sku3.getCATEGORIE_NIVEAU_4());
 			distinct_brand.add(sku3.getMARQUE());
+			distinct_vendor.add(sku3.getVENDEUR());
+			distinct_magasin.add(sku3.getMAGASIN());
+			distinct_states.add(sku3.getETAT());
 
 			tf_libelle_distances[2] = computeTFdistance(current_sku.getLIBELLE_PRODUIT(),sku3.getLIBELLE_PRODUIT());
 			//tf_idf_libelle_distances[2] = computeTFIDFdistance(current_sku.getLIBELLE_PRODUIT(),sku3.getLIBELLE_PRODUIT());
@@ -79,7 +92,10 @@ public class StatisticsUtility {
 			distinct_category5.add(sku4.getCATEGORIE_NIVEAU_5());
 			distinct_category4.add(sku4.getCATEGORIE_NIVEAU_4());
 			distinct_brand.add(sku4.getMARQUE());
-
+			distinct_vendor.add(sku4.getVENDEUR());
+			distinct_magasin.add(sku4.getMAGASIN());
+			distinct_states.add(sku4.getETAT());
+			
 			tf_libelle_distances[3] = computeTFdistance(current_sku.getLIBELLE_PRODUIT(),sku4.getLIBELLE_PRODUIT());
 			//tf_idf_libelle_distances[3] = computeTFIDFdistance(current_sku.getLIBELLE_PRODUIT(),sku4.getLIBELLE_PRODUIT());
 			levenshtein_libelle_distances[3] = computeLevenshteindistance(current_sku.getLIBELLE_PRODUIT(),sku4.getLIBELLE_PRODUIT());
@@ -94,7 +110,10 @@ public class StatisticsUtility {
 			distinct_category5.add(sku5.getCATEGORIE_NIVEAU_5());
 			distinct_category4.add(sku5.getCATEGORIE_NIVEAU_4());
 			distinct_brand.add(sku5.getMARQUE());
-
+			distinct_vendor.add(sku5.getVENDEUR());
+			distinct_magasin.add(sku5.getMAGASIN());
+			distinct_states.add(sku5.getETAT());
+			
 			tf_libelle_distances[4] = computeTFdistance(current_sku.getLIBELLE_PRODUIT(),sku5.getLIBELLE_PRODUIT());
 			//tf_idf_libelle_distances[4] = computeTFIDFdistance(current_sku.getLIBELLE_PRODUIT(),sku5.getLIBELLE_PRODUIT());
 			levenshtein_libelle_distances[4] = computeLevenshteindistance(current_sku.getLIBELLE_PRODUIT(),sku5.getLIBELLE_PRODUIT());
@@ -109,6 +128,10 @@ public class StatisticsUtility {
 			distinct_category5.add(sku6.getCATEGORIE_NIVEAU_5());
 			distinct_category4.add(sku6.getCATEGORIE_NIVEAU_4());
 			distinct_brand.add(sku6.getMARQUE());
+			distinct_vendor.add(sku6.getVENDEUR());
+			distinct_magasin.add(sku6.getMAGASIN());
+			distinct_states.add(sku6.getETAT());
+
 			tf_libelle_distances[5] = computeTFdistance(current_sku.getLIBELLE_PRODUIT(),sku6.getLIBELLE_PRODUIT());
 			//tf_idf_libelle_distances[5] = computeTFIDFdistance(current_sku.getLIBELLE_PRODUIT(),sku6.getLIBELLE_PRODUIT());
 			levenshtein_libelle_distances[5] = computeLevenshteindistance(current_sku.getLIBELLE_PRODUIT(),sku6.getLIBELLE_PRODUIT());
@@ -125,8 +148,15 @@ public class StatisticsUtility {
 		measures.setNb_distinct_brands(distinct_brand.size());
 		distinct_brand.remove("AUCUNE");
 		measures.setNb_distinct_brands_without_default(distinct_brand.size());
+		measures.setNb_distinct_magasins(distinct_magasin.size());
+		measures.setNb_distinct_states(distinct_states.size());
+		measures.setNb_distinct_vendors(distinct_vendor.size());
+		
 		measures.setDistinct_category5(distinct_category5.toString());
 		measures.setDistinct_category4(distinct_category4.toString());
+		measures.setDistinct_vendors(distinct_vendor.toString());
+		measures.setDistinct_states(distinct_states.toString());
+		measures.setDistinct_magasins(distinct_magasin.toString());
 
 		measures.setLevenshtein_distances_libelle(levenshtein_libelle_distances);
 		measures.setLevenshtein_description80(levenshtein_description80_distances);
@@ -145,23 +175,14 @@ public class StatisticsUtility {
 	}
 
 	public static Double computeTFdistance(String text1,String text2){
-		Double result=CorpusCache.computeTFSimilarity(text1, text2);
-		if (Double.isNaN(result)){
-			System.out.println("Trouble");
-		}
-		return result;
+		return CorpusCache.computeTFSimilarity(text1, text2);
 	}
 
 	public static Double computeTFIDFdistance(String text1,String text2){
-		Double result=CorpusCache.computeTFSIDFimilarity(text1, text2);
-		if (Double.isNaN(result)){
-			System.out.println("Trouble");
-		}
-		return result;
+		return CorpusCache.computeTFSIDFimilarity(text1, text2);
 	}
 
 	public static Integer computeLevenshteindistance(String text1,String text2){
-		Integer result=StringUtils.getLevenshteinDistance(text1, text2);
-		return result;
+		return StringUtils.getLevenshteinDistance(text1, text2);
 	}
 }
