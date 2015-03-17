@@ -18,7 +18,6 @@
 <fullyQualifiedTypeName name="crawl4j.corpus.CorpusCrawlDataManagement"/>
 <fullyQualifiedTypeName name="java.io.Reader"/>
 <fullyQualifiedTypeName name="crawl4j.arbo.semantic.SemanticArboController"/>
-<fullyQualifiedTypeName name="org.apache.commons.lang3.StringUtils"/>
 <fullyQualifiedTypeName name="com.parsing.utility.XPathUtility"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="com.urlutilities.URLTitleInfo"/>
@@ -60,4 +59,5 @@
 <fullyQualifiedTypeName name="java.lang.reflect.Array"/>
 <fullyQualifiedTypeName name="java.sql.PreparedStatement"/>
 <fullyQualifiedTypeName name="com.statistics.processing.StatisticsMeasures"/>
+<fullyQualifiedTypeName name="org.apache.commons.lang3.StringUtils"/>
 </qualifiedTypeNameHistroy>

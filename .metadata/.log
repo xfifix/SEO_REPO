@@ -7943,3 +7943,86 @@ org.eclipse.jdi.TimeoutException: Timeout occurred while waiting for packet 2118
 	at org.eclipse.jdt.internal.debug.core.EventDispatcher.access$0(EventDispatcher.java:100)
 	at org.eclipse.jdt.internal.debug.core.EventDispatcher$1.run(EventDispatcher.java:249)
 	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+!SESSION 2015-03-17 08:15:06.123 -----------------------------------------------
+eclipse.buildId=4.4.0.I20140606-1215
+java.version=1.7.0_72
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_GB
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.debug.core 4 125 2015-03-17 09:03:47.233
+!MESSAGE Error logged from Debug Core: 
+!STACK 1
+org.eclipse.debug.core.DebugException: org.eclipse.jdi.TimeoutException: Timeout occurred while waiting for packet 1506. occurred retrieving source path debug attribute.
+	at org.eclipse.jdt.internal.debug.core.model.JDIDebugElement.throwDebugException(JDIDebugElement.java:258)
+	at org.eclipse.jdt.internal.debug.core.model.JDIDebugElement.requestFailed(JDIDebugElement.java:197)
+	at org.eclipse.jdt.internal.debug.core.model.JDIDebugElement.targetRequestFailed(JDIDebugElement.java:177)
+	at org.eclipse.jdt.internal.debug.core.model.JDIStackFrame.getSourcePath(JDIStackFrame.java:1321)
+	at org.eclipse.jdt.internal.debug.core.JavaDebugUtils.getSourceName(JavaDebugUtils.java:137)
+	at org.eclipse.jdt.launching.sourcelookup.containers.JavaSourceLookupParticipant.getSourceName(JavaSourceLookupParticipant.java:60)
+	at org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant.findSourceElements(AbstractSourceLookupParticipant.java:63)
+	at org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector$SourceLookupQuery.run(AbstractSourceLookupDirector.java:142)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector.doSourceLookup(AbstractSourceLookupDirector.java:505)
+	at org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector.getSourceElement(AbstractSourceLookupDirector.java:785)
+	at org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility.lookup(SourceLookupFacility.java:346)
+	at org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility$SourceLookupJob.run(SourceLookupFacility.java:737)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+Caused by: org.eclipse.jdi.TimeoutException: Timeout occurred while waiting for packet 1506.
+	at org.eclipse.jdi.internal.connect.PacketReceiveManager.getReply(PacketReceiveManager.java:186)
+	at org.eclipse.jdi.internal.connect.PacketReceiveManager.getReply(PacketReceiveManager.java:197)
+	at org.eclipse.jdi.internal.MirrorImpl.requestVM(MirrorImpl.java:191)
+	at org.eclipse.jdi.internal.MirrorImpl.requestVM(MirrorImpl.java:226)
+	at org.eclipse.jdi.internal.MirrorImpl.requestVM(MirrorImpl.java:258)
+	at org.eclipse.jdi.internal.ReferenceTypeImpl.getSourceName(ReferenceTypeImpl.java:1716)
+	at org.eclipse.jdi.internal.ReferenceTypeImpl.sourcePath(ReferenceTypeImpl.java:1897)
+	at org.eclipse.jdi.internal.LocationImpl.sourcePath(LocationImpl.java:195)
+	at org.eclipse.jdi.internal.LocationImpl.sourcePath(LocationImpl.java:202)
+	at org.eclipse.jdt.internal.debug.core.model.JDIStackFrame.getSourcePath(JDIStackFrame.java:1318)
+	... 10 more
+!SUBENTRY 1 org.eclipse.jdt.debug 4 5010 2015-03-17 09:03:47.234
+!MESSAGE org.eclipse.jdi.TimeoutException: Timeout occurred while waiting for packet 1506. occurred retrieving source path debug attribute.
+!STACK 0
+org.eclipse.jdi.TimeoutException: Timeout occurred while waiting for packet 1506.
+	at org.eclipse.jdi.internal.connect.PacketReceiveManager.getReply(PacketReceiveManager.java:186)
+	at org.eclipse.jdi.internal.connect.PacketReceiveManager.getReply(PacketReceiveManager.java:197)
+	at org.eclipse.jdi.internal.MirrorImpl.requestVM(MirrorImpl.java:191)
+	at org.eclipse.jdi.internal.MirrorImpl.requestVM(MirrorImpl.java:226)
+	at org.eclipse.jdi.internal.MirrorImpl.requestVM(MirrorImpl.java:258)
+	at org.eclipse.jdi.internal.ReferenceTypeImpl.getSourceName(ReferenceTypeImpl.java:1716)
+	at org.eclipse.jdi.internal.ReferenceTypeImpl.sourcePath(ReferenceTypeImpl.java:1897)
+	at org.eclipse.jdi.internal.LocationImpl.sourcePath(LocationImpl.java:195)
+	at org.eclipse.jdi.internal.LocationImpl.sourcePath(LocationImpl.java:202)
+	at org.eclipse.jdt.internal.debug.core.model.JDIStackFrame.getSourcePath(JDIStackFrame.java:1318)
+	at org.eclipse.jdt.internal.debug.core.JavaDebugUtils.getSourceName(JavaDebugUtils.java:137)
+	at org.eclipse.jdt.launching.sourcelookup.containers.JavaSourceLookupParticipant.getSourceName(JavaSourceLookupParticipant.java:60)
+	at org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant.findSourceElements(AbstractSourceLookupParticipant.java:63)
+	at org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector$SourceLookupQuery.run(AbstractSourceLookupDirector.java:142)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector.doSourceLookup(AbstractSourceLookupDirector.java:505)
+	at org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector.getSourceElement(AbstractSourceLookupDirector.java:785)
+	at org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility.lookup(SourceLookupFacility.java:346)
+	at org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility$SourceLookupJob.run(SourceLookupFacility.java:737)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY org.eclipse.jface 2 0 2015-03-17 09:03:56.147
+!MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
+!SUBENTRY 1 org.eclipse.jface 2 0 2015-03-17 09:03:56.147
+!MESSAGE A conflict occurred for CTRL+D:
+Binding(CTRL+D,
+	ParameterizedCommand(Command(org.eclipse.debug.ui.commands.eof,EOF,
+		Send end of file,
+		Category(org.eclipse.debug.ui.category.run,Run/Debug,Run/Debug command category,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@13e431a,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.debug.ui.console,,,system)
+Binding(CTRL+D,
+	ParameterizedCommand(Command(org.eclipse.ui.edit.text.delete.line,Delete Line,
+		Delete a line of text,
+		Category(org.eclipse.ui.category.textEditor,Text Editing,Text Editing Commands,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@1ea76099,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.textEditorScope,,,system)
