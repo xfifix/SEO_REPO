@@ -109,16 +109,18 @@ public class StatisticsUtility {
 		measures.setNb_distinct_category5(distinct_category5.size());
 		measures.setNb_distinct_category4(distinct_category4.size());
 		measures.setNb_distinct_brands(distinct_brand.size());
+		distinct_brand.remove("AUCUNE");
+		measures.setNb_distinct_brands_without_default(distinct_brand.size());
 		measures.setDistinct_category5(distinct_category5.toString());
 		measures.setDistinct_category4(distinct_category4.toString());
-		
+
 		measures.setLevenshtein_distances_libelle(levenshtein_libelle_distances);
 		measures.setLevenshtein_description80(levenshtein_description80_distances);
 		measures.setTf_description80(tf_description80_distances);
 		measures.setTf_distances_libelle(tf_libelle_distances);
 		measures.setTf_idf_description80(tf_idf_description80_distances);
 		measures.setTf_idf_distances_libelle(tf_idf_libelle_distances);
-		
+
 		measures.setDistinct_brands(distinct_brand.toString());
 		measures.setCurrentSku(current_sku.getSKU());
 		measures.setCurrentVendor(current_sku.getVENDEUR());
@@ -129,14 +131,23 @@ public class StatisticsUtility {
 	}
 
 	public static Double computeTFdistance(String text1,String text2){
-		return CorpusCache.computeTFSimilarity(text1, text2);
+		Double result=CorpusCache.computeTFSimilarity(text1, text2);
+		if (Double.isNaN(result)){
+			System.out.println("Trouble");
+		}
+		return result;
 	}
 
 	public static Double computeTFIDFdistance(String text1,String text2){
-		return CorpusCache.computeTFSIDFimilarity(text1, text2);
+		Double result=CorpusCache.computeTFSIDFimilarity(text1, text2);
+		if (Double.isNaN(result)){
+			System.out.println("Trouble");
+		}
+		return result;
 	}
 
 	public static Integer computeLevenshteindistance(String text1,String text2){
-		return StringUtils.getLevenshteinDistance(text1, text2);
+		Integer result=StringUtils.getLevenshteinDistance(text1, text2);
+		return result;
 	}
 }

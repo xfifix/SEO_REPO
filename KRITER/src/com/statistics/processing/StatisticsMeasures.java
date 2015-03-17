@@ -6,6 +6,7 @@ public class StatisticsMeasures {
 	private int nb_distinct_category4;
 	private String distinct_category4;
 	private int nb_distinct_brands;
+	private int nb_distinct_brands_without_default;
 	private String distinct_brands;
 	private Double[] tf_distances_libelle = new Double[0];
 	private Double[] tf_idf_distances_libelle = new Double[0];
@@ -122,5 +123,12 @@ public class StatisticsMeasures {
 	}
 	public void setCurrentSku(String currentSku) {
 		this.currentSku = currentSku;
+	}
+	public int getNb_distinct_brands_without_default() {
+		return nb_distinct_brands_without_default;
+	}
+	public void setNb_distinct_brands_without_default(
+			int nb_distinct_brands_without_default) {
+		this.nb_distinct_brands_without_default = nb_distinct_brands_without_default;
 	}
 }

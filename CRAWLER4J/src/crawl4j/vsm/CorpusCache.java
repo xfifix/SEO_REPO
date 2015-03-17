@@ -31,7 +31,7 @@ public class CorpusCache {
 	private static Map<String, Double> corpus_idf = new HashMap<String, Double>();
 	private static int nb_total_documents = 1;
 	private static int nb_semantic_hits_threshold = 20;
-	
+
 	private static String semantic_hit_separator = " ";
 
 	public static void load(){
@@ -103,7 +103,7 @@ public class CorpusCache {
 		VectorStateSpringRepresentation vs =new VectorStateSpringRepresentation(pageText);
 		return vs.getWordFrequencies();
 	}
-	
+
 	public static Map<String, Double> computePageTFIDFVector(String pageText){
 		pageText = CorpusCache.preprocessSemanticText(pageText);
 		VectorStateSpringRepresentation vs =new VectorStateSpringRepresentation(pageText);
@@ -113,12 +113,30 @@ public class CorpusCache {
 	}
 
 	public static Double computeTFSIDFimilarity(String text1, String text2) {
+		if (("".equals(text1))&&("".equals(text2))){
+			return (double) 1;
+		}
+		if (("".equals(text1))&&(!"".equals(text2))){
+			return (double) 0;
+		}
+		if ((!"".equals(text1))&&("".equals(text2))){
+			return (double) 0;
+		}
 		text1 = CorpusCache.preprocessSemanticText(text1);
 		text2 = CorpusCache.preprocessSemanticText(text2);
 		VectorStateSpringRepresentation vs1 =new VectorStateSpringRepresentation(text1);
 		VectorStateSpringRepresentation vs2 =new VectorStateSpringRepresentation(text2);
 		Map<String, Double> firstMap = addTFIDF(vs1.getWordFrequencies());
 		Map<String, Double> secondMap = addTFIDF(vs2.getWordFrequencies());
+		if ((firstMap.size() == 0) && secondMap.size() ==0){
+			return (double) 1;
+		}
+		if ((firstMap.size() != 0) && secondMap.size() ==0){
+			return (double) 0;
+		}
+		if ((firstMap.size() == 0) && secondMap.size() !=0){
+			return (double) 0;
+		}
 		return cosine_tfidfsimilarity(firstMap,secondMap);
 	}
 
@@ -133,7 +151,7 @@ public class CorpusCache {
 		}
 		return to_clean;
 	}
-	
+
 	public static Map<String, Double> addTFIDF(Map<String, Integer> v1){
 		Map<String, Double> output = new HashMap<String, Double>();
 		Iterator<Entry<String, Integer>> it = v1.entrySet().iterator();
@@ -148,10 +166,28 @@ public class CorpusCache {
 	}
 
 	public static Double computeTFSimilarity(String text1, String text2) {
+		if (("".equals(text1))&&("".equals(text2))){
+			return (double) 1;
+		}
+		if (("".equals(text1))&&(!"".equals(text2))){
+			return (double) 0;
+		}
+		if ((!"".equals(text1))&&("".equals(text2))){
+			return (double) 0;
+		}
 		text1 = CorpusCache.preprocessSemanticText(text1);
 		text2 = CorpusCache.preprocessSemanticText(text2);
 		VectorStateSpringRepresentation vs1 =new VectorStateSpringRepresentation(text1);
 		VectorStateSpringRepresentation vs2 =new VectorStateSpringRepresentation(text2);
+		if ((vs1.getWordFrequencies().size() == 0) && vs2.getWordFrequencies().size() ==0){
+			return (double) 1;
+		}
+		if ((vs1.getWordFrequencies().size() != 0) && vs2.getWordFrequencies().size() ==0){
+			return (double) 0;
+		}
+		if ((vs1.getWordFrequencies().size() == 0) && vs2.getWordFrequencies().size() !=0){
+			return (double) 0;
+		}
 		return cosine_tfsimilarity(vs1.getWordFrequencies() , vs2.getWordFrequencies());
 	}
 
@@ -191,7 +227,7 @@ public class CorpusCache {
 		String orderedKeysTenHits=getOrderedKeysBestHitsJSON(tfIdfMapSortedMap);
 		return orderedKeysTenHits;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static String formatTFMapJSON(Map<String, Integer> tfMap){
 		String[] keys=getKeys(tfMap);
@@ -201,21 +237,21 @@ public class CorpusCache {
 		}
 		return termsArray.toJSONString();
 	}
-	
+
 	public static String formatTFMap(Map<String, Integer> tfMap){
 		String[] keys=getKeys(tfMap);
 		return StringUtils.join(keys,semantic_hit_separator);
 	}
-	
+
 	public static String formatTFIDFMap(Map<String, Double> tfIdfMap){
 		Map<String, Double> tfIdfMapSortedMap = sortByValueDescendingly( tfIdfMap );
 		String[] orderedKeys=getKeys(tfIdfMapSortedMap);
 		return StringUtils.join(orderedKeys,semantic_hit_separator);
 	}
-//	facetteObject.put("facette_name", info.getFacetteName());
-//	facetteObject.put("facette_value", info.getFacetteValue());
-//	facetteObject.put("facette_count", info.getFacetteCount());
-//	facettesArray.add(facetteObject);
+	//	facetteObject.put("facette_name", info.getFacetteName());
+	//	facetteObject.put("facette_value", info.getFacetteValue());
+	//	facetteObject.put("facette_count", info.getFacetteCount());
+	//	facettesArray.add(facetteObject);
 	@SuppressWarnings("unchecked")
 	public static String getOrderedKeysBestHitsJSON(Map<String, Double> tfIdfMapSortedMap){
 		JSONArray tfidfsArray = new JSONArray();
@@ -305,7 +341,7 @@ public class CorpusCache {
 		}
 		return result;
 	}
-	
+
 	public static <K, V extends Comparable<? super V>> Map<K, V> sortByValueAscendingly( Map<K, V> map )
 	{
 		List<Map.Entry<K, V>> list = new LinkedList<Map.Entry<K, V>>( map.entrySet() );
@@ -325,7 +361,7 @@ public class CorpusCache {
 		}
 		return result;
 	}
-	
+
 	public static String preprocessSemanticText(String semanticText){
 		semanticText=semanticText.replace("l'", "");
 		semanticText=semanticText.replace("n'", "");
@@ -334,5 +370,5 @@ public class CorpusCache {
 		semanticText=semanticText.replace("s'", "");
 		return semanticText;
 	}
-	
+
 }
