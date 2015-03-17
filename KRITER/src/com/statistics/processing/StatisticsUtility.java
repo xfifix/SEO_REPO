@@ -12,6 +12,11 @@ public class StatisticsUtility {
 
 	public static StatisticsMeasures computeStatistics(String[] skus_in_order, Map<String, CatalogEntry> filled_up ){
 		CatalogEntry current_sku = filled_up.get(skus_in_order[0]);
+		if (current_sku == null)
+		{
+			System.out.println("Trouble finding current sku");
+			return null;
+		}
 
 		Set<String> distinct_category5 = new HashSet<String>();
 		Set<String> distinct_category4 = new HashSet<String>();
@@ -36,6 +41,8 @@ public class StatisticsUtility {
 			tf_description80_distances[0] = computeTFdistance(current_sku.getDESCRIPTION_LONGUEUR80(),sku1.getDESCRIPTION_LONGUEUR80());
 			//tf_idf_description80_distances[0] = computeTFIDFdistance(current_sku.getDESCRIPTION_LONGUEUR80(),sku1.getDESCRIPTION_LONGUEUR80());
 			levenshtein_description80_distances[0] = computeLevenshteindistance(current_sku.getDESCRIPTION_LONGUEUR80(),sku1.getDESCRIPTION_LONGUEUR80());
+		} else {
+			System.out.println("Trouble finding sku 1");
 		}
 		CatalogEntry sku2 =filled_up.get(skus_in_order[2]);
 		if (sku2 != null){
@@ -49,6 +56,8 @@ public class StatisticsUtility {
 			tf_description80_distances[1] = computeTFdistance(current_sku.getDESCRIPTION_LONGUEUR80(),sku2.getDESCRIPTION_LONGUEUR80());
 			//tf_idf_description80_distances[1] = computeTFIDFdistance(current_sku.getDESCRIPTION_LONGUEUR80(),sku2.getDESCRIPTION_LONGUEUR80());
 			levenshtein_description80_distances[1] = computeLevenshteindistance(current_sku.getDESCRIPTION_LONGUEUR80(),sku2.getDESCRIPTION_LONGUEUR80());
+		} else {
+			System.out.println("Trouble finding sku 2");
 		}
 		CatalogEntry sku3 =filled_up.get(skus_in_order[3]);
 		if (sku3 != null){
@@ -62,6 +71,8 @@ public class StatisticsUtility {
 			tf_description80_distances[2] = computeTFdistance(current_sku.getDESCRIPTION_LONGUEUR80(),sku3.getDESCRIPTION_LONGUEUR80());
 			//tf_idf_description80_distances[2] = computeTFIDFdistance(current_sku.getDESCRIPTION_LONGUEUR80(),sku3.getDESCRIPTION_LONGUEUR80());
 			levenshtein_description80_distances[2] = computeLevenshteindistance(current_sku.getDESCRIPTION_LONGUEUR80(),sku3.getDESCRIPTION_LONGUEUR80());
+		} else {
+			System.out.println("Trouble finding sku 3");
 		}
 		CatalogEntry sku4 =filled_up.get(skus_in_order[4]);
 		if (sku4 != null){
@@ -75,7 +86,8 @@ public class StatisticsUtility {
 			tf_description80_distances[3] = computeTFdistance(current_sku.getDESCRIPTION_LONGUEUR80(),sku4.getDESCRIPTION_LONGUEUR80());
 			//tf_idf_description80_distances[3] = computeTFIDFdistance(current_sku.getDESCRIPTION_LONGUEUR80(),sku4.getDESCRIPTION_LONGUEUR80());
 			levenshtein_description80_distances[3] = computeLevenshteindistance(current_sku.getDESCRIPTION_LONGUEUR80(),sku4.getDESCRIPTION_LONGUEUR80());
-
+		} else {
+			System.out.println("Trouble finding sku 4");
 		}
 		CatalogEntry sku5 =filled_up.get(skus_in_order[5]);
 		if (sku5 != null){
@@ -89,7 +101,8 @@ public class StatisticsUtility {
 			tf_description80_distances[4] = computeTFdistance(current_sku.getDESCRIPTION_LONGUEUR80(),sku5.getDESCRIPTION_LONGUEUR80());
 			//tf_idf_description80_distances[4] = computeTFIDFdistance(current_sku.getDESCRIPTION_LONGUEUR80(),sku5.getDESCRIPTION_LONGUEUR80());
 			levenshtein_description80_distances[4] = computeLevenshteindistance(current_sku.getDESCRIPTION_LONGUEUR80(),sku5.getDESCRIPTION_LONGUEUR80());
-
+		} else {
+			System.out.println("Trouble finding sku 5");
 		}
 		CatalogEntry sku6 =filled_up.get(skus_in_order[6]);
 		if (sku6 != null){
@@ -102,8 +115,9 @@ public class StatisticsUtility {
 			tf_description80_distances[5] = computeTFdistance(current_sku.getDESCRIPTION_LONGUEUR80(),sku6.getDESCRIPTION_LONGUEUR80());
 			//tf_idf_description80_distances[5] = computeTFIDFdistance(current_sku.getDESCRIPTION_LONGUEUR80(),sku6.getDESCRIPTION_LONGUEUR80());
 			levenshtein_description80_distances[5] = computeLevenshteindistance(current_sku.getDESCRIPTION_LONGUEUR80(),sku6.getDESCRIPTION_LONGUEUR80());
+		} else {
+			System.out.println("Trouble finding sku 6");
 		}
-
 		StatisticsMeasures measures = new StatisticsMeasures();
 
 		measures.setNb_distinct_category5(distinct_category5.size());
