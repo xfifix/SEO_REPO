@@ -5,7 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.statistics.processing.CatalogEntry;
 import com.statistics.processing.StatisticsUtility;
@@ -14,6 +17,7 @@ public class SimilarityComputingWorkerThread implements Runnable {
 	private Connection con;
 	private List<String> my_categories_to_compute = new ArrayList<String>();
 	private static String select_entry_from_category = " select SKU, MAGASIN, RAYON, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4, CATEGORIE_NIVEAU_5, LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, URL, LIEN_IMAGE, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_4=?";
+	private static Map<String,List<String>> matching_skus = new HashMap<String,List<String>>();
 
 	public SimilarityComputingWorkerThread(Connection con, List<String> to_fetch) throws SQLException{
 		this.con = con;
@@ -25,11 +29,12 @@ public class SimilarityComputingWorkerThread implements Runnable {
 			for (String category : my_categories_to_compute){
 				System.out.println("Dealing with category : "+category);
 				List<CatalogEntry> my_data = fetch_category_data(category);
-				computeDistanceMatrix(my_data);
+				Double[] symmetric_matrix = computeDistanceMatrix(my_data);
+				find_similar(symmetric_matrix,my_data);
 				close_connection();
 			}
 
-		} catch (SQLException ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
 			try {
@@ -39,6 +44,18 @@ public class SimilarityComputingWorkerThread implements Runnable {
 			} catch (SQLException ex) {
 				ex.printStackTrace();
 			}
+		}
+	}
+
+	public void find_similar(Double[] symmetric_matrix,List<CatalogEntry> entries){
+		int size_list = entries.size();
+		Double[] vector_list = new Double[size_list]; 
+		for (int i=0;i<size_list;i++){
+			System.out.println("i"+i);
+			for (int j= 0;j<size_list;j++){
+				vector_list[j] = symmetric_matrix[fromMatrixToVector(i,j,size_list)];
+			}
+			Arrays.sort(vector_list);
 		}
 	}
 
@@ -90,10 +107,12 @@ public class SimilarityComputingWorkerThread implements Runnable {
 		Double[] to_return = new Double[size_list*(size_list+1)/2];
 		for (int i=0;i<size_list;i++){
 			System.out.println("i"+i);
-			for (int j=i+1;j<size_list;j++){
+			for (int j=i;j<size_list;j++){
 				CatalogEntry entryi = entries.get(i);
 				CatalogEntry entryj = entries.get(j);
-				to_return[fromMatrixToVector(i,j,size_list)] = StatisticsUtility.computeTFdistance(entryi.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
+				Double distone = StatisticsUtility.computeTFdistance(entryi.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
+				Double disttwo = StatisticsUtility.computeTFdistance(entryi.getDESCRIPTION_LONGUEUR80(), entryj.getDESCRIPTION_LONGUEUR80());
+				to_return[fromMatrixToVector(i,j,size_list)] = distone + disttwo;
 			}
 		}
 		return to_return;
@@ -101,10 +120,13 @@ public class SimilarityComputingWorkerThread implements Runnable {
 
 	public int fromMatrixToVector(int i, int j, int N)
 	{
+		int my_index;
 		if (i <= j)
-			return i * N - (i - 1) * i / 2 + j - i-1;
+			my_index = i * N - (i - 1) * i / 2 + j - i;
 		else
-			return j * N - (j - 1) * j / 2 + i - j-1;
+			my_index = j * N - (j - 1) * j / 2 + i - j;
+		
+		return my_index;
 	}
 	private void close_connection(){
 		try {

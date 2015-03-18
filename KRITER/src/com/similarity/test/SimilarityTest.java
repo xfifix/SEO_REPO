@@ -44,7 +44,7 @@ public class SimilarityTest {
 
 		Connection local_con = DriverManager.getConnection(url, user, passwd);
 		List<String> categories = new ArrayList<String>();
-		categories.add("MUSIQUE");
+		categories.add("TARTE");
 		Runnable worker = new SimilarityComputingWorkerThread(local_con,categories);
 		worker.run();
 	}
