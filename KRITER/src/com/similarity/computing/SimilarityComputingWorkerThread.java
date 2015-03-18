@@ -7,10 +7,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
+import java.util.Set;
 
 import com.statistics.processing.CatalogEntry;
 import com.statistics.processing.StatisticsUtility;
@@ -19,8 +22,9 @@ public class SimilarityComputingWorkerThread implements Runnable {
 	private Connection con;
 	private List<String> my_categories_to_compute = new ArrayList<String>();
 	private static String select_entry_from_category = " select SKU, MAGASIN, RAYON, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4, CATEGORIE_NIVEAU_5, LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, URL, LIEN_IMAGE, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_4=?";
-	private static Map<String,List<String>> matching_skus = new HashMap<String,List<String>>();
-	private int kriter_threshold =6;
+	private Map<String,List<String>> matching_skus = new HashMap<String,List<String>>();
+	private static int kriter_threshold =6;
+	private static int max_list_size = 10000; 
 
 	public SimilarityComputingWorkerThread(Connection con, List<String> to_fetch) throws SQLException{
 		this.con = con;
@@ -34,10 +38,11 @@ public class SimilarityComputingWorkerThread implements Runnable {
 				category_to_debug=category;
 				System.out.println("Dealing with category : "+category);
 				List<CatalogEntry> my_data = fetch_category_data(category);
-				if (my_data.size() >= kriter_threshold){
+				if (my_data.size() >= kriter_threshold && my_data.size()<= max_list_size){
+					// we do it the standard way
 					Double[] symmetric_matrix = computeDistanceMatrix(my_data);
 					find_similar(symmetric_matrix,my_data);
-				} else {
+				} else if (my_data.size() < kriter_threshold) {
 					List<String> similars = new ArrayList<String>();
 					for (CatalogEntry to_add : my_data){
 						similars.add(to_add.getSKU());
@@ -45,6 +50,15 @@ public class SimilarityComputingWorkerThread implements Runnable {
 					for (CatalogEntry to_process : my_data){
 						matching_skus.put(to_process.getSKU(),similars);
 					}
+					// we here have to fetch lower category
+				}else if (my_data.size() > max_list_size) {
+					// we here have to restrain ourselves
+					// we do it randomly
+					// but we should get a more proper criteria (business value, clicking trend)
+					List<CatalogEntry> randomSet = shrink(my_data);
+					System.out.println(randomSet.size());
+					Double[][] distance_matrix = computeRestrictedDistanceMatrix(my_data,randomSet);
+					find_restricted_similar(distance_matrix,my_data);
 				}
 				saving_similar();
 			}
@@ -64,9 +78,16 @@ public class SimilarityComputingWorkerThread implements Runnable {
 		}
 	}
 
+	public List<CatalogEntry> shrink(List<CatalogEntry> my_list){
+		Set<CatalogEntry> to_return = new HashSet<CatalogEntry>();
+		Random my_rand = new Random();
+		while (to_return.size() < max_list_size){
+			to_return.add(my_list.get(my_rand.nextInt(my_list.size())));
+		}
+		return new ArrayList<CatalogEntry>(to_return);
+	}
+
 	public void saving_similar(){
-
-
 		Iterator<Entry<String, List<String>>> it = matching_skus.entrySet().iterator();
 		while (it.hasNext()){
 			Map.Entry<String, List<String>> pairs = (Map.Entry<String, List<String>>)it.next();
@@ -76,12 +97,39 @@ public class SimilarityComputingWorkerThread implements Runnable {
 		}
 	}
 
+	public void find_restricted_similar(Double[][] distance_matrix, List<CatalogEntry> entries){
+		int size_list = entries.size();
+		Double[] vector_list = new Double[size_list]; 
+		for (int i=0;i<size_list;i++){
+			CatalogEntry current_entry = entries.get(i);
+			//System.out.println("i"+i);
+			entries.get(i);
+			for (int j= 0;j<max_list_size;j++){
+				vector_list[j] = distance_matrix[i][j];
+			}
+			// sorting the array and keeping the indexes
+			ArrayIndexComparator comparator = new ArrayIndexComparator(vector_list);
+			Integer[] indexes = comparator.createIndexArray();
+			Arrays.sort(indexes, comparator);
+
+			List<String> similars = new ArrayList<String>();
+			// adding the 6 first closest skus
+			similars.add(entries.get(0).getSKU());
+			similars.add(entries.get(1).getSKU());
+			similars.add(entries.get(2).getSKU());
+			similars.add(entries.get(3).getSKU());
+			similars.add(entries.get(4).getSKU());
+			similars.add(entries.get(5).getSKU());
+			matching_skus.put(current_entry.getSKU(),similars);
+		}
+	}
+
 	public void find_similar(Double[] symmetric_matrix,List<CatalogEntry> entries){
 		int size_list = entries.size();
 		Double[] vector_list = new Double[size_list]; 
 		for (int i=0;i<size_list;i++){
 			CatalogEntry current_entry = entries.get(i);
-			System.out.println("i"+i);
+			//System.out.println("i"+i);
 			entries.get(i);
 			for (int j= 0;j<size_list;j++){
 				vector_list[j] = symmetric_matrix[fromMatrixToVector(i,j,size_list)];
@@ -146,11 +194,35 @@ public class SimilarityComputingWorkerThread implements Runnable {
 		return my_entries;
 	}
 
+
+	public Double[][] computeRestrictedDistanceMatrix(List<CatalogEntry> entries,List<CatalogEntry> restrictedPanel){
+		int size_list = entries.size();
+		int restricted_size_list = restrictedPanel.size();
+
+		Double[][] to_return = new Double[size_list][restricted_size_list];
+		for (int i=0;i<size_list;i++){
+			if (i%1000 == 0){
+				System.out.println(Thread.currentThread() +" Having computed distance matrix"+i+" from "+size_list);
+			}
+			for (int j=0;j<restricted_size_list;j++){
+				CatalogEntry entryi = entries.get(i);
+				CatalogEntry entryj = restrictedPanel.get(j);
+				Double distone = StatisticsUtility.computeTFdistance(entryi.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
+				Double disttwo = StatisticsUtility.computeTFdistance(entryi.getDESCRIPTION_LONGUEUR80(), entryj.getDESCRIPTION_LONGUEUR80());
+				to_return[i][j] = distone + disttwo;
+			}
+		}
+		return to_return;
+	}
+
 	public Double[] computeDistanceMatrix(List<CatalogEntry> entries){
 		int size_list = entries.size();
-		Double[] to_return = new Double[size_list*(size_list+1)/2];
+		long vector_size_list = size_list*(size_list+1)/2;
+		Double[] to_return = new Double[(int)vector_size_list];
 		for (int i=0;i<size_list;i++){
-//			System.out.println("i"+i);
+			if (i%1000 == 0){
+				System.out.println(Thread.currentThread() +" Having computed distance matrix"+i+" from "+size_list);
+			}
 			for (int j=i;j<size_list;j++){
 				CatalogEntry entryi = entries.get(i);
 				CatalogEntry entryj = entries.get(j);

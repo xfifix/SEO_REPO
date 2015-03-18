@@ -47,8 +47,9 @@ public class SimilarityTest {
 //		categories.add("TARTE");
 //		categories.add("CARTE TUNER TV");
 //		categories.add("PANES - CORDON BLEUS");
-		categories.add("FANION DE SIGNALISATION");	
-		categories.add("TIGE A URETRE");
+//		categories.add("FANION DE SIGNALISATION");	
+//		categories.add("TIGE A URETRE");
+		categories.add("COQUE - HOUSSE");
 
 		Runnable worker = new SimilarityComputingWorkerThread(local_con,categories);
 		worker.run();
