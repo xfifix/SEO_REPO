@@ -22,6 +22,7 @@ public class SimilarityComputingWorkerThread implements Runnable {
 	private Connection con;
 	private List<String> my_categories_to_compute = new ArrayList<String>();
 	private static String select_entry_from_category = " select SKU, MAGASIN, RAYON, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4, CATEGORIE_NIVEAU_5, LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, URL, LIEN_IMAGE, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_4=?";
+	private static String insert_cds_statement = "INSERT INTO CDS_SIMILAR_PRODUCTS(SKU,SKU1,SKU2,SKU3,SKU4,SKU5,SKU6) VALUES(?,?,?,?,?,?,?)";
 	private Map<String,List<String>> matching_skus = new HashMap<String,List<String>>();
 	private static int kriter_threshold =6;
 	private static int max_list_size = 10000; 
@@ -88,13 +89,45 @@ public class SimilarityComputingWorkerThread implements Runnable {
 	}
 
 	public void saving_similar(){
-		Iterator<Entry<String, List<String>>> it = matching_skus.entrySet().iterator();
-		while (it.hasNext()){
-			Map.Entry<String, List<String>> pairs = (Map.Entry<String, List<String>>)it.next();
-			String current_sku=pairs.getKey();
-			List<String> similars =pairs.getValue();
-			System.out.println("Current Sku :" + current_sku + similars);
-		}
+		System.out.println("Inserting the batch "+matching_skus.size());
+		try{
+
+			Iterator<Entry<String, List<String>>> it = matching_skus.entrySet().iterator();
+			int local_counter = 0;
+			con.setAutoCommit(false);
+			PreparedStatement st = con.prepareStatement(insert_cds_statement);
+			while (it.hasNext()){
+				local_counter++;
+				Map.Entry<String, List<String>> pairs = (Map.Entry<String, List<String>>)it.next();
+				String current_sku=pairs.getKey();
+				List<String> similars =pairs.getValue();
+				System.out.println("Current Sku :" + current_sku + similars);
+				// preparing the statement
+				st.setString(1,current_sku);
+				st.setString(2,similars.get(0));
+				st.setString(3,similars.get(1));
+				st.setString(4,similars.get(2));
+				st.setString(5,similars.get(3));
+				st.setString(6,similars.get(4));
+				st.setString(7,similars.get(5));
+				st.addBatch();
+			}
+			st.executeBatch();
+			con.commit();
+			st.close();
+			System.out.println(Thread.currentThread()+"Committed " + local_counter + " updates");
+		} catch (SQLException e){
+			//System.out.println("Line already inserted : "+nb_lines);
+			e.printStackTrace();  
+			if (con != null) {
+				try {
+					con.rollback();
+				} catch (SQLException ex1) {
+					ex1.printStackTrace();
+				}
+			}
+			e.printStackTrace();
+		}	
 	}
 
 	public void find_restricted_similar(Double[][] distance_matrix, List<CatalogEntry> entries){

@@ -48,16 +48,16 @@
 <fullyQualifiedTypeName name="crawl4j.continuous.CrawlerUtility"/>
 <fullyQualifiedTypeName name="crawl4j.continuous.ContinuousController"/>
 <fullyQualifiedTypeName name="crawl4j.xpathutility.XPathUtility"/>
-<fullyQualifiedTypeName name="java.util.Iterator"/>
-<fullyQualifiedTypeName name="java.util.Map.Entry"/>
 <fullyQualifiedTypeName name="java.lang.reflect.Array"/>
 <fullyQualifiedTypeName name="java.sql.PreparedStatement"/>
 <fullyQualifiedTypeName name="com.statistics.processing.StatisticsMeasures"/>
 <fullyQualifiedTypeName name="org.apache.commons.lang3.StringUtils"/>
-<fullyQualifiedTypeName name="java.util.Set"/>
 <fullyQualifiedTypeName name="com.statistics.processing.StatisticsUtility"/>
 <fullyQualifiedTypeName name="com.itextpdf.text.List"/>
 <fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="java.util.Map"/>
 <fullyQualifiedTypeName name="java.util.Arrays"/>
+<fullyQualifiedTypeName name="java.util.Map.Entry"/>
+<fullyQualifiedTypeName name="java.util.Iterator"/>
+<fullyQualifiedTypeName name="java.util.Set"/>
 </qualifiedTypeNameHistroy>
