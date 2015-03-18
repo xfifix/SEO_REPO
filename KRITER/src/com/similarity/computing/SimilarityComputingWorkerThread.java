@@ -7,8 +7,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.statistics.processing.CatalogEntry;
 import com.statistics.processing.StatisticsUtility;
@@ -18,6 +20,7 @@ public class SimilarityComputingWorkerThread implements Runnable {
 	private List<String> my_categories_to_compute = new ArrayList<String>();
 	private static String select_entry_from_category = " select SKU, MAGASIN, RAYON, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4, CATEGORIE_NIVEAU_5, LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, URL, LIEN_IMAGE, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_4=?";
 	private static Map<String,List<String>> matching_skus = new HashMap<String,List<String>>();
+	private int kriter_threshold =6;
 
 	public SimilarityComputingWorkerThread(Connection con, List<String> to_fetch) throws SQLException{
 		this.con = con;
@@ -25,16 +28,30 @@ public class SimilarityComputingWorkerThread implements Runnable {
 	}
 
 	public void run() {
+		String category_to_debug="";
 		try {  
 			for (String category : my_categories_to_compute){
+				category_to_debug=category;
 				System.out.println("Dealing with category : "+category);
 				List<CatalogEntry> my_data = fetch_category_data(category);
-				Double[] symmetric_matrix = computeDistanceMatrix(my_data);
-				find_similar(symmetric_matrix,my_data);
-				close_connection();
+				if (my_data.size() >= kriter_threshold){
+					Double[] symmetric_matrix = computeDistanceMatrix(my_data);
+					find_similar(symmetric_matrix,my_data);
+				} else {
+					List<String> similars = new ArrayList<String>();
+					for (CatalogEntry to_add : my_data){
+						similars.add(to_add.getSKU());
+					}
+					for (CatalogEntry to_process : my_data){
+						matching_skus.put(to_process.getSKU(),similars);
+					}
+				}
+				saving_similar();
 			}
+			close_connection();
 
 		} catch (Exception ex) {
+			System.out.println("Trouble with category : "+category_to_debug);
 			ex.printStackTrace();
 		} finally {
 			try {
@@ -47,15 +64,42 @@ public class SimilarityComputingWorkerThread implements Runnable {
 		}
 	}
 
+	public void saving_similar(){
+
+
+		Iterator<Entry<String, List<String>>> it = matching_skus.entrySet().iterator();
+		while (it.hasNext()){
+			Map.Entry<String, List<String>> pairs = (Map.Entry<String, List<String>>)it.next();
+			String current_sku=pairs.getKey();
+			List<String> similars =pairs.getValue();
+			System.out.println("Current Sku :" + current_sku + similars);
+		}
+	}
+
 	public void find_similar(Double[] symmetric_matrix,List<CatalogEntry> entries){
 		int size_list = entries.size();
 		Double[] vector_list = new Double[size_list]; 
 		for (int i=0;i<size_list;i++){
+			CatalogEntry current_entry = entries.get(i);
 			System.out.println("i"+i);
+			entries.get(i);
 			for (int j= 0;j<size_list;j++){
 				vector_list[j] = symmetric_matrix[fromMatrixToVector(i,j,size_list)];
 			}
-			Arrays.sort(vector_list);
+			// sorting the array and keeping the indexes
+			ArrayIndexComparator comparator = new ArrayIndexComparator(vector_list);
+			Integer[] indexes = comparator.createIndexArray();
+			Arrays.sort(indexes, comparator);
+
+			List<String> similars = new ArrayList<String>();
+			// adding the 6 first closest skus
+			similars.add(entries.get(0).getSKU());
+			similars.add(entries.get(1).getSKU());
+			similars.add(entries.get(2).getSKU());
+			similars.add(entries.get(3).getSKU());
+			similars.add(entries.get(4).getSKU());
+			similars.add(entries.get(5).getSKU());
+			matching_skus.put(current_entry.getSKU(),similars);
 		}
 	}
 
@@ -106,7 +150,7 @@ public class SimilarityComputingWorkerThread implements Runnable {
 		int size_list = entries.size();
 		Double[] to_return = new Double[size_list*(size_list+1)/2];
 		for (int i=0;i<size_list;i++){
-			System.out.println("i"+i);
+//			System.out.println("i"+i);
 			for (int j=i;j<size_list;j++){
 				CatalogEntry entryi = entries.get(i);
 				CatalogEntry entryj = entries.get(j);
@@ -125,7 +169,7 @@ public class SimilarityComputingWorkerThread implements Runnable {
 			my_index = i * N - (i - 1) * i / 2 + j - i;
 		else
 			my_index = j * N - (j - 1) * j / 2 + i - j;
-		
+
 		return my_index;
 	}
 	private void close_connection(){

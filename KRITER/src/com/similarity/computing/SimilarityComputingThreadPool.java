@@ -53,12 +53,10 @@ public class SimilarityComputingThreadPool {
 		System.out.println("You'll connect to the postgresql KRITERDB database as "+user);
 		// Instantiating the pool thread
 		ExecutorService executor = Executors.newFixedThreadPool(list_fixed_pool_size);
-
 		// The database connection
 		Connection con = null;
 		PreparedStatement pst = null;
 		ResultSet rs = null;
-
 		try {  
 			con = DriverManager.getConnection(url, user, passwd);
 			// getting the number of URLs to fetch

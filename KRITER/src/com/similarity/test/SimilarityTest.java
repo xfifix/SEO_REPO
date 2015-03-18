@@ -44,7 +44,12 @@ public class SimilarityTest {
 
 		Connection local_con = DriverManager.getConnection(url, user, passwd);
 		List<String> categories = new ArrayList<String>();
-		categories.add("TARTE");
+//		categories.add("TARTE");
+//		categories.add("CARTE TUNER TV");
+//		categories.add("PANES - CORDON BLEUS");
+		categories.add("FANION DE SIGNALISATION");	
+		categories.add("TIGE A URETRE");
+
 		Runnable worker = new SimilarityComputingWorkerThread(local_con,categories);
 		worker.run();
 	}
