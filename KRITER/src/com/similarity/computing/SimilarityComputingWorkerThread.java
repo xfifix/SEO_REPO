@@ -82,11 +82,12 @@ public class SimilarityComputingWorkerThread implements Runnable {
 		}
 	}
 
-	public void updateDataList(CatalogEntry current_entry, List<CatalogEntry> my_data){
+	public boolean updateDataList(CatalogEntry current_entry, List<CatalogEntry> my_data){
+		boolean done = false;
 		if (my_data.size() >= kriter_threshold){
 			// we do it the standard way
 			Double[] symmetric_vector = computeDistanceVector(current_entry,my_data);
-			find_similar_backup(current_entry,symmetric_vector,my_data);
+			done = find_similar_backup(current_entry,symmetric_vector,my_data);
 		} else if (my_data.size() < kriter_threshold) {
 			Set<String> current_similars = unfetched_skus_local_cache.get(current_entry);
 			for (CatalogEntry to_add : my_data){
@@ -94,11 +95,12 @@ public class SimilarityComputingWorkerThread implements Runnable {
 			}
 			if (current_similars.size()>= kriter_threshold){
 				matching_skus.put(current_entry.getSKU(),new ArrayList<String>(current_similars));
-				unfetched_skus_local_cache.remove(current_entry);
+				done = true;
 			} else {
 				unfetched_skus_local_cache.put(current_entry,current_similars);
 			}
 		}
+		return done;
 	}
 
 	public void computeDataList(List<CatalogEntry> my_data){
@@ -128,31 +130,52 @@ public class SimilarityComputingWorkerThread implements Runnable {
 
 	public void backup_category3() throws SQLException{
 		Iterator<Entry<CatalogEntry, Set<String>>> it = unfetched_skus_local_cache.entrySet().iterator();	
+		List<CatalogEntry> to_remove = new ArrayList<CatalogEntry>();
 		while (it.hasNext()){
 			Map.Entry<CatalogEntry, Set<String>> pairs = (Map.Entry<CatalogEntry, Set<String>>)it.next();
 			CatalogEntry current_entry=pairs.getKey();			
 			List<CatalogEntry> newSet = fetch_category_data3(current_entry.getCATEGORIE_NIVEAU_3());
-			updateDataList(current_entry,newSet);
+			if (updateDataList(current_entry,newSet)){
+				to_remove.add(current_entry);	
+			}
+		}
+
+		for (CatalogEntry torem : to_remove){
+			unfetched_skus_local_cache.remove(torem);
 		}
 	}
 
 	public void backup_category2() throws SQLException{
 		Iterator<Entry<CatalogEntry, Set<String>>> it = unfetched_skus_local_cache.entrySet().iterator();	
+		List<CatalogEntry> to_remove = new ArrayList<CatalogEntry>();
 		while (it.hasNext()){
 			Map.Entry<CatalogEntry, Set<String>> pairs = (Map.Entry<CatalogEntry, Set<String>>)it.next();
 			CatalogEntry current_entry=pairs.getKey();			
 			List<CatalogEntry> newSet = fetch_category_data2(current_entry.getCATEGORIE_NIVEAU_2());
-			updateDataList(current_entry,newSet);
+			if (updateDataList(current_entry,newSet)){
+				to_remove.add(current_entry);	
+			}
+		}
+
+		for (CatalogEntry torem : to_remove){
+			unfetched_skus_local_cache.remove(torem);
 		}
 	}
 
 	public void backup_category1() throws SQLException{
 		Iterator<Entry<CatalogEntry, Set<String>>> it = unfetched_skus_local_cache.entrySet().iterator();	
+		List<CatalogEntry> to_remove = new ArrayList<CatalogEntry>();
 		while (it.hasNext()){
 			Map.Entry<CatalogEntry, Set<String>> pairs = (Map.Entry<CatalogEntry, Set<String>>)it.next();
 			CatalogEntry current_entry=pairs.getKey();			
 			List<CatalogEntry> newSet = fetch_category_data1(current_entry.getCATEGORIE_NIVEAU_1());
-			updateDataList(current_entry,newSet);
+			if (updateDataList(current_entry,newSet)){
+				to_remove.add(current_entry);	
+			}
+		}
+
+		for (CatalogEntry torem : to_remove){
+			unfetched_skus_local_cache.remove(torem);
 		}
 	}
 
@@ -277,26 +300,25 @@ public class SimilarityComputingWorkerThread implements Runnable {
 		}
 	}
 
-	public void find_similar_backup(CatalogEntry current_entry, Double[] vector_list,List<CatalogEntry> entries){
+	public boolean find_similar_backup(CatalogEntry current_entry, Double[] vector_list,List<CatalogEntry> entries){
+        boolean done = false;
 		Set<String> current_similars = unfetched_skus_local_cache.get(current_entry);
-
 		// sorting the array and keeping the indexes
 		DescendingArrayIndexComparator comparator = new DescendingArrayIndexComparator(vector_list);
 		Integer[] indexes = comparator.createIndexArray();
 		Arrays.sort(indexes, comparator);
-
 		int loc = 0;
 		while (current_similars.size()<kriter_threshold){
 			current_similars.add(entries.get(indexes[loc]).getSKU());
 			loc++;
 		}
-
 		if (current_similars.size()>= kriter_threshold){
 			matching_skus.put(current_entry.getSKU(),new ArrayList<String>(current_similars));
-			unfetched_skus_local_cache.remove(current_entry);
+	        done = true;
 		} else {
 			unfetched_skus_local_cache.put(current_entry,current_similars);
 		}
+		return done;
 	}
 
 	public void find_similar(Double[] symmetric_matrix,List<CatalogEntry> entries){
