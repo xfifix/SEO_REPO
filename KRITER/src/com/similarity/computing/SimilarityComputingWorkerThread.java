@@ -21,15 +21,19 @@ import com.statistics.processing.StatisticsUtility;
 public class SimilarityComputingWorkerThread implements Runnable {
 	private Connection con;
 	private List<String> my_categories_to_compute = new ArrayList<String>();
+	// beware static shared global cache for unfetched skus
+	private Map<String, List<String>> unfetched_skus_global_cache;
+
 	private static String select_entry_from_category = " select SKU, MAGASIN, RAYON, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4, CATEGORIE_NIVEAU_5, LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, URL, LIEN_IMAGE, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_4=?";
 	private static String insert_cds_statement = "INSERT INTO CDS_SIMILAR_PRODUCTS(SKU,SKU1,SKU2,SKU3,SKU4,SKU5,SKU6) VALUES(?,?,?,?,?,?,?)";
 	private Map<String,List<String>> matching_skus = new HashMap<String,List<String>>();
 	private static int kriter_threshold =6;
 	private static int max_list_size = 10000; 
 
-	public SimilarityComputingWorkerThread(Connection con, List<String> to_fetch) throws SQLException{
+	public SimilarityComputingWorkerThread(Connection con, List<String> to_fetch,Map<String, List<String>> unfetched_skus_global_cache) throws SQLException{
 		this.con = con;
 		this.my_categories_to_compute = to_fetch;
+		this.unfetched_skus_global_cache= unfetched_skus_global_cache;
 	}
 
 	public void run() {
@@ -49,7 +53,7 @@ public class SimilarityComputingWorkerThread implements Runnable {
 						similars.add(to_add.getSKU());
 					}
 					for (CatalogEntry to_process : my_data){
-						matching_skus.put(to_process.getSKU(),similars);
+						unfetched_skus_global_cache.put(to_process.getSKU(),similars);
 					}
 					// we here have to fetch lower category
 				}else if (my_data.size() > max_list_size) {

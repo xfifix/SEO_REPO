@@ -9,19 +9,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class SimilarityComputingThreadPool {
 
+	private static Map<String, List<String>> unfetched_skus = new ConcurrentHashMap<String, List<String>>();
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
 	private static int list_fixed_pool_size = 250;
 	private static int list_size_bucket = 25;
 	public static String select_distinct_cat4 = "select distinct categorie_niveau_4 from CATALOG";
-	
+
 	public static void main(String[] args) {
 		System.out.println("Number of threads for list crawler : "+list_fixed_pool_size);
 		System.out.println("Bucket size for list crawler : "+list_size_bucket);
@@ -77,7 +78,7 @@ public class SimilarityComputingThreadPool {
 					// one new connection per task
 					System.out.println("Launching another thread with "+local_count+" Categories to fetch");
 					Connection local_con = DriverManager.getConnection(url, user, passwd);
-					Runnable worker = new SimilarityComputingWorkerThread(local_con,thread_list);
+					Runnable worker = new SimilarityComputingWorkerThread(local_con,thread_list,unfetched_skus);
 					executor.execute(worker);		
 					// we initialize everything for the next thread
 					local_count=0;
@@ -94,7 +95,7 @@ public class SimilarityComputingThreadPool {
 				// one new connection per task
 				System.out.println("Launching another thread with "+local_count+ " Categories to fetch");
 				Connection local_con = DriverManager.getConnection(url, user, passwd);
-				Runnable worker = new SimilarityComputingWorkerThread(local_con,thread_list);
+				Runnable worker = new SimilarityComputingWorkerThread(local_con,thread_list,unfetched_skus);
 				executor.execute(worker);
 			}
 			System.out.println("We have : " +global_count + " Categories status to fetch according to the Kriter database \n");
