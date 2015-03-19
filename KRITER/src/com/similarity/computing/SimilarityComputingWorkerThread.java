@@ -29,6 +29,8 @@ public class SimilarityComputingWorkerThread implements Runnable {
 	private static String select_entry_from_category3 = " select SKU, MAGASIN, RAYON, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4, CATEGORIE_NIVEAU_5, LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, URL, LIEN_IMAGE, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_3=?";
 	private static String select_entry_from_category2 = " select SKU, MAGASIN, RAYON, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4, CATEGORIE_NIVEAU_5, LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, URL, LIEN_IMAGE, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_2=?";
 
+	private static String update_category = "update CATEGORY_FOLLOWING set to_fetch = false where CATEGORIE_NIVEAU_4 = ?";
+
 	private static String insert_cds_statement = "INSERT INTO CDS_SIMILAR_PRODUCTS(SKU,SKU1,SKU2,SKU3,SKU4,SKU5,SKU6) VALUES(?,?,?,?,?,?,?)";
 	private Map<String,List<String>> matching_skus = new HashMap<String,List<String>>();
 	private static int kriter_threshold =6;
@@ -48,6 +50,7 @@ public class SimilarityComputingWorkerThread implements Runnable {
 				List<CatalogEntry> my_data = fetch_category_data4(category);
 				computeDataList(my_data);
 				saving_similar_step_by_step();
+				updateCategory(category_to_debug);
 			}		
 			// dealing with unfetched skus
 			// we loop over each sku and get back to fomer category level to find matching offer
@@ -80,6 +83,14 @@ public class SimilarityComputingWorkerThread implements Runnable {
 				ex.printStackTrace();
 			}
 		}
+	}
+
+	public void updateCategory(String category) throws SQLException{
+		PreparedStatement st = con.prepareStatement(update_category); 
+		st.setString(1, category);
+		st.executeUpdate();
+		st.close();
+		System.out.println("Category : "+ category+ " fetched !");
 	}
 
 	public boolean updateDataList(CatalogEntry current_entry, List<CatalogEntry> my_data){
@@ -301,7 +312,7 @@ public class SimilarityComputingWorkerThread implements Runnable {
 	}
 
 	public boolean find_similar_backup(CatalogEntry current_entry, Double[] vector_list,List<CatalogEntry> entries){
-        boolean done = false;
+		boolean done = false;
 		Set<String> current_similars = unfetched_skus_local_cache.get(current_entry);
 		// sorting the array and keeping the indexes
 		DescendingArrayIndexComparator comparator = new DescendingArrayIndexComparator(vector_list);
@@ -314,7 +325,7 @@ public class SimilarityComputingWorkerThread implements Runnable {
 		}
 		if (current_similars.size()>= kriter_threshold){
 			matching_skus.put(current_entry.getSKU(),new ArrayList<String>(current_similars));
-	        done = true;
+			done = true;
 		} else {
 			unfetched_skus_local_cache.put(current_entry,current_similars);
 		}

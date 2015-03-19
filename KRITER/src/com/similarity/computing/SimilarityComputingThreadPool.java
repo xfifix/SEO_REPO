@@ -18,7 +18,11 @@ public class SimilarityComputingThreadPool {
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
 	private static int list_fixed_pool_size = 100;
 	private static int list_size_bucket = 60;
-	public static String select_distinct_cat4 = "select distinct categorie_niveau_4 from CATALOG";
+	private static boolean recreate_table = false;
+	public static String select_distinct_cat4 = "select categorie_niveau_4 from CATEGORY_FOLLOWING where to_fetch=true";
+	private static String drop_CATEGORY_FOLLOWING_table = "DROP TABLE IF EXISTS CURRENT_CONTINUOUS_DUPLICATES";
+	private static String create_CATEGORY_FOLLOWING_table = "select distinct categorie_niveau_4, count(*), true as to_fetch into CATEGORY_FOLLOWING from CATALOG group by categorie_niveau_4";
+
 
 	public static void main(String[] args) {
 		System.out.println("Number of threads for list crawler : "+list_fixed_pool_size);
@@ -57,6 +61,10 @@ public class SimilarityComputingThreadPool {
 		ResultSet rs = null;
 		try {  
 			con = DriverManager.getConnection(url, user, passwd);
+			System.out.println("Cleaning up and building the category_following table");
+			if (recreate_table){
+				cleaning_category_scheduler_database(con);
+			}
 			// getting the number of URLs to fetch
 			System.out.println("Requesting all distinct categories");
 			pst = con.prepareStatement(select_distinct_cat4);
@@ -118,5 +126,17 @@ public class SimilarityComputingThreadPool {
 		}
 		System.out.println("Finished all threads");
 	}
+
+	private static void cleaning_category_scheduler_database(Connection con) throws SQLException{
+		PreparedStatement drop_nodes_table_st = con.prepareStatement(drop_CATEGORY_FOLLOWING_table);
+		drop_nodes_table_st.executeUpdate();
+		System.out.println("Dropping the old CURRENT_CONTINUOUS_DUPLICATES table");
+		drop_nodes_table_st.close();
+		PreparedStatement create_nodes_table_st = con.prepareStatement(create_CATEGORY_FOLLOWING_table);
+		create_nodes_table_st.executeUpdate();
+		System.out.println("Creating the new CURRENT_CONTINUOUS_DUPLICATES table");
+		create_nodes_table_st.close();
+	}
+
 }
 

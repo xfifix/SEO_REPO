@@ -44,14 +44,15 @@ public class SimilarityTest {
 
 		Connection local_con = DriverManager.getConnection(url, user, passwd);
 		List<String> categories = new ArrayList<String>();
-		//categories.add("TARTE");
+		categories.add("TARTE");
 		//		categories.add("CARTE TUNER TV");
 		//		categories.add("PANES - CORDON BLEUS");
 		//		categories.add("FANION DE SIGNALISATION");	
 		//		categories.add("TIGE A URETRE");
 		//		categories.add("COQUE - HOUSSE");
-		//categories.add("SALADE");
-		categories.add("CABINE D'ESSAYAGE - MIROIR D'ESSAYAGE - RIDEAU DE CABINE");
+		//      categories.add("SALADE");
+		//      categories.add("CABINE D'ESSAYAGE - MIROIR D'ESSAYAGE - RIDEAU DE CABINE");
+		//categories.add("COQUE - BUMPER - FACADE TELEPHONE");
 		Runnable worker = new SimilarityComputingWorkerThread(local_con,categories);
 		worker.run();
 	}

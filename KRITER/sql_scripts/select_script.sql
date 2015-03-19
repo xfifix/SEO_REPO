@@ -4,3 +4,6 @@ select distinct nb_distinct_cat4, count(*) from CATALOG group by nb_distinct_cat
 select distinct nb_distinct_cat5, count(*) from CATALOG group by nb_distinct_cat5;
 select distinct nb_distinct_vendor, count(*) from CATALOG group by nb_distinct_vendor;
 select distinct nb_distinct_state, count(*) from CATALOG group by nb_distinct_state;
+
+
+select distinct categorie_niveau_4, count(*), true as to_fetch into CATEGORY_FOLLOWING from CATALOG group by categorie_niveau_4;
