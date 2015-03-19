@@ -7,16 +7,13 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.similarity.computing.SimilarityComputingWorkerThread;
 
 public class SimilarityTest {
 
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
-	private static Map<String, List<String>> unfetched_skus = new ConcurrentHashMap<String, List<String>>();
 
 	public static void main(String[] args) throws SQLException{
 		//		// Getting the database property
@@ -47,14 +44,15 @@ public class SimilarityTest {
 
 		Connection local_con = DriverManager.getConnection(url, user, passwd);
 		List<String> categories = new ArrayList<String>();
-		//		categories.add("TARTE");
+		//categories.add("TARTE");
 		//		categories.add("CARTE TUNER TV");
 		//		categories.add("PANES - CORDON BLEUS");
 		//		categories.add("FANION DE SIGNALISATION");	
 		//		categories.add("TIGE A URETRE");
 		//		categories.add("COQUE - HOUSSE");
-		categories.add("SALADE");
-		Runnable worker = new SimilarityComputingWorkerThread(local_con,categories,unfetched_skus);
+		//categories.add("SALADE");
+		categories.add("CABINE D'ESSAYAGE - MIROIR D'ESSAYAGE - RIDEAU DE CABINE");
+		Runnable worker = new SimilarityComputingWorkerThread(local_con,categories);
 		worker.run();
 	}
 }

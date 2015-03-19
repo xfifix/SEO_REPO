@@ -2,11 +2,11 @@ package com.similarity.computing;
 
 import java.util.Comparator;
 
-public class ArrayIndexComparator implements Comparator<Integer>
+public class DescendingArrayIndexComparator implements Comparator<Integer>
 {
     private final Double[] array;
 
-    public ArrayIndexComparator( Double[] array)
+    public DescendingArrayIndexComparator( Double[] array)
     {
         this.array = array;
     }
@@ -25,6 +25,6 @@ public class ArrayIndexComparator implements Comparator<Integer>
     public int compare(Integer index1, Integer index2)
     {
          // Autounbox from Integer to int to use as array indexes
-        return array[index1].compareTo(array[index2]);
+        return -array[index1].compareTo(array[index2]);
     }
 }

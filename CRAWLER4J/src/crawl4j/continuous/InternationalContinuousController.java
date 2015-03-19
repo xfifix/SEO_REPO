@@ -12,8 +12,8 @@ import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
-public class ContinuousController {
-	public static String crawl_conf_path = "/home/sduprey/My_Data/My_ContinuousCrawl_Conf/crawl.conf";
+public class InternationalContinuousController {
+	public static String crawl_conf_path = "/home/sduprey/My_Data/My_ContinuousCrawl_Conf/international_crawl.conf";
 	public static Properties properties;
 
 	public static void main(String[] args)   {
@@ -51,7 +51,6 @@ public class ContinuousController {
 			System.out.println("Trouble getting the configuration : unable to launch the crawler");
 			System.exit(0);
 		}	
-
 		if (args.length == 2) {
 			ContinuousCrawlParameter.seed = args[0];
 			numberOfCrawlers=Integer.valueOf(args[1]);
@@ -60,16 +59,14 @@ public class ContinuousController {
 		// overiding seed for debug
 		//numberOfCrawlers =  1;
 		//CrawlDataManagement.bulk_size = 5;
-		//seed="http://www.cdiscount.com/maison/v-117-0.html";
-		//seed="http://www.cdiscount.com/livres-bd/livres-religion-esoterisme/billy-graham-pape-protestant/f-105210806-9782226135605.html";
-		//seed="http://www.cdiscount.com/pret-a-porter/vetements-enfant/folia-trench-fille-beige/f-113236602-wmh85433k.html";
-		//seed = "http://www.cdiscount.com/electromenager/lavage-sechage/bosch-wak24160ff-lave-linge-frontal-8-kg/f-11001040406-bos4242002781082.html";		
-
+		//ContinuousCrawlParameter.seed="http://www.moncornerdeco.com/";
 		System.out.println("Seed URL : "+ContinuousCrawlParameter.seed);
+		System.out.println("Stub restrainer : "+ContinuousCrawlParameter.crawl_restrainer_start_with);
+		
 		System.out.println("Number of threads : "+numberOfCrawlers);
 		System.out.println("MongoDB stored : "+ContinuousCrawlParameter.isMongoDBStored);
 		System.out.println("Blob stored : "+ContinuousCrawlParameter.isBlobStored);
-		System.out.println("Solr indexed : "+ContinuousCrawlParameter.isSolrIndexed);	
+		System.out.println("Solr indexed : "+ContinuousCrawlParameter.isSolrIndexed);		
 		System.out.println("XPATH parsed : "+ContinuousCrawlParameter.isXPATHparsed);
 		System.out.println("User-agent : "+user_agent_name);
 		System.out.println("Max depth of crawling : "+maxDepthOfCrawling);

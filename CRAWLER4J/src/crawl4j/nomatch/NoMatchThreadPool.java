@@ -16,7 +16,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import crawl4j.continuous.ContinuousController;
+import crawl4j.continuous.ContinuousCrawlParameter;
 import crawl4j.continuous.CrawlDataManagement;
 import crawl4j.xpathutility.XPathUtility;
 
@@ -42,8 +42,8 @@ public class NoMatchThreadPool {
 			loadProperties();
 			nomatch_fixed_pool_size = Integer.valueOf(properties.getProperty("crawl.nomatch_pool_size")); 
 			nomatch_size_bucket = Integer.valueOf(properties.getProperty("crawl.nomatch_size_bucket"));
-			ContinuousController.isBlobStored = Boolean.parseBoolean(properties.getProperty("crawl.isBlobStored"));
-			ContinuousController.isXPATHparsed = Boolean.parseBoolean(properties.getProperty("crawl.isXPATHparsed"));
+			ContinuousCrawlParameter.isBlobStored = Boolean.parseBoolean(properties.getProperty("crawl.isBlobStored"));
+			ContinuousCrawlParameter.isXPATHparsed = Boolean.parseBoolean(properties.getProperty("crawl.isXPATHparsed"));
 			//String user_agent_name = "CdiscountBot-crawler";
 			my_user_agent=properties.getProperty("crawl.user_agent_name"); 
 			//int maxDepthOfCrawling = 300;

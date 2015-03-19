@@ -35,7 +35,7 @@ public class ContinuousCrawler extends WebCrawler {
 	@Override
 	public boolean shouldVisit(WebURL url) {
 		String href = url.getURL().toLowerCase();
-		return !filters.matcher(href).matches() && href.startsWith(ContinuousController.crawl_restrainer_start_with);
+		return !filters.matcher(href).matches() && href.startsWith(ContinuousCrawlParameter.crawl_restrainer_start_with);
 	}
 
 	@Override

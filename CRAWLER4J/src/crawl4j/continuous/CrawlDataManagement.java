@@ -83,15 +83,17 @@ public class CrawlDataManagement {
 		String passwd = props.getProperty("db.passwd");
 		try{
 			con = DriverManager.getConnection(url, user, passwd);
-			solr_server = new HttpSolrServer("http://localhost:8983/solr");
-			mongo_client =  new MongoClient( "localhost",27017);
+			if (ContinuousCrawlParameter.isSolrIndexed){
+				solr_server = new HttpSolrServer("http://localhost:8983/solr");
+			}
+			if (ContinuousCrawlParameter.isMongoDBStored){
+				mongo_client =  new MongoClient( "localhost",27017);
+			}
 		} catch (Exception e){
 			System.out.println("Error instantiating either database or solr server");
 			e.printStackTrace();
 		}
 	}
-
-
 
 	public int getTotalProcessedPages() {
 		return totalProcessedPages;
@@ -1092,13 +1094,15 @@ public class CrawlDataManagement {
 	public void updateData(){
 		// warning the upsert method in the PostgreSQL database will empty the cache
 		// you have to update Solr first
-		updateSolrData();
+		if (ContinuousCrawlParameter.isSolrIndexed){
+			updateSolrData();
+		}
 		//you have to update Solr first 
-		if (ContinuousController.isMongoDBStored){
+		if (ContinuousCrawlParameter.isMongoDBStored){
 			updateMongoDB();
 		}
 		// we here choose wether or not we store all the page source code
-		if (ContinuousController.isBlobStored){
+		if (ContinuousCrawlParameter.isBlobStored){
 			updateDatabaseWithBlobData();
 		} else {
 			updateDatabaseData();

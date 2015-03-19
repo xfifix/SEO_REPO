@@ -53,7 +53,7 @@ public class CrawlerUtility {
 		info.setYoutubeVideoReferenced(youtube);
 
 		// XPATH parsing
-		if (ContinuousController.isXPATHparsed){
+		if (ContinuousCrawlParameter.isXPATHparsed){
 			try {
 				String[] xpathOutput = XPathUtility.parse_page_code_source(html);
 				info.setXPATH_results(xpathOutput);
@@ -68,7 +68,7 @@ public class CrawlerUtility {
 		}
 
 		// filling up entity to be cached with page source code
-		if (ContinuousController.isBlobStored){
+		if (ContinuousCrawlParameter.isBlobStored){
 			byte[] compressedPageContent = CrawlerUtility.gzip_compress_byte_stream(html.getBytes());
 			info.setPage_source_code(compressedPageContent);
 		}
