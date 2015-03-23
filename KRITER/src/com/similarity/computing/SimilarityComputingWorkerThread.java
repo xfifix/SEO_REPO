@@ -196,7 +196,10 @@ public class SimilarityComputingWorkerThread implements Runnable {
 		Random my_rand = new Random();
 		// to_return is a set forbidding duplicated entries
 		while (to_return.size() < max_list_size){
-			to_return.add(my_list.get(my_rand.nextInt(my_list.size())));
+			CatalogEntry candidate = my_list.get(my_rand.nextInt(my_list.size()));
+			if (("CDS".equals(candidate.getVENDEUR()))&&("non épuisé".equals(candidate.getETAT()))) { 
+				to_return.add(candidate);
+			}
 		}
 		return new ArrayList<CatalogEntry>(to_return);
 	}
@@ -320,7 +323,7 @@ public class SimilarityComputingWorkerThread implements Runnable {
 	}
 
 	public boolean find_similar_backup(CatalogEntry current_entry, List<CatalogEntry> entries){
-		
+
 		boolean done = false;
 		Set<String> current_similars = unfetched_skus_local_cache.get(current_entry);
 		// sorting the array and keeping the indexes
