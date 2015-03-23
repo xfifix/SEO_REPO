@@ -44,7 +44,7 @@ public class SimilarityTest {
 
 		Connection local_con = DriverManager.getConnection(url, user, passwd);
 		List<String> categories = new ArrayList<String>();
-		//categories.add("TARTE");
+		//      categories.add("TARTE");
 		//		categories.add("CARTE TUNER TV");
 		//		categories.add("PANES - CORDON BLEUS");
 		//		categories.add("FANION DE SIGNALISATION");	
@@ -52,8 +52,8 @@ public class SimilarityTest {
 		//		categories.add("COQUE - HOUSSE");
 		//      categories.add("SALADE");
 		//      categories.add("CABINE D'ESSAYAGE - MIROIR D'ESSAYAGE - RIDEAU DE CABINE");
-		//categories.add("COQUE - BUMPER - FACADE TELEPHONE");
-		categories.add("XBOX 360");
+		      categories.add("COQUE - BUMPER - FACADE TELEPHONE");
+		//      categories.add("XBOX 360");
 
 		
 		long startTime = System.currentTimeMillis();
@@ -63,7 +63,7 @@ public class SimilarityTest {
 
 		long endTime = System.currentTimeMillis();
 
-		long timeneeded =  ((startTime - endTime));
-		System.out.println("Needed time in ms: "+timeneeded);
+		long timeneeded = (endTime-startTime)/(1000*60);
+		System.out.println("Needed time in minutes : "+timeneeded);
 	}
 }

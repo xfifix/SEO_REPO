@@ -288,7 +288,12 @@ public class SimilarityComputingWorkerThread implements Runnable {
 
 	public void find_restricted_similar(List<CatalogEntry> entries, List<CatalogEntry> filtered_entries){
 		int restricted_size_list = filtered_entries.size();
-		for (CatalogEntry current_entry : entries){
+		int size_list = entries.size();
+		for (int i=0;i<size_list;i++){
+			CatalogEntry current_entry = entries.get(i);
+			if (i%500 == 0){
+				System.out.println(Thread.currentThread() +" Having computed distance matrix "+i+" from "+size_list);
+			}
 			Double[] vector_list = new Double[restricted_size_list]; 
 			// computing the vector distance
 			for (int j= 0;j<restricted_size_list;j++){
@@ -340,6 +345,9 @@ public class SimilarityComputingWorkerThread implements Runnable {
 	public void find_similar(List<CatalogEntry> entries){
 		int size_list = entries.size();
 		for (int i=0;i<size_list;i++){
+			if (i%500 == 0){
+				System.out.println(Thread.currentThread() +" Having computed distance matrix "+i+" from "+size_list);
+			}
 			CatalogEntry current_entry = entries.get(i);
 			Double[] vector_list = new Double[size_list]; 
 			for (int j= 0;j<size_list;j++){
