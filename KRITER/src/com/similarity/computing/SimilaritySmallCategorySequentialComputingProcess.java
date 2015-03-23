@@ -19,7 +19,7 @@ public class SimilaritySmallCategorySequentialComputingProcess {
 	private static int list_fixed_pool_size = 100;
 	private static int list_size_bucket = 50;
 	private static boolean recreate_table = false;
-	public static String select_small_distinct_cat4 = "select categorie_niveau_4 from CATEGORY_FOLLOWING where to_fetch=true and count < 5000";
+	public static String select_small_distinct_cat4 = "select categorie_niveau_4 from CATEGORY_FOLLOWING where to_fetch=true and count < " +SimilarityComputingWorkerThread.max_list_size_string;
 	private static String drop_CATEGORY_FOLLOWING_table = "DROP TABLE IF EXISTS CATEGORY_FOLLOWING";
 	private static String create_CATEGORY_FOLLOWING_table = "select distinct categorie_niveau_4, count(*), true as to_fetch into CATEGORY_FOLLOWING from CATALOG group by categorie_niveau_4";
 
