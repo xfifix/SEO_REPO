@@ -32,7 +32,7 @@ public class SimilarityComputingWorkerThread implements Runnable {
 	private static String update_category = "update CATEGORY_FOLLOWING set to_fetch = false where CATEGORIE_NIVEAU_4 = ?";
 
 	//private static String insert_cds_statement = "INSERT INTO CDS_SIMILAR_PRODUCTS(SKU,SKU1,SKU2,SKU3,SKU4,SKU5,SKU6) VALUES(?,?,?,?,?,?,?)";
-	private static String update_catalog_statement = "UPDATE CATALOG SET SKU1=?,SKU2=?,SKU3=?,SKU4=?,SKU5=?,SKU6=? where SKU=?";
+	private static String update_catalog_statement = "UPDATE CATALOG SET SKU1=?,SKU2=?,SKU3=?,SKU4=?,SKU5=?,SKU6=?,TO_FETCH=false where SKU=?";
 
 	private Map<String,List<String>> matching_skus = new HashMap<String,List<String>>();
 	private static int kriter_threshold =6;
@@ -52,7 +52,8 @@ public class SimilarityComputingWorkerThread implements Runnable {
 				System.out.println("Dealing with category : "+category);
 				List<CatalogEntry> my_data = fetch_category_data4(category);
 				computeDataList(my_data);
-				saving_similar_step_by_step();
+				//saving_similar_step_by_step();
+				saving_similar();
 				updateCategory(category_to_debug);
 			}		
 			// dealing with unfetched skus
@@ -70,7 +71,8 @@ public class SimilarityComputingWorkerThread implements Runnable {
 				backup_category1();
 			}
 
-			saving_similar_step_by_step();
+			//saving_similar_step_by_step();
+			saving_similar();
 
 			close_connection();
 
@@ -100,8 +102,7 @@ public class SimilarityComputingWorkerThread implements Runnable {
 		boolean done = false;
 		if (my_data.size() >= kriter_threshold){
 			// we do it the standard way
-			Double[] symmetric_vector = computeDistanceVector(current_entry,my_data);
-			done = find_similar_backup(current_entry,symmetric_vector,my_data);
+			done = find_similar_backup(current_entry,my_data);
 		} else if (my_data.size() < kriter_threshold) {
 			Set<String> current_similars = unfetched_skus_local_cache.get(current_entry);
 			for (CatalogEntry to_add : my_data){
@@ -213,7 +214,7 @@ public class SimilarityComputingWorkerThread implements Runnable {
 				Map.Entry<String, List<String>> pairs = (Map.Entry<String, List<String>>)it.next();
 				current_sku=pairs.getKey();
 				List<String> similars =pairs.getValue();
-				System.out.println("Current Sku :" + current_sku + similars);
+				//System.out.println("Current Sku :" + current_sku + similars);
 				// preparing the statement
 				st.setString(1,similars.get(0));
 				st.setString(2,similars.get(1));
@@ -256,7 +257,7 @@ public class SimilarityComputingWorkerThread implements Runnable {
 				Map.Entry<String, List<String>> pairs = (Map.Entry<String, List<String>>)it.next();
 				String current_sku=pairs.getKey();
 				List<String> similars =pairs.getValue();
-				System.out.println("Current Sku :" + current_sku + similars);
+				//System.out.println("Current Sku :" + current_sku + similars);
 				// preparing the statement
 				st.setString(1,similars.get(0));
 				st.setString(2,similars.get(1));
@@ -313,10 +314,12 @@ public class SimilarityComputingWorkerThread implements Runnable {
 		}
 	}
 
-	public boolean find_similar_backup(CatalogEntry current_entry, Double[] vector_list,List<CatalogEntry> entries){
+	public boolean find_similar_backup(CatalogEntry current_entry, List<CatalogEntry> entries){
+		
 		boolean done = false;
 		Set<String> current_similars = unfetched_skus_local_cache.get(current_entry);
 		// sorting the array and keeping the indexes
+		Double[] vector_list = computeDistanceVector(current_entry, entries);
 		DescendingArrayIndexComparator comparator = new DescendingArrayIndexComparator(vector_list);
 		Integer[] indexes = comparator.createIndexArray();
 		Arrays.sort(indexes, comparator);

@@ -13,7 +13,7 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class SimilaritySmallCategorySequentialComputingProcess {
+public class SimilaritySmallCategoryComputingProcess {
 
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
 	private static int list_fixed_pool_size = 100;
