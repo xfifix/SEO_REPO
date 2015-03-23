@@ -42,8 +42,8 @@
 		<item value="2" key="FatJarPackageWizardPage.LIBRARY_HANDLING"/>
 		<list key="FatJarPackageWizardPage.DESTINATION_NAMES_ID">
 			<item value="/home/sduprey/My_Executable/my_position_checker.jar"/>
-			<item value="/home/sduprey/My_Executable/my_kriter_similarity_test_category_computing_job.jar"/>
 			<item value="/home/sduprey/My_Executable/my_kriter_similarity_all_category_computing_job.jar"/>
+			<item value="/home/sduprey/My_Executable/my_kriter_similarity_test_category_computing_job.jar"/>
 			<item value="/home/sduprey/My_Executable/my_kriter_similarity_big_category_computing_job.jar"/>
 			<item value="/home/sduprey/My_Executable/my_kriter_similarity_small_category_computing_job.jar"/>
 		</list>

@@ -114,7 +114,12 @@ public class MultipleIPsCookieCronJob {
 
 					// Synchronous launch but waiting after
 					RankInfo loc_info = proxy_ranking_keyword(keyword_name,target);
-					DataBaseManagement.insertKeyword(checkId, idTarget,  idKeyword,loc_info.getPosition(), loc_info.getUrl()); 
+					try{
+						DataBaseManagement.insertKeyword(checkId, idTarget,  idKeyword,loc_info.getPosition(), loc_info.getUrl()); 
+					} catch (SQLException e){
+						System.out.println("Trouble insertingkeyword "+keyword_name);
+					}
+
 				}
 
 				// closing the run by inserting a stopping date !

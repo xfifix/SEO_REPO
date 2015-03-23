@@ -112,11 +112,11 @@ public class DataBaseManagement {
 			statement.setString(3, idKeyword);
 			statement.setInt(4, position);
 			statement.setString(5, url);
-			// ...
-			int affectedRows = statement.executeUpdate();
-			if (affectedRows == 0) {
-				throw new SQLException("Creating user failed, no rows affected.");
-			}
+			statement.executeUpdate();
+			//int affectedRows = statement.executeUpdate();
+//			if (affectedRows == 0) {
+//				throw new SQLException("Creating user failed, no rows affected.");
+//			}
 		}
 	}
 

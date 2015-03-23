@@ -16,8 +16,8 @@ import java.util.concurrent.Executors;
 public class SimilarityAllCategoryComputingProcess {
 
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
-	private static int list_fixed_pool_size = 100;
-	private static int list_size_bucket = 60;
+	private static int list_fixed_pool_size = 250;
+	private static int list_size_bucket = 25;
 	private static boolean recreate_table = false;
 	public static String select_distinct_cat4 = "select categorie_niveau_4 from CATEGORY_FOLLOWING where to_fetch=true";
 	private static String drop_CATEGORY_FOLLOWING_table = "DROP TABLE IF EXISTS CATEGORY_FOLLOWING";
