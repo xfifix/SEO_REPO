@@ -18,7 +18,7 @@ import java.util.Set;
 import com.statistics.processing.CatalogEntry;
 import com.statistics.processing.StatisticsUtility;
 
-public class SimilarityComputingWorkerThread implements Runnable {
+public class SimilarityComputingCDSWorkerThread implements Runnable {
 	private Connection con;
 	private List<String> my_categories_to_compute = new ArrayList<String>();
 	// beware static shared global cache for unfetched skus
@@ -31,14 +31,14 @@ public class SimilarityComputingWorkerThread implements Runnable {
 
 	private static String update_category = "update CATEGORY_FOLLOWING set to_fetch = false where CATEGORIE_NIVEAU_4 = ?";
 
-	//private static String insert_cds_statement = "INSERT INTO CDS_SIMILAR_PRODUCTS(SKU,SKU1,SKU2,SKU3,SKU4,SKU5,SKU6) VALUES(?,?,?,?,?,?,?)";
-	private static String update_catalog_statement = "UPDATE CATALOG SET SKU1=?,SKU2=?,SKU3=?,SKU4=?,SKU5=?,SKU6=? where SKU=?";
+	private static String insert_cds_statement = "INSERT INTO CDS_SIMILAR_PRODUCTS(SKU,SKU1,SKU2,SKU3,SKU4,SKU5,SKU6) VALUES(?,?,?,?,?,?,?)";
+	//private static String update_catalog_statement = "UPDATE CATALOG SET SKU1=?,SKU2=?,SKU3=?,SKU4=?,SKU5=?,SKU6=? where SKU=?";
 
 	private Map<String,List<String>> matching_skus = new HashMap<String,List<String>>();
 	private static int kriter_threshold =6;
 	private static int max_list_size = 5000; 
 
-	public SimilarityComputingWorkerThread(Connection con, List<String> to_fetch) throws SQLException{
+	public SimilarityComputingCDSWorkerThread(Connection con, List<String> to_fetch) throws SQLException{
 		this.con = con;
 		this.my_categories_to_compute = to_fetch;
 	}
@@ -209,20 +209,20 @@ public class SimilarityComputingWorkerThread implements Runnable {
 		String current_sku = "";
 		while (it.hasNext()){
 			try{
-				st = con.prepareStatement(update_catalog_statement);
+				st = con.prepareStatement(insert_cds_statement);
 				local_counter++;
 				Map.Entry<String, List<String>> pairs = (Map.Entry<String, List<String>>)it.next();
 				current_sku=pairs.getKey();
 				List<String> similars =pairs.getValue();
 				System.out.println("Current Sku :" + current_sku + similars);
 				// preparing the statement
-				st.setString(1,similars.get(0));
-				st.setString(2,similars.get(1));
-				st.setString(3,similars.get(2));
-				st.setString(4,similars.get(3));
-				st.setString(5,similars.get(4));				
-				st.setString(6,similars.get(5));
-				st.setString(7,current_sku);
+				st.setString(1,current_sku);
+				st.setString(2,similars.get(0));
+				st.setString(3,similars.get(1));
+				st.setString(4,similars.get(2));
+				st.setString(5,similars.get(3));
+				st.setString(6,similars.get(4));
+				st.setString(7,similars.get(5));
 				st.executeUpdate();
 				st.close();
 			} catch (SQLException e){
@@ -251,7 +251,7 @@ public class SimilarityComputingWorkerThread implements Runnable {
 			Iterator<Entry<String, List<String>>> it = matching_skus.entrySet().iterator();
 			int local_counter = 0;
 			con.setAutoCommit(false);
-			PreparedStatement st = con.prepareStatement(update_catalog_statement);
+			PreparedStatement st = con.prepareStatement(insert_cds_statement);
 			while (it.hasNext()){
 				local_counter++;
 				Map.Entry<String, List<String>> pairs = (Map.Entry<String, List<String>>)it.next();
@@ -259,13 +259,13 @@ public class SimilarityComputingWorkerThread implements Runnable {
 				List<String> similars =pairs.getValue();
 				System.out.println("Current Sku :" + current_sku + similars);
 				// preparing the statement
-				st.setString(1,similars.get(0));
-				st.setString(2,similars.get(1));
-				st.setString(3,similars.get(2));
-				st.setString(4,similars.get(3));
-				st.setString(5,similars.get(4));				
-				st.setString(6,similars.get(5));
-				st.setString(7,current_sku);
+				st.setString(1,current_sku);
+				st.setString(2,similars.get(0));
+				st.setString(3,similars.get(1));
+				st.setString(4,similars.get(2));
+				st.setString(5,similars.get(3));
+				st.setString(6,similars.get(4));
+				st.setString(7,similars.get(5));
 				st.addBatch();
 			}
 			st.executeBatch();
