@@ -16,11 +16,12 @@ import java.util.concurrent.Executors;
 public class SimilarityBigCategoryComputingThreadPool {
 
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
-	private static int list_fixed_pool_size = 1;
+	private static int list_fixed_pool_size = 100;
 	// no more than 1000 categories with a size bigger than 5000
-	private static int list_size_bucket = 1000;
+	private static int list_size_bucket = 1;
 	private static boolean recreate_table = false;
-	public static String select_big_distinct_cat4 = "select categorie_niveau_4 from CATEGORY_FOLLOWING where to_fetch=true and count >=  "+SimilarityComputingWorkerThread.max_list_size_string;
+	public static String max_list_size_string = "1000";
+	public static String select_big_distinct_cat4 = "select categorie_niveau_4 from CATEGORY_FOLLOWING where to_fetch=true and count >=  "+ max_list_size_string;
 	private static String drop_CATEGORY_FOLLOWING_table = "DROP TABLE IF EXISTS CATEGORY_FOLLOWING";
 	private static String create_CATEGORY_FOLLOWING_table = "select distinct categorie_niveau_4, count(*), true as to_fetch into CATEGORY_FOLLOWING from CATALOG group by categorie_niveau_4";
 

@@ -36,8 +36,7 @@ public class SimilarityComputingWorkerThread implements Runnable {
 
 	private Map<String,List<String>> matching_skus = new HashMap<String,List<String>>();
 	private static int kriter_threshold =6;
-	public static int max_list_size = 500; 
-	public static String max_list_size_string = "500"; 
+	public static int computing_max_list_size = 500;  
 
 	public SimilarityComputingWorkerThread(Connection con, List<String> to_fetch) throws SQLException{
 		this.con = con;
@@ -119,7 +118,7 @@ public class SimilarityComputingWorkerThread implements Runnable {
 	}
 
 	public void computeDataList(List<CatalogEntry> my_data){
-		if (my_data.size() >= kriter_threshold && my_data.size()<= max_list_size){
+		if (my_data.size() >= kriter_threshold && my_data.size()<= computing_max_list_size){
 			// we do it the standard way
 			find_similar(my_data);
 		} else if (my_data.size() < kriter_threshold) {
@@ -131,7 +130,7 @@ public class SimilarityComputingWorkerThread implements Runnable {
 				unfetched_skus_local_cache.put(to_process,similars);
 			}
 			// we here have to fetch lower category
-		}else if (my_data.size() > max_list_size) {
+		}else if (my_data.size() > computing_max_list_size) {
 			// we here have to restrain ourselves
 			// we do it randomly
 			// but we should get a more proper criteria (business value, clicking trend)
@@ -195,7 +194,7 @@ public class SimilarityComputingWorkerThread implements Runnable {
 		Set<CatalogEntry> to_return = new HashSet<CatalogEntry>();
 		Random my_rand = new Random();
 		// to_return is a set forbidding duplicated entries
-		while (to_return.size() < max_list_size){
+		while (to_return.size() < computing_max_list_size){
 			CatalogEntry candidate = my_list.get(my_rand.nextInt(my_list.size()));
 			if (("CDS".equals(candidate.getVENDEUR()))&&("non épuisé".equals(candidate.getETAT()))) { 
 				to_return.add(candidate);
