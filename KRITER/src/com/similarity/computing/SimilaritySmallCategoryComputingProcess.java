@@ -16,10 +16,10 @@ import java.util.concurrent.Executors;
 public class SimilaritySmallCategoryComputingProcess {
 
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
-	private static int list_fixed_pool_size = 100;
-	private static int list_size_bucket = 60;
+	private static int list_fixed_pool_size = 200;
+	private static int list_size_bucket = 30;
 	private static boolean recreate_table = false;
-	public static String max_list_size_string = "1000";
+	public static String max_list_size_string = "10000";
 	public static String select_small_distinct_cat4 = "select categorie_niveau_4 from CATEGORY_FOLLOWING where to_fetch=true and count < " + max_list_size_string;
 	private static String drop_CATEGORY_FOLLOWING_table = "DROP TABLE IF EXISTS CATEGORY_FOLLOWING";
 	private static String create_CATEGORY_FOLLOWING_table = "select distinct categorie_niveau_4, count(*), true as to_fetch into CATEGORY_FOLLOWING from CATALOG group by categorie_niveau_4";
@@ -84,6 +84,7 @@ public class SimilaritySmallCategoryComputingProcess {
 					System.out.println("Launching another thread with "+local_count+" Categories to fetch");
 					Connection local_con = DriverManager.getConnection(url, user, passwd);
 					Runnable worker = new SimilarityComputingWorkerThread(local_con,thread_list);
+					//Runnable worker = new SimilarityComputingWorkerThread(con,thread_list);
 					executor.execute(worker);		
 					// we initialize everything for the next thread
 					local_count=0;
@@ -101,8 +102,10 @@ public class SimilaritySmallCategoryComputingProcess {
 				System.out.println("Launching another thread with "+local_count+ " Categories to fetch");
 				Connection local_con = DriverManager.getConnection(url, user, passwd);
 				Runnable worker = new SimilarityComputingWorkerThread(local_con,thread_list);
+				//Runnable worker = new SimilarityComputingWorkerThread(con,thread_list);
 				executor.execute(worker);
 			}
+			System.gc();
 			System.out.println("We have : " +global_count + " Categories status to fetch according to the Kriter database \n");
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -114,9 +117,7 @@ public class SimilaritySmallCategoryComputingProcess {
 				if (pst != null) {
 					pst.close();
 				}
-				if (con != null) {
-					con.close();
-				}
+
 			} catch (SQLException ex) {
 				ex.printStackTrace();
 			}
@@ -125,17 +126,25 @@ public class SimilaritySmallCategoryComputingProcess {
 		while (!executor.isTerminated()) {
 		}
 		System.out.println("Finished all threads");
+		if (con != null) {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private static void cleaning_category_scheduler_database(Connection con) throws SQLException{
-		PreparedStatement drop_nodes_table_st = con.prepareStatement(drop_CATEGORY_FOLLOWING_table);
-		drop_nodes_table_st.executeUpdate();
+		PreparedStatement drop_category_table_st = con.prepareStatement(drop_CATEGORY_FOLLOWING_table);
+		drop_category_table_st.executeUpdate();
 		System.out.println("Dropping the old CATEGORY_FOLLOWING table");
-		drop_nodes_table_st.close();
-		PreparedStatement create_nodes_table_st = con.prepareStatement(create_CATEGORY_FOLLOWING_table);
-		create_nodes_table_st.executeUpdate();
+		drop_category_table_st.close();
+		PreparedStatement create_category_table_st = con.prepareStatement(create_CATEGORY_FOLLOWING_table);
+		create_category_table_st.executeUpdate();
 		System.out.println("Creating the new CATEGORY_FOLLOWING table");
-		create_nodes_table_st.close();
+		create_category_table_st.close();
 	}
 
 }

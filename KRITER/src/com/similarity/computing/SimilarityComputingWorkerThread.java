@@ -48,12 +48,15 @@ public class SimilarityComputingWorkerThread implements Runnable {
 		try {  
 			for (String category : my_categories_to_compute){
 				category_to_debug=category;
-				System.out.println("Dealing with category : "+category);
+				System.out.println(Thread.currentThread()+" Dealing with category : "+category);
 				List<CatalogEntry> my_data = fetch_category_data4(category);
+				System.out.println(Thread.currentThread()+" Category skus all fetched for data : "+category);
+				
 				computeDataList(my_data);
 				//saving_similar_step_by_step();
 				saving_similar();
 				updateCategory(category_to_debug);
+				System.gc();
 			}		
 			// dealing with unfetched skus
 			// we loop over each sku and get back to fomer category level to find matching offer
@@ -134,8 +137,8 @@ public class SimilarityComputingWorkerThread implements Runnable {
 			// we here have to restrain ourselves
 			// we do it randomly
 			// but we should get a more proper criteria (business value, clicking trend)
-			List<CatalogEntry> randomSet = shrink(my_data);
-			find_restricted_similar(my_data,randomSet);	
+
+			find_restricted_similar(my_data);	
 		}
 	}
 
@@ -288,10 +291,11 @@ public class SimilarityComputingWorkerThread implements Runnable {
 		}	
 	}
 
-	public void find_restricted_similar(List<CatalogEntry> entries, List<CatalogEntry> filtered_entries){
-		int restricted_size_list = filtered_entries.size();
+	public void find_restricted_similar(List<CatalogEntry> entries){
 		int size_list = entries.size();
 		for (int i=0;i<size_list;i++){
+			List<CatalogEntry> filtered_entries = shrink(entries);
+			int restricted_size_list = filtered_entries.size();
 			CatalogEntry current_entry = entries.get(i);
 			if (i%500 == 0){
 				System.out.println(Thread.currentThread() +" Having computed distance matrix "+i+" from "+size_list);
