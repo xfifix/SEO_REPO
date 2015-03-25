@@ -36,7 +36,7 @@ public class SimilarityComputingWorkerThread implements Runnable {
 
 	private Map<String,List<String>> matching_skus = new HashMap<String,List<String>>();
 	private static int kriter_threshold =6;
-	public static int computing_max_list_size = 500;  
+	public static int computing_max_list_size = 100;  
 
 	public SimilarityComputingWorkerThread(Connection con, List<String> to_fetch) throws SQLException{
 		this.con = con;
