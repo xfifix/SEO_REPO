@@ -18,16 +18,16 @@ import java.util.Set;
 import com.statistics.processing.CatalogEntry;
 import com.statistics.processing.StatisticsUtility;
 
-public class SimilarityComputingWorkerThread implements Runnable {
+public class HeavySimilarityComputingWorkerThread implements Runnable {
 	private Connection con;
 	private List<String> my_categories_to_compute = new ArrayList<String>();
 	// beware static shared global cache for unfetched skus
 	private Map<CatalogEntry, Set<String>> unfetched_skus_local_cache = new HashMap<CatalogEntry, Set<String>>();
 
-	private static String select_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_4=?";
-	private static String select_entry_from_category1 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_1=?";
-	private static String select_entry_from_category3 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_3=?";
-	private static String select_entry_from_category2 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_2=?";
+	private static String select_entry_from_category4 = " select SKU, MAGASIN, RAYON, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4, CATEGORIE_NIVEAU_5, LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, URL, LIEN_IMAGE, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_4=?";
+	private static String select_entry_from_category1 = " select SKU, MAGASIN, RAYON, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4, CATEGORIE_NIVEAU_5, LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, URL, LIEN_IMAGE, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_1=?";
+	private static String select_entry_from_category3 = " select SKU, MAGASIN, RAYON, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4, CATEGORIE_NIVEAU_5, LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, URL, LIEN_IMAGE, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_3=?";
+	private static String select_entry_from_category2 = " select SKU, MAGASIN, RAYON, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4, CATEGORIE_NIVEAU_5, LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, URL, LIEN_IMAGE, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_2=?";
 
 	private static String update_category = "update CATEGORY_FOLLOWING set to_fetch = false where CATEGORIE_NIVEAU_4 = ?";
 
@@ -38,7 +38,7 @@ public class SimilarityComputingWorkerThread implements Runnable {
 	private static int kriter_threshold =6;
 	public static int computing_max_list_size = 100;  
 
-	public SimilarityComputingWorkerThread(Connection con, List<String> to_fetch) throws SQLException{
+	public HeavySimilarityComputingWorkerThread(Connection con, List<String> to_fetch) throws SQLException{
 		this.con = con;
 		this.my_categories_to_compute = to_fetch;
 	}
@@ -387,27 +387,33 @@ public class SimilarityComputingWorkerThread implements Runnable {
 			CatalogEntry entry = new CatalogEntry();
 			String sku = rs.getString(1);
 			entry.setSKU(sku);
-            // category fetching
-			String CATEGORIE_NIVEAU_1 = rs.getString(2);
+			String MAGASIN = rs.getString(2);
+			entry.setMAGASIN(MAGASIN);
+			String RAYON = rs.getString(3);
+			entry.setRAYON(RAYON);
+			String CATEGORIE_NIVEAU_1 = rs.getString(4);
 			entry.setCATEGORIE_NIVEAU_1(CATEGORIE_NIVEAU_1);
-			String CATEGORIE_NIVEAU_2 = rs.getString(3);
+			String CATEGORIE_NIVEAU_2 = rs.getString(5);
 			entry.setCATEGORIE_NIVEAU_2(CATEGORIE_NIVEAU_2);
-			String CATEGORIE_NIVEAU_3 = rs.getString(4);
+			String CATEGORIE_NIVEAU_3 = rs.getString(6);
 			entry.setCATEGORIE_NIVEAU_3(CATEGORIE_NIVEAU_3);
-			String CATEGORIE_NIVEAU_4 = rs.getString(5);
+			String CATEGORIE_NIVEAU_4 = rs.getString(7);
 			entry.setCATEGORIE_NIVEAU_4(CATEGORIE_NIVEAU_4);
-			// product libelle
-			String  LIBELLE_PRODUIT = rs.getString(6);
+			String CATEGORIE_NIVEAU_5 = rs.getString(8);
+			entry.setCATEGORIE_NIVEAU_5(CATEGORIE_NIVEAU_5);
+			String  LIBELLE_PRODUIT = rs.getString(9);
 			entry.setLIBELLE_PRODUIT(LIBELLE_PRODUIT);
-			String MARQUE = rs.getString(7);
+			String MARQUE = rs.getString(10);
 			entry.setMARQUE(MARQUE);
-			// brand description
-			String  DESCRIPTION_LONGUEUR80 = rs.getString(8);
+			String  DESCRIPTION_LONGUEUR80 = rs.getString(11);
 			entry.setDESCRIPTION_LONGUEUR80(DESCRIPTION_LONGUEUR80);
-			// vendor and state (available or not)
-			String VENDEUR = rs.getString(9);
+			String URL = rs.getString(12);
+			entry.setURL(URL);
+			String LIEN_IMAGE = rs.getString(13);
+			entry.setLIEN_IMAGE(LIEN_IMAGE);
+			String VENDEUR = rs.getString(14);
 			entry.setVENDEUR(VENDEUR);
-			String ETAT = rs.getString(9);
+			String ETAT = rs.getString(15);
 			entry.setETAT(ETAT);
 			my_entries.add(entry);
 		}
@@ -424,27 +430,33 @@ public class SimilarityComputingWorkerThread implements Runnable {
 			CatalogEntry entry = new CatalogEntry();
 			String sku = rs.getString(1);
 			entry.setSKU(sku);
-            // category fetching
-			String CATEGORIE_NIVEAU_1 = rs.getString(2);
+			String MAGASIN = rs.getString(2);
+			entry.setMAGASIN(MAGASIN);
+			String RAYON = rs.getString(3);
+			entry.setRAYON(RAYON);
+			String CATEGORIE_NIVEAU_1 = rs.getString(4);
 			entry.setCATEGORIE_NIVEAU_1(CATEGORIE_NIVEAU_1);
-			String CATEGORIE_NIVEAU_2 = rs.getString(3);
+			String CATEGORIE_NIVEAU_2 = rs.getString(5);
 			entry.setCATEGORIE_NIVEAU_2(CATEGORIE_NIVEAU_2);
-			String CATEGORIE_NIVEAU_3 = rs.getString(4);
+			String CATEGORIE_NIVEAU_3 = rs.getString(6);
 			entry.setCATEGORIE_NIVEAU_3(CATEGORIE_NIVEAU_3);
-			String CATEGORIE_NIVEAU_4 = rs.getString(5);
+			String CATEGORIE_NIVEAU_4 = rs.getString(7);
 			entry.setCATEGORIE_NIVEAU_4(CATEGORIE_NIVEAU_4);
-			// product libelle
-			String  LIBELLE_PRODUIT = rs.getString(6);
+			String CATEGORIE_NIVEAU_5 = rs.getString(8);
+			entry.setCATEGORIE_NIVEAU_5(CATEGORIE_NIVEAU_5);
+			String  LIBELLE_PRODUIT = rs.getString(9);
 			entry.setLIBELLE_PRODUIT(LIBELLE_PRODUIT);
-			String MARQUE = rs.getString(7);
+			String MARQUE = rs.getString(10);
 			entry.setMARQUE(MARQUE);
-			// brand description
-			String  DESCRIPTION_LONGUEUR80 = rs.getString(8);
+			String  DESCRIPTION_LONGUEUR80 = rs.getString(11);
 			entry.setDESCRIPTION_LONGUEUR80(DESCRIPTION_LONGUEUR80);
-			// vendor and state (available or not)
-			String VENDEUR = rs.getString(9);
+			String URL = rs.getString(12);
+			entry.setURL(URL);
+			String LIEN_IMAGE = rs.getString(13);
+			entry.setLIEN_IMAGE(LIEN_IMAGE);
+			String VENDEUR = rs.getString(14);
 			entry.setVENDEUR(VENDEUR);
-			String ETAT = rs.getString(9);
+			String ETAT = rs.getString(15);
 			entry.setETAT(ETAT);
 			my_entries.add(entry);
 		}
@@ -461,27 +473,33 @@ public class SimilarityComputingWorkerThread implements Runnable {
 			CatalogEntry entry = new CatalogEntry();
 			String sku = rs.getString(1);
 			entry.setSKU(sku);
-            // category fetching
-			String CATEGORIE_NIVEAU_1 = rs.getString(2);
+			String MAGASIN = rs.getString(2);
+			entry.setMAGASIN(MAGASIN);
+			String RAYON = rs.getString(3);
+			entry.setRAYON(RAYON);
+			String CATEGORIE_NIVEAU_1 = rs.getString(4);
 			entry.setCATEGORIE_NIVEAU_1(CATEGORIE_NIVEAU_1);
-			String CATEGORIE_NIVEAU_2 = rs.getString(3);
+			String CATEGORIE_NIVEAU_2 = rs.getString(5);
 			entry.setCATEGORIE_NIVEAU_2(CATEGORIE_NIVEAU_2);
-			String CATEGORIE_NIVEAU_3 = rs.getString(4);
+			String CATEGORIE_NIVEAU_3 = rs.getString(6);
 			entry.setCATEGORIE_NIVEAU_3(CATEGORIE_NIVEAU_3);
-			String CATEGORIE_NIVEAU_4 = rs.getString(5);
+			String CATEGORIE_NIVEAU_4 = rs.getString(7);
 			entry.setCATEGORIE_NIVEAU_4(CATEGORIE_NIVEAU_4);
-			// product libelle
-			String  LIBELLE_PRODUIT = rs.getString(6);
+			String CATEGORIE_NIVEAU_5 = rs.getString(8);
+			entry.setCATEGORIE_NIVEAU_5(CATEGORIE_NIVEAU_5);
+			String  LIBELLE_PRODUIT = rs.getString(9);
 			entry.setLIBELLE_PRODUIT(LIBELLE_PRODUIT);
-			String MARQUE = rs.getString(7);
+			String MARQUE = rs.getString(10);
 			entry.setMARQUE(MARQUE);
-			// brand description
-			String  DESCRIPTION_LONGUEUR80 = rs.getString(8);
+			String  DESCRIPTION_LONGUEUR80 = rs.getString(11);
 			entry.setDESCRIPTION_LONGUEUR80(DESCRIPTION_LONGUEUR80);
-			// vendor and state (available or not)
-			String VENDEUR = rs.getString(9);
+			String URL = rs.getString(12);
+			entry.setURL(URL);
+			String LIEN_IMAGE = rs.getString(13);
+			entry.setLIEN_IMAGE(LIEN_IMAGE);
+			String VENDEUR = rs.getString(14);
 			entry.setVENDEUR(VENDEUR);
-			String ETAT = rs.getString(9);
+			String ETAT = rs.getString(15);
 			entry.setETAT(ETAT);
 			my_entries.add(entry);
 		}
@@ -498,27 +516,33 @@ public class SimilarityComputingWorkerThread implements Runnable {
 			CatalogEntry entry = new CatalogEntry();
 			String sku = rs.getString(1);
 			entry.setSKU(sku);
-            // category fetching
-			String CATEGORIE_NIVEAU_1 = rs.getString(2);
+			String MAGASIN = rs.getString(2);
+			entry.setMAGASIN(MAGASIN);
+			String RAYON = rs.getString(3);
+			entry.setRAYON(RAYON);
+			String CATEGORIE_NIVEAU_1 = rs.getString(4);
 			entry.setCATEGORIE_NIVEAU_1(CATEGORIE_NIVEAU_1);
-			String CATEGORIE_NIVEAU_2 = rs.getString(3);
+			String CATEGORIE_NIVEAU_2 = rs.getString(5);
 			entry.setCATEGORIE_NIVEAU_2(CATEGORIE_NIVEAU_2);
-			String CATEGORIE_NIVEAU_3 = rs.getString(4);
+			String CATEGORIE_NIVEAU_3 = rs.getString(6);
 			entry.setCATEGORIE_NIVEAU_3(CATEGORIE_NIVEAU_3);
-			String CATEGORIE_NIVEAU_4 = rs.getString(5);
+			String CATEGORIE_NIVEAU_4 = rs.getString(7);
 			entry.setCATEGORIE_NIVEAU_4(CATEGORIE_NIVEAU_4);
-			// product libelle
-			String  LIBELLE_PRODUIT = rs.getString(6);
+			String CATEGORIE_NIVEAU_5 = rs.getString(8);
+			entry.setCATEGORIE_NIVEAU_5(CATEGORIE_NIVEAU_5);
+			String  LIBELLE_PRODUIT = rs.getString(9);
 			entry.setLIBELLE_PRODUIT(LIBELLE_PRODUIT);
-			String MARQUE = rs.getString(7);
+			String MARQUE = rs.getString(10);
 			entry.setMARQUE(MARQUE);
-			// brand description
-			String  DESCRIPTION_LONGUEUR80 = rs.getString(8);
+			String  DESCRIPTION_LONGUEUR80 = rs.getString(11);
 			entry.setDESCRIPTION_LONGUEUR80(DESCRIPTION_LONGUEUR80);
-			// vendor and state (available or not)
-			String VENDEUR = rs.getString(9);
+			String URL = rs.getString(12);
+			entry.setURL(URL);
+			String LIEN_IMAGE = rs.getString(13);
+			entry.setLIEN_IMAGE(LIEN_IMAGE);
+			String VENDEUR = rs.getString(14);
 			entry.setVENDEUR(VENDEUR);
-			String ETAT = rs.getString(9);
+			String ETAT = rs.getString(15);
 			entry.setETAT(ETAT);
 			my_entries.add(entry);
 		}

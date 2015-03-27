@@ -96,7 +96,7 @@ public class DataBaseManagement {
 		if (groups.length > 0){
 			group_request=group_request+" where name in ('"+Joiner.on("','").join(groups)+"')";
 		}
-		group_request=group_request+" ORDER BY rand()";
+		group_request=group_request+" ORDER BY name desc";
 		return group_statement
 				.executeQuery(group_request);
 	}

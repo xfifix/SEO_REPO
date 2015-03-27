@@ -26,25 +26,18 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class MultipleIPsCookieBunchByBunchCronJob {
-	//	private static int min_number_of_wait_times = 40;
-	//	private static int max_number_of_wait_times = 60;
-	private static int min_number_of_wait_times = 20;
-	private static int max_number_of_wait_times = 25;
+public class SlowDailyMultipleIPsCookieBunchByBunchCronJob {
+	//private static int min_number_of_wait_times = 30;
+	//private static int max_number_of_wait_times = 35;
+	private static int min_number_of_wait_times = 15;
+	private static int max_number_of_wait_times = 20;
 	private static List<String> user_agents = new ArrayList<String>();
 	private static String user_agent_path = "/home/sduprey/My_Data/My_User_Agents/user-agent.txt";
 	public static void main(String[] args){
 
-		if (args.length == 1 ){
-			try{
-				min_number_of_wait_times = Integer.parseInt(args[0]);
-				max_number_of_wait_times = min_number_of_wait_times + 5;
-			} catch (NumberFormatException e){
-				e.printStackTrace();
-				System.out.println("Minimum number of waiting times : " + min_number_of_wait_times);
-				System.out.println("Maximum number of waiting times : " + max_number_of_wait_times);
-			}
-		}
+		args = new String[2];
+        args[0]="Plan ouverture Facette contextuallisé";
+        args[1]="CDISCOUNT_TOP_5000";
 
 		System.out.println("Minimum number of waiting times : " + min_number_of_wait_times);
 		System.out.println("Maximum number of waiting times : " + max_number_of_wait_times);
