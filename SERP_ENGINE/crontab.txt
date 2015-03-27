@@ -1,1 +1,2 @@
-00 11 * * * sudo kill $(ps aux | grep 'my_daily_slow_position_checker.jar' | awk '{print $2}');sudo java -jar my_close_unfinish_position_checker.jar;sudo java -jar my_daily_slow_position_checker.jar 1>/tmp/slow_daily_position_checker.log 2>&1
+00 11 * * * sudo kill $(ps aux | grep 'my_daily_slow_position_checker.jar' | awk '{print $2}');sudo java -jar /home/sduprey/My_Executable/my_close_unfinish_position_checker.jar;sudo rm /tmp/slow_daily_position_checker.log;sudo java -jar /home/sduprey/My_Executable/my_daily_slow_position_checker.jar 1>/tmp/slow_daily_position_checker.log 2>&1
+00 11 * * * sudo bash my_daily_checker.bash

@@ -16,8 +16,8 @@ import java.util.concurrent.Executors;
 public class SimilaritySmallCategoryComputingProcess {
 
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
-	private static int list_fixed_pool_size = 20;
-	private static int list_size_bucket = 200;
+	private static int list_fixed_pool_size = 50;
+	private static int list_size_bucket = 100;
 	private static boolean recreate_table = false;
 	public static String max_list_size_string = "5000";
 	public static String select_small_distinct_cat4 = "select categorie_niveau_4 from CATEGORY_FOLLOWING where to_fetch=true and count < " + max_list_size_string;
