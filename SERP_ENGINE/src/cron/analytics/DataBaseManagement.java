@@ -113,10 +113,6 @@ public class DataBaseManagement {
 			statement.setInt(4, position);
 			statement.setString(5, url);
 			statement.executeUpdate();
-			//int affectedRows = statement.executeUpdate();
-//			if (affectedRows == 0) {
-//				throw new SQLException("Creating user failed, no rows affected.");
-//			}
 		}
 	}
 
@@ -127,10 +123,8 @@ public class DataBaseManagement {
 				) {
 			statement.setDate(1,new java.sql.Date(System.currentTimeMillis()));
 			// ...
-			int affectedRows = statement.executeUpdate();
-			if (affectedRows == 0) {
-				throw new SQLException("Creating user failed, no rows affected.");
-			}
+			statement.executeUpdate();
+
 		}
 	}
 
@@ -143,10 +137,8 @@ public class DataBaseManagement {
 			statement.setString(2, idRun);
 			statement.setDate(3, date);
 			// ...
-			int affectedRows = statement.executeUpdate();
-			if (affectedRows == 0) {
-				throw new SQLException("Creating user failed, no rows affected.");
-			}
+			statement.executeUpdate();
+
 			try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
 				if (generatedKeys.next()) {
 					return generatedKeys.getLong(1);         
