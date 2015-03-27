@@ -22,8 +22,8 @@ import com.statistics.processing.CatalogEntry;
 public class SimilaritySmallCategoryNoConcurrentRequestComputingProcess {
 
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
-	private static int list_fixed_pool_size = 50;
-	private static int list_size_bucket = 100;
+	private static int list_fixed_pool_size = 25;
+	private static int list_size_bucket = 200;
 	private static boolean recreate_table = false;
 	public static String max_list_size_string = "5000";
 	private static String select_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT FROM CATALOG";

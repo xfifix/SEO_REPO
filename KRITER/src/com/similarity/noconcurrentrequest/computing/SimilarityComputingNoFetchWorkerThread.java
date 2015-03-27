@@ -295,8 +295,10 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 
 	public void find_restricted_similar(List<CatalogEntry> entries){
 		int size_list = entries.size();
+		System.out.println(Thread.currentThread() +" Beginning to compute distance matrix from "+size_list);
 		for (int i=0;i<size_list;i++){
 			List<CatalogEntry> filtered_entries = shrink(entries);
+			System.out.println(Thread.currentThread() +" Having shrinked distance matrix from "+filtered_entries.size());
 			int restricted_size_list = filtered_entries.size();
 			CatalogEntry current_entry = entries.get(i);
 			if (i%500 == 0){
@@ -352,6 +354,9 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 
 	public void find_similar(List<CatalogEntry> entries){
 		int size_list = entries.size();
+		
+		System.out.println(Thread.currentThread() +" Beginning to compute distance matrix from "+size_list);
+		
 		for (int i=0;i<size_list;i++){
 			if (i%500 == 0){
 				System.out.println(Thread.currentThread() +" Having computed distance matrix "+i+" from "+size_list);
