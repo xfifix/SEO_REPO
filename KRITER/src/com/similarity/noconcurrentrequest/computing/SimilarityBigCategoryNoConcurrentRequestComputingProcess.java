@@ -22,11 +22,13 @@ import com.statistics.processing.CatalogEntry;
 public class SimilarityBigCategoryNoConcurrentRequestComputingProcess {
 
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
-	private static int list_fixed_pool_size = 100;
+	private static int list_fixed_pool_size = 20;
 	// no more than 1000 categories with a size bigger than 5000
-	private static int list_size_bucket = 1;
+	private static int list_size_bucket = 6;
 	private static boolean recreate_table = false;
-	public static String max_list_size_string = "5000";
+	private static List<String> too_big_categories = new ArrayList<String>();
+	public static String max_list_size_string = "10000";
+	public static String select_big_category = "select categorie_niveau_4 from CATEGORY_FOLLOWING where count > "+max_list_size_string;
 	private static String select_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT FROM CATALOG";
 
 	private static String drop_CATEGORY_FOLLOWING_table = "DROP TABLE IF EXISTS CATEGORY_FOLLOWING";
@@ -73,6 +75,17 @@ public class SimilarityBigCategoryNoConcurrentRequestComputingProcess {
 			if (recreate_table){
 				cleaning_category_scheduler_database(con);
 			}
+			// getting the too big categories to exclude
+			System.out.println("Requesting all distinct too big categories");
+			pst = con.prepareStatement(select_big_category);
+			rs = pst.executeQuery();
+			while (rs.next()) {
+				// fetching all
+				String category_level_4 = rs.getString(1);
+				too_big_categories.add(category_level_4);
+			}
+			rs.close();
+			pst.close();
 			// getting the number of URLs to fetch
 			System.out.println("Requesting all distinct categories");
 			pst = con.prepareStatement(select_entry_from_category4);
@@ -106,12 +119,17 @@ public class SimilarityBigCategoryNoConcurrentRequestComputingProcess {
 				String ETAT = rs.getString(9);
 				entry.setETAT(ETAT);
 
-				List<CatalogEntry> toprocess = my_entries.get(CATEGORIE_NIVEAU_4);
-				if (toprocess == null){
-					toprocess = new ArrayList<CatalogEntry>();
-					my_entries.put(CATEGORIE_NIVEAU_4, toprocess);
+				// we here just keep the big categories
+				if (too_big_categories.contains(CATEGORIE_NIVEAU_4)){
+					List<CatalogEntry> toprocess = my_entries.get(CATEGORIE_NIVEAU_4);
+					if (toprocess == null){
+						toprocess = new ArrayList<CatalogEntry>();
+						my_entries.put(CATEGORIE_NIVEAU_4, toprocess);
+					}
+					toprocess.add(entry);
+				} else {
+					System.out.println("Too small category, we drop it : "+CATEGORIE_NIVEAU_4);
 				}
-				toprocess.add(entry);
 			}
 			
 			// iterating over the categories map !!! 

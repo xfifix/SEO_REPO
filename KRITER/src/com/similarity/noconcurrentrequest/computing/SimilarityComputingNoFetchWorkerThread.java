@@ -20,6 +20,7 @@ import com.statistics.processing.StatisticsUtility;
 
 public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 	private Connection con;
+	private Random my_rand = new Random();
 	private Map<String, List<CatalogEntry>> my_categories_to_compute  = new HashMap<String, List<CatalogEntry>>();
 	// beware static shared global cache for unfetched skus
 	private Map<CatalogEntry, Set<String>> unfetched_skus_local_cache = new HashMap<CatalogEntry, Set<String>>();
@@ -36,6 +37,7 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 	private Map<String,List<String>> matching_skus = new HashMap<String,List<String>>();
 	private static int kriter_threshold =6;
 	public static int computing_max_list_size = 100;  
+	private static int batch_size = 100;
 
 	public SimilarityComputingNoFetchWorkerThread(Connection con, Map<String, List<CatalogEntry>>  to_fetch) throws SQLException{
 		this.con = con;
@@ -197,13 +199,12 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 
 	public List<CatalogEntry> shrink(List<CatalogEntry> my_list){
 		Set<CatalogEntry> to_return = new HashSet<CatalogEntry>();
-		Random my_rand = new Random();
 		// to_return is a set forbidding duplicated entries
 		while (to_return.size() < computing_max_list_size){
 			CatalogEntry candidate = my_list.get(my_rand.nextInt(my_list.size()));
-			if (("CDS".equals(candidate.getVENDEUR()))&&("non épuisé".equals(candidate.getETAT()))) { 
+//			if (("CDS".equals(candidate.getVENDEUR()))&&("non épuisé".equals(candidate.getETAT()))) { 
 				to_return.add(candidate);
-			}
+//			}
 		}
 		return new ArrayList<CatalogEntry>(to_return);
 	}
@@ -298,7 +299,6 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		System.out.println(Thread.currentThread() +" Beginning to compute distance matrix from "+size_list);
 		for (int i=0;i<size_list;i++){
 			List<CatalogEntry> filtered_entries = shrink(entries);
-			System.out.println(Thread.currentThread() +" Having shrinked distance matrix from "+filtered_entries.size());
 			int restricted_size_list = filtered_entries.size();
 			CatalogEntry current_entry = entries.get(i);
 			if (i%500 == 0){
@@ -326,6 +326,10 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			similars.add(filtered_entries.get(indexes[4]).getSKU());
 			similars.add(filtered_entries.get(indexes[5]).getSKU());
 			matching_skus.put(current_entry.getSKU(),similars);
+			if ((matching_skus.size() != 0) && matching_skus.size() % batch_size == 0 ){
+				saving_similar();
+				matching_skus.clear();
+			}
 		}
 	}
 
@@ -382,6 +386,10 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			similars.add(entries.get(indexes[4]).getSKU());
 			similars.add(entries.get(indexes[5]).getSKU());
 			matching_skus.put(current_entry.getSKU(),similars);
+			if ((matching_skus.size() != 0) && matching_skus.size() % batch_size == 0 ){
+				saving_similar();
+				matching_skus.clear();
+			}
 		}
 	}
 
