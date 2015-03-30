@@ -35,9 +35,11 @@ public class SlowDailyMultipleIPsCookieBunchByBunchCronJob {
 	private static String user_agent_path = "/home/sduprey/My_Data/My_User_Agents/user-agent.txt";
 	public static void main(String[] args){
 
-		args = new String[2];
-        args[0]="Plan ouverture Facette contextuallisé";
-        args[1]="CDISCOUNT_TOP_5000";
+		if (args.length == 0){
+			args = new String[1];
+			args[0]="CDISCOUNT_TOP_5000";
+//			 args[0]="Plan ouverture Facette contextuallisé";
+		}
 
 		System.out.println("Minimum number of waiting times : " + min_number_of_wait_times);
 		System.out.println("Maximum number of waiting times : " + max_number_of_wait_times);
