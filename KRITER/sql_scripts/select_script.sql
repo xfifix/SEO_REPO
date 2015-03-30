@@ -8,5 +8,9 @@ select distinct nb_distinct_state, count(*) from CATALOG group by nb_distinct_st
 
 select distinct categorie_niveau_4, count(*), true as to_fetch into CATEGORY_FOLLOWING from CATALOG group by categorie_niveau_4;
 
+
 # assessing the homogeneity of the links
 select distinct counter, count(*) from LINKING_SIMILAR_PRODUCTS group by counter;
+
+
+select distinct categorie_niveau_4, count(*), true as to_fetch into CATEGORY_FOLLOWING from CATALOG group by categorie_niveau_4;

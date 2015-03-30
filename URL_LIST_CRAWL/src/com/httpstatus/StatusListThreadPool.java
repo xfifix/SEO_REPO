@@ -114,7 +114,6 @@ public class StatusListThreadPool {
 					executor.execute(worker);		
 					local_count=0;
 					thread_list = new ArrayList<Integer>();
-					thread_list.add(tofetch_list.get(size_counter));
 				}
 			}
 			if (thread_list.size()>0){

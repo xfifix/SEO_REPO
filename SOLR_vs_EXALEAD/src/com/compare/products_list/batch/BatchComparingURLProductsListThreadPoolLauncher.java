@@ -120,7 +120,6 @@ public class BatchComparingURLProductsListThreadPoolLauncher {
 					// we initialize everything for the next thread
 					local_count=0;
 					thread_list = new ArrayList<Integer>();
-					thread_list.add(tofetch_list.get(size_counter));
 				}
 			}
 			// there might be a last task with the euclidean remainder

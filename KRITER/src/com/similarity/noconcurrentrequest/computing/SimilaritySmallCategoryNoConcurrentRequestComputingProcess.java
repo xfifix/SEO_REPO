@@ -137,7 +137,6 @@ public class SimilaritySmallCategoryNoConcurrentRequestComputingProcess {
 					// we initialize everything for the next thread
 					local_count=0;
 					thread_list = new HashMap<String, List<CatalogEntry>>();
-					thread_list.put(current_category,category_entries);
 				}
 				global_count++;
 			}

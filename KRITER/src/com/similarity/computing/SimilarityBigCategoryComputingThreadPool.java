@@ -89,7 +89,6 @@ public class SimilarityBigCategoryComputingThreadPool {
 					// we initialize everything for the next thread
 					local_count=0;
 					thread_list = new ArrayList<String>();
-					thread_list.add(cat4);
 				}
 				global_count++;
 			}

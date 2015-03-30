@@ -1,4 +1,4 @@
-package com.similarity.noconcurrentrequest.computing;
+package com.similarity.noconcurrentrequest.random.computing;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,8 +18,9 @@ import java.util.Set;
 import com.statistics.processing.CatalogEntry;
 import com.statistics.processing.StatisticsUtility;
 
-public class SimilarityComputingNoFetchWorkerThread implements Runnable {
+public class SimilarityRandomComputingNoFetchWorkerThread implements Runnable {
 	private Connection con;
+	private static Random my_rand = new Random();
 	private Map<String, List<CatalogEntry>> my_categories_to_compute  = new HashMap<String, List<CatalogEntry>>();
 	// beware static shared global cache for unfetched skus
 	private Map<CatalogEntry, Set<String>> unfetched_skus_local_cache = new HashMap<CatalogEntry, Set<String>>();
@@ -35,9 +36,9 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 
 	private Map<String,List<String>> matching_skus = new HashMap<String,List<String>>();
 	private static int kriter_threshold =6;
-	public static int computing_max_list_size = 100;  
+	private static int batch_size = 100;
 
-	public SimilarityComputingNoFetchWorkerThread(Connection con, Map<String, List<CatalogEntry>>  to_fetch) throws SQLException{
+	public SimilarityRandomComputingNoFetchWorkerThread(Connection con, Map<String, List<CatalogEntry>>  to_fetch) throws SQLException{
 		this.con = con;
 		this.my_categories_to_compute = to_fetch;
 	}
@@ -53,27 +54,33 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 				List<CatalogEntry> my_data = pairs.getValue();
 				category_to_debug=category;
 				System.out.println(Thread.currentThread()+" Dealing with category : "+category);
-				System.out.println(Thread.currentThread()+" Category skus all fetched for data : "+category);
-				computeDataList(my_data);
-				//saving_similar_step_by_step();
-				saving_similar();
-				updateCategory(category_to_debug);
-				System.gc();
+				randomComputeDataList(my_data,category);
+				
+
+				//				System.out.println(Thread.currentThread()+" Category skus all fetched for data : "+category);
+				//				computeDataList(my_data);
+				//				//saving_similar_step_by_step();
+				//				saving_similar();
+				// for debug
+				System.out.println(Thread.currentThread()  + "Category "+category+" dealt with");
+				System.out.println(Thread.currentThread()  + "Updating category "+category+" size : "+my_data.size());
+				updateCategory(category_to_debug);			
+				//				System.gc();
 			}		
 			// dealing with unfetched skus
 			// we loop over each sku and get back to fomer category level to find matching offer
-
-			if (unfetched_skus_local_cache.size()>0){
-				backup_category3();
-			}
-
-			if (unfetched_skus_local_cache.size()>0){
-				backup_category2();
-			}
-
-			if (unfetched_skus_local_cache.size()>0){
-				backup_category1();
-			}
+			//
+//			if (unfetched_skus_local_cache.size()>0){
+//				backup_category3();
+//			}
+//
+//			if (unfetched_skus_local_cache.size()>0){
+//				backup_category2();
+//			}
+//
+//			if (unfetched_skus_local_cache.size()>0){
+//				backup_category1();
+//			}
 
 			//saving_similar_step_by_step();
 			saving_similar();
@@ -94,11 +101,20 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		}
 	}
 
-	public void updateCategory(String category) throws SQLException{
-		PreparedStatement st = con.prepareStatement(update_category); 
-		st.setString(1, category);
-		st.executeUpdate();
-		st.close();
+	public void updateCategory(String category){
+		PreparedStatement st;
+		try {
+			con.setAutoCommit(true);
+			st = con.prepareStatement(update_category);
+			st.setString(1, category);
+			st.executeUpdate();
+			st.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Trouble updating category");
+			e.printStackTrace();
+		} 
+
 		System.out.println("Category : "+ category+ " fetched !");
 	}
 
@@ -122,10 +138,28 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		return done;
 	}
 
-	public void computeDataList(List<CatalogEntry> my_data){
-		if (my_data.size() >= kriter_threshold && my_data.size()<= computing_max_list_size){
-			// we do it the standard way
-			find_similar(my_data);
+	public void randomComputeDataList(List<CatalogEntry> my_data,String category){
+		int total_size=my_data.size();
+		if (my_data.size() >= kriter_threshold){
+			int nb_computation = 0;
+			for (CatalogEntry currentEntry : my_data){
+				nb_computation++;
+				if (nb_computation%200 == 0){
+					System.out.println(Thread.currentThread() +" Having computed distance matrix "+nb_computation+" from "+total_size);
+				}
+				List<CatalogEntry> filtered_entries = shrink_to_kriter_size(my_data);
+				List<String> similars = new ArrayList<String>();
+				for (CatalogEntry toAdd : filtered_entries){
+					similars.add(toAdd.getSKU());
+				}
+				// adding the 6 first closest skus
+				//System.out.println("Adding 6 similar SKUs for : "+currentEntry.getSKU());
+				matching_skus.put(currentEntry.getSKU(),similars);
+				if ((matching_skus.size() != 0) && matching_skus.size() % batch_size == 0 ){
+					saving_similar();
+					matching_skus.clear();
+				}
+			}
 		} else if (my_data.size() < kriter_threshold) {
 			Set<String> similars = new HashSet<String>();
 			for (CatalogEntry to_add : my_data){
@@ -135,12 +169,6 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 				unfetched_skus_local_cache.put(to_process,similars);
 			}
 			// we here have to fetch lower category
-		}else if (my_data.size() > computing_max_list_size) {
-			// we here have to restrain ourselves
-			// we do it randomly
-			// but we should get a more proper criteria (business value, clicking trend)
-
-			find_restricted_similar(my_data);	
 		}
 	}
 
@@ -195,17 +223,24 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		}
 	}
 
-	public List<CatalogEntry> shrink(List<CatalogEntry> my_list){
+	public List<CatalogEntry> shrink_to_kriter_size(List<CatalogEntry> my_list){
 		Set<CatalogEntry> to_return = new HashSet<CatalogEntry>();
-		Random my_rand = new Random();
+
 		// to_return is a set forbidding duplicated entries
-		while (to_return.size() < computing_max_list_size){
+		while (to_return.size() < kriter_threshold) {
 			CatalogEntry candidate = my_list.get(my_rand.nextInt(my_list.size()));
-			if (("CDS".equals(candidate.getVENDEUR()))&&("non épuisé".equals(candidate.getETAT()))) { 
-				to_return.add(candidate);
-			}
+			to_return.add(candidate);
 		}
 		return new ArrayList<CatalogEntry>(to_return);
+		//		if (to_return.size() == kriter_threshold){
+		//			return new ArrayList<CatalogEntry>(to_return);
+		//		} else {
+		//			while (to_return.size() < kriter_threshold) {
+		//				CatalogEntry candidate = my_list.get(my_rand.nextInt(my_list.size()));
+		//				to_return.add(candidate);
+		//			}	
+		//			return new ArrayList<CatalogEntry>(to_return);
+		//		}
 	}
 
 	public void saving_similar_step_by_step(){
@@ -293,41 +328,6 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		}	
 	}
 
-	public void find_restricted_similar(List<CatalogEntry> entries){
-		int size_list = entries.size();
-		System.out.println(Thread.currentThread() +" Beginning to compute distance matrix from "+size_list);
-		for (int i=0;i<size_list;i++){
-			List<CatalogEntry> filtered_entries = shrink(entries);
-			System.out.println(Thread.currentThread() +" Having shrinked distance matrix from "+filtered_entries.size());
-			int restricted_size_list = filtered_entries.size();
-			CatalogEntry current_entry = entries.get(i);
-			if (i%500 == 0){
-				System.out.println(Thread.currentThread() +" Having computed distance matrix "+i+" from "+size_list);
-			}
-			Double[] vector_list = new Double[restricted_size_list]; 
-			// computing the vector distance
-			for (int j= 0;j<restricted_size_list;j++){
-				CatalogEntry entryj = filtered_entries.get(j);
-				Double distone = StatisticsUtility.computeTFdistance(current_entry.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
-				Double disttwo = StatisticsUtility.computeTFdistance(current_entry.getDESCRIPTION_LONGUEUR80(), entryj.getDESCRIPTION_LONGUEUR80());
-				vector_list[j] = distone+disttwo;
-			}
-			// sorting the array and keeping the indexes
-			DescendingArrayIndexComparator comparator = new DescendingArrayIndexComparator(vector_list);
-			Integer[] indexes = comparator.createIndexArray();
-			Arrays.sort(indexes, comparator);
-
-			List<String> similars = new ArrayList<String>();
-			// adding the 6 first closest skus
-			similars.add(filtered_entries.get(indexes[0]).getSKU());
-			similars.add(filtered_entries.get(indexes[1]).getSKU());
-			similars.add(filtered_entries.get(indexes[2]).getSKU());
-			similars.add(filtered_entries.get(indexes[3]).getSKU());
-			similars.add(filtered_entries.get(indexes[4]).getSKU());
-			similars.add(filtered_entries.get(indexes[5]).getSKU());
-			matching_skus.put(current_entry.getSKU(),similars);
-		}
-	}
 
 	public boolean find_similar_backup(CatalogEntry current_entry, List<CatalogEntry> entries){
 
@@ -352,38 +352,7 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		return done;
 	}
 
-	public void find_similar(List<CatalogEntry> entries){
-		int size_list = entries.size();
-		
-		System.out.println(Thread.currentThread() +" Beginning to compute distance matrix from "+size_list);
-		
-		for (int i=0;i<size_list;i++){
-			if (i%100 == 0){
-				System.out.println(Thread.currentThread() +" Having computed distance matrix "+i+" from "+size_list);
-			}
-			CatalogEntry current_entry = entries.get(i);
-			Double[] vector_list = new Double[size_list]; 
-			for (int j= 0;j<size_list;j++){
-				CatalogEntry entryj = entries.get(j);
-				Double distone = StatisticsUtility.computeTFdistance(current_entry.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
-				Double disttwo = StatisticsUtility.computeTFdistance(current_entry.getDESCRIPTION_LONGUEUR80(), entryj.getDESCRIPTION_LONGUEUR80());
-				vector_list[j] = distone+disttwo;
-			}
-			// sorting the array and keeping the indexes
-			DescendingArrayIndexComparator comparator = new DescendingArrayIndexComparator(vector_list);
-			Integer[] indexes = comparator.createIndexArray();
-			Arrays.sort(indexes, comparator);
-			List<String> similars = new ArrayList<String>();
-			// adding the 6 first closest skus
-			similars.add(entries.get(indexes[0]).getSKU());
-			similars.add(entries.get(indexes[1]).getSKU());
-			similars.add(entries.get(indexes[2]).getSKU());
-			similars.add(entries.get(indexes[3]).getSKU());
-			similars.add(entries.get(indexes[4]).getSKU());
-			similars.add(entries.get(indexes[5]).getSKU());
-			matching_skus.put(current_entry.getSKU(),similars);
-		}
-	}
+
 
 	public List<CatalogEntry> fetch_category_data3(String category) throws SQLException{
 		List<CatalogEntry> my_entries = new ArrayList<CatalogEntry>();
