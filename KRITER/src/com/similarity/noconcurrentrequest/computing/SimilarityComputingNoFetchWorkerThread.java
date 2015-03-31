@@ -357,7 +357,7 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 	}
 
 	public void saving_similar(){
-		System.out.println("Inserting the batch "+matching_skus.size());
+		System.out.println(Thread.currentThread()+"Inserting the batch "+matching_skus.size());
 		try{
 			Iterator<Entry<String, List<String>>> it = matching_skus.entrySet().iterator();
 			int local_counter = 0;

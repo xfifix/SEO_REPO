@@ -27,7 +27,7 @@ public class SimilaritySmallCategoryNoConcurrentRequestComputingProcess {
 	private static int list_size_bucket = 50;
 	private static boolean recreate_table = false;
 	public static String max_list_size_string = "10000";
-	public static String select_too_big_category = "select categorie_niveau_4 from CATEGORY_FOLLOWING where count> "+max_list_size_string;
+	public static String select_too_big_category = "select categorie_niveau_4 from CATEGORY_FOLLOWING where count > "+max_list_size_string;
 	private static String select_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT FROM CATALOG";
 
 	private static String drop_CATEGORY_FOLLOWING_table = "DROP TABLE IF EXISTS CATEGORY_FOLLOWING";

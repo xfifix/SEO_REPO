@@ -1,4 +1,4 @@
-package com.similarity.noconcurrentrequest.computing;
+package com.similarity.test;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,24 +12,24 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.similarity.noconcurrentrequest.computing.SimilarityComputingNoFetchWorkerThread;
 import com.statistics.processing.CatalogEntry;
 
-public class SimilarityBigCategoryNoConcurrentRequestComputingProcess {
+public class SimilarityLessThan6CategoryNoConcurrentRequestComputingProcessTest {
 
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
-	// the exact same number as the number of categories
-	private static int list_fixed_pool_size = 104;
-	// just one category per thread because of the big memory footprint
-	private static int list_size_bucket = 1;
+	private static List<String> less_than_six_categories = new ArrayList<String>();
+    // 633 categories with less than 6 elements
+	private static int list_fixed_pool_size = 1;
+	private static int list_size_bucket = 633;
 	private static boolean recreate_table = false;
-	private static List<String> too_big_categories = new ArrayList<String>();
-	public static String max_list_size_string = "10000";
-	public static String select_big_category = "select categorie_niveau_4 from CATEGORY_FOLLOWING where count > "+max_list_size_string;
+	public static String less_than_six_size_string = "6";
+	public static String select_less_than_six_category = "select categorie_niveau_4 from CATEGORY_FOLLOWING where count < "+less_than_six_size_string;
 	private static String select_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT FROM CATALOG";
 
 	private static String drop_CATEGORY_FOLLOWING_table = "DROP TABLE IF EXISTS CATEGORY_FOLLOWING";
@@ -78,17 +78,17 @@ public class SimilarityBigCategoryNoConcurrentRequestComputingProcess {
 			}
 			// getting the too big categories to exclude
 			System.out.println("Requesting all distinct too big categories");
-			pst = con.prepareStatement(select_big_category);
+			pst = con.prepareStatement(select_less_than_six_category);
 			rs = pst.executeQuery();
 			while (rs.next()) {
 				// fetching all
 				String category_level_4 = rs.getString(1);
-				too_big_categories.add(category_level_4);
+				less_than_six_categories.add(category_level_4);
 			}
 			rs.close();
 			pst.close();
 			// getting the number of URLs to fetch
-			System.out.println("Requesting all distinct categories");
+			System.out.println("Requesting all data from categories categories");
 			pst = con.prepareStatement(select_entry_from_category4);
 			rs = pst.executeQuery();
 			Map<String, List<CatalogEntry>> my_entries = new HashMap<String, List<CatalogEntry>>();
@@ -120,8 +120,8 @@ public class SimilarityBigCategoryNoConcurrentRequestComputingProcess {
 				String ETAT = rs.getString(9);
 				entry.setETAT(ETAT);
 
-				// we here just keep the big categories
-				if (too_big_categories.contains(CATEGORIE_NIVEAU_4)){
+				// we here just keep the less than six categories
+				if (less_than_six_categories.contains(CATEGORIE_NIVEAU_4)){
 					List<CatalogEntry> toprocess = my_entries.get(CATEGORIE_NIVEAU_4);
 					if (toprocess == null){
 						toprocess = new ArrayList<CatalogEntry>();
@@ -129,10 +129,12 @@ public class SimilarityBigCategoryNoConcurrentRequestComputingProcess {
 					}
 					toprocess.add(entry);
 				} else {
-					System.out.println("Too small category, we drop it : "+CATEGORIE_NIVEAU_4);
+					System.out.println("Too big category (we just keep the less than 6), we drop it : "+CATEGORIE_NIVEAU_4);
 				}
-			}
-			
+			}		
+			rs.close();
+			pst.close();
+
 			// iterating over the categories map !!! 
 			Map<String, List<CatalogEntry>> thread_list = new HashMap<String, List<CatalogEntry>>();
 			Iterator<Entry<String, List<CatalogEntry>>> it = my_entries.entrySet().iterator();
@@ -160,8 +162,7 @@ public class SimilarityBigCategoryNoConcurrentRequestComputingProcess {
 				}
 				global_count++;
 			}
-			rs.close();
-			pst.close();
+
 			// we add one for the euclidean remainder
 			// there might be a last task with the euclidean remainder
 			if (thread_list.size()>0){
