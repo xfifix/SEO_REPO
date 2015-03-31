@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="java.io.InputStream"/>
 <fullyQualifiedTypeName name="java.io.ByteArrayOutputStream"/>
 <fullyQualifiedTypeName name="crawl4j.vsm.CorpusCache"/>
 <fullyQualifiedTypeName name="java.util.TreeMap"/>
@@ -23,8 +22,6 @@
 <fullyQualifiedTypeName name="org.apache.http.client.params.ClientPNames"/>
 <fullyQualifiedTypeName name="org.apache.http.client.params.HttpClientParams"/>
 <fullyQualifiedTypeName name="java.util.regex.Matcher"/>
-<fullyQualifiedTypeName name="java.io.FileReader"/>
-<fullyQualifiedTypeName name="java.io.File"/>
 <fullyQualifiedTypeName name="crawl4j.nomatch.NoMatchWorkerThread"/>
 <fullyQualifiedTypeName name="crawl4j.nomatch.NoMatchThreadPool"/>
 <fullyQualifiedTypeName name="java.util.Date"/>
@@ -60,4 +57,7 @@
 <fullyQualifiedTypeName name="java.util.Map"/>
 <fullyQualifiedTypeName name="java.util.Set"/>
 <fullyQualifiedTypeName name="com.similarity.noconcurrentrequest.computing.SimilarityComputingNoFetchWorkerThread"/>
+<fullyQualifiedTypeName name="java.io.FileReader"/>
+<fullyQualifiedTypeName name="java.io.File"/>
+<fullyQualifiedTypeName name="com.similarity.parameter.KriterParameter"/>
 </qualifiedTypeNameHistroy>

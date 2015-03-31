@@ -9087,3 +9087,52 @@ org.eclipse.debug.core.DebugException: Invalid stack frame
 	at org.eclipse.jface.text.TextViewerHoverManager$4.run(TextViewerHoverManager.java:166)
 !SUBENTRY 1 org.eclipse.jdt.debug 4 100 2015-03-31 11:38:42.224
 !MESSAGE Invalid stack frame
+!SESSION 2015-03-31 13:44:59.278 -----------------------------------------------
+eclipse.buildId=4.4.0.I20140606-1215
+java.version=1.7.0_72
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_GB
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.jface 2 0 2015-03-31 14:26:10.278
+!MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
+!SUBENTRY 1 org.eclipse.jface 2 0 2015-03-31 14:26:10.278
+!MESSAGE A conflict occurred for CTRL+D:
+Binding(CTRL+D,
+	ParameterizedCommand(Command(org.eclipse.debug.ui.commands.eof,EOF,
+		Send end of file,
+		Category(org.eclipse.debug.ui.category.run,Run/Debug,Run/Debug command category,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@628cf53f,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.debug.ui.console,,,system)
+Binding(CTRL+D,
+	ParameterizedCommand(Command(org.eclipse.ui.edit.text.delete.line,Delete Line,
+		Delete a line of text,
+		Category(org.eclipse.ui.category.textEditor,Text Editing,Text Editing Commands,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@14392da5,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.textEditorScope,,,system)
+
+!ENTRY org.eclipse.core.jobs 4 2 2015-03-31 14:35:29.046
+!MESSAGE An internal error occurred during: "JDI thread evaluations".
+!STACK 0
+java.lang.OutOfMemoryError: Java heap space
+	at java.lang.AbstractStringBuilder.<init>(AbstractStringBuilder.java:64)
+	at java.lang.StringBuffer.<init>(StringBuffer.java:108)
+	at org.eclipse.jdi.internal.jdwp.JdwpString.read(JdwpString.java:33)
+	at org.eclipse.jdi.internal.MirrorImpl.readString(MirrorImpl.java:451)
+	at org.eclipse.jdi.internal.StringReferenceImpl.value(StringReferenceImpl.java:61)
+	at org.eclipse.jdt.internal.debug.core.model.JDIValue.getValueString(JDIValue.java:123)
+	at org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager$EvaluationListener.appendJDIValueString(JavaDetailFormattersManager.java:727)
+	at org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager$EvaluationListener.appendObjectDetail(JavaDetailFormattersManager.java:745)
+	at org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager$EvaluationListener$1.run(JavaDetailFormattersManager.java:658)
+	at org.eclipse.jdt.internal.debug.core.model.JDIThread.runEvaluation(JDIThread.java:765)
+	at org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager$EvaluationListener.valueToString(JavaDetailFormattersManager.java:665)
+	at org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager.resolveFormatter(JavaDetailFormattersManager.java:166)
+	at org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager.access$1(JavaDetailFormattersManager.java:139)
+	at org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager$1.run(JavaDetailFormattersManager.java:134)
+	at org.eclipse.jdt.internal.debug.core.model.JDIThread$ThreadJob.run(JDIThread.java:3158)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)

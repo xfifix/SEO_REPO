@@ -24,11 +24,9 @@ import com.statistics.processing.CatalogEntry;
 
 public class SimilarityBigCategoryNoConcurrentRequestComputingProcess {
 	public static Properties properties;
-	public static String kriter_conf_path = "/home/sduprey/My_Data/My_Kriter_Conf/criter.conf";
-	private static boolean recreate_table = false;
+	public static String kriter_conf_path = "/home/sduprey/My_Data/My_Kriter_Conf/kriter.conf";
 	private static List<String> too_big_categories = new ArrayList<String>();
-	public static String max_list_size_string = "10000";
-	public static String select_big_category = "select categorie_niveau_4 from CATEGORY_FOLLOWING where count > "+max_list_size_string;
+	public static String select_big_category = "select categorie_niveau_4 from CATEGORY_FOLLOWING where count > ";
 	private static String select_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT FROM CATALOG";
 
 	private static String drop_CATEGORY_FOLLOWING_table = "DROP TABLE IF EXISTS CATEGORY_FOLLOWING";
@@ -43,21 +41,26 @@ public class SimilarityBigCategoryNoConcurrentRequestComputingProcess {
 			KriterParameter.small_list_size_bucket =Integer.valueOf(properties.getProperty("kriter.small_list_size_bucket")); 
 			KriterParameter.big_list_pool_size =Integer.valueOf(properties.getProperty("kriter.big_list_pool_size")); 
 			KriterParameter.big_list_size_bucket =Integer.valueOf(properties.getProperty("kriter.big_list_size_bucket")); 
+			KriterParameter.max_list_size_separator_string=properties.getProperty("kriter.max_list_size_separator_string");
+			KriterParameter.recreate_table=Boolean.parseBoolean(properties.getProperty("kriter.recreate_table"));
+			KriterParameter.compute_optimal_parameters=Boolean.parseBoolean(properties.getProperty("kriter.compute_optimal_parameters"));
+			KriterParameter.kriter_threshold =Integer.valueOf(properties.getProperty("kriter.kriter_threshold")); 
+			KriterParameter.small_computing_max_list_size =Integer.valueOf(properties.getProperty("kriter.small_computing_max_list_size"));
+			KriterParameter.big_computing_max_list_size =Integer.valueOf(properties.getProperty("kriter.big_computing_max_list_size"));
+			KriterParameter.batch_size =Integer.valueOf(properties.getProperty("kriter.batch_size"));
+			KriterParameter.displaying_threshold =Integer.valueOf(properties.getProperty("kriter.displaying_threshold"));
+			KriterParameter.computing_max_list_size =KriterParameter.big_computing_max_list_size;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println("Trouble getting the configuration : unable to launch the crawler");
 			System.exit(0);
 		}
-		System.out.println("Number of threads for list crawler : "+KriterParameter.big_list_pool_size);
-		System.out.println("Bucket size for list crawler : "+KriterParameter.big_list_size_bucket);
-		// it would be best to use a property file to store MD5 password
-		//		// Getting the database property
-		Properties props = new Properties();
+		// Getting the database property
 		FileInputStream in = null;      
 		try {
 			in = new FileInputStream(KriterParameter.database_con_path);
-			props.load(in);
+			properties.load(in);
 		} catch (IOException ex) {
 			System.out.println("Trouble fetching database configuration");
 			ex.printStackTrace();
@@ -72,26 +75,27 @@ public class SimilarityBigCategoryNoConcurrentRequestComputingProcess {
 			}
 		}
 		//the following properties have been identified
-		String url = props.getProperty("db.url");
-		String user = props.getProperty("db.user");
-		String passwd = props.getProperty("db.passwd");
+		String url = properties.getProperty("db.url");
+		String user = properties.getProperty("db.user");
+		String passwd = properties.getProperty("db.passwd");
 
 		System.out.println("You'll connect to the postgresql KRITERDB database as "+user);
-		// Instantiating the pool thread
-		ExecutorService executor = Executors.newFixedThreadPool(KriterParameter.big_list_pool_size);
+
+
 		// The database connection
 		Connection con = null;
 		PreparedStatement pst = null;
 		ResultSet rs = null;
+		ExecutorService executor = null;
 		try {  
 			con = DriverManager.getConnection(url, user, passwd);
 			System.out.println("Cleaning up and building the category_following table");
-			if (recreate_table){
+			if (KriterParameter.recreate_table){
 				cleaning_category_scheduler_database(con);
 			}
 			// getting the too big categories to exclude
 			System.out.println("Requesting all distinct too big categories");
-			pst = con.prepareStatement(select_big_category);
+			pst = con.prepareStatement(select_big_category+KriterParameter.max_list_size_separator_string);
 			rs = pst.executeQuery();
 			while (rs.next()) {
 				// fetching all
@@ -142,10 +146,21 @@ public class SimilarityBigCategoryNoConcurrentRequestComputingProcess {
 					}
 					toprocess.add(entry);
 				} else {
-					System.out.println("Too small category, we drop it : "+CATEGORIE_NIVEAU_4);
+					System.out.println("Too small category < "+KriterParameter.max_list_size_separator_string+", we drop it : "+CATEGORIE_NIVEAU_4);
 				}
 			}
-			
+
+			// computing the thread pool parameters for big categories
+			if (KriterParameter.compute_optimal_parameters){
+				KriterParameter.big_list_pool_size=my_entries.size();
+				KriterParameter.big_list_size_bucket=1;
+			}
+
+			System.out.println("Number of threads for list crawler : "+KriterParameter.big_list_pool_size);
+			System.out.println("Bucket size for list crawler : "+KriterParameter.big_list_size_bucket);
+
+			// Instantiating the pool thread
+			executor = Executors.newFixedThreadPool(KriterParameter.big_list_pool_size);
 			// iterating over the categories map !!! 
 			Map<String, List<CatalogEntry>> thread_list = new HashMap<String, List<CatalogEntry>>();
 			Iterator<Entry<String, List<CatalogEntry>>> it = my_entries.entrySet().iterator();
