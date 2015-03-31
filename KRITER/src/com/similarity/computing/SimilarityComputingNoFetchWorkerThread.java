@@ -18,16 +18,16 @@ import java.util.Set;
 import com.statistics.processing.CatalogEntry;
 import com.statistics.processing.StatisticsUtility;
 
-public class HeavySimilarityComputingWorkerThread implements Runnable {
+public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 	private Connection con;
-	private List<String> my_categories_to_compute = new ArrayList<String>();
+	private Random my_rand = new Random();
+	private Map<String, List<CatalogEntry>> my_categories_to_compute  = new HashMap<String, List<CatalogEntry>>();
 	// beware static shared global cache for unfetched skus
 	private Map<CatalogEntry, Set<String>> unfetched_skus_local_cache = new HashMap<CatalogEntry, Set<String>>();
 
-	private static String select_entry_from_category4 = " select SKU, MAGASIN, RAYON, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4, CATEGORIE_NIVEAU_5, LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, URL, LIEN_IMAGE, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_4=?";
-	private static String select_entry_from_category1 = " select SKU, MAGASIN, RAYON, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4, CATEGORIE_NIVEAU_5, LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, URL, LIEN_IMAGE, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_1=?";
-	private static String select_entry_from_category3 = " select SKU, MAGASIN, RAYON, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4, CATEGORIE_NIVEAU_5, LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, URL, LIEN_IMAGE, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_3=?";
-	private static String select_entry_from_category2 = " select SKU, MAGASIN, RAYON, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4, CATEGORIE_NIVEAU_5, LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, URL, LIEN_IMAGE, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_2=?";
+	private static String select_entry_from_category1 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_1=?";
+	private static String select_entry_from_category3 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_3=?";
+	private static String select_entry_from_category2 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_2=?";
 
 	private static String update_category = "update CATEGORY_FOLLOWING set to_fetch = false where CATEGORIE_NIVEAU_4 = ?";
 
@@ -37,8 +37,11 @@ public class HeavySimilarityComputingWorkerThread implements Runnable {
 	private Map<String,List<String>> matching_skus = new HashMap<String,List<String>>();
 	private static int kriter_threshold =6;
 	public static int computing_max_list_size = 100;  
+	private static int batch_size = 100;
 
-	public HeavySimilarityComputingWorkerThread(Connection con, List<String> to_fetch) throws SQLException{
+	private static int displaying_threshold = 250;
+
+	public SimilarityComputingNoFetchWorkerThread(Connection con, Map<String, List<CatalogEntry>>  to_fetch) throws SQLException{
 		this.con = con;
 		this.my_categories_to_compute = to_fetch;
 	}
@@ -46,13 +49,16 @@ public class HeavySimilarityComputingWorkerThread implements Runnable {
 	public void run() {
 		String category_to_debug="";
 		try {  
-			for (String category : my_categories_to_compute){
+			Iterator<Entry<String, List<CatalogEntry>>> it = my_categories_to_compute.entrySet().iterator();
+			// dispatching to threads
+			while (it.hasNext()){	
+				Map.Entry<String, List<CatalogEntry>> pairs = (Map.Entry<String, List<CatalogEntry>>)it.next();
+				String category=pairs.getKey();
+				List<CatalogEntry> my_data = pairs.getValue();
 				category_to_debug=category;
 				System.out.println(Thread.currentThread()+" Dealing with category : "+category);
-				List<CatalogEntry> my_data = fetch_category_data4(category);
 				System.out.println(Thread.currentThread()+" Category skus all fetched for data : "+category);
-				
-				computeDataList(my_data);
+				computeDataList_with_filter(my_data);
 				//saving_similar_step_by_step();
 				saving_similar();
 				updateCategory(category_to_debug);
@@ -60,24 +66,25 @@ public class HeavySimilarityComputingWorkerThread implements Runnable {
 			}		
 			// dealing with unfetched skus
 			// we loop over each sku and get back to fomer category level to find matching offer
-
+			System.out.println("Getting back to category level 3 to get products with missing similar products (<6) : number = "+unfetched_skus_local_cache.size());
 			if (unfetched_skus_local_cache.size()>0){
 				backup_category3();
 			}
-
+			System.out.println("Getting back to category level 2 to get products with missing similar products (<6) : number = "+unfetched_skus_local_cache.size());
 			if (unfetched_skus_local_cache.size()>0){
 				backup_category2();
 			}
-
+			System.out.println("Getting back to category level 1 to get products with missing similar products (<6) : number = "+unfetched_skus_local_cache.size());
 			if (unfetched_skus_local_cache.size()>0){
 				backup_category1();
-			}
-
+			}			
+			System.out.println("Saving the last batch");
 			//saving_similar_step_by_step();
 			saving_similar();
-
+			if (unfetched_skus_local_cache.size()>0){
+				System.out.println("We have still products with less than 6 similar products : "+unfetched_skus_local_cache.size());
+			}
 			close_connection();
-
 		} catch (Exception ex) {
 			System.out.println("Trouble with category : "+category_to_debug);
 			ex.printStackTrace();
@@ -102,16 +109,22 @@ public class HeavySimilarityComputingWorkerThread implements Runnable {
 
 	public boolean updateDataList(CatalogEntry current_entry, List<CatalogEntry> my_data){
 		boolean done = false;
-		if (my_data.size() >= kriter_threshold){
+		if (my_data.size() > kriter_threshold){
 			// we do it the standard way
 			done = find_similar_backup(current_entry,my_data);
-		} else if (my_data.size() < kriter_threshold) {
+		} else if (my_data.size() <= kriter_threshold) {
 			Set<String> current_similars = unfetched_skus_local_cache.get(current_entry);
 			for (CatalogEntry to_add : my_data){
-				current_similars.add(to_add.getSKU());
+				if (!current_entry.getSKU().equals(to_add.getSKU())){
+					current_similars.add(to_add.getSKU());
+				}
 			}
 			if (current_similars.size()>= kriter_threshold){
 				matching_skus.put(current_entry.getSKU(),new ArrayList<String>(current_similars));
+				if ((matching_skus.size() != 0) && matching_skus.size() % batch_size == 0 ){
+					saving_similar();
+					matching_skus.clear();
+				}
 				done = true;
 			} else {
 				unfetched_skus_local_cache.put(current_entry,current_similars);
@@ -120,16 +133,35 @@ public class HeavySimilarityComputingWorkerThread implements Runnable {
 		return done;
 	}
 
+	public void computeDataList_with_filter(List<CatalogEntry> my_data){
+		List<CatalogEntry> filteredList = filterCDSAvailableEntries(my_data);
+		if (filteredList.size() > kriter_threshold && filteredList.size()<= computing_max_list_size){
+			// we do it the standard way
+			find_similar_with_filter(my_data,filteredList);
+		} else if (filteredList.size() <= kriter_threshold) {
+			computeDataList(my_data);
+			// we here have to fetch lower category
+		}else if (filteredList.size() > computing_max_list_size) {
+			// we here have to restrain ourselves
+			// we do it randomly
+			// but we should get a more proper criteria (business value, clicking trend)
+			find_restricted_similar_with_filter(my_data,filteredList);	
+		}
+		System.gc();
+	}
+
 	public void computeDataList(List<CatalogEntry> my_data){
 		if (my_data.size() >= kriter_threshold && my_data.size()<= computing_max_list_size){
 			// we do it the standard way
 			find_similar(my_data);
 		} else if (my_data.size() < kriter_threshold) {
-			Set<String> similars = new HashSet<String>();
-			for (CatalogEntry to_add : my_data){
-				similars.add(to_add.getSKU());
-			}
 			for (CatalogEntry to_process : my_data){
+				Set<String> similars = new HashSet<String>();
+				for (CatalogEntry to_add : my_data){
+					if (!to_process.getSKU().equals(to_add.getSKU())){
+						similars.add(to_add.getSKU());
+					}
+				}
 				unfetched_skus_local_cache.put(to_process,similars);
 			}
 			// we here have to fetch lower category
@@ -142,10 +174,101 @@ public class HeavySimilarityComputingWorkerThread implements Runnable {
 		}
 	}
 
+	public void find_restricted_similar(List<CatalogEntry> entries){
+		int size_list = entries.size();
+		System.out.println(Thread.currentThread() +" Beginning to compute distance matrix from "+size_list);
+		for (int i=0;i<size_list;i++){
+			List<CatalogEntry> filtered_entries = shrink(entries);
+			int restricted_size_list = filtered_entries.size();
+			CatalogEntry current_entry = entries.get(i);
+			if (i%displaying_threshold == 0){
+				System.out.println(Thread.currentThread() +" Having computed distance matrix "+i+" from "+size_list);
+			}
+			Double[] vector_list = new Double[restricted_size_list]; 
+			// computing the vector distance
+			for (int j= 0;j<restricted_size_list;j++){
+				CatalogEntry entryj = filtered_entries.get(j);
+				Double distone = StatisticsUtility.computeTFdistance(current_entry.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
+				Double disttwo = StatisticsUtility.computeTFdistance(current_entry.getDESCRIPTION_LONGUEUR80(), entryj.getDESCRIPTION_LONGUEUR80());
+				vector_list[j] = distone+disttwo;
+			}
+			// sorting the array and keeping the indexes
+			DescendingArrayIndexComparator comparator = new DescendingArrayIndexComparator(vector_list);
+			Integer[] indexes = comparator.createIndexArray();
+			Arrays.sort(indexes, comparator);
+
+			List<String> similars = new ArrayList<String>();
+			// adding the 6 first closest skus
+			similars.add(filtered_entries.get(indexes[0]).getSKU());
+			similars.add(filtered_entries.get(indexes[1]).getSKU());
+			similars.add(filtered_entries.get(indexes[2]).getSKU());
+			similars.add(filtered_entries.get(indexes[3]).getSKU());
+			similars.add(filtered_entries.get(indexes[4]).getSKU());
+			similars.add(filtered_entries.get(indexes[5]).getSKU());
+			matching_skus.put(current_entry.getSKU(),similars);
+			if ((matching_skus.size() != 0) && matching_skus.size() % batch_size == 0 ){
+				saving_similar();
+				matching_skus.clear();
+			}
+		}
+	}
+
+	public void find_similar(List<CatalogEntry> entries){
+		int size_list = entries.size();
+
+		System.out.println(Thread.currentThread() +" Beginning to compute distance matrix from "+size_list);
+
+		for (int i=0;i<size_list;i++){
+			if (i%displaying_threshold == 0){
+				System.out.println(Thread.currentThread() +" Having computed distance matrix "+i+" from "+size_list);
+			}
+			CatalogEntry current_entry = entries.get(i);
+			Double[] vector_list = new Double[size_list]; 
+			for (int j= 0;j<size_list;j++){
+				CatalogEntry entryj = entries.get(j);
+				Double distone = StatisticsUtility.computeTFdistance(current_entry.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
+				Double disttwo = StatisticsUtility.computeTFdistance(current_entry.getDESCRIPTION_LONGUEUR80(), entryj.getDESCRIPTION_LONGUEUR80());
+				vector_list[j] = distone+disttwo;
+			}
+			// sorting the array and keeping the indexes
+			DescendingArrayIndexComparator comparator = new DescendingArrayIndexComparator(vector_list);
+			Integer[] indexes = comparator.createIndexArray();
+			Arrays.sort(indexes, comparator);
+			List<String> similars = new ArrayList<String>();
+			// adding the 6 first closest skus
+			similars.add(entries.get(indexes[0]).getSKU());
+			similars.add(entries.get(indexes[1]).getSKU());
+			similars.add(entries.get(indexes[2]).getSKU());
+			similars.add(entries.get(indexes[3]).getSKU());
+			similars.add(entries.get(indexes[4]).getSKU());
+			similars.add(entries.get(indexes[5]).getSKU());
+			matching_skus.put(current_entry.getSKU(),similars);
+			if ((matching_skus.size() != 0) && matching_skus.size() % batch_size == 0 ){
+				saving_similar();
+				matching_skus.clear();
+			}
+		}
+	}
+
+	public List<CatalogEntry> filterCDSAvailableEntries(List<CatalogEntry> my_data){
+		List<CatalogEntry> filtered_List = new ArrayList<CatalogEntry>();
+		for (CatalogEntry entry : my_data){
+			if (("CDS".equals(entry.getVENDEUR()))&&("non épuisé".equals(entry.getETAT()))) { 
+				filtered_List.add(entry);
+			}
+		}
+		return filtered_List; 
+	}
+
 	public void backup_category3() throws SQLException{
 		Iterator<Entry<CatalogEntry, Set<String>>> it = unfetched_skus_local_cache.entrySet().iterator();	
 		List<CatalogEntry> to_remove = new ArrayList<CatalogEntry>();
+		int global_size_to_process = unfetched_skus_local_cache.size();
+		int iteration =1;
 		while (it.hasNext()){
+			if (iteration%displaying_threshold == 0){
+				System.out.println(Thread.currentThread() +" Having computed remaining SKUs "+iteration+" from "+global_size_to_process);
+			}
 			Map.Entry<CatalogEntry, Set<String>> pairs = (Map.Entry<CatalogEntry, Set<String>>)it.next();
 			CatalogEntry current_entry=pairs.getKey();			
 			List<CatalogEntry> newSet = fetch_category_data3(current_entry.getCATEGORIE_NIVEAU_3());
@@ -160,9 +283,14 @@ public class HeavySimilarityComputingWorkerThread implements Runnable {
 	}
 
 	public void backup_category2() throws SQLException{
+		int global_size_to_process = unfetched_skus_local_cache.size();
+		int iteration =1;
 		Iterator<Entry<CatalogEntry, Set<String>>> it = unfetched_skus_local_cache.entrySet().iterator();	
 		List<CatalogEntry> to_remove = new ArrayList<CatalogEntry>();
 		while (it.hasNext()){
+			if (iteration%displaying_threshold == 0){
+				System.out.println(Thread.currentThread() +" Having computed remaining SKUs "+iteration+" from "+global_size_to_process);
+			}
 			Map.Entry<CatalogEntry, Set<String>> pairs = (Map.Entry<CatalogEntry, Set<String>>)it.next();
 			CatalogEntry current_entry=pairs.getKey();			
 			List<CatalogEntry> newSet = fetch_category_data2(current_entry.getCATEGORIE_NIVEAU_2());
@@ -177,9 +305,14 @@ public class HeavySimilarityComputingWorkerThread implements Runnable {
 	}
 
 	public void backup_category1() throws SQLException{
+		int global_size_to_process = unfetched_skus_local_cache.size();
+		int iteration =1;
 		Iterator<Entry<CatalogEntry, Set<String>>> it = unfetched_skus_local_cache.entrySet().iterator();	
 		List<CatalogEntry> to_remove = new ArrayList<CatalogEntry>();
 		while (it.hasNext()){
+			if (iteration%displaying_threshold == 0){
+				System.out.println(Thread.currentThread() +" Having computed remaining SKUs "+iteration+" from "+global_size_to_process);
+			}
 			Map.Entry<CatalogEntry, Set<String>> pairs = (Map.Entry<CatalogEntry, Set<String>>)it.next();
 			CatalogEntry current_entry=pairs.getKey();			
 			List<CatalogEntry> newSet = fetch_category_data1(current_entry.getCATEGORIE_NIVEAU_1());
@@ -195,13 +328,10 @@ public class HeavySimilarityComputingWorkerThread implements Runnable {
 
 	public List<CatalogEntry> shrink(List<CatalogEntry> my_list){
 		Set<CatalogEntry> to_return = new HashSet<CatalogEntry>();
-		Random my_rand = new Random();
 		// to_return is a set forbidding duplicated entries
 		while (to_return.size() < computing_max_list_size){
 			CatalogEntry candidate = my_list.get(my_rand.nextInt(my_list.size()));
-			if (("CDS".equals(candidate.getVENDEUR()))&&("non épuisé".equals(candidate.getETAT()))) { 
-				to_return.add(candidate);
-			}
+			to_return.add(candidate);
 		}
 		return new ArrayList<CatalogEntry>(to_return);
 	}
@@ -251,7 +381,7 @@ public class HeavySimilarityComputingWorkerThread implements Runnable {
 	}
 
 	public void saving_similar(){
-		System.out.println("Inserting the batch "+matching_skus.size());
+		System.out.println(Thread.currentThread()+"Inserting the batch "+matching_skus.size());
 		try{
 			Iterator<Entry<String, List<String>>> it = matching_skus.entrySet().iterator();
 			int local_counter = 0;
@@ -291,13 +421,14 @@ public class HeavySimilarityComputingWorkerThread implements Runnable {
 		}	
 	}
 
-	public void find_restricted_similar(List<CatalogEntry> entries){
+	public void find_restricted_similar_with_filter(List<CatalogEntry> entries, List<CatalogEntry> cds_entries){
 		int size_list = entries.size();
+		System.out.println(Thread.currentThread() +" Beginning to compute distance matrix from "+size_list);
 		for (int i=0;i<size_list;i++){
-			List<CatalogEntry> filtered_entries = shrink(entries);
+			List<CatalogEntry> filtered_entries = shrink(cds_entries);
 			int restricted_size_list = filtered_entries.size();
 			CatalogEntry current_entry = entries.get(i);
-			if (i%500 == 0){
+			if (i%displaying_threshold == 0){
 				System.out.println(Thread.currentThread() +" Having computed distance matrix "+i+" from "+size_list);
 			}
 			Double[] vector_list = new Double[restricted_size_list]; 
@@ -322,6 +453,10 @@ public class HeavySimilarityComputingWorkerThread implements Runnable {
 			similars.add(filtered_entries.get(indexes[4]).getSKU());
 			similars.add(filtered_entries.get(indexes[5]).getSKU());
 			matching_skus.put(current_entry.getSKU(),similars);
+			if ((matching_skus.size() != 0) && matching_skus.size() % batch_size == 0 ){
+				saving_similar();
+				matching_skus.clear();
+			}
 		}
 	}
 
@@ -348,16 +483,19 @@ public class HeavySimilarityComputingWorkerThread implements Runnable {
 		return done;
 	}
 
-	public void find_similar(List<CatalogEntry> entries){
+	public void find_similar_with_filter(List<CatalogEntry> entries,List<CatalogEntry> filtered_entries){
 		int size_list = entries.size();
+		int filtered_size_list = filtered_entries.size();
+		System.out.println(Thread.currentThread() +" Beginning to compute distance matrix from "+size_list);
+
 		for (int i=0;i<size_list;i++){
-			if (i%500 == 0){
+			if (i%displaying_threshold == 0){
 				System.out.println(Thread.currentThread() +" Having computed distance matrix "+i+" from "+size_list);
 			}
 			CatalogEntry current_entry = entries.get(i);
 			Double[] vector_list = new Double[size_list]; 
-			for (int j= 0;j<size_list;j++){
-				CatalogEntry entryj = entries.get(j);
+			for (int j= 0;j<filtered_size_list;j++){
+				CatalogEntry entryj = filtered_entries.get(j);
 				Double distone = StatisticsUtility.computeTFdistance(current_entry.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
 				Double disttwo = StatisticsUtility.computeTFdistance(current_entry.getDESCRIPTION_LONGUEUR80(), entryj.getDESCRIPTION_LONGUEUR80());
 				vector_list[j] = distone+disttwo;
@@ -375,6 +513,10 @@ public class HeavySimilarityComputingWorkerThread implements Runnable {
 			similars.add(entries.get(indexes[4]).getSKU());
 			similars.add(entries.get(indexes[5]).getSKU());
 			matching_skus.put(current_entry.getSKU(),similars);
+			if ((matching_skus.size() != 0) && matching_skus.size() % batch_size == 0 ){
+				saving_similar();
+				matching_skus.clear();
+			}
 		}
 	}
 
@@ -387,33 +529,27 @@ public class HeavySimilarityComputingWorkerThread implements Runnable {
 			CatalogEntry entry = new CatalogEntry();
 			String sku = rs.getString(1);
 			entry.setSKU(sku);
-			String MAGASIN = rs.getString(2);
-			entry.setMAGASIN(MAGASIN);
-			String RAYON = rs.getString(3);
-			entry.setRAYON(RAYON);
-			String CATEGORIE_NIVEAU_1 = rs.getString(4);
+			// category fetching
+			String CATEGORIE_NIVEAU_1 = rs.getString(2);
 			entry.setCATEGORIE_NIVEAU_1(CATEGORIE_NIVEAU_1);
-			String CATEGORIE_NIVEAU_2 = rs.getString(5);
+			String CATEGORIE_NIVEAU_2 = rs.getString(3);
 			entry.setCATEGORIE_NIVEAU_2(CATEGORIE_NIVEAU_2);
-			String CATEGORIE_NIVEAU_3 = rs.getString(6);
+			String CATEGORIE_NIVEAU_3 = rs.getString(4);
 			entry.setCATEGORIE_NIVEAU_3(CATEGORIE_NIVEAU_3);
-			String CATEGORIE_NIVEAU_4 = rs.getString(7);
+			String CATEGORIE_NIVEAU_4 = rs.getString(5);
 			entry.setCATEGORIE_NIVEAU_4(CATEGORIE_NIVEAU_4);
-			String CATEGORIE_NIVEAU_5 = rs.getString(8);
-			entry.setCATEGORIE_NIVEAU_5(CATEGORIE_NIVEAU_5);
-			String  LIBELLE_PRODUIT = rs.getString(9);
+			// product libelle
+			String  LIBELLE_PRODUIT = rs.getString(6);
 			entry.setLIBELLE_PRODUIT(LIBELLE_PRODUIT);
-			String MARQUE = rs.getString(10);
+			String MARQUE = rs.getString(7);
 			entry.setMARQUE(MARQUE);
-			String  DESCRIPTION_LONGUEUR80 = rs.getString(11);
+			// brand description
+			String  DESCRIPTION_LONGUEUR80 = rs.getString(8);
 			entry.setDESCRIPTION_LONGUEUR80(DESCRIPTION_LONGUEUR80);
-			String URL = rs.getString(12);
-			entry.setURL(URL);
-			String LIEN_IMAGE = rs.getString(13);
-			entry.setLIEN_IMAGE(LIEN_IMAGE);
-			String VENDEUR = rs.getString(14);
+			// vendor and state (available or not)
+			String VENDEUR = rs.getString(9);
 			entry.setVENDEUR(VENDEUR);
-			String ETAT = rs.getString(15);
+			String ETAT = rs.getString(9);
 			entry.setETAT(ETAT);
 			my_entries.add(entry);
 		}
@@ -430,33 +566,27 @@ public class HeavySimilarityComputingWorkerThread implements Runnable {
 			CatalogEntry entry = new CatalogEntry();
 			String sku = rs.getString(1);
 			entry.setSKU(sku);
-			String MAGASIN = rs.getString(2);
-			entry.setMAGASIN(MAGASIN);
-			String RAYON = rs.getString(3);
-			entry.setRAYON(RAYON);
-			String CATEGORIE_NIVEAU_1 = rs.getString(4);
+			// category fetching
+			String CATEGORIE_NIVEAU_1 = rs.getString(2);
 			entry.setCATEGORIE_NIVEAU_1(CATEGORIE_NIVEAU_1);
-			String CATEGORIE_NIVEAU_2 = rs.getString(5);
+			String CATEGORIE_NIVEAU_2 = rs.getString(3);
 			entry.setCATEGORIE_NIVEAU_2(CATEGORIE_NIVEAU_2);
-			String CATEGORIE_NIVEAU_3 = rs.getString(6);
+			String CATEGORIE_NIVEAU_3 = rs.getString(4);
 			entry.setCATEGORIE_NIVEAU_3(CATEGORIE_NIVEAU_3);
-			String CATEGORIE_NIVEAU_4 = rs.getString(7);
+			String CATEGORIE_NIVEAU_4 = rs.getString(5);
 			entry.setCATEGORIE_NIVEAU_4(CATEGORIE_NIVEAU_4);
-			String CATEGORIE_NIVEAU_5 = rs.getString(8);
-			entry.setCATEGORIE_NIVEAU_5(CATEGORIE_NIVEAU_5);
-			String  LIBELLE_PRODUIT = rs.getString(9);
+			// product libelle
+			String  LIBELLE_PRODUIT = rs.getString(6);
 			entry.setLIBELLE_PRODUIT(LIBELLE_PRODUIT);
-			String MARQUE = rs.getString(10);
+			String MARQUE = rs.getString(7);
 			entry.setMARQUE(MARQUE);
-			String  DESCRIPTION_LONGUEUR80 = rs.getString(11);
+			// brand description
+			String  DESCRIPTION_LONGUEUR80 = rs.getString(8);
 			entry.setDESCRIPTION_LONGUEUR80(DESCRIPTION_LONGUEUR80);
-			String URL = rs.getString(12);
-			entry.setURL(URL);
-			String LIEN_IMAGE = rs.getString(13);
-			entry.setLIEN_IMAGE(LIEN_IMAGE);
-			String VENDEUR = rs.getString(14);
+			// vendor and state (available or not)
+			String VENDEUR = rs.getString(9);
 			entry.setVENDEUR(VENDEUR);
-			String ETAT = rs.getString(15);
+			String ETAT = rs.getString(9);
 			entry.setETAT(ETAT);
 			my_entries.add(entry);
 		}
@@ -473,76 +603,27 @@ public class HeavySimilarityComputingWorkerThread implements Runnable {
 			CatalogEntry entry = new CatalogEntry();
 			String sku = rs.getString(1);
 			entry.setSKU(sku);
-			String MAGASIN = rs.getString(2);
-			entry.setMAGASIN(MAGASIN);
-			String RAYON = rs.getString(3);
-			entry.setRAYON(RAYON);
-			String CATEGORIE_NIVEAU_1 = rs.getString(4);
+			// category fetching
+			String CATEGORIE_NIVEAU_1 = rs.getString(2);
 			entry.setCATEGORIE_NIVEAU_1(CATEGORIE_NIVEAU_1);
-			String CATEGORIE_NIVEAU_2 = rs.getString(5);
+			String CATEGORIE_NIVEAU_2 = rs.getString(3);
 			entry.setCATEGORIE_NIVEAU_2(CATEGORIE_NIVEAU_2);
-			String CATEGORIE_NIVEAU_3 = rs.getString(6);
+			String CATEGORIE_NIVEAU_3 = rs.getString(4);
 			entry.setCATEGORIE_NIVEAU_3(CATEGORIE_NIVEAU_3);
-			String CATEGORIE_NIVEAU_4 = rs.getString(7);
+			String CATEGORIE_NIVEAU_4 = rs.getString(5);
 			entry.setCATEGORIE_NIVEAU_4(CATEGORIE_NIVEAU_4);
-			String CATEGORIE_NIVEAU_5 = rs.getString(8);
-			entry.setCATEGORIE_NIVEAU_5(CATEGORIE_NIVEAU_5);
-			String  LIBELLE_PRODUIT = rs.getString(9);
+			// product libelle
+			String  LIBELLE_PRODUIT = rs.getString(6);
 			entry.setLIBELLE_PRODUIT(LIBELLE_PRODUIT);
-			String MARQUE = rs.getString(10);
+			String MARQUE = rs.getString(7);
 			entry.setMARQUE(MARQUE);
-			String  DESCRIPTION_LONGUEUR80 = rs.getString(11);
+			// brand description
+			String  DESCRIPTION_LONGUEUR80 = rs.getString(8);
 			entry.setDESCRIPTION_LONGUEUR80(DESCRIPTION_LONGUEUR80);
-			String URL = rs.getString(12);
-			entry.setURL(URL);
-			String LIEN_IMAGE = rs.getString(13);
-			entry.setLIEN_IMAGE(LIEN_IMAGE);
-			String VENDEUR = rs.getString(14);
+			// vendor and state (available or not)
+			String VENDEUR = rs.getString(9);
 			entry.setVENDEUR(VENDEUR);
-			String ETAT = rs.getString(15);
-			entry.setETAT(ETAT);
-			my_entries.add(entry);
-		}
-		select_statement.close();
-		return my_entries;
-	}
-
-	public List<CatalogEntry> fetch_category_data4(String category) throws SQLException{
-		List<CatalogEntry> my_entries = new ArrayList<CatalogEntry>();
-		PreparedStatement select_statement = con.prepareStatement(select_entry_from_category4);
-		select_statement.setString(1, category);
-		ResultSet rs = select_statement.executeQuery();
-		while (rs.next()) {
-			CatalogEntry entry = new CatalogEntry();
-			String sku = rs.getString(1);
-			entry.setSKU(sku);
-			String MAGASIN = rs.getString(2);
-			entry.setMAGASIN(MAGASIN);
-			String RAYON = rs.getString(3);
-			entry.setRAYON(RAYON);
-			String CATEGORIE_NIVEAU_1 = rs.getString(4);
-			entry.setCATEGORIE_NIVEAU_1(CATEGORIE_NIVEAU_1);
-			String CATEGORIE_NIVEAU_2 = rs.getString(5);
-			entry.setCATEGORIE_NIVEAU_2(CATEGORIE_NIVEAU_2);
-			String CATEGORIE_NIVEAU_3 = rs.getString(6);
-			entry.setCATEGORIE_NIVEAU_3(CATEGORIE_NIVEAU_3);
-			String CATEGORIE_NIVEAU_4 = rs.getString(7);
-			entry.setCATEGORIE_NIVEAU_4(CATEGORIE_NIVEAU_4);
-			String CATEGORIE_NIVEAU_5 = rs.getString(8);
-			entry.setCATEGORIE_NIVEAU_5(CATEGORIE_NIVEAU_5);
-			String  LIBELLE_PRODUIT = rs.getString(9);
-			entry.setLIBELLE_PRODUIT(LIBELLE_PRODUIT);
-			String MARQUE = rs.getString(10);
-			entry.setMARQUE(MARQUE);
-			String  DESCRIPTION_LONGUEUR80 = rs.getString(11);
-			entry.setDESCRIPTION_LONGUEUR80(DESCRIPTION_LONGUEUR80);
-			String URL = rs.getString(12);
-			entry.setURL(URL);
-			String LIEN_IMAGE = rs.getString(13);
-			entry.setLIEN_IMAGE(LIEN_IMAGE);
-			String VENDEUR = rs.getString(14);
-			entry.setVENDEUR(VENDEUR);
-			String ETAT = rs.getString(15);
+			String ETAT = rs.getString(9);
 			entry.setETAT(ETAT);
 			my_entries.add(entry);
 		}

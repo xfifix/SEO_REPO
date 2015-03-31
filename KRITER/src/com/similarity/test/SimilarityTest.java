@@ -1,5 +1,6 @@
 package com.similarity.test;
 
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
@@ -8,8 +9,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
-import com.similarity.computing.SimilarityComputingWorkerThread;
 
 public class SimilarityTest {
 
@@ -58,8 +57,8 @@ public class SimilarityTest {
 		
 		long startTime = System.currentTimeMillis();
 	
-		Runnable worker = new SimilarityComputingWorkerThread(local_con,categories);
-		worker.run();
+		//Runnable worker = new SimilarityComputingNoFetchWorkerThread(local_con,categories);
+		//worker.run();
 
 		long endTime = System.currentTimeMillis();
 

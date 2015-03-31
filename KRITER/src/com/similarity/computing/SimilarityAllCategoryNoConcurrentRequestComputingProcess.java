@@ -8,19 +8,25 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class SimilaritySmallCategoryComputingProcess {
+import com.statistics.processing.CatalogEntry;
+
+public class SimilarityAllCategoryNoConcurrentRequestComputingProcess {
 
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
-	private static int list_fixed_pool_size = 50;
-	private static int list_size_bucket = 100;
+	private static int list_fixed_pool_size = 25;
+	private static int list_size_bucket = 200;
 	private static boolean recreate_table = false;
-	public static String max_list_size_string = "5000";
-	public static String select_small_distinct_cat4 = "select categorie_niveau_4 from CATEGORY_FOLLOWING where to_fetch=true and count < " + max_list_size_string;
+	private static String select_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT FROM CATALOG";
+
 	private static String drop_CATEGORY_FOLLOWING_table = "DROP TABLE IF EXISTS CATEGORY_FOLLOWING";
 	private static String create_CATEGORY_FOLLOWING_table = "select distinct categorie_niveau_4, count(*), true as to_fetch into CATEGORY_FOLLOWING from CATALOG group by categorie_niveau_4";
 
@@ -67,28 +73,69 @@ public class SimilaritySmallCategoryComputingProcess {
 			}
 			// getting the number of URLs to fetch
 			System.out.println("Requesting all distinct categories");
-			pst = con.prepareStatement(select_small_distinct_cat4);
+			pst = con.prepareStatement(select_entry_from_category4);
 			rs = pst.executeQuery();
+			Map<String, List<CatalogEntry>> my_entries = new HashMap<String, List<CatalogEntry>>();
+			while (rs.next()) {
+				// fetching all
+				CatalogEntry entry = new CatalogEntry();
+				String sku = rs.getString(1);
+				entry.setSKU(sku);
+				// category fetching
+				String CATEGORIE_NIVEAU_1 = rs.getString(2);
+				entry.setCATEGORIE_NIVEAU_1(CATEGORIE_NIVEAU_1);
+				String CATEGORIE_NIVEAU_2 = rs.getString(3);
+				entry.setCATEGORIE_NIVEAU_2(CATEGORIE_NIVEAU_2);
+				String CATEGORIE_NIVEAU_3 = rs.getString(4);
+				entry.setCATEGORIE_NIVEAU_3(CATEGORIE_NIVEAU_3);
+				String CATEGORIE_NIVEAU_4 = rs.getString(5);
+				entry.setCATEGORIE_NIVEAU_4(CATEGORIE_NIVEAU_4);
+				// product libelle
+				String  LIBELLE_PRODUIT = rs.getString(6);
+				entry.setLIBELLE_PRODUIT(LIBELLE_PRODUIT);
+				String MARQUE = rs.getString(7);
+				entry.setMARQUE(MARQUE);
+				// brand description
+				String  DESCRIPTION_LONGUEUR80 = rs.getString(8);
+				entry.setDESCRIPTION_LONGUEUR80(DESCRIPTION_LONGUEUR80);
+				// vendor and state (available or not)
+				String VENDEUR = rs.getString(9);
+				entry.setVENDEUR(VENDEUR);
+				String ETAT = rs.getString(9);
+				entry.setETAT(ETAT);
+
+				List<CatalogEntry> toprocess = my_entries.get(CATEGORIE_NIVEAU_4);
+				if (toprocess == null){
+					toprocess = new ArrayList<CatalogEntry>();
+					my_entries.put(CATEGORIE_NIVEAU_4, toprocess);
+				}
+				toprocess.add(entry);
+			}
+			
+			// iterating over the categories map !!! 
+			Map<String, List<CatalogEntry>> thread_list = new HashMap<String, List<CatalogEntry>>();
+			Iterator<Entry<String, List<CatalogEntry>>> it = my_entries.entrySet().iterator();
 			// dispatching to threads
 			int local_count=0;
 			int global_count=0;
-			List<String> thread_list = new ArrayList<String>();
-			while (rs.next()) {
-				String cat4 = rs.getString(1);
+			while (it.hasNext()){	
+				Map.Entry<String, List<CatalogEntry>> pairs = (Map.Entry<String, List<CatalogEntry>>)it.next();
+				String current_category=pairs.getKey();
+				List<CatalogEntry> category_entries = pairs.getValue();
 				if(local_count<list_size_bucket ){
-					thread_list.add(cat4);		
+					thread_list.put(current_category,category_entries);		
 					local_count++;
 				}
 				if (local_count==list_size_bucket){
 					// one new connection per task
 					System.out.println("Launching another thread with "+local_count+" Categories to fetch");
 					Connection local_con = DriverManager.getConnection(url, user, passwd);
-					Runnable worker = new SimilarityComputingWorkerThread(local_con,thread_list);
+					Runnable worker = new SimilarityComputingNoFetchWorkerThread(local_con,thread_list);
 					//Runnable worker = new SimilarityComputingWorkerThread(con,thread_list);
 					executor.execute(worker);		
 					// we initialize everything for the next thread
 					local_count=0;
-					thread_list = new ArrayList<String>();
+					thread_list = new HashMap<String, List<CatalogEntry>>();
 				}
 				global_count++;
 			}
@@ -100,7 +147,7 @@ public class SimilaritySmallCategoryComputingProcess {
 				// one new connection per task
 				System.out.println("Launching another thread with "+local_count+ " Categories to fetch");
 				Connection local_con = DriverManager.getConnection(url, user, passwd);
-				Runnable worker = new SimilarityComputingWorkerThread(local_con,thread_list);
+				Runnable worker = new SimilarityComputingNoFetchWorkerThread(local_con,thread_list);
 				//Runnable worker = new SimilarityComputingWorkerThread(con,thread_list);
 				executor.execute(worker);
 			}

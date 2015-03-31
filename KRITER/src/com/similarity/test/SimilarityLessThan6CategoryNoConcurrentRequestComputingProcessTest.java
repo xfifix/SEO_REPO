@@ -17,7 +17,7 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.similarity.noconcurrentrequest.computing.SimilarityComputingNoFetchWorkerThread;
+import com.similarity.computing.SimilarityComputingNoFetchWorkerThread;
 import com.statistics.processing.CatalogEntry;
 
 public class SimilarityLessThan6CategoryNoConcurrentRequestComputingProcessTest {

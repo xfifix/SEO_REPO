@@ -1,0 +1,11 @@
+# launching the big categories computations
+# select count(*) from CATEGORY_FOLLOWING where count > 10000 ==> 104
+# 100 threads : list_fixed_pool_size = 104 and list_size_bucket = 1 and fifty categories per thread
+# we here just launch one thread per category
+sudo java -Xmx150g -jar my_kriter_similarity_big_category_computing_job.jar 
+
+# select count(*) from CATEGORY_FOLLOWING where count < 10000 ==> 5070
+# 100 threads : list_fixed_pool_size = 100 and list_size_bucket = 50 and fifty categories per thread
+sudo java -Xmx150g -jar my_kriter_similarity_small_category_computing_job.jar 
+
+
