@@ -100,7 +100,6 @@ public class StatisticsComputingThreadPool {
 			// there might be a last task with the euclidean remainder
 			if (thread_list.size()>0){
 				// one new connection per task
-
 				System.out.println("Launching another thread with "+local_count+ " URLs to fetch");
 				Connection local_con = DriverManager.getConnection(url, user, passwd);
 				Runnable worker = new StatisticsComputingWorkerThread(local_con,thread_list);

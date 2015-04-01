@@ -78,12 +78,17 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			}			
 			System.out.println("Saving the last batch");
 			//saving_similar_step_by_step();
+			// saving the current batch
 			saving_similar();
 			if (unfetched_skus_local_cache.size()>0){
 				System.out.println("We have still products with less than 6 similar products : "+unfetched_skus_local_cache.size());
 				System.out.println("We'll complete the similar products with rayon level similar_products ");
 				backup_rayon();
 			}
+			System.out.println("Saving the last batch");
+			//saving_similar_step_by_step();
+			saving_similar();
+			
 			close_connection();
 		} catch (Exception ex) {
 			System.out.println("Trouble with category : "+category_to_debug);
