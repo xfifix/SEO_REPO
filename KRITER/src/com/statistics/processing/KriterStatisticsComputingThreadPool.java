@@ -15,12 +15,12 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class StatisticsComputingThreadPool {
+public class KriterStatisticsComputingThreadPool {
 
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
 	private static int list_fixed_pool_size = 250;
 	private static int list_size_bucket = 32000;
-	private static String select_all_similar_skus = "SELECT SKU,SKU1,SKU2,SKU3,SKU4,SKU5,SKU6 FROM CATALOG";
+	private static String select_all_similar_skus = "SELECT SKU,KRIT_SKU1,KRIT_SKU2,KRIT_SKU3,KRIT_SKU4,KRIT_SKU5,KRIT_SKU6 FROM CATALOG";
 
 	public static void main(String[] args) {
 		System.out.println("Number of threads for list crawler : "+list_fixed_pool_size);
@@ -86,7 +86,7 @@ public class StatisticsComputingThreadPool {
 					// one new connection per task
 					System.out.println("Launching another thread with "+local_count+ " URLs to fetch");
 					Connection local_con = DriverManager.getConnection(url, user, passwd);
-					Runnable worker = new StatisticsComputingWorkerThread(local_con,thread_list);
+					Runnable worker = new KriterStatisticsComputingWorkerThread(local_con,thread_list);
 					executor.execute(worker);		
 					// we initialize everything for the next thread
 					local_count=0;
@@ -103,12 +103,12 @@ public class StatisticsComputingThreadPool {
 
 				System.out.println("Launching another thread with "+local_count+ " URLs to fetch");
 				Connection local_con = DriverManager.getConnection(url, user, passwd);
-				Runnable worker = new StatisticsComputingWorkerThread(local_con,thread_list);
+				Runnable worker = new KriterStatisticsComputingWorkerThread(local_con,thread_list);
 				executor.execute(worker);
 			}
 			System.out.println("We have : " +global_count + " URL status to fetch according to the NOMATCH database \n");
 		} catch (SQLException ex) {
-			Logger lgr = Logger.getLogger(StatisticsComputingThreadPool.class.getName());
+			Logger lgr = Logger.getLogger(KriterStatisticsComputingThreadPool.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		} finally {
 			try {
@@ -122,7 +122,7 @@ public class StatisticsComputingThreadPool {
 					con.close();
 				}
 			} catch (SQLException ex) {
-				Logger lgr = Logger.getLogger(StatisticsComputingThreadPool.class.getName());
+				Logger lgr = Logger.getLogger(KriterStatisticsComputingThreadPool.class.getName());
 				lgr.log(Level.WARNING, ex.getMessage(), ex);
 			}
 		}

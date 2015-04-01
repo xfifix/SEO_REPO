@@ -26,9 +26,10 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 	// beware static shared global cache for unfetched skus
 	private Map<CatalogEntry, Set<String>> unfetched_skus_local_cache = new HashMap<CatalogEntry, Set<String>>();
 
-	private static String select_entry_from_category1 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_1=?";
-	private static String select_entry_from_category3 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_3=?";
-	private static String select_entry_from_category2 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT FROM CATALOG where CATEGORIE_NIVEAU_2=?";
+	private static String select_entry_from_rayon = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT, RAYON FROM CATALOG where RAYON=?";
+	private static String select_entry_from_category1 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT, RAYON FROM CATALOG where CATEGORIE_NIVEAU_1=?";
+	private static String select_entry_from_category3 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT, RAYON FROM CATALOG where CATEGORIE_NIVEAU_3=?";
+	private static String select_entry_from_category2 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT, RAYON FROM CATALOG where CATEGORIE_NIVEAU_2=?";
 
 	private static String update_category = "update CATEGORY_FOLLOWING set to_fetch = false where CATEGORIE_NIVEAU_4 = ?";
 
@@ -80,6 +81,9 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			saving_similar();
 			if (unfetched_skus_local_cache.size()>0){
 				System.out.println("We have still products with less than 6 similar products : "+unfetched_skus_local_cache.size());
+				System.out.println("We'll complete the similar products with rayon level similar_products ");
+				backup_rayon();
+
 			}
 			close_connection();
 		} catch (Exception ex) {
@@ -178,7 +182,7 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			List<CatalogEntry> filtered_entries = shrink(entries);
 			int restricted_size_list = filtered_entries.size();
 			CatalogEntry current_entry = entries.get(i);
-			if (i%KriterParameter.displaying_threshold == 0){
+			if (i!=0 && i%KriterParameter.displaying_threshold == 0){
 				System.out.println(Thread.currentThread() +" Having computed distance matrix "+i+" from "+size_list);
 			}
 			Double[] vector_list = new Double[restricted_size_list]; 
@@ -216,7 +220,7 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		System.out.println(Thread.currentThread() +" Beginning to compute distance matrix from "+size_list);
 
 		for (int i=0;i<size_list;i++){
-			if (i%KriterParameter.displaying_threshold == 0){
+			if (i!=0 && i%KriterParameter.displaying_threshold == 0){
 				System.out.println(Thread.currentThread() +" Having computed distance matrix "+i+" from "+size_list);
 			}
 			CatalogEntry current_entry = entries.get(i);
@@ -326,6 +330,29 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		}
 	}
 
+	public void backup_rayon() throws SQLException{
+		int global_size_to_process = unfetched_skus_local_cache.size();
+		int iteration =1;
+		Iterator<Entry<CatalogEntry, Set<String>>> it = unfetched_skus_local_cache.entrySet().iterator();	
+		List<CatalogEntry> to_remove = new ArrayList<CatalogEntry>();
+		while (it.hasNext()){
+			if (iteration%KriterParameter.displaying_threshold == 0){
+				System.out.println(Thread.currentThread() +" Having computed remaining SKUs "+iteration+" from "+global_size_to_process);
+			}
+			Map.Entry<CatalogEntry, Set<String>> pairs = (Map.Entry<CatalogEntry, Set<String>>)it.next();
+			CatalogEntry current_entry=pairs.getKey();			
+			List<CatalogEntry> newSet = fetch_rayon_data(current_entry.getRAYON());
+			if (updateDataList(current_entry,newSet)){
+				to_remove.add(current_entry);	
+			}
+			iteration++;
+		}
+
+		for (CatalogEntry torem : to_remove){
+			unfetched_skus_local_cache.remove(torem);
+		}
+	}
+	
 	public List<CatalogEntry> shrink(List<CatalogEntry> my_list){
 		Set<CatalogEntry> to_return = new HashSet<CatalogEntry>();
 		// to_return is a set forbidding duplicated entries
@@ -489,7 +516,7 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		System.out.println(Thread.currentThread() +" Beginning to compute distance matrix from "+size_list);
 
 		for (int i=0;i<size_list;i++){
-			if (i%KriterParameter.displaying_threshold == 0){
+			if (i!=0 && i%KriterParameter.displaying_threshold == 0){
 				System.out.println(Thread.currentThread() +" Having computed distance matrix "+i+" from "+size_list);
 			}
 			CatalogEntry current_entry = entries.get(i);
@@ -551,6 +578,8 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			entry.setVENDEUR(VENDEUR);
 			String ETAT = rs.getString(9);
 			entry.setETAT(ETAT);
+			String RAYON = rs.getString(10);
+			entry.setRAYON(RAYON);
 			my_entries.add(entry);
 		}
 		select_statement.close();
@@ -588,6 +617,8 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			entry.setVENDEUR(VENDEUR);
 			String ETAT = rs.getString(9);
 			entry.setETAT(ETAT);
+			String RAYON = rs.getString(10);
+			entry.setRAYON(RAYON);
 			my_entries.add(entry);
 		}
 		select_statement.close();
@@ -625,6 +656,48 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			entry.setVENDEUR(VENDEUR);
 			String ETAT = rs.getString(9);
 			entry.setETAT(ETAT);
+			String RAYON = rs.getString(10);
+			entry.setRAYON(RAYON);
+			my_entries.add(entry);
+		}
+		select_statement.close();
+		return my_entries;
+	}
+
+	
+	public List<CatalogEntry> fetch_rayon_data(String rayon) throws SQLException{
+		List<CatalogEntry> my_entries = new ArrayList<CatalogEntry>();
+		PreparedStatement select_statement = con.prepareStatement(select_entry_from_rayon);
+		select_statement.setString(1, rayon);
+		ResultSet rs = select_statement.executeQuery();
+		while (rs.next()) {
+			CatalogEntry entry = new CatalogEntry();
+			String sku = rs.getString(1);
+			entry.setSKU(sku);
+			// category fetching
+			String CATEGORIE_NIVEAU_1 = rs.getString(2);
+			entry.setCATEGORIE_NIVEAU_1(CATEGORIE_NIVEAU_1);
+			String CATEGORIE_NIVEAU_2 = rs.getString(3);
+			entry.setCATEGORIE_NIVEAU_2(CATEGORIE_NIVEAU_2);
+			String CATEGORIE_NIVEAU_3 = rs.getString(4);
+			entry.setCATEGORIE_NIVEAU_3(CATEGORIE_NIVEAU_3);
+			String CATEGORIE_NIVEAU_4 = rs.getString(5);
+			entry.setCATEGORIE_NIVEAU_4(CATEGORIE_NIVEAU_4);
+			// product libelle
+			String  LIBELLE_PRODUIT = rs.getString(6);
+			entry.setLIBELLE_PRODUIT(LIBELLE_PRODUIT);
+			String MARQUE = rs.getString(7);
+			entry.setMARQUE(MARQUE);
+			// brand description
+			String  DESCRIPTION_LONGUEUR80 = rs.getString(8);
+			entry.setDESCRIPTION_LONGUEUR80(DESCRIPTION_LONGUEUR80);
+			// vendor and state (available or not)
+			String VENDEUR = rs.getString(9);
+			entry.setVENDEUR(VENDEUR);
+			String ETAT = rs.getString(9);
+			entry.setETAT(ETAT);
+			String RAYON = rs.getString(10);
+			entry.setRAYON(RAYON);
 			my_entries.add(entry);
 		}
 		select_statement.close();

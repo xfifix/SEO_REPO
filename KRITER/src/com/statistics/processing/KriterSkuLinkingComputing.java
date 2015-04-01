@@ -15,11 +15,11 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SkuLinkingComputing {
+public class KriterSkuLinkingComputing {
 	private static int nb_similar_skus = 6;
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
-	private static String select_all_linked_skus = "SELECT SKU1,SKU2,SKU3,SKU4,SKU5,SKU6 FROM CATALOG";
-	private static String insert_cds_linking_statement = "INSERT INTO CDS_LINKING_SIMILAR_PRODUCTS (SKU,COUNTER) values (?,?)";
+	private static String select_all_linked_skus = "SELECT KRIT_SKU1,KRIT_SKU2,KRIT_SKU3,KRIT_SKU4,KRIT_SKU5,KRIT_SKU6 FROM CATALOG";
+	private static String insert_linking_statement = "INSERT INTO LINKING_SIMILAR_PRODUCTS (SKU,COUNTER) values (?,?)";
 	//private static String update_catalog_statement = "UPDATE CATALOG SET COUNTER=? where SKU=?";
 
 	private static Map<String,Integer> linked_skus_counter = new HashMap<String,Integer>();
@@ -85,7 +85,7 @@ public class SkuLinkingComputing {
 			try{
 				int local_counter = 0;
 				con.setAutoCommit(false);
-				PreparedStatement st = con.prepareStatement(insert_cds_linking_statement);
+				PreparedStatement st = con.prepareStatement(insert_linking_statement);
 				//PreparedStatement st = con.prepareStatement(update_catalog_statement);
 				Iterator<Entry<String, Integer>> it = linked_skus_counter.entrySet().iterator();
 				while (it.hasNext()){	

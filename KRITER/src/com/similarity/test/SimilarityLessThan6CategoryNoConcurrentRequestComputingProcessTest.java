@@ -1,6 +1,8 @@
 package com.similarity.test;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,24 +20,49 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.similarity.computing.SimilarityComputingNoFetchWorkerThread;
+import com.similarity.parameter.KriterParameter;
 import com.statistics.processing.CatalogEntry;
 
 public class SimilarityLessThan6CategoryNoConcurrentRequestComputingProcessTest {
-
+	public static String kriter_conf_path = "/home/sduprey/My_Data/My_Kriter_Conf/kriter.conf";
+	public static Properties properties;
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
 	private static List<String> less_than_six_categories = new ArrayList<String>();
-    // 633 categories with less than 6 elements
+	// 633 categories with less than 6 elements
 	private static int list_fixed_pool_size = 1;
 	private static int list_size_bucket = 633;
 	private static boolean recreate_table = false;
-	public static String less_than_six_size_string = "6";
-	public static String select_less_than_six_category = "select categorie_niveau_4 from CATEGORY_FOLLOWING where count < "+less_than_six_size_string;
-	private static String select_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT FROM CATALOG";
+	public static String less_than_size_string = "6";
+	public static String select_less_than_six_category = "select categorie_niveau_4 from CATEGORY_FOLLOWING where count < "+less_than_size_string;
+	private static String select_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT, RAYON FROM CATALOG";
 
 	private static String drop_CATEGORY_FOLLOWING_table = "DROP TABLE IF EXISTS CATEGORY_FOLLOWING";
 	private static String create_CATEGORY_FOLLOWING_table = "select distinct categorie_niveau_4, count(*), true as to_fetch into CATEGORY_FOLLOWING from CATALOG group by categorie_niveau_4";
 
 	public static void main(String[] args) {
+		System.out.println("Reading the configuration files : "+kriter_conf_path);
+		try{
+			loadProperties();
+			KriterParameter.database_con_path=properties.getProperty("kriter.database_con_path");
+			KriterParameter.small_list_pool_size =Integer.valueOf(properties.getProperty("kriter.small_list_pool_size")); 
+			KriterParameter.small_list_size_bucket =Integer.valueOf(properties.getProperty("kriter.small_list_size_bucket")); 
+			KriterParameter.big_list_pool_size =Integer.valueOf(properties.getProperty("kriter.big_list_pool_size")); 
+			KriterParameter.big_list_size_bucket =Integer.valueOf(properties.getProperty("kriter.big_list_size_bucket")); 
+			KriterParameter.max_list_size_separator_string=properties.getProperty("kriter.max_list_size_separator_string");
+			KriterParameter.recreate_table=Boolean.parseBoolean(properties.getProperty("kriter.recreate_table"));
+			KriterParameter.compute_optimal_parameters=Boolean.parseBoolean(properties.getProperty("kriter.compute_optimal_parameters"));
+			KriterParameter.kriter_threshold =Integer.valueOf(properties.getProperty("kriter.kriter_threshold")); 
+			KriterParameter.small_computing_max_list_size =Integer.valueOf(properties.getProperty("kriter.small_computing_max_list_size"));
+			KriterParameter.big_computing_max_list_size =Integer.valueOf(properties.getProperty("kriter.big_computing_max_list_size"));
+			KriterParameter.batch_size =Integer.valueOf(properties.getProperty("kriter.batch_size"));
+			KriterParameter.displaying_threshold =Integer.valueOf(properties.getProperty("kriter.displaying_threshold"));
+			KriterParameter.computing_max_list_size =KriterParameter.small_computing_max_list_size;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("Trouble getting the configuration : unable to launch the crawler");
+			System.exit(0);
+		}
 		System.out.println("Number of threads for list crawler : "+list_fixed_pool_size);
 		System.out.println("Bucket size for list crawler : "+list_size_bucket);
 		// it would be best to use a property file to store MD5 password
@@ -119,6 +146,8 @@ public class SimilarityLessThan6CategoryNoConcurrentRequestComputingProcessTest 
 				entry.setVENDEUR(VENDEUR);
 				String ETAT = rs.getString(9);
 				entry.setETAT(ETAT);
+				String RAYON = rs.getString(10);
+				entry.setRAYON(RAYON);
 
 				// we here just keep the less than six categories
 				if (less_than_six_categories.contains(CATEGORIE_NIVEAU_4)){
@@ -215,5 +244,14 @@ public class SimilarityLessThan6CategoryNoConcurrentRequestComputingProcessTest 
 		create_category_table_st.close();
 	}
 
+	private static void loadProperties(){
+		properties = new Properties();
+		try {
+			properties.load(new FileReader(new File(kriter_conf_path)));
+		} catch (Exception e) {
+			System.out.println("Failed to load properties file!!");
+			e.printStackTrace();
+		}
+	}
 }
 
