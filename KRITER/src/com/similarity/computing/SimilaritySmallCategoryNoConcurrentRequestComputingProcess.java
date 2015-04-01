@@ -140,9 +140,9 @@ public class SimilaritySmallCategoryNoConcurrentRequestComputingProcess {
 				// vendor and state (available or not)
 				String VENDEUR = rs.getString(9);
 				entry.setVENDEUR(VENDEUR);
-				String ETAT = rs.getString(9);
+				String ETAT = rs.getString(10);
 				entry.setETAT(ETAT);
-				String RAYON = rs.getString(10);
+				String RAYON = rs.getString(11);
 				entry.setRAYON(RAYON);
 				
 				// we here just keep the small categories

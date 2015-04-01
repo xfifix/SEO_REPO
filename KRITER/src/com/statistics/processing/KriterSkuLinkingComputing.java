@@ -18,9 +18,11 @@ import java.util.logging.Logger;
 public class KriterSkuLinkingComputing {
 	private static int nb_similar_skus = 6;
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
-	private static String select_all_linked_skus = "SELECT KRIT_SKU1,KRIT_SKU2,KRIT_SKU3,KRIT_SKU4,KRIT_SKU5,KRIT_SKU6 FROM CATALOG";
+	private static String select_all_linked_skus = "SELECT SKU,SKU1,SKU2,SKU3,SKU4,SKU5,SKU6 FROM CATALOG";
 	private static String insert_linking_statement = "INSERT INTO LINKING_SIMILAR_PRODUCTS (SKU,COUNTER) values (?,?)";
 	//private static String update_catalog_statement = "UPDATE CATALOG SET COUNTER=? where SKU=?";
+	private static String drop_LINKING_SIMILAR_PRODUCTS_table = "DROP TABLE IF EXISTS LINKING_SIMILAR_PRODUCTS";
+	private static String create_LINKING_SIMILAR_PRODUCTS_table = "CREATE TABLE IF NOT EXISTS LINKING_SIMILAR_PRODUCTS (SKU VARCHAR(100),COUNTER INT) TABLESPACE mydbspace";
 
 	private static Map<String,Integer> linked_skus_counter = new HashMap<String,Integer>();
 	public static void main(String[] args){
@@ -55,6 +57,8 @@ public class KriterSkuLinkingComputing {
 		ResultSet rs = null;
 		try {  
 			con = DriverManager.getConnection(url, user, passwd);
+			// cleaning and recreating from scratch the previous LINKING SKUS table
+			cleaning_category_scheduler_database(con);
 			// getting the number of URLs to fetch
 			System.out.println("Requesting all linked SKUs as a similar product");
 			pst = con.prepareStatement(select_all_linked_skus);
@@ -66,7 +70,14 @@ public class KriterSkuLinkingComputing {
 				if (global_count%500 == 0){
 					System.out.println(Thread.currentThread() +" Having processed "+global_count+" SKUs");
 				}
-				for (int nb_sku=1;nb_sku<(nb_similar_skus+1);nb_sku++){
+				// the very first sku is not linked to
+				String current_sku=rs.getString(1);
+				// if the sku is not in the map, we put it with no link to it
+				if (linked_skus_counter.get(current_sku) == null){
+					linked_skus_counter.put(current_sku, 0);
+				}
+				
+				for (int nb_sku=2;nb_sku<(nb_similar_skus+2);nb_sku++){
 					String current_linked_skus = rs.getString(nb_sku);
 					Integer counter = linked_skus_counter.get(current_linked_skus);	
 					if (counter == null){
@@ -136,5 +147,16 @@ public class KriterSkuLinkingComputing {
 			}
 		}
 		System.out.println("Finished all threads");
+	}
+	
+	private static void cleaning_category_scheduler_database(Connection con) throws SQLException{
+		PreparedStatement drop_category_table_st = con.prepareStatement(drop_LINKING_SIMILAR_PRODUCTS_table);
+		drop_category_table_st.executeUpdate();
+		System.out.println("Dropping the old CATEGORY_FOLLOWING table");
+		drop_category_table_st.close();
+		PreparedStatement create_category_table_st = con.prepareStatement(create_LINKING_SIMILAR_PRODUCTS_table);
+		create_category_table_st.executeUpdate();
+		System.out.println("Creating the new CATEGORY_FOLLOWING table");
+		create_category_table_st.close();
 	}
 }

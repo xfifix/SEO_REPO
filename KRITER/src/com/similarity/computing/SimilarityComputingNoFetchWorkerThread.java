@@ -83,7 +83,6 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 				System.out.println("We have still products with less than 6 similar products : "+unfetched_skus_local_cache.size());
 				System.out.println("We'll complete the similar products with rayon level similar_products ");
 				backup_rayon();
-
 			}
 			close_connection();
 		} catch (Exception ex) {
@@ -576,9 +575,9 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			// vendor and state (available or not)
 			String VENDEUR = rs.getString(9);
 			entry.setVENDEUR(VENDEUR);
-			String ETAT = rs.getString(9);
+			String ETAT = rs.getString(10);
 			entry.setETAT(ETAT);
-			String RAYON = rs.getString(10);
+			String RAYON = rs.getString(11);
 			entry.setRAYON(RAYON);
 			my_entries.add(entry);
 		}
@@ -615,9 +614,9 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			// vendor and state (available or not)
 			String VENDEUR = rs.getString(9);
 			entry.setVENDEUR(VENDEUR);
-			String ETAT = rs.getString(9);
+			String ETAT = rs.getString(10);
 			entry.setETAT(ETAT);
-			String RAYON = rs.getString(10);
+			String RAYON = rs.getString(11);
 			entry.setRAYON(RAYON);
 			my_entries.add(entry);
 		}
@@ -654,9 +653,9 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			// vendor and state (available or not)
 			String VENDEUR = rs.getString(9);
 			entry.setVENDEUR(VENDEUR);
-			String ETAT = rs.getString(9);
+			String ETAT = rs.getString(10);
 			entry.setETAT(ETAT);
-			String RAYON = rs.getString(10);
+			String RAYON = rs.getString(11);
 			entry.setRAYON(RAYON);
 			my_entries.add(entry);
 		}
@@ -694,9 +693,9 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			// vendor and state (available or not)
 			String VENDEUR = rs.getString(9);
 			entry.setVENDEUR(VENDEUR);
-			String ETAT = rs.getString(9);
+			String ETAT = rs.getString(10);
 			entry.setETAT(ETAT);
-			String RAYON = rs.getString(10);
+			String RAYON = rs.getString(11);
 			entry.setRAYON(RAYON);
 			my_entries.add(entry);
 		}
