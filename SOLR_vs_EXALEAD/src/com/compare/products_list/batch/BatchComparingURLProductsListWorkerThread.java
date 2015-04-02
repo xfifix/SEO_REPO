@@ -97,7 +97,7 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
+
 	// step by step update
 	private void updateStatusStepByStep(List<URLInfo> infos){
 		System.out.println("Adding to batch : " + infos.size() + "ULRs into database");
@@ -189,65 +189,67 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 				URLInfo local_info = infos.get(i);
 				//UPDATE SOLR_VS_EXALEAD_PRODUCT_LIST SET STATUS_SOLR=?, MEILLEUR_VENTE_PRODUCTS_SOLR TEXT=?, PAGE_BODY_PRODUCTS_SOLR=?,PAGE2_BODY_PRODUCTS_SOLR=?,NUMBER_OF_PRODUCTS_SOLR=?,FACETTES_SOLR=?,GEOLOC_SOLR=?,STATUS_EXALEAD=?,MEILLEUR_VENTE_PRODUCTS_EXALEAD=?, PAGE_BODY_PRODUCTS_EXALEAD=?,PAGE2_BODY_PRODUCTS_EXALEAD=?,NUMBER_OF_PRODUCTS_EXALEAD=?,FACETTES_EXALEAD=?,GEOLOC_EXALEAD=?,STATUS_COMPARISON=?,MEILLEUR_VENTE_PRODUCTS_COMPARISON=?,PAGE_BODY_PRODUCTS_COMPARISON=?,PAGE2_BODY_PRODUCTS_COMPARISON=?,NUMBER_OF_PRODUCTS_COMPARISON=?,FACETTES_COMPARISON=?,GEOLOC_COMPARISON=?,TO_FETCH=FALSE WHERE ID=?";	
 				//                                            1                            2                              3                           4                      5                     6               7               8                        9                               10                            11                           12                      13                  14              15                           16                               17                             18                                    19                     20                     21                                22
-				st.setInt(1, local_info.getSolrOutput().getStatus());
-				st.setString(2,local_info.getSolrOutput().getBest_sales_products());
-				st.setString(3,local_info.getSolrOutput().getBody_page_products());
-				st.setString(4,local_info.getSolrOutput().getBody_page_two_products());
-				st.setString(5,local_info.getSolrOutput().getNumber_of_products());
-				st.setString(6,local_info.getSolrOutput().getFacette_summary());
-				st.setString(7,local_info.getSolrOutput().getGeoloc_selection());
-				st.setInt(8, local_info.getExaleadOutput().getStatus());
-				st.setString(9,local_info.getExaleadOutput().getBest_sales_products());
-				st.setString(10,local_info.getExaleadOutput().getBody_page_products());
-				st.setString(11,local_info.getExaleadOutput().getBody_page_two_products());
-				st.setString(12,local_info.getExaleadOutput().getNumber_of_products());
-				st.setString(13,local_info.getExaleadOutput().getFacette_summary());
-				st.setString(14,local_info.getExaleadOutput().getGeoloc_selection());				
-				// fill up if the strings match
-				// status matching
-				if (local_info.getSolrOutput().getStatus() == local_info.getExaleadOutput().getStatus()){
-					st.setInt(15,1);
-				}else{
-					st.setInt(15,0);
+				if (local_info.getSolrOutput() != null){
+					st.setInt(1, local_info.getSolrOutput().getStatus());
+					st.setString(2,local_info.getSolrOutput().getBest_sales_products());
+					st.setString(3,local_info.getSolrOutput().getBody_page_products());
+					st.setString(4,local_info.getSolrOutput().getBody_page_two_products());
+					st.setString(5,local_info.getSolrOutput().getNumber_of_products());
+					st.setString(6,local_info.getSolrOutput().getFacette_summary());
+					st.setString(7,local_info.getSolrOutput().getGeoloc_selection());
+					st.setInt(8, local_info.getExaleadOutput().getStatus());
+					st.setString(9,local_info.getExaleadOutput().getBest_sales_products());
+					st.setString(10,local_info.getExaleadOutput().getBody_page_products());
+					st.setString(11,local_info.getExaleadOutput().getBody_page_two_products());
+					st.setString(12,local_info.getExaleadOutput().getNumber_of_products());
+					st.setString(13,local_info.getExaleadOutput().getFacette_summary());
+					st.setString(14,local_info.getExaleadOutput().getGeoloc_selection());				
+					// fill up if the strings match
+					// status matching
+					if (local_info.getSolrOutput().getStatus() == local_info.getExaleadOutput().getStatus()){
+						st.setInt(15,1);
+					}else{
+						st.setInt(15,0);
+					}
+					// best sales products matching
+					if (local_info.getSolrOutput().getBest_sales_products().equals(local_info.getExaleadOutput().getBest_sales_products())){
+						st.setInt(16,1);
+					}else{
+						st.setInt(16,0);
+					}
+					// body products matching
+					if (local_info.getSolrOutput().getBody_page_products().equals(local_info.getExaleadOutput().getBody_page_products())){
+						st.setInt(17,1);
+					}else{
+						st.setInt(17,0);
+					}
+					// body page 2 products matching
+					if (local_info.getSolrOutput().getBody_page_two_products().equals(local_info.getExaleadOutput().getBody_page_two_products())){
+						st.setInt(18,1);
+					}else{
+						st.setInt(18,0);
+					}
+					// number of products matching
+					if (local_info.getSolrOutput().getNumber_of_products().equals(local_info.getExaleadOutput().getNumber_of_products())){
+						st.setInt(19,1);
+					}else{
+						st.setInt(19,0);
+					}
+					// summary facettes matching
+					if (local_info.getSolrOutput().getFacette_summary().equals(local_info.getExaleadOutput().getFacette_summary())){
+						st.setInt(20,1);
+					}else{
+						st.setInt(20,0);
+					}
+					//geoloc selection matching
+					if (local_info.getSolrOutput().getGeoloc_selection().equals(local_info.getExaleadOutput().getGeoloc_selection())){
+						st.setInt(21,1);
+					}else{
+						st.setInt(21,0);
+					}
+					st.setInt(22, local_info.getId());		
+					st.addBatch();	
 				}
-				// best sales products matching
-				if (local_info.getSolrOutput().getBest_sales_products().equals(local_info.getExaleadOutput().getBest_sales_products())){
-					st.setInt(16,1);
-				}else{
-					st.setInt(16,0);
-				}
-				// body products matching
-				if (local_info.getSolrOutput().getBody_page_products().equals(local_info.getExaleadOutput().getBody_page_products())){
-					st.setInt(17,1);
-				}else{
-					st.setInt(17,0);
-				}
-				// body page 2 products matching
-				if (local_info.getSolrOutput().getBody_page_two_products().equals(local_info.getExaleadOutput().getBody_page_two_products())){
-					st.setInt(18,1);
-				}else{
-					st.setInt(18,0);
-				}
-				// number of products matching
-				if (local_info.getSolrOutput().getNumber_of_products().equals(local_info.getExaleadOutput().getNumber_of_products())){
-					st.setInt(19,1);
-				}else{
-					st.setInt(19,0);
-				}
-				// summary facettes matching
-				if (local_info.getSolrOutput().getFacette_summary().equals(local_info.getExaleadOutput().getFacette_summary())){
-					st.setInt(20,1);
-				}else{
-					st.setInt(20,0);
-				}
-				//geoloc selection matching
-				if (local_info.getSolrOutput().getGeoloc_selection().equals(local_info.getExaleadOutput().getGeoloc_selection())){
-					st.setInt(21,1);
-				}else{
-					st.setInt(21,0);
-				}
-				st.setInt(22, local_info.getId());		
-				st.addBatch();		
 			}      
 			//int counts[] = st.executeBatch();
 			System.out.println("Beginning to insert : " + infos.size() + "ULRs into database");
@@ -321,7 +323,7 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 				solrOutput.setStatus(solr_status);
 				// inspecting the output
 				my_info.setSolrOutput(solrOutput);
-				
+
 				String exaleadurl = url + "?a";
 				String exaleadpage_two_url = page_two_url + "?a";
 				System.out.println(Thread.currentThread().getName()+" fetching URL : "+exaleadurl + " with cookie value to tap Exalead");
@@ -366,7 +368,7 @@ public class BatchComparingURLProductsListWorkerThread implements Runnable {
 				ProductsListParseUtility.parse_page2_source_code(exaleadOutput,page2_source_codeExalead);
 				exaleadOutput.setStatus(exalead_status);
 				// inspecting the output
-			    
+
 				my_info.setExaleadOutput(exaleadOutput);
 			} catch (Exception e){
 				System.out.println("Trouble fetching URL : "+url);

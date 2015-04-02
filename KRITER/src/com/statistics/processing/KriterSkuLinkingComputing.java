@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 public class KriterSkuLinkingComputing {
 	private static int nb_similar_skus = 6;
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
-	private static String select_all_linked_skus = "SELECT SKU,SKU1,SKU2,SKU3,SKU4,SKU5,SKU6 FROM CATALOG";
+	private static String select_all_linked_skus = "SELECT SKU,KRIT_SKU1,KRIT_SKU2,KRIT_SKU3,KRIT_SKU4,KRIT_SKU5,KRIT_SKU6 FROM CATALOG";
 	private static String insert_linking_statement = "INSERT INTO LINKING_SIMILAR_PRODUCTS (SKU,COUNTER) values (?,?)";
 	//private static String update_catalog_statement = "UPDATE CATALOG SET COUNTER=? where SKU=?";
 	private static String drop_LINKING_SIMILAR_PRODUCTS_table = "DROP TABLE IF EXISTS LINKING_SIMILAR_PRODUCTS";
