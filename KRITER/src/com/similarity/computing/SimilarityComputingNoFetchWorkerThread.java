@@ -75,19 +75,20 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			System.out.println("Getting back to category level 1 to get products with missing similar products (<6) : number = "+unfetched_skus_local_cache.size());
 			if (unfetched_skus_local_cache.size()>0){
 				backup_category1();
-			}			
-			System.out.println("Saving the last batch");
-			//saving_similar_step_by_step();
+			}			;
 			// saving the current batch
+			System.out.println("Saving the last batch from category level 3 2 1");
 			saving_similar();
+			matching_skus.clear();
 			if (unfetched_skus_local_cache.size()>0){
 				System.out.println("We have still products with less than 6 similar products : "+unfetched_skus_local_cache.size());
 				System.out.println("We'll complete the similar products with rayon level similar_products ");
 				backup_rayon();
 			}
-			System.out.println("Saving the last batch");
+			System.out.println("Saving the last batch from rayon");
 			//saving_similar_step_by_step();
 			saving_similar();
+			matching_skus.clear();
 			
 			close_connection();
 		} catch (Exception ex) {
@@ -507,6 +508,10 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		}
 		if (current_similars.size()>= KriterParameter.kriter_threshold){
 			matching_skus.put(current_entry.getSKU(),new ArrayList<String>(current_similars));
+			if ((matching_skus.size() != 0) && matching_skus.size() % KriterParameter.batch_size == 0 ){
+				saving_similar();
+				matching_skus.clear();
+			}
 			done = true;
 		} else {
 			unfetched_skus_local_cache.put(current_entry,current_similars);

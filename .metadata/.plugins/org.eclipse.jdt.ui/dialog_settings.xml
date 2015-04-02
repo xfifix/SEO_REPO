@@ -35,17 +35,17 @@
 		<item value="3" key="pageIndex"/>
 	</section>
 	<section name="FatJarPackageWizard">
-		<item value="/home/sduprey/My_Executable/test.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
-		<item value="SimilarityLessThan6CategoryNoConcurrentRequestComputingProcessTest - KRITER" key="FatJarPackageWizardPage.LAUNCH_CONFIGURATION_SELECTION_NAME"/>
+		<item value="/home/sduprey/My_Executable/my_cds_skulinking_computing_job.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
+		<item value="SkuLinkingComputing - KRITER" key="FatJarPackageWizardPage.LAUNCH_CONFIGURATION_SELECTION_NAME"/>
 		<item value="/home/sduprey/My_Code/My_Java_Workspace" key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION"/>
 		<item value="false" key="FatJarPackageWizardPage.ANTSCRIPT_SAVE"/>
 		<item value="2" key="FatJarPackageWizardPage.LIBRARY_HANDLING"/>
 		<list key="FatJarPackageWizardPage.DESTINATION_NAMES_ID">
+			<item value="/home/sduprey/My_Executable/my_cds_skulinking_computing_job.jar"/>
+			<item value="/home/sduprey/My_Executable/my_kriter_skulinking_computing_job.jar"/>
 			<item value="/home/sduprey/My_Executable/test.jar"/>
 			<item value="/home/sduprey/My_Executable/my_cds_statistics_computing_job.jar"/>
 			<item value="/home/sduprey/My_Executable/my_kriter_statistics_computing_job.jar"/>
-			<item value="/home/sduprey/My_Executable/my_cds_skulinking_computing_job.jar"/>
-			<item value="/home/sduprey/My_Executable/my_kriter_skulinking_computing_job.jar"/>
 		</list>
 		<list key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION_HISTORY">
 			<item value="/home/sduprey/My_Code/My_Java_Workspace.xml"/>

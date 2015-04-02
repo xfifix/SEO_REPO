@@ -107,8 +107,10 @@ public class KriterSkuLinkingComputing {
 					Map.Entry<String, Integer> pairs = (Map.Entry<String, Integer>)it.next();
 					String current_sku=pairs.getKey();
 					Integer counter = pairs.getValue();
-					st.setInt(1,counter);
-					st.setString(2,current_sku);
+					st.setString(1,current_sku);
+					st.setInt(2,counter);
+//					st.setInt(1,counter);
+//					st.setString(2,current_sku);
 					st.addBatch();
 				}
 				st.executeBatch();
