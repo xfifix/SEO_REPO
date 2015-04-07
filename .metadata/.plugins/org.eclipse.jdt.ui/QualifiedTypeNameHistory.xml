@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="java.io.ByteArrayOutputStream"/>
 <fullyQualifiedTypeName name="crawl4j.vsm.CorpusCache"/>
 <fullyQualifiedTypeName name="java.util.TreeMap"/>
 <fullyQualifiedTypeName name="crawl4j.arbo.semantic.SemanticArboCrawler"/>
@@ -60,4 +59,5 @@
 <fullyQualifiedTypeName name="java.io.FileReader"/>
 <fullyQualifiedTypeName name="java.io.File"/>
 <fullyQualifiedTypeName name="com.similarity.parameter.KriterParameter"/>
+<fullyQualifiedTypeName name="com.statistics.processing.LightSKU"/>
 </qualifiedTypeNameHistroy>

@@ -197,6 +197,10 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 				Double distone = StatisticsUtility.computeTFdistance(current_entry.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
 				Double disttwo = StatisticsUtility.computeTFdistance(current_entry.getDESCRIPTION_LONGUEUR80(), entryj.getDESCRIPTION_LONGUEUR80());
 				vector_list[j] = distone+disttwo;
+				if (current_entry.getSKU().equals(entryj.getSKU())){
+					vector_list[j] = Double.POSITIVE_INFINITY;
+				}
+
 			}
 			// sorting the array and keeping the indexes
 			DescendingArrayIndexComparator comparator = new DescendingArrayIndexComparator(vector_list);
@@ -235,6 +239,10 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 				Double distone = StatisticsUtility.computeTFdistance(current_entry.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
 				Double disttwo = StatisticsUtility.computeTFdistance(current_entry.getDESCRIPTION_LONGUEUR80(), entryj.getDESCRIPTION_LONGUEUR80());
 				vector_list[j] = distone+disttwo;
+				if (current_entry.getSKU().equals(entryj.getSKU())){
+					vector_list[j] = Double.POSITIVE_INFINITY;
+				}
+
 			}
 			// sorting the array and keeping the indexes
 			DescendingArrayIndexComparator comparator = new DescendingArrayIndexComparator(vector_list);
@@ -470,6 +478,10 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 				Double distone = StatisticsUtility.computeTFdistance(current_entry.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
 				Double disttwo = StatisticsUtility.computeTFdistance(current_entry.getDESCRIPTION_LONGUEUR80(), entryj.getDESCRIPTION_LONGUEUR80());
 				vector_list[j] = distone+disttwo;
+				if (current_entry.getSKU().equals(entryj.getSKU())){
+					vector_list[j] = Double.POSITIVE_INFINITY;
+				}
+
 			}
 			// sorting the array and keeping the indexes
 			DescendingArrayIndexComparator comparator = new DescendingArrayIndexComparator(vector_list);
@@ -529,12 +541,16 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 				System.out.println(Thread.currentThread() +" Having computed distance matrix "+i+" from "+size_list);
 			}
 			CatalogEntry current_entry = entries.get(i);
-			Double[] vector_list = new Double[size_list]; 
+			Double[] vector_list = new Double[filtered_size_list]; 
 			for (int j= 0;j<filtered_size_list;j++){
 				CatalogEntry entryj = filtered_entries.get(j);
 				Double distone = StatisticsUtility.computeTFdistance(current_entry.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
 				Double disttwo = StatisticsUtility.computeTFdistance(current_entry.getDESCRIPTION_LONGUEUR80(), entryj.getDESCRIPTION_LONGUEUR80());
 				vector_list[j] = distone+disttwo;
+				if (current_entry.getSKU().equals(entryj.getSKU())){
+					vector_list[j] = Double.POSITIVE_INFINITY;
+				}
+
 			}
 			// sorting the array and keeping the indexes
 			DescendingArrayIndexComparator comparator = new DescendingArrayIndexComparator(vector_list);
