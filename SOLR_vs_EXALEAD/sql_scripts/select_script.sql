@@ -8,4 +8,6 @@ select
     sum(PAGE_BODY_PRODUCTS_COMPARISON) as PAGE_BODY_PRODUCTS,
     sum(PAGE2_BODY_PRODUCTS_COMPARISON) as PAGE2_BODY_PRODUCTS_COMPARISON,
     sum(NUMBER_OF_PRODUCTS_COMPARISON) as NUMBER_OF_PRODUCTS_COMPARISON,
-     count(*) as TOTAL_FICHE_PRODUIT_CRAWLED  from solr_vs_exalead_product_list where to_fetch=false;
+    sum(FACETTES_COMPARISON) as FACETTES_COMPARISON,
+    sum(GEOLOC_COMPARISON) as GEOLOC_COMPARISON,
+    count(*) as TOTAL_FICHE_PRODUIT_CRAWLED  from solr_vs_exalead_product_list where to_fetch=false;
