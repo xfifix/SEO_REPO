@@ -45,21 +45,23 @@ public class AttributesUtility {
 		}
 		return to_return;
 	}
-	
+
 	public static Map<String,String> unserializeJSONStringtoAttributesMap(String storedJSONString){
 		Map<String,String> to_return = new HashMap<String,String>();
-		JSONParser jsonParser = new JSONParser();
-		try {
-			JSONArray attributesArray = (JSONArray) jsonParser.parse(storedJSONString);
-			@SuppressWarnings("rawtypes")
-			Iterator i = attributesArray.iterator();
-			while (i.hasNext()) {
-				JSONObject innerObj = (JSONObject) i.next();
-				to_return.put((String)innerObj.get("attribute_name"),(String)innerObj.get("attribute_value"));
+		if (!"".equals(storedJSONString)){
+			JSONParser jsonParser = new JSONParser();
+			try {
+				JSONArray attributesArray = (JSONArray) jsonParser.parse(storedJSONString);
+				@SuppressWarnings("rawtypes")
+				Iterator i = attributesArray.iterator();
+				while (i.hasNext()) {
+					JSONObject innerObj = (JSONObject) i.next();
+					to_return.put((String)innerObj.get("attribute_name"),(String)innerObj.get("attribute_value"));
+				}
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return to_return;
 	}

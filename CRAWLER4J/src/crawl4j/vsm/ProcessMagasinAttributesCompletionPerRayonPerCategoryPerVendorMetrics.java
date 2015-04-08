@@ -52,9 +52,8 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		//String magasin_to_analyse ="informatique";
 		//String magasin_to_analyse ="musique-instruments";
 		//String magasin_to_analyse ="dvd";
-		//String magasin_to_analyse =properties.getProperty("config.default_magasin");
+		String magasin_to_analyse =properties.getProperty("config.default_magasin");
 		String output_directory=properties.getProperty("config.output_directory");
-		String magasin_to_analyse ="musique-instruments";
 		if (args.length >= 1){
 			magasin_to_analyse = args[0];
 		} 

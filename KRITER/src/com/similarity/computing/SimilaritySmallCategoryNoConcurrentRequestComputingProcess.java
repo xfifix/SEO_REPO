@@ -58,9 +58,17 @@ public class SimilaritySmallCategoryNoConcurrentRequestComputingProcess {
 			System.out.println("Trouble getting the configuration : unable to launch the crawler");
 			System.exit(0);
 		}
-
 		System.out.println("Number of threads for list crawler : "+KriterParameter.small_list_pool_size);
 		System.out.println("Bucket size for list crawler : "+KriterParameter.small_list_size_bucket);
+		System.out.println("Database configuration path : "+KriterParameter.database_con_path);
+		System.out.println("Maximum list size separator : "+KriterParameter.max_list_size_separator_string);
+		System.out.println("Recreating table : "+KriterParameter.recreate_table);
+		System.out.println("Computing optimal parameters : "+KriterParameter.compute_optimal_parameters);
+		System.out.println("Kriter threshold : "+KriterParameter.kriter_threshold);
+		System.out.println("Small computing maximum list size : "+KriterParameter.computing_max_list_size);
+		System.out.println("Batch size : "+KriterParameter.batch_size);
+		System.out.println("Displaying threshold : "+KriterParameter.displaying_threshold);
+		
 		// it would be best to use a property file to store MD5 password
 		//		// Getting the database property
 		Properties props = new Properties();

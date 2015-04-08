@@ -56,6 +56,17 @@ public class SimilarityBigCategoryNoConcurrentRequestComputingProcess {
 			System.out.println("Trouble getting the configuration : unable to launch the crawler");
 			System.exit(0);
 		}
+
+		System.out.println("Database configuration path : "+KriterParameter.database_con_path);
+		System.out.println("Maximum list size separator : "+KriterParameter.max_list_size_separator_string);
+		System.out.println("Recreating table : "+KriterParameter.recreate_table);
+		System.out.println("Computing optimal parameters : "+KriterParameter.compute_optimal_parameters);
+		System.out.println("Kriter threshold : "+KriterParameter.kriter_threshold);
+		System.out.println("Big computing maximum list size : "+KriterParameter.computing_max_list_size);
+		System.out.println("Batch size : "+KriterParameter.batch_size);
+		System.out.println("Displaying threshold : "+KriterParameter.displaying_threshold);
+
+		
 		// Getting the database property
 		FileInputStream in = null;      
 		try {
