@@ -40,7 +40,9 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 	private static Connection con = null;
 	private static List<URLContentInfo> magasins_datas = new ArrayList<URLContentInfo>();
 	private static Map<String, String> properties_map = new HashMap<String, String>();
+	private static Map<String, String> idmodel_nom_map = new HashMap<String, String>();
 
+	
 	// category mapping cache
 	private static List<CategoryInfo> category_datas = new ArrayList<CategoryInfo>();
 
@@ -52,8 +54,9 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		//String magasin_to_analyse ="informatique";
 		//String magasin_to_analyse ="musique-instruments";
 		//String magasin_to_analyse ="dvd";
-		String magasin_to_analyse =properties.getProperty("config.default_magasin");
+		//String magasin_to_analyse =properties.getProperty("config.default_magasin");
 		String output_directory=properties.getProperty("config.output_directory");
+		String magasin_to_analyse ="musique-instruments";
 		if (args.length >= 1){
 			magasin_to_analyse = args[0];
 		} 
@@ -124,6 +127,7 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 				row_info.setNiv3(fields[4]);
 				row_info.setNiv4(fields[5]);
 				row_info.setModelid(fields[6]);
+				row_info.setNomModel(idmodel_nom_map.get(fields[6]));
 				row_info.setName(fields[7]);
 				category_datas.add(row_info);
 			} 
@@ -145,12 +149,14 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 	private static String find_relevant_category_model(String front_category_text){
 		// we search the level 4
 		Set<String> modelIds = new HashSet<String>();
+		Set<String> modelNames = new HashSet<String>();
 		Set<String> categoryIds = new HashSet<String>();		
 		boolean found = false;
 		for (CategoryInfo category_infos : category_datas){
 			if (category_infos.getNiv4().contains(front_category_text)){
 				categoryIds.add(category_infos.getCategoryId());
 				modelIds.add(category_infos.getModelid()+":"+category_infos.getName());
+				modelNames.add(idmodel_nom_map.get(category_infos.getModelid()));
 				found=true;
 			}
 		}
@@ -159,7 +165,8 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 			for (CategoryInfo category_infos : category_datas){
 				if (category_infos.getNiv3().contains(front_category_text)){
 					categoryIds.add(category_infos.getCategoryId());
-					modelIds.add(category_infos.getModelid()+":"+category_infos.getName());
+					modelIds.add(category_infos.getModelid()+":"+category_infos.getName()+";"+idmodel_nom_map.get(category_infos.getModelid()));
+					modelNames.add(idmodel_nom_map.get(category_infos.getModelid()));
 					found=true;
 				}
 			}
@@ -169,7 +176,8 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 			for (CategoryInfo category_infos : category_datas){
 				if (category_infos.getNiv2().contains(front_category_text)){
 					categoryIds.add(category_infos.getCategoryId());
-					modelIds.add(category_infos.getModelid()+":"+category_infos.getName());
+					modelIds.add(category_infos.getModelid()+":"+category_infos.getName()+";"+idmodel_nom_map.get(category_infos.getModelid()));
+					modelNames.add(idmodel_nom_map.get(category_infos.getModelid()));
 					found=true;
 				}
 			}
@@ -179,7 +187,8 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 			for (CategoryInfo category_infos : category_datas){
 				if (category_infos.getNiv1().contains(front_category_text)){
 					categoryIds.add(category_infos.getCategoryId());
-					modelIds.add(category_infos.getModelid()+":"+category_infos.getName());
+					modelIds.add(category_infos.getModelid()+":"+category_infos.getName()+";"+idmodel_nom_map.get(category_infos.getModelid()));
+					modelNames.add(idmodel_nom_map.get(category_infos.getModelid()));
 					found=true;
 				}
 			}
@@ -193,6 +202,11 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		response.append(";");
 		for (String modIds : modelIds){
 			response.append(modIds);
+			response.append(",");
+		}
+		response.append(";");
+		for (String modNames : modelNames){
+			response.append(modNames);
 			response.append(",");
 		}
 		response.append(";");
@@ -221,6 +235,7 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 					value_to_put=value_to_put+alreadythere;
 				}
 				properties_map.put(fields[3],value_to_put);
+				idmodel_nom_map.put(fields[0], fields[1]);
 			} 
 		}catch (IOException ex) {
 			ex.printStackTrace();
@@ -346,7 +361,7 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		System.out.println("Writing the file : "+output_file);
 		writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output_file), "UTF-8"));
 		// we write the header
-		writer.write("RAYON;VENDOR;CATEGORY;CATEGORYID*;MODELID*;CATEGORY_PER_VENDOR_PER_PERCENTAGE_FILLING;ATTRIBUTE_NAME*;FILLED_PERCENTAGE*\n");
+		writer.write("RAYON;VENDOR;CATEGORY;CATEGORYID*;MODELID*;MODELNAME*;CATEGORY_PER_VENDOR_PER_PERCENTAGE_FILLING;ATTRIBUTE_NAME*;FILLED_PERCENTAGE*\n");
 		// we loop over each category and create the matching result file
 		Iterator<Map.Entry<String,Integer>> cat_counter_it = global_counter.entrySet().iterator();
 		while (cat_counter_it.hasNext()) {
@@ -462,7 +477,14 @@ public class ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetri
 		private String niv3;
 		private String niv4;
 		private String modelid;
+		private String nomModel;
 		private String name;
+		public String getNomModel() {
+			return nomModel;
+		}
+		public void setNomModel(String nomModel) {
+			this.nomModel = nomModel;
+		}
 		public String getCategoryId() {
 			return categoryId;
 		}
