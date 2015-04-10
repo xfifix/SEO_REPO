@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="java.util.TreeMap"/>
-<fullyQualifiedTypeName name="crawl4j.arbo.semantic.SemanticArboCrawler"/>
-<fullyQualifiedTypeName name="crawl4j.corpus.CorpusCrawlDataManagement"/>
-<fullyQualifiedTypeName name="java.io.Reader"/>
 <fullyQualifiedTypeName name="crawl4j.arbo.semantic.SemanticArboController"/>
 <fullyQualifiedTypeName name="com.parsing.utility.XPathUtility"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
@@ -54,10 +50,14 @@
 <fullyQualifiedTypeName name="java.util.Set"/>
 <fullyQualifiedTypeName name="com.similarity.noconcurrentrequest.computing.SimilarityComputingNoFetchWorkerThread"/>
 <fullyQualifiedTypeName name="java.io.FileReader"/>
-<fullyQualifiedTypeName name="java.io.File"/>
 <fullyQualifiedTypeName name="com.similarity.parameter.KriterParameter"/>
 <fullyQualifiedTypeName name="com.statistics.processing.LightSKU"/>
 <fullyQualifiedTypeName name="org.json.simple.parser.JSONParser"/>
 <fullyQualifiedTypeName name="java.util.Iterator"/>
 <fullyQualifiedTypeName name="java.util.Map"/>
+<fullyQualifiedTypeName name="org.w3c.dom.Document"/>
+<fullyQualifiedTypeName name="javax.xml.parsers.DocumentBuilder"/>
+<fullyQualifiedTypeName name="org.w3c.dom.Element"/>
+<fullyQualifiedTypeName name="java.io.File"/>
+<fullyQualifiedTypeName name="javax.xml.transform.Transformer"/>
 </qualifiedTypeNameHistroy>
