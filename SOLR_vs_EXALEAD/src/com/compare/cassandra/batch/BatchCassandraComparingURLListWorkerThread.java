@@ -1,4 +1,4 @@
-package com.compare.batch;
+package com.compare.cassandra.batch;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,7 +22,7 @@ import org.apache.http.util.EntityUtils;
 import com.parsing.utility.ParsingOutput;
 import com.parsing.utility.XPathUtility;
 
-public class BatchComparingURLListWorkerThread implements Runnable {
+public class BatchCassandraComparingURLListWorkerThread implements Runnable {
 	private static int batch_size = 100;
 	private static String updateStatement ="UPDATE SOLR_VS_EXALEAD SET STATUS=?, H1_SOLR=?, TITLE_SOLR=?, XPATH1_SOLR=?, XPATH2_SOLR=?, XPATH3_SOLR=?, XPATH4_SOLR=?, XPATH5_SOLR=?, XPATH6_SOLR=?, XPATH7_SOLR=?, XPATH8_SOLR=?, XPATH9_SOLR=?, XPATH10_SOLR=?, H1_EXALEAD=?, TITLE_EXALEAD=?, XPATH1_EXALEAD=?, XPATH2_EXALEAD=?, XPATH3_EXALEAD=?, XPATH4_EXALEAD=?, XPATH5_EXALEAD=?, XPATH6_EXALEAD=?, XPATH7_EXALEAD=?, XPATH8_EXALEAD=?, XPATH9_EXALEAD=?, XPATH10_EXALEAD=?, H1_COMPARISON=?, TITLE_COMPARISON=?, XPATH1_COMPARISON=?, XPATH2_COMPARISON=?, XPATH3_COMPARISON=?, XPATH4_COMPARISON=?, XPATH5_COMPARISON=?, XPATH6_COMPARISON=?, XPATH7_COMPARISON=?, XPATH8_COMPARISON=?, XPATH9_COMPARISON=?, XPATH10_COMPARISON=?, TO_FETCH=FALSE WHERE ID=?";
 	private String[] xpathExpressions;
@@ -30,7 +30,7 @@ public class BatchComparingURLListWorkerThread implements Runnable {
 	private List<ULRId> my_urls_to_fetch = new ArrayList<ULRId>();
 	private Connection con;
 
-	public BatchComparingURLListWorkerThread(Connection con ,List<Integer> to_fetch, String my_user_agent, String[] xpathExpressions) throws SQLException{
+	public BatchCassandraComparingURLListWorkerThread(Connection con ,List<Integer> to_fetch, String my_user_agent, String[] xpathExpressions) throws SQLException{
 		this.xpathExpressions = xpathExpressions;
 		this.user_agent=my_user_agent;
 		this.con = con;
@@ -556,7 +556,6 @@ public class BatchComparingURLListWorkerThread implements Runnable {
 	}
 
 
-
 	private List<URLComparisonInfo> processComparison(List<ULRId> line_infos) {
 		List<URLComparisonInfo> my_fetched_infos = new ArrayList<URLComparisonInfo>();
 		for(ULRId line_info : line_infos){
@@ -570,7 +569,7 @@ public class BatchComparingURLListWorkerThread implements Runnable {
 			try{
 				// fetching the solr version
 				String solrurl = url + "?b";
-				System.out.println(Thread.currentThread().getName()+" fetching URL : "+solrurl + " with cookie value to tap Solr");
+				System.out.println(Thread.currentThread().getName()+" fetching URL : "+solrurl + " with no cookie value to avoid Cassandra");
 				HttpGet getSolr = new HttpGet(solrurl);
 				getSolr.setHeader("User-Agent", user_agent);
 				DefaultHttpClient clientSolr = new DefaultHttpClient();		
@@ -579,13 +578,13 @@ public class BatchComparingURLListWorkerThread implements Runnable {
 				//getSolr.setHeader("Referer", "http://www.google.com");
 				getSolr.setHeader("User-Agent", "CdiscountBot-crawler");
 				// set the cookies
-				CookieStore cookieStoreSolr = new BasicCookieStore();
-				BasicClientCookie cookieSolr = new BasicClientCookie("_$hidden", "230.1");
-				cookieSolr.setDomain("cdiscount.com");
-				cookieSolr.setPath("/");
-				cookieStoreSolr.addCookie(cookieSolr);    
-				clientSolr.setCookieStore(cookieStoreSolr);
-				// get the cookies
+//				CookieStore cookieStoreSolr = new BasicCookieStore();
+//				//BasicClientCookie cookieSolr = new BasicClientCookie("_$hidden", "230.1");
+//				cookieSolr.setDomain("cdiscount.com");
+//				cookieSolr.setPath("/");
+//				cookieStoreSolr.addCookie(cookieSolr);    
+//				clientSolr.setCookieStore(cookieStoreSolr);
+//				// get the cookies
 				HttpResponse responseSolr = clientSolr.execute(getSolr,HTTP_CONTEXT_SOLR);
 
 				System.out.println(responseSolr.getStatusLine());
@@ -599,7 +598,7 @@ public class BatchComparingURLListWorkerThread implements Runnable {
 				my_info.setSolrOutput(solrOutput);
 				my_info.setStatus(responseSolr.getStatusLine().getStatusCode());
 				String exaleadurl = url + "?a";
-				System.out.println(Thread.currentThread().getName()+" fetching URL : "+exaleadurl + " with cookie value to tap Exalead");
+				System.out.println(Thread.currentThread().getName()+" fetching URL : "+exaleadurl + " with cookie value to tap Cassandra");
 				HttpGet getExalead = new HttpGet(exaleadurl);
 				HttpContext HTTP_CONTEXT_EXALEAD = new BasicHttpContext();
 				HTTP_CONTEXT_EXALEAD.setAttribute(CoreProtocolPNames.USER_AGENT, user_agent);
@@ -608,7 +607,7 @@ public class BatchComparingURLListWorkerThread implements Runnable {
 				DefaultHttpClient clientExalead = new DefaultHttpClient();
 				// set the cookies
 				CookieStore cookieStoreExalead = new BasicCookieStore();
-				BasicClientCookie cookieExalead = new BasicClientCookie("_$hidden", "230.0");
+				BasicClientCookie cookieExalead = new BasicClientCookie("Cassandra", "1");
 				cookieExalead.setDomain("cdiscount.com");
 				cookieExalead.setPath("/");
 				cookieStoreExalead.addCookie(cookieExalead);    

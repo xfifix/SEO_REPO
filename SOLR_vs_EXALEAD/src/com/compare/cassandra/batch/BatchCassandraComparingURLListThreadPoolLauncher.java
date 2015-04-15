@@ -1,4 +1,4 @@
-package com.compare.batch;
+package com.compare.cassandra.batch;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 
 import com.parsing.utility.XPathUtility;
 
-public class BatchComparingURLListThreadPoolLauncher {
+public class BatchCassandraComparingURLListThreadPoolLauncher {
 
 	private static String select_url_to_fetch = "SELECT ID FROM SOLR_VS_EXALEAD WHERE TO_FETCH = TRUE";
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/url_list_infos.properties";
@@ -119,7 +119,7 @@ public class BatchComparingURLListThreadPoolLauncher {
 					// one new connection per task
 					Connection local_con = DriverManager.getConnection(url, user, passwd);
 					System.out.println("Launching another thread with "+local_count+ " URLs to fetch");
-					Runnable worker = new BatchComparingURLListWorkerThread(local_con,thread_list,my_user_agent,xpath_expression);
+					Runnable worker = new BatchCassandraComparingURLListWorkerThread(local_con,thread_list,my_user_agent,xpath_expression);
 					executor.execute(worker);		
 					// we initialize everything for the next thread
 					local_count=0;
@@ -131,12 +131,12 @@ public class BatchComparingURLListThreadPoolLauncher {
 				// one new connection per task
 				Connection local_con = DriverManager.getConnection(url, user, passwd);
 				System.out.println("Launching another thread with "+local_count+ " URLs to fetch");
-				Runnable worker = new BatchComparingURLListWorkerThread(local_con,thread_list,my_user_agent,xpath_expression);
+				Runnable worker = new BatchCassandraComparingURLListWorkerThread(local_con,thread_list,my_user_agent,xpath_expression);
 				executor.execute(worker);
 			}
 			tofetch_list.clear();
 		} catch (SQLException ex) {
-			Logger lgr = Logger.getLogger(BatchComparingURLListThreadPoolLauncher.class.getName());
+			Logger lgr = Logger.getLogger(BatchCassandraComparingURLListThreadPoolLauncher.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		} finally {
 			try {
@@ -151,7 +151,7 @@ public class BatchComparingURLListThreadPoolLauncher {
 				}
 
 			} catch (SQLException ex) {
-				Logger lgr = Logger.getLogger(BatchComparingURLListThreadPoolLauncher.class.getName());
+				Logger lgr = Logger.getLogger(BatchCassandraComparingURLListThreadPoolLauncher.class.getName());
 				lgr.log(Level.WARNING, ex.getMessage(), ex);
 			}
 		}
