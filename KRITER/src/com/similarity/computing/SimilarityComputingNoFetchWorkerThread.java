@@ -184,12 +184,13 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		int size_list = entries.size();
 		System.out.println(Thread.currentThread() +" Beginning to compute distance matrix from "+size_list);
 		for (int i=0;i<size_list;i++){
-			List<CatalogEntry> filtered_entries = shrink(entries);
-			int restricted_size_list = filtered_entries.size();
 			CatalogEntry current_entry = entries.get(i);
 			if (i!=0 && i%KriterParameter.displaying_threshold == 0){
 				System.out.println(Thread.currentThread() +" Having computed distance matrix "+i+" from "+size_list);
 			}
+			String current_entry_brand = current_entry.getMARQUE();
+			List<CatalogEntry> filtered_entries = shrink(current_entry_brand,entries);
+			int restricted_size_list = filtered_entries.size();
 			Double[] vector_list = new Double[restricted_size_list]; 
 			// computing the vector distance
 			for (int j= 0;j<restricted_size_list;j++){
@@ -274,6 +275,18 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		return filtered_List; 
 	}
 
+	
+	public List<CatalogEntry> filterBrandAvailableEntries(String brandToFilter, List<CatalogEntry> my_data){
+		List<CatalogEntry> filtered_List = new ArrayList<CatalogEntry>();
+		for (CatalogEntry entry : my_data){
+			if ((brandToFilter.equals(entry.getMARQUE()))) { 
+				filtered_List.add(entry);
+			}
+		}
+		return filtered_List; 
+	}
+
+	
 	public void backup_category3() throws SQLException{
 		Iterator<Entry<CatalogEntry, Set<String>>> it = unfetched_skus_local_cache.entrySet().iterator();	
 		List<CatalogEntry> to_remove = new ArrayList<CatalogEntry>();
@@ -366,14 +379,26 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		}
 	}
 	
-	public List<CatalogEntry> shrink(List<CatalogEntry> my_list){
-		Set<CatalogEntry> to_return = new HashSet<CatalogEntry>();
-		// to_return is a set forbidding duplicated entries
-		while (to_return.size() < KriterParameter.computing_max_list_size){
-			CatalogEntry candidate = my_list.get(my_rand.nextInt(my_list.size()));
-			to_return.add(candidate);
+	public List<CatalogEntry> shrink(String current_entry_brand, List<CatalogEntry> my_list){
+		List<CatalogEntry> brandFilteredList = filterBrandAvailableEntries(current_entry_brand, my_list);
+		if (brandFilteredList.size() >= KriterParameter.computing_max_list_size){
+			Set<CatalogEntry> to_return = new HashSet<CatalogEntry>();
+			// to_return is a set forbidding duplicated entries
+			while (to_return.size() < KriterParameter.computing_max_list_size){
+				CatalogEntry candidate = brandFilteredList.get(my_rand.nextInt(brandFilteredList.size()));
+				to_return.add(candidate);
+			}
+			return new ArrayList<CatalogEntry>(to_return);
+		} else {
+			Set<CatalogEntry> to_return = new HashSet<CatalogEntry>();
+			// to_return is a set forbidding duplicated entries
+			to_return.addAll(brandFilteredList);
+			while (to_return.size() < KriterParameter.computing_max_list_size){
+				CatalogEntry candidate = my_list.get(my_rand.nextInt(my_list.size()));
+				to_return.add(candidate);
+			}
+			return new ArrayList<CatalogEntry>(to_return);	
 		}
-		return new ArrayList<CatalogEntry>(to_return);
 	}
 
 	public void saving_similar_step_by_step(){
@@ -465,12 +490,14 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		int size_list = entries.size();
 		System.out.println(Thread.currentThread() +" Beginning to compute distance matrix from "+size_list);
 		for (int i=0;i<size_list;i++){
-			List<CatalogEntry> filtered_entries = shrink(cds_entries);
-			int restricted_size_list = filtered_entries.size();
 			CatalogEntry current_entry = entries.get(i);
 			if (i%KriterParameter.displaying_threshold == 0){
 				System.out.println(Thread.currentThread() +" Having computed distance matrix "+i+" from "+size_list);
 			}
+			String current_entry_brand = current_entry.getMARQUE();
+			List<CatalogEntry> filtered_entries = shrink(current_entry_brand,cds_entries);
+			int restricted_size_list = filtered_entries.size();
+
 			Double[] vector_list = new Double[restricted_size_list]; 
 			// computing the vector distance
 			for (int j= 0;j<restricted_size_list;j++){
