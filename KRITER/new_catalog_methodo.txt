@@ -1,0 +1,32 @@
+1) Populating the new CATALOG database :
+**** update the PopulatingCatalogDatabase (new csv name, last up to date SQL scripts )
+**** launch PopulatingCatalogDatabase
+
+
+2) Populating the new CATALOG database :
+**** update the PopulatingSimilarCatalogDatabase (new xml name)
+**** launch the PopulatingSimilarCatalogDatabase
+
+
+3) Recreate the new CATEGORY_FOLLOWING table using SQL script
+
+
+4) Launch the Cdiscount computation
+**** Launch in parallel : SimilarityBigCategoryNoConcurrentRequestComputingProcess 
+# select count(*) from CATEGORY_FOLLOWING where count > 10000 ==> 104
+# 100 threads : list_fixed_pool_size = 104 and list_size_bucket = 1 and fifty categories per thread
+# we here just launch one thread per category
+sudo java -Xmx80g -jar my_kriter_similarity_big_category_computing_job.jar 
+**** Launch in parallel : SimilaritySmallCategoryNoConcurrentRequestComputingProcess
+# select count(*) from CATEGORY_FOLLOWING where count < 10000 ==> 5070
+# 100 threads : list_fixed_pool_size = 100 and list_size_bucket = 51 and fifty categories per thread
+sudo java -Xmx80g -jar my_kriter_similarity_small_category_computing_job.jar 
+
+
+5) Launch the Statistics computation
+**** Launch KriterSkuLinkingComputing
+**** Launch SkuLinkingComputing
+**** Launch KriterStatisticsComputingThreadPool
+**** Launch StatisticsComputingThreadPool
+
+
