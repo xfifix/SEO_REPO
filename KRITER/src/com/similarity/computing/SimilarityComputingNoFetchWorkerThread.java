@@ -170,12 +170,12 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 				System.out.println(Thread.currentThread() +" Having computed distance matrix "+i+" from "+size_list);
 			}
 			String current_entry_brand = current_entry.getMARQUE();
-			List<CatalogEntry> filtered_entries = shrink_with_brand_and_max_size(current_entry_brand,entries);
-			int restricted_size_list = filtered_entries.size();
+			List<CatalogEntry> my_shrunk_entries = shrink_with_brand_and_max_size(current_entry_brand,entries);
+			int restricted_size_list = my_shrunk_entries.size();
 			Double[] vector_list = new Double[restricted_size_list]; 
 			// computing the vector distance
 			for (int j= 0;j<restricted_size_list;j++){
-				CatalogEntry entryj = filtered_entries.get(j);
+				CatalogEntry entryj = my_shrunk_entries.get(j);
 				Double innerDistance = computeWeightedDistance(current_entry,entryj);
 				vector_list[j] = innerDistance;
 			}
@@ -186,12 +186,12 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 
 			List<String> similars = new ArrayList<String>();
 			// adding the 6 first closest skus
-			similars.add(filtered_entries.get(indexes[0]).getSKU());
-			similars.add(filtered_entries.get(indexes[1]).getSKU());
-			similars.add(filtered_entries.get(indexes[2]).getSKU());
-			similars.add(filtered_entries.get(indexes[3]).getSKU());
-			similars.add(filtered_entries.get(indexes[4]).getSKU());
-			similars.add(filtered_entries.get(indexes[5]).getSKU());
+			similars.add(my_shrunk_entries.get(indexes[0]).getSKU());
+			similars.add(my_shrunk_entries.get(indexes[1]).getSKU());
+			similars.add(my_shrunk_entries.get(indexes[2]).getSKU());
+			similars.add(my_shrunk_entries.get(indexes[3]).getSKU());
+			similars.add(my_shrunk_entries.get(indexes[4]).getSKU());
+			similars.add(my_shrunk_entries.get(indexes[5]).getSKU());
 			matching_skus.put(current_entry.getSKU(),similars);
 			if ((matching_skus.size() != 0) && matching_skus.size() % KriterParameter.batch_size == 0 ){
 				saving_similar();
@@ -200,8 +200,8 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		}
 	}
 
-	public void find_similar(List<CatalogEntry> entries){
-		int size_list = entries.size();
+	public void find_similar(List<CatalogEntry> my_entries){
+		int size_list = my_entries.size();
 
 		System.out.println(Thread.currentThread() +" Beginning to compute distance matrix from "+size_list);
 
@@ -209,10 +209,10 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			if (i!=0 && i%KriterParameter.displaying_threshold == 0){
 				System.out.println(Thread.currentThread() +" Having computed distance matrix "+i+" from "+size_list);
 			}
-			CatalogEntry current_entry = entries.get(i);
+			CatalogEntry current_entry = my_entries.get(i);
 			Double[] vector_list = new Double[size_list]; 
 			for (int j= 0;j<size_list;j++){
-				CatalogEntry entryj = entries.get(j);
+				CatalogEntry entryj = my_entries.get(j);
 				Double innerDistance = computeWeightedDistance(current_entry,entryj);
 				vector_list[j] = innerDistance;
 			}
@@ -222,12 +222,12 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			Arrays.sort(indexes, comparator);
 			List<String> similars = new ArrayList<String>();
 			// adding the 6 first closest skus
-			similars.add(entries.get(indexes[0]).getSKU());
-			similars.add(entries.get(indexes[1]).getSKU());
-			similars.add(entries.get(indexes[2]).getSKU());
-			similars.add(entries.get(indexes[3]).getSKU());
-			similars.add(entries.get(indexes[4]).getSKU());
-			similars.add(entries.get(indexes[5]).getSKU());
+			similars.add(my_entries.get(indexes[0]).getSKU());
+			similars.add(my_entries.get(indexes[1]).getSKU());
+			similars.add(my_entries.get(indexes[2]).getSKU());
+			similars.add(my_entries.get(indexes[3]).getSKU());
+			similars.add(my_entries.get(indexes[4]).getSKU());
+			similars.add(my_entries.get(indexes[5]).getSKU());
 			matching_skus.put(current_entry.getSKU(),similars);
 			if ((matching_skus.size() != 0) && matching_skus.size() % KriterParameter.batch_size == 0 ){
 				saving_similar();
@@ -475,13 +475,13 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 				System.out.println(Thread.currentThread() +" Having computed distance matrix "+i+" from "+size_list);
 			}
 			String current_entry_brand = current_entry.getMARQUE();
-			List<CatalogEntry> shrunk_entries = shrink_with_brand_and_max_size(current_entry_brand,my_entries);
-			int restricted_size_list = shrunk_entries.size();
+			List<CatalogEntry> my_shrunk_entries = shrink_with_brand_and_max_size(current_entry_brand,my_entries);
+			int restricted_size_list = my_shrunk_entries.size();
 
 			Double[] vector_list = new Double[restricted_size_list]; 
 			// computing the vector distance
 			for (int j= 0;j<restricted_size_list;j++){
-				CatalogEntry entryj = shrunk_entries.get(j);
+				CatalogEntry entryj = my_shrunk_entries.get(j);
 				Double innerDistance = computeWeightedDistance(current_entry,entryj);
 				vector_list[j] = innerDistance;
 			}
@@ -492,12 +492,12 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 
 			List<String> similars = new ArrayList<String>();
 			// adding the 6 first closest skus
-			similars.add(shrunk_entries.get(indexes[0]).getSKU());
-			similars.add(shrunk_entries.get(indexes[1]).getSKU());
-			similars.add(shrunk_entries.get(indexes[2]).getSKU());
-			similars.add(shrunk_entries.get(indexes[3]).getSKU());
-			similars.add(shrunk_entries.get(indexes[4]).getSKU());
-			similars.add(shrunk_entries.get(indexes[5]).getSKU());
+			similars.add(my_shrunk_entries.get(indexes[0]).getSKU());
+			similars.add(my_shrunk_entries.get(indexes[1]).getSKU());
+			similars.add(my_shrunk_entries.get(indexes[2]).getSKU());
+			similars.add(my_shrunk_entries.get(indexes[3]).getSKU());
+			similars.add(my_shrunk_entries.get(indexes[4]).getSKU());
+			similars.add(my_shrunk_entries.get(indexes[5]).getSKU());
 			matching_skus.put(current_entry.getSKU(),similars);
 			if ((matching_skus.size() != 0) && matching_skus.size() % KriterParameter.batch_size == 0 ){
 				saving_similar();
@@ -535,9 +535,9 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		return done;
 	}
 
-	public void find_my_similar_products(List<CatalogEntry> my_tofetch_entries,List<CatalogEntry> entries){
+	public void find_my_similar_products(List<CatalogEntry> my_tofetch_entries,List<CatalogEntry> my_entries){
 		int size_list = my_tofetch_entries.size();
-		int filtered_size_list = entries.size();
+		int filtered_size_list = my_entries.size();
 		System.out.println(Thread.currentThread() +" Beginning to compute distance matrix from "+size_list);
 
 		for (int i=0;i<size_list;i++){
@@ -547,7 +547,7 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			CatalogEntry current_entry = my_tofetch_entries.get(i);
 			Double[] vector_list = new Double[filtered_size_list]; 
 			for (int j= 0;j<filtered_size_list;j++){
-				CatalogEntry entryj = entries.get(j);
+				CatalogEntry entryj = my_entries.get(j);
 				Double innerDistance = computeWeightedDistance(current_entry,entryj);
 				vector_list[j] = innerDistance;
 
@@ -558,12 +558,12 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			Arrays.sort(indexes, comparator);
 			List<String> similars = new ArrayList<String>();
 			// adding the 6 first closest skus
-			similars.add(my_tofetch_entries.get(indexes[0]).getSKU());
-			similars.add(my_tofetch_entries.get(indexes[1]).getSKU());
-			similars.add(my_tofetch_entries.get(indexes[2]).getSKU());
-			similars.add(my_tofetch_entries.get(indexes[3]).getSKU());
-			similars.add(my_tofetch_entries.get(indexes[4]).getSKU());
-			similars.add(my_tofetch_entries.get(indexes[5]).getSKU());
+			similars.add(my_entries.get(indexes[0]).getSKU());
+			similars.add(my_entries.get(indexes[1]).getSKU());
+			similars.add(my_entries.get(indexes[2]).getSKU());
+			similars.add(my_entries.get(indexes[3]).getSKU());
+			similars.add(my_entries.get(indexes[4]).getSKU());
+			similars.add(my_entries.get(indexes[5]).getSKU());
 			matching_skus.put(current_entry.getSKU(),similars);
 			if ((matching_skus.size() != 0) && matching_skus.size() % KriterParameter.batch_size == 0 ){
 				saving_similar();
