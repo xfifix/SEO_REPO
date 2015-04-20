@@ -29,7 +29,7 @@ public class SimilaritySmallCategoryNoConcurrentRequestComputingProcess {
 	private static List<String> too_big_categories = new ArrayList<String>();
 
 	public static String select_too_big_category = "select categorie_niveau_4 from CATEGORY_FOLLOWING where count > ";
-	private static String select_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT, RAYON FROM CATALOG WHERE TO_FETCH=true";
+	private static String select_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT, RAYON, TO_FETCH FROM CATALOG";
 
 	private static String drop_CATEGORY_FOLLOWING_table = "DROP TABLE IF EXISTS CATEGORY_FOLLOWING";
 	private static String create_CATEGORY_FOLLOWING_table = "select distinct categorie_niveau_4, count(*), true as to_fetch into CATEGORY_FOLLOWING from CATALOG group by categorie_niveau_4";
@@ -119,7 +119,9 @@ public class SimilaritySmallCategoryNoConcurrentRequestComputingProcess {
 			rs.close();
 			pst.close();
 			// getting the number of URLs to fetch
-			System.out.println("Requesting all data from categories categories");
+			System.out.println("Requesting all data from categories");
+			System.out.println("We here fetch all data even those with the to_fetch flag to false");
+			
 			pst = con.prepareStatement(select_entry_from_category4);
 			rs = pst.executeQuery();
 			Map<String, List<CatalogEntry>> my_entries = new HashMap<String, List<CatalogEntry>>();
@@ -152,7 +154,8 @@ public class SimilaritySmallCategoryNoConcurrentRequestComputingProcess {
 				entry.setETAT(ETAT);
 				String RAYON = rs.getString(11);
 				entry.setRAYON(RAYON);
-				
+				Boolean to_fetch = rs.getBoolean(12);
+				entry.setTO_FETCH(to_fetch);
 				// we here just keep the small categories
 				if (! too_big_categories.contains(CATEGORIE_NIVEAU_4)){
 					List<CatalogEntry> toprocess = my_entries.get(CATEGORIE_NIVEAU_4);

@@ -34,7 +34,7 @@ public class SimilarityLessThan6CategoryNoConcurrentRequestComputingProcessTest 
 	private static boolean recreate_table = false;
 	public static String less_than_size_string = "6";
 	public static String select_less_than_six_category = "select categorie_niveau_4 from CATEGORY_FOLLOWING where count < "+less_than_size_string;
-	private static String select_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT, RAYON FROM CATALOG";
+	private static String select_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT, RAYON, TO_FETCH FROM CATALOG";
 
 	private static String drop_CATEGORY_FOLLOWING_table = "DROP TABLE IF EXISTS CATEGORY_FOLLOWING";
 	private static String create_CATEGORY_FOLLOWING_table = "select distinct categorie_niveau_4, count(*), true as to_fetch into CATEGORY_FOLLOWING from CATALOG group by categorie_niveau_4";
@@ -148,7 +148,8 @@ public class SimilarityLessThan6CategoryNoConcurrentRequestComputingProcessTest 
 				entry.setETAT(ETAT);
 				String RAYON = rs.getString(11);
 				entry.setRAYON(RAYON);
-
+				Boolean to_fetch = rs.getBoolean(12);
+				entry.setTO_FETCH(to_fetch);
 				// we here just keep the less than six categories
 				if (less_than_six_categories.contains(CATEGORIE_NIVEAU_4)){
 					List<CatalogEntry> toprocess = my_entries.get(CATEGORIE_NIVEAU_4);

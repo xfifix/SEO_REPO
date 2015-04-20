@@ -30,8 +30,8 @@ public class SimilaritySpecificCategoryNoConcurrentRequestComputingProcessTest {
 	private static int list_fixed_pool_size = 1;
 	private static int list_size_bucket = 633;
 	private static boolean recreate_table = false;
-	public static String specific_category_level_4 = "BATTERIE";
-	private static String select_entry_from_specific_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT, RAYON FROM CATALOG where CATEGORIE_NIVEAU_4='"+specific_category_level_4+"'";
+	public static String specific_category_level_4 = "HUB";
+	private static String select_entry_from_specific_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT, RAYON, TO_FETCH FROM CATALOG where CATEGORIE_NIVEAU_4='"+specific_category_level_4+"'";
 	private static String drop_CATEGORY_FOLLOWING_table = "DROP TABLE IF EXISTS CATEGORY_FOLLOWING";
 	private static String create_CATEGORY_FOLLOWING_table = "select distinct categorie_niveau_4, count(*), true as to_fetch into CATEGORY_FOLLOWING from CATALOG group by categorie_niveau_4";
 
@@ -133,7 +133,8 @@ public class SimilaritySpecificCategoryNoConcurrentRequestComputingProcessTest {
 				entry.setETAT(ETAT);
 				String RAYON = rs.getString(11);
 				entry.setRAYON(RAYON);
-
+				Boolean to_fetch = rs.getBoolean(12);
+				entry.setTO_FETCH(to_fetch);
 				List<CatalogEntry> toprocess = my_entries.get(CATEGORIE_NIVEAU_4);
 				if (toprocess == null){
 					toprocess = new ArrayList<CatalogEntry>();

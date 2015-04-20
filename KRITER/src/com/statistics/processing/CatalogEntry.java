@@ -17,6 +17,13 @@ public class CatalogEntry {
     private String LIEN_IMAGE="";
     private String VENDEUR="";
     private String ETAT="";
+    private Boolean TO_FETCH;
+	public Boolean getTO_FETCH() {
+		return TO_FETCH;
+	}
+	public void setTO_FETCH(Boolean tO_FETCH) {
+		TO_FETCH = tO_FETCH;
+	}
 	public String getMAGASIN() {
 		return MAGASIN;
 	}
