@@ -89,7 +89,7 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			//saving_similar_step_by_step();
 			saving_similar();
 			matching_skus.clear();
-			
+
 			close_connection();
 		} catch (Exception ex) {
 			System.out.println("Trouble with category : "+category_to_debug);
@@ -140,7 +140,9 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 	}
 
 	public void computeDataList_with_filter(List<CatalogEntry> my_data){
-		List<CatalogEntry> filteredList = filterCDSAvailableEntries(my_data);
+		// for the moment we don't filter just CDS and available : this would too drastically restrict our offer and limit our long tail in the SERPs
+		//List<CatalogEntry> filteredList = filterCDSAvailableEntries(my_data);
+		List<CatalogEntry> filteredList = my_data;
 		if (filteredList.size() > KriterParameter.kriter_threshold && filteredList.size()<= KriterParameter.computing_max_list_size){
 			// we do it the standard way
 			find_similar_with_filter(my_data,filteredList);
@@ -195,13 +197,8 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			// computing the vector distance
 			for (int j= 0;j<restricted_size_list;j++){
 				CatalogEntry entryj = filtered_entries.get(j);
-				Double distone = StatisticsUtility.computeTFdistance(current_entry.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
-				Double disttwo = StatisticsUtility.computeTFdistance(current_entry.getDESCRIPTION_LONGUEUR80(), entryj.getDESCRIPTION_LONGUEUR80());
-				vector_list[j] = distone+disttwo;
-				if (current_entry.getSKU().equals(entryj.getSKU())){
-					vector_list[j] = Double.POSITIVE_INFINITY;
-				}
-
+				Double innerDistance = computeWeightedDistance(current_entry,entryj);
+				vector_list[j] = innerDistance;
 			}
 			// sorting the array and keeping the indexes
 			DescendingArrayIndexComparator comparator = new DescendingArrayIndexComparator(vector_list);
@@ -237,13 +234,8 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			Double[] vector_list = new Double[size_list]; 
 			for (int j= 0;j<size_list;j++){
 				CatalogEntry entryj = entries.get(j);
-				Double distone = StatisticsUtility.computeTFdistance(current_entry.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
-				Double disttwo = StatisticsUtility.computeTFdistance(current_entry.getDESCRIPTION_LONGUEUR80(), entryj.getDESCRIPTION_LONGUEUR80());
-				vector_list[j] = distone+disttwo;
-				if (current_entry.getSKU().equals(entryj.getSKU())){
-					vector_list[j] = Double.POSITIVE_INFINITY;
-				}
-
+				Double innerDistance = computeWeightedDistance(current_entry,entryj);
+				vector_list[j] = innerDistance;
 			}
 			// sorting the array and keeping the indexes
 			DescendingArrayIndexComparator comparator = new DescendingArrayIndexComparator(vector_list);
@@ -275,7 +267,7 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		return filtered_List; 
 	}
 
-	
+
 	public List<CatalogEntry> filterBrandAvailableEntries(String brandToFilter, List<CatalogEntry> my_data){
 		List<CatalogEntry> filtered_List = new ArrayList<CatalogEntry>();
 		for (CatalogEntry entry : my_data){
@@ -286,7 +278,7 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		return filtered_List; 
 	}
 
-	
+
 	public void backup_category3() throws SQLException{
 		Iterator<Entry<CatalogEntry, Set<String>>> it = unfetched_skus_local_cache.entrySet().iterator();	
 		List<CatalogEntry> to_remove = new ArrayList<CatalogEntry>();
@@ -378,7 +370,7 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			unfetched_skus_local_cache.remove(torem);
 		}
 	}
-	
+
 	public List<CatalogEntry> shrink(String current_entry_brand, List<CatalogEntry> my_list){
 		List<CatalogEntry> brandFilteredList = filterBrandAvailableEntries(current_entry_brand, my_list);
 		if (brandFilteredList.size() >= KriterParameter.computing_max_list_size){
@@ -502,12 +494,9 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			// computing the vector distance
 			for (int j= 0;j<restricted_size_list;j++){
 				CatalogEntry entryj = filtered_entries.get(j);
-				Double distone = StatisticsUtility.computeTFdistance(current_entry.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
-				Double disttwo = StatisticsUtility.computeTFdistance(current_entry.getDESCRIPTION_LONGUEUR80(), entryj.getDESCRIPTION_LONGUEUR80());
-				vector_list[j] = distone+disttwo;
-				if (current_entry.getSKU().equals(entryj.getSKU())){
-					vector_list[j] = Double.POSITIVE_INFINITY;
-				}
+				Double innerDistance = computeWeightedDistance(current_entry,entryj);
+				vector_list[j] = innerDistance;
+
 
 			}
 			// sorting the array and keeping the indexes
@@ -571,12 +560,8 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			Double[] vector_list = new Double[filtered_size_list]; 
 			for (int j= 0;j<filtered_size_list;j++){
 				CatalogEntry entryj = filtered_entries.get(j);
-				Double distone = StatisticsUtility.computeTFdistance(current_entry.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
-				Double disttwo = StatisticsUtility.computeTFdistance(current_entry.getDESCRIPTION_LONGUEUR80(), entryj.getDESCRIPTION_LONGUEUR80());
-				vector_list[j] = distone+disttwo;
-				if (current_entry.getSKU().equals(entryj.getSKU())){
-					vector_list[j] = Double.POSITIVE_INFINITY;
-				}
+				Double innerDistance = computeWeightedDistance(current_entry,entryj);
+				vector_list[j] = innerDistance;
 
 			}
 			// sorting the array and keeping the indexes
@@ -716,7 +701,7 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		return my_entries;
 	}
 
-	
+
 	public List<CatalogEntry> fetch_rayon_data(String rayon) throws SQLException{
 		List<CatalogEntry> my_entries = new ArrayList<CatalogEntry>();
 		PreparedStatement select_statement = con.prepareStatement(select_entry_from_rayon);
@@ -761,9 +746,7 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		Double[] to_return = new Double[size_list];
 		for (int j=0;j<size_list;j++){
 			CatalogEntry entryj = entries.get(j);
-			Double distone = StatisticsUtility.computeTFdistance(currentEntry.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
-			Double disttwo = StatisticsUtility.computeTFdistance(currentEntry.getDESCRIPTION_LONGUEUR80(), entryj.getDESCRIPTION_LONGUEUR80());
-			to_return[j] = distone + disttwo;
+			to_return[j] = computeWeightedDistance(currentEntry,entryj);
 		}
 		return to_return;
 	}
@@ -779,12 +762,23 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 			CatalogEntry entryi = entries.get(i);
 			for (int j=i;j<size_list;j++){
 				CatalogEntry entryj = entries.get(j);
-				Double distone = StatisticsUtility.computeTFdistance(entryi.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
-				Double disttwo = StatisticsUtility.computeTFdistance(entryi.getDESCRIPTION_LONGUEUR80(), entryj.getDESCRIPTION_LONGUEUR80());
-				to_return[fromMatrixToVector(i,j,size_list)] = distone + disttwo;
+				Double innerDistance = computeWeightedDistance(entryi,entryj);
+				to_return[fromMatrixToVector(i,j,size_list)] = innerDistance;
 			}
 		}
 		return to_return;
+	}
+
+	public Double computeWeightedDistance(CatalogEntry entryi, CatalogEntry entryj){
+		Double distone;
+		if (entryi.getSKU().equals(entryj.getSKU())){
+			distone = Double.POSITIVE_INFINITY;
+		} else {
+			distone =StatisticsUtility.computeAlgoWeightedDistance(entryi.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
+		}
+		//	Double disttwo =StatisticsUtility.computeAlgoWeightedDistance(entryi.getDESCRIPTION_LONGUEUR80(), entryj.getDESCRIPTION_LONGUEUR80());
+		//    return distone + disttwo;
+		return distone;
 	}
 
 	public int fromMatrixToVector(int i, int j, int N)

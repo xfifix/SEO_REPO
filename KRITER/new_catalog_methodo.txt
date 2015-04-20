@@ -29,4 +29,6 @@ sudo java -Xmx80g -jar my_kriter_similarity_small_category_computing_job.jar
 **** Launch KriterStatisticsComputingThreadPool
 **** Launch StatisticsComputingThreadPool
 
-
+6) Check which SKU is the good one
+www.cdiscount.com/dp.aspx?sku=UCALLMIAMINO
+http://ns333827.ip-178-33-123.eu:8001/comparator/HP2009980445021/results

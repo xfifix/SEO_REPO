@@ -185,4 +185,11 @@ public class StatisticsUtility {
 	public static Integer computeLevenshteindistance(String text1,String text2){
 		return StringUtils.getLevenshteinDistance(text1, text2);
 	}
+	
+	public static Double computeAlgoWeightedDistance(String text1,String text2){
+		Double tf_distance = CorpusCache.computeTFSimilarity(text1, text2);
+		Integer levenshteing_distance = StringUtils.getLevenshteinDistance(text1, text2);
+		return tf_distance+(double)levenshteing_distance;
+	}
+
 }
