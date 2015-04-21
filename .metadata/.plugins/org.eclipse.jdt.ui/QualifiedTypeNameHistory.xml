@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="crawl4j.arbo.semantic.SemanticArboController"/>
 <fullyQualifiedTypeName name="com.parsing.utility.XPathUtility"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="com.urlutilities.URLTitleInfo"/>
 <fullyQualifiedTypeName name="crawl4j.vsm.ProcessMagasinAttributesCompletionPerRayonPerCategoryPerVendorMetrics.CategoryInfo"/>
-<fullyQualifiedTypeName name="org.jsoup.Jsoup"/>
 <fullyQualifiedTypeName name="com.facettes.URLListFacettesWorkerThread.FacettesInfo"/>
 <fullyQualifiedTypeName name="java.lang.NumberFormatException"/>
 <fullyQualifiedTypeName name="java.sql.Statement"/>
 <fullyQualifiedTypeName name="com.parsing.utility.ProductsListParseUtility"/>
 <fullyQualifiedTypeName name="com.parsing.utility.URLComparisonListProductsInfo"/>
-<fullyQualifiedTypeName name="org.jsoup.select.Elements"/>
-<fullyQualifiedTypeName name="org.jsoup.nodes.Element"/>
 <fullyQualifiedTypeName name="org.apache.http.client.params.ClientPNames"/>
 <fullyQualifiedTypeName name="org.apache.http.client.params.HttpClientParams"/>
 <fullyQualifiedTypeName name="java.util.regex.Matcher"/>
@@ -38,7 +34,6 @@
 <fullyQualifiedTypeName name="com.statistics.processing.StatisticsMeasures"/>
 <fullyQualifiedTypeName name="org.apache.commons.lang3.StringUtils"/>
 <fullyQualifiedTypeName name="com.itextpdf.text.List"/>
-<fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="java.util.Arrays"/>
 <fullyQualifiedTypeName name="java.util.Map.Entry"/>
 <fullyQualifiedTypeName name="java.util.concurrent.ConcurrentHashMap"/>
@@ -60,4 +55,9 @@
 <fullyQualifiedTypeName name="java.io.File"/>
 <fullyQualifiedTypeName name="javax.xml.transform.Transformer"/>
 <fullyQualifiedTypeName name="com.statistics.processing.StatisticsUtility"/>
+<fullyQualifiedTypeName name="com.parsing.utility.FacettesParsingOutput"/>
+<fullyQualifiedTypeName name="org.jsoup.select.Elements"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="org.jsoup.nodes.Element"/>
+<fullyQualifiedTypeName name="org.jsoup.Jsoup"/>
 </qualifiedTypeNameHistroy>

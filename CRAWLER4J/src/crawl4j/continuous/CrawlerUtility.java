@@ -125,18 +125,20 @@ public class CrawlerUtility {
 			// finding the number of attributes
 			List<FacettesInfo> list_facettes = new ArrayList<FacettesInfo>();
 			FacettesInfo my_info = new FacettesInfo();
-			Elements facette_elements = doc.select("div.mvFilter");			
+			Elements facette_elements = doc.select("div.mvFacets.jsFCategory.mvFOpen");			
 			for (Element facette : facette_elements ){
 				//System.out.println(e.toString());
-				Elements facette_name = facette.select("div.mvFTit");
+				Elements facette_name = facette.select("div.mvFTitle.noSel");
 				my_info.setFacetteName(facette_name.text());
 				Elements facette_values = facette.select("a");
-				for (Element facette_value : facette_values){
+				for (Element facette_value : facette_values){		
+					System.out.println(facette_value);
+					// old way
 					String categorie_value = facette_value.text();
 					if ("".equals(categorie_value)){
 						categorie_value = facette_value.attr("title");
 					}
-					Matcher matchPattern = CrawlerUtility.bracketPattern.matcher(categorie_value);
+					Matcher matchPattern = bracketPattern.matcher(categorie_value);
 					String categorieCount ="";
 					while (matchPattern.find()) {		
 						categorieCount=matchPattern.group();

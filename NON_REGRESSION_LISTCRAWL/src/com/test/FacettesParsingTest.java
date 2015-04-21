@@ -31,12 +31,8 @@ import com.parsing.utility.URLComparisonListProductsInfo;
 public class FacettesParsingTest {
 	
 	@SuppressWarnings("deprecation")
-	public static void main(String[] args) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
-		//String url = "http://www.cdiscount.com/bagages/homme/sacs-de-sport/l-1432004.html";
-		//String url = "http://www.cdiscount.com/electromenager/refrigerateur-congelateur/achat-refrigerateur/refrigerateur-encastrable/refrigerateur-2-portes/l-11003090502.html";
-		// testing a redirection
-		String url="http://www.cdiscount.com/cdiscount pro/equipement-du-bureau/porte-manteaux-porte-parapluies/porte-manteaux/l-115851401.html";
-		url=url.replace(" ", "%20");
+	public static void main(String[] args) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{		
+		String url="http://www.cdiscount.com/search/10/tondeuse+sans+fil.html";
 		String user_agent= "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
 		try{
 			String solrurl = url + "?b";
