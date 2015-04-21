@@ -1,13 +1,20 @@
 1) Populating the new CATALOG database :
 **** update the PopulatingCatalogDatabase (new csv name, last up to date SQL scripts )
+**** convert it to utf-8
+ sudo iconv -t utf-8 Catalogue_KryterFull_17_04_2015_10_37_30.csv -o Catalogue_KryterFull_17_04_2015_10_37_30_utf8.csv
 **** launch PopulatingCatalogDatabase
 
 
 2) Populating the new CATALOG database :
 **** update the PopulatingSimilarCatalogDatabase (new xml name)
 **** launch the PopulatingSimilarCatalogDatabase
-
-
+**** update TO_FETCH to true over the whole CATALOG
+**** create indexes for the table
+CREATE INDEX ON catalog (sku);
+CREATE INDEX ON catalog (categorie_niveau_4);
+CREATE INDEX ON catalog (categorie_niveau_3);
+CREATE INDEX ON catalog (categorie_niveau_2);
+CREATE INDEX ON catalog (categorie_niveau_1);
 3) Recreate the new CATEGORY_FOLLOWING table using SQL script
 
 
