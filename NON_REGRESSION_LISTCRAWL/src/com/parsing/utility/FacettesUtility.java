@@ -21,6 +21,9 @@ public class FacettesUtility {
 
 		List<FacettesInfo> list_facettes = new ArrayList<FacettesInfo>();
 		FacettesInfo my_info = new FacettesInfo();
+		Elements nb_products = doc.select("div.lpStTit");
+		output.setNb_products(nb_products.text());
+		
 		Elements facette_elements = doc.select("div.mvFacets.jsFCategory.mvFOpen");			
 		for (Element facette : facette_elements ){
 			//System.out.println(e.toString());

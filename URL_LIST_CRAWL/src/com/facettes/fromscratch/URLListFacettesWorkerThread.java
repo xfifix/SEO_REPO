@@ -14,6 +14,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+
 public class URLListFacettesWorkerThread implements Runnable {
 
 	private static Pattern bracketPattern = Pattern.compile("\\(.*?\\)");
@@ -165,13 +166,15 @@ public class URLListFacettesWorkerThread implements Runnable {
 				my_info.setId(idUrl);
 				my_info.setUrl(url);
 
-				Elements facette_elements = doc.select("div.mvFilter");			
+				Elements facette_elements = doc.select("div.mvFacets.jsFCategory.mvFOpen");			
 				for (Element facette : facette_elements ){
 					//System.out.println(e.toString());
-					Elements facette_name = facette.select("div.mvFTit");
+					Elements facette_name = facette.select("div.mvFTitle.noSel");
 					my_info.setFacetteName(facette_name.text());
 					Elements facette_values = facette.select("a");
-					for (Element facette_value : facette_values){
+					for (Element facette_value : facette_values){		
+						System.out.println(facette_value);
+						// old way
 						String categorie_value = facette_value.text();
 						if ("".equals(categorie_value)){
 							categorie_value = facette_value.attr("title");
@@ -189,14 +192,12 @@ public class URLListFacettesWorkerThread implements Runnable {
 							my_info.setFacetteCount(Integer.valueOf(categorieCount));
 							//System.out.println(Integer.valueOf(categorieCount));	
 						} catch (NumberFormatException e){
-							e.printStackTrace();
-							System.out.println("Trouble with urls : "+url);
+							System.out.println("Trouble while formatting a facette");
+							my_info.setFacetteCount(0);
 						}
 						my_info.setFacetteValue(categorie_value);
 						my_fetched_infos.add(my_info);
 						my_info = new FacettesInfo();
-						my_info.setId(idUrl);
-						my_info.setUrl(url);
 						my_info.setFacetteName(facette_name.text());
 					}		
 				}
