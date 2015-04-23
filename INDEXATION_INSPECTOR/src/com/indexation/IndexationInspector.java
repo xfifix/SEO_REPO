@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
+
 import org.apache.http.HttpHost;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.config.RequestConfig;
@@ -27,21 +30,20 @@ import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import org.xml.sax.SAXException;
+
+import com.xpath.utility.XPathUtility;
 
 public class IndexationInspector {
 	//	private static int min_number_of_wait_times = 40;
 	//	private static int max_number_of_wait_times = 60;
 	private static int min_number_of_wait_times = 20;
 	private static int max_number_of_wait_times = 25;
-	private static int bunch_size = 30;
 	private static List<String> user_agents = new ArrayList<String>();
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/url_list_status.properties";
 	private static String user_agent_path = "/home/sduprey/My_Data/My_User_Agents/user-agent.txt";
 	private static String fetch_url_to_check = "SELECT URL FROM URL_TO_CHECK_LIST WHERE TO_FETCH = TRUE";
-	private static String update_url = "UPDATE URL_TO_CHECK_LIST set IN_INDEX=? WHERE URL=?";
+	private static String update_url = "UPDATE URL_TO_CHECK_LIST set IN_INDEX=?, LAST_UPDATE=?, TO_FETCH=false WHERE URL=?";
 	
 	public static void main(String[] args){
 
@@ -108,9 +110,12 @@ public class IndexationInspector {
 			while (rs.next()) {
 				String url_to_test = rs.getString(1);
 				boolean is_index = proxy_in_index_url(url_to_test);
+				System.out.println("Is URL : "+url_to_test+" in index : "+is_index);
 				PreparedStatement update_pst = con.prepareStatement(update_url);
 				update_pst.setBoolean(1, is_index);
-				update_pst.setString(2, url_to_test);
+				java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
+				update_pst.setDate(2,sqlDate);
+				update_pst.setString(3, url_to_test);
 				update_pst.executeUpdate();
 			}
 		} catch (SQLException ex) {
@@ -151,18 +156,14 @@ public class IndexationInspector {
 	public static boolean proxy_in_index_url(String url){
 		// we here fetch up to three paginations
 		long startTimeMs = System.currentTimeMillis( );
-		org.jsoup.nodes.Document doc;
-		int my_rank=30;
-		int nb_results=0;
+		boolean in_index = false;
 
-		String my_url = "";
-		boolean found = false;
 		try{
 			// we wait between x and xx seconds
 			Thread.sleep(randInt(min_number_of_wait_times,max_number_of_wait_times)*1000);
-			System.out.println("Fetching a new page");
-			String constructed_url ="https://www.google.fr/search?q="+url+"&num="+bunch_size;
-
+			System.out.println("Checking a new URL");
+			String constructed_url ="https://www.google.fr/search?hl=fr&safe=off&num=100&q="+url;
+					
 			// adding a fake cookie
 			CookieStore cookieStoreSolr = new BasicCookieStore();
 			BasicClientCookie cookieSolr = new BasicClientCookie("_$hidden", "230.1");
@@ -194,31 +195,15 @@ public class IndexationInspector {
 			String pageString = EntityUtils.toString(responseSERP.getEntity());
 			EntityUtils.consume(responseSERP.getEntity());
 
-			doc =  Jsoup.parse(pageString);
-			Elements serps = doc.select("h3[class=r]");
-			for (Element serp : serps) {
-				Element link = serp.getElementsByTag("a").first();
-				if (link != null){
-					String linkref = link.attr("href");
-					if (linkref.startsWith("/url?q=") || linkref.startsWith("http://")){
-						nb_results++;
-						if (linkref.startsWith("/url?q=")){
-							linkref = linkref.substring(7,linkref.indexOf("&"));
-						} else {
-							if (linkref.indexOf("&") != -1){
-								linkref = linkref.substring(0,linkref.indexOf("&"));
-							}
-						}
-					}
-					//					if (linkref.contains(targe_name) && !found){
-					//						my_rank=nb_results;
-					//						my_url=linkref;
-					//						found=true;
-					//					}			
+			try {
+				String content = XPathUtility.parseContent(pageString,"//div[@id=\"ires\"]//a/@href");
+				if (content.contains(url)){
+					in_index=true;
 				}
-			}
-			if (nb_results == 0){
-				System.out.println("Warning captcha");
+			} catch (XPathExpressionException | ParserConfigurationException
+					| SAXException e) {
+			    System.out.println("Trouble parsing our URL : "+url);
+				e.printStackTrace();
 			}
 		}
 		catch (IOException e) {
@@ -228,15 +213,7 @@ public class IndexationInspector {
 		}
 		long taskTimeMs  = System.currentTimeMillis( ) - startTimeMs;
 		System.out.println("Overall google requesting time : "+taskTimeMs);
-
-		if (nb_results == 0){
-			System.out.println("Warning captcha");
-		}else {
-			System.out.println("Number of links read in the pages : "+nb_results);
-		}
-		//		System.out.println("My rank : "+my_rank+" for keyword : "+keyword);
-		//		System.out.println("My URL : "+my_url+" for keyword : "+keyword);
-		return true;
+		return in_index;
 	}
 
 	public static int randInt(int min, int max) {
