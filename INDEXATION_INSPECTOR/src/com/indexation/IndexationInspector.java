@@ -191,6 +191,11 @@ public class IndexationInspector {
 
 			CloseableHttpResponse responseSERP = httpclient.execute(getSERPrequest,context);
 
+			if (responseSERP.getStatusLine().getStatusCode() == 503){
+				Thread.sleep(3600*1000);
+				proxy_in_index_url(url);
+			}
+			
 			// and ensure it is fully consumed
 			String pageString = EntityUtils.toString(responseSERP.getEntity());
 			EntityUtils.consume(responseSERP.getEntity());
