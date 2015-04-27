@@ -21,9 +21,9 @@ import java.util.concurrent.ExecutorService;
 import com.data.DataEntry;
 import com.parameters.CategorizerParameters;
 
-public class CategoryBagWordsComputation {
+public class CategoryBagWordsComputer {
 
-	public static String kriter_conf_path = "/home/sduprey/My_Data/My_Categorizer_Conf/categorizer.conf";
+	public static String categorizer_conf_path = "/home/sduprey/My_Data/My_Categorizer_Conf/categorizer.conf";
 	public static Properties properties;
 
 	private static String select_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT, RAYON, TO_FETCH FROM CATALOG";
@@ -32,7 +32,7 @@ public class CategoryBagWordsComputation {
 	private static String create_CATEGORY_FOLLOWING_table = "select distinct categorie_niveau_4, count(*), true as to_fetch into CATEGORY_FOLLOWING from CATALOG group by categorie_niveau_4";
 
 	public static void main(String[] args) {
-		System.out.println("Reading the configuration files : "+kriter_conf_path);
+		System.out.println("Reading the configuration files : "+categorizer_conf_path);
 		try{
 			loadProperties();
 			CategorizerParameters.database_con_path=properties.getProperty("categorizer.database_con_path");
@@ -206,7 +206,7 @@ public class CategoryBagWordsComputation {
 	private static void loadProperties(){
 		properties = new Properties();
 		try {
-			properties.load(new FileReader(new File(kriter_conf_path)));
+			properties.load(new FileReader(new File(categorizer_conf_path)));
 		} catch (Exception e) {
 			System.out.println("Failed to load properties file!!");
 			e.printStackTrace();
