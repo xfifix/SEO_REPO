@@ -24,11 +24,6 @@ if not found, we insert a row with the word, the url and the number of documents
 # insert statement 
 INSERT INTO CATEGORIZER_CORPUS_WORDS(WORD,NB_DOCUMENTS,DOC_LIST) values(?,?,?)
 
-INSERT INTO CATEGORIZER_CORPUS_WORDS_METADATA(THEMA,NB_TOTAL_DOCUMENTS) values('TOTAL_NUMBER_DOCUMENTS',1000000)
-
-# UPDATE
-UPDATE CATEGORIZER_CORPUS_WORDS_METADATA SET NB_TOTAL_DOCUMENTS=? WHERE THEMA='TOTAL_NUMBER_DOCUMENTS'
-
 
 # if found, we check if the document is not already present in our list
 # if the document is already present we do nothing

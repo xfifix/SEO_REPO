@@ -78,7 +78,7 @@ public class CorpusCache {
 				counter++;
 				String word = rs.getString(1);
 				int nb_document = rs.getInt(2);
-				Double idf = Math.log10(nb_total_documents/nb_document);
+				Double idf = Math.log10((double)nb_total_documents/(double)nb_document);
 				corpus_idf.put(word, idf);
 				System.out.println("Appending "+counter+" word "+word + " with idf : " +idf);
 			}	
