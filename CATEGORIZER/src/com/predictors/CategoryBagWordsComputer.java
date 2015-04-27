@@ -14,9 +14,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutorService;
+import java.util.Properties;
 
 import com.data.DataEntry;
 import com.parameters.CategorizerParameters;
@@ -26,7 +25,7 @@ public class CategoryBagWordsComputer {
 	public static String categorizer_conf_path = "/home/sduprey/My_Data/My_Categorizer_Conf/categorizer.conf";
 	public static Properties properties;
 
-	private static String select_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT, RAYON, TO_FETCH FROM CATALOG";
+	private static String select_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT, RAYON, TO_FETCH FROM DATA";
 
 	private static String drop_CATEGORY_FOLLOWING_table = "DROP TABLE IF EXISTS CATEGORY_FOLLOWING";
 	private static String create_CATEGORY_FOLLOWING_table = "select distinct categorie_niveau_4, count(*), true as to_fetch into CATEGORY_FOLLOWING from CATALOG group by categorie_niveau_4";
@@ -91,14 +90,14 @@ public class CategoryBagWordsComputer {
 		String user = props.getProperty("db.user");
 		String passwd = props.getProperty("db.passwd");
 
-		System.out.println("You'll connect to the postgresql KRITERDB database as "+user);
-		// Instantiating the pool thread
-		ExecutorService executor = null;
+		System.out.println("You'll connect to the postgresql CATEGORIZERDB database as "+user);
+
 		// The database connection
 		Connection con = null;
 		PreparedStatement pst = null;
 		ResultSet rs = null;
 		try {  
+			CategoryBagOfWordsManager manager = new CategoryBagOfWordsManager(url, user, passwd);
 			con = DriverManager.getConnection(url, user, passwd);
 			System.out.println("Cleaning up and building the category_following table");
 			if (CategorizerParameters.recreate_table){
@@ -161,7 +160,8 @@ public class CategoryBagWordsComputer {
 				String category=pairs.getKey();
 				List<DataEntry> my_data = pairs.getValue();
 				System.out.println("Processing category : "+category);
-				System.out.println("List size : "+my_data.size());		
+				System.out.println("List size : "+my_data.size());	
+				manager.updateCategoryEntry(category,my_data);
 			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -177,9 +177,6 @@ public class CategoryBagWordsComputer {
 			} catch (SQLException ex) {
 				ex.printStackTrace();
 			}
-		}
-		executor.shutdown();
-		while (!executor.isTerminated()) {
 		}
 		System.out.println("Finished all threads");
 		if (con != null) {

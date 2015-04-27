@@ -6,16 +6,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 
 import com.data.DataEntry;
 
-public class CorpusManager {
+public class CorpusFrequencyManager {
 
 	private static Connection con;
 
@@ -23,7 +20,7 @@ public class CorpusManager {
 	private static String insert_statement="INSERT INTO CATEGORIZER_CORPUS_WORDS(WORD,NB_DOCUMENTS,DOC_LIST) values(?,?,?)";
 	private static String update_statement="UPDATE CATEGORIZER_CORPUS_WORDS SET NB_DOCUMENTS=?,DOC_LIST=? WHERE WORD=?";
 
-	public CorpusManager(String url,String user,String passwd) throws SQLException{
+	public CorpusFrequencyManager(String url,String user,String passwd) throws SQLException{
 		con = DriverManager.getConnection(url, user, passwd);
 		RemoveStopWordsUtility.loadFrenchStopWords();
 	}

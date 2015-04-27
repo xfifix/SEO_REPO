@@ -60,6 +60,5 @@
 	<classpathentry kind="lib" path="lib/tika-core-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/tika-parsers-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/wstx-asl-3.2.7.jar"/>
-	<classpathentry kind="src" path="/CRAWLER4J"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

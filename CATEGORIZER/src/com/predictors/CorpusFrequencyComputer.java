@@ -91,7 +91,7 @@ public class CorpusFrequencyComputer {
 		PreparedStatement pst = null;
 		ResultSet rs = null;
 		try {  
-			CorpusManager manager = new CorpusManager(url, user, passwd);
+			CorpusFrequencyManager manager = new CorpusFrequencyManager(url, user, passwd);
 			con = DriverManager.getConnection(url, user, passwd);
 			System.out.println("Cleaning up and building the category_following table");
 			if (CategorizerParameters.recreate_table){
