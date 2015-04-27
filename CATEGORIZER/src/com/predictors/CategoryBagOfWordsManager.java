@@ -25,7 +25,7 @@ public class CategoryBagOfWordsManager {
 	private static String select_corpus_frequency_word_statement="select nb_documents from CATEGORIZER_CORPUS_WORDS where word=?";
 	private static String select_totalcount_statement="select count(*) from DATA";
 	// BLOB storing requests
-	private static String get_blob_oid = "SELECT BLOBOID FROM CATEGORY_BAGOFWORDS WHERE CATEGORY = ?";
+	private static String get_blob_oid = "SELECT BLOBOID FROM CATEGORY_BAG_OF_WORDS WHERE CATEGORY = ?";
 	private static String update_blob="UPDATE CATEGORY_BAG_OF_WORDS SET BLOBOID=?,LAST_UPDATE=? WHERE CATEGORY=?";
 	private static String insert_blob="INSERT INTO CATEGORY_BAG_OF_WORDS (CATEGORY,BLOBOID,LAST_UPDATE) VALUES (?,?,?)";
 
@@ -58,7 +58,9 @@ public class CategoryBagOfWordsManager {
 		try {
 			Map<String, Double> tf_idf_bag_of_words = convert_to_tfidf(tf_bag_of_words);
 			System.out.println("Updating category : "+category);
+			con.setAutoCommit(false);
 			updateCategoryBlob(category,tf_idf_bag_of_words);
+			con.setAutoCommit(true);
 		} catch (SQLException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
