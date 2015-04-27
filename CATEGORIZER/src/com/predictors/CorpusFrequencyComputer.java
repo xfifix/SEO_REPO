@@ -9,14 +9,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Map.Entry;
-import java.util.concurrent.ExecutorService;
 
 import com.data.DataEntry;
 import com.parameters.CategorizerParameters;
@@ -26,10 +19,10 @@ public class CorpusFrequencyComputer {
 	public static String categorizer_conf_path = "/home/sduprey/My_Data/My_Categorizer_Conf/categorizer.conf";
 	public static Properties properties;
 
-	private static String select_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT, RAYON, TO_FETCH FROM CATALOG";
+	private static String select_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT, RAYON, TO_FETCH FROM DATA";
 
-	private static String drop_CATEGORY_FOLLOWING_table = "DROP TABLE IF EXISTS CATEGORY_FOLLOWING";
-	private static String create_CATEGORY_FOLLOWING_table = "select distinct categorie_niveau_4, count(*), true as to_fetch into CATEGORY_FOLLOWING from CATALOG group by categorie_niveau_4";
+	private static String drop_DATA_FOLLOWING_table = "DROP TABLE IF EXISTS DATA_FOLLOWING";
+	private static String create_DATA_FOLLOWING_table = "select distinct categorie_niveau_4, count(*), true as to_fetch into DATA_FOLLOWING from DATA group by categorie_niveau_4";
 
 	public static void main(String[] args) {
 		System.out.println("Reading the configuration files : "+categorizer_conf_path);
@@ -92,9 +85,7 @@ public class CorpusFrequencyComputer {
 		String passwd = props.getProperty("db.passwd");
 
 		
-		System.out.println("You'll connect to the postgresql KRITERDB database as "+user);
-		// Instantiating the pool thread
-		ExecutorService executor = null;
+		System.out.println("You'll connect to the postgresql CATEGORIZERDB database as "+user);
 		// The database connection
 		Connection con = null;
 		PreparedStatement pst = null;
@@ -113,7 +104,9 @@ public class CorpusFrequencyComputer {
 
 			pst = con.prepareStatement(select_entry_from_category4);
 			rs = pst.executeQuery();
+			int loop_count = 0;
 			while (rs.next()) {
+				loop_count++;
 				// fetching all
 				DataEntry entry = new DataEntry();
 				String sku = rs.getString(1);
@@ -145,7 +138,7 @@ public class CorpusFrequencyComputer {
 				Boolean to_fetch = rs.getBoolean(12);
 				entry.setTO_FETCH(to_fetch);
 				// we here just keep the small categories
-				System.out.println("Processing entry SKU : "+entry.getSKU());
+				System.out.println("Processing entry SKU : "+entry.getSKU()+" number : "+loop_count);
 				manager.updateEntry(entry);
 			}		
 			rs.close();
@@ -165,10 +158,6 @@ public class CorpusFrequencyComputer {
 				ex.printStackTrace();
 			}
 		}
-		executor.shutdown();
-		while (!executor.isTerminated()) {
-		}
-		System.out.println("Finished all threads");
 		if (con != null) {
 			try {
 				con.close();
@@ -180,11 +169,11 @@ public class CorpusFrequencyComputer {
 	}
 
 	private static void cleaning_category_scheduler_database(Connection con) throws SQLException{
-		PreparedStatement drop_category_table_st = con.prepareStatement(drop_CATEGORY_FOLLOWING_table);
+		PreparedStatement drop_category_table_st = con.prepareStatement(drop_DATA_FOLLOWING_table);
 		drop_category_table_st.executeUpdate();
 		System.out.println("Dropping the old CATEGORY_FOLLOWING table");
 		drop_category_table_st.close();
-		PreparedStatement create_category_table_st = con.prepareStatement(create_CATEGORY_FOLLOWING_table);
+		PreparedStatement create_category_table_st = con.prepareStatement(create_DATA_FOLLOWING_table);
 		create_category_table_st.executeUpdate();
 		System.out.println("Creating the new CATEGORY_FOLLOWING table");
 		create_category_table_st.close();

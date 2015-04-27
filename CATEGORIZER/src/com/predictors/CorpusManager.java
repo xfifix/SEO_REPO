@@ -5,51 +5,50 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import com.data.DataEntry;
-
-import crawl4j.vsm.CorpusCache;
-import crawl4j.vsm.VectorStateSpringRepresentation;
 
 public class CorpusManager {
 
 	private static Connection con;
-	
+
 	private static String find_statement="select DOC_LIST from CATEGORIZER_CORPUS_WORDS where WORD=?";
 	private static String insert_statement="INSERT INTO CATEGORIZER_CORPUS_WORDS(WORD,NB_DOCUMENTS,DOC_LIST) values(?,?,?)";
 	private static String update_statement="UPDATE CATEGORIZER_CORPUS_WORDS SET NB_DOCUMENTS=?,DOC_LIST=? WHERE WORD=?";
 
 	public CorpusManager(String url,String user,String passwd) throws SQLException{
 		con = DriverManager.getConnection(url, user, passwd);
+		RemoveStopWordsUtility.loadFrenchStopWords();
 	}
 
 	public void updateEntry(DataEntry entry){
-		this.updateText(entry.getLIBELLE_PRODUIT(),entry.getSKU());
+		this.updateText(entry.getLIBELLE_PRODUIT().toLowerCase()+" "+entry.getDESCRIPTION_LONGUEUR80().toLowerCase(),entry.getSKU());
 	}
-	
-	public void updateText(String text, String currentUrl){
+
+	public void updateText(String text, String SKU){
 		// we don't need that as we have updated our stopwords with single letters
 		//String semantic_text = CorpusCache.preprocessSemanticText(text);
-		String semantic_text = text;
-		VectorStateSpringRepresentation vector_rep = new VectorStateSpringRepresentation(semantic_text);
-		Map<String, Integer> word_map = vector_rep.getWordFrequencies();
+		Map<String,Integer> word_map = RemoveStopWordsUtility.removeStopWords(text);
+
 		Iterator<Map.Entry<String, Integer>> it = word_map.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry<String, Integer> pairs = (Map.Entry<String, Integer>)it.next();
 			String word=pairs.getKey();
+			Integer count=pairs.getValue();
 			// we here don't want any number
-			if (!word.matches(".*\\d+.*")){
-				System.out.println("Word to add to the corpus : "+word);
-				this.updateWord(word, currentUrl);
-			}
+			System.out.println("Word to add to the corpus : "+word);
+			this.updateSKU(word, SKU,count);
 		}	
 	}
 
-	public void updateWord(String word, String currentUrl){
+	public void updateSKU(String word, String SKU, Integer counter){
 		try{
 			// finding if the world is already present in our database dictionary
 			PreparedStatement select_st = con.prepareStatement(find_statement);
@@ -64,49 +63,59 @@ public class CorpusManager {
 			select_st.close();
 			if (found){	
 				// we found it
-				// we check if the current url is already in the list
-				Set<String> links_set = parse_nodes_out_links(document_list);
-				boolean isAlreadyPresent=links_set.contains(currentUrl);
-
-				// if the document is already listed, the frequency is up to date, we do nothing
-				if (!isAlreadyPresent){
-					// else if the document is not present, we must update the database row by adding the document
-					links_set.add(currentUrl);
-					PreparedStatement update_st = con.prepareStatement(update_statement);
-					//NB_DOCUMENTS=?,DOCUMENTS=? WHERE WORD=?
-					update_st.setInt(1,links_set.size());
-					update_st.setString(2,links_set.toString());
-					update_st.setString(3,word);
-					update_st.executeUpdate();
-				}
+				Map<String,Integer> skus_map = parse_skulist_links(document_list);
+			    // we update the map with the new SKU
+				skus_map.put(SKU,counter);
+				Integer total = count_map(skus_map);
+				PreparedStatement update_st = con.prepareStatement(update_statement);
+				//NB_DOCUMENTS=?,DOCUMENTS=? WHERE WORD=?
+				update_st.setInt(1,total);
+				update_st.setString(2,skus_map.toString());
+				update_st.setString(3,word);
+				update_st.executeUpdate();
 			}else{
 				// we did not find it	
-				// we create the new document set
-				Set<String> documents_set = new HashSet<String>();
-				documents_set.add(currentUrl);
+				// we create the map from scratch
+				Map<String,Integer> documents_map = new HashMap<String,Integer>();
+				documents_map.put(SKU,counter);
 				// we have to add it 
 				PreparedStatement insert_st = con.prepareStatement(insert_statement);
 				//(WORD,NB_DOCUMENTS,DOCUMENTS) values(?,?,?)
 				insert_st.setString(1,word);
-				insert_st.setInt(2,documents_set.size());
-				insert_st.setString(3,documents_set.toString());
+				insert_st.setInt(2,counter);
+				insert_st.setString(3,documents_map.toString());
 				insert_st.executeUpdate();
 			}
-			System.out.println(Thread.currentThread()+"Committed " +  " updates");
+			System.out.println(Thread.currentThread()+"Committed one update");
 		} catch (SQLException e){
 			e.printStackTrace();
-			System.out.println("Trouble inserting "+word + " for URL : "+currentUrl);
+			System.out.println("Trouble inserting "+word + " for URL : "+SKU);
 		}	
 	}
-	
-	public Set<String> parse_nodes_out_links(String output_links) {
-		output_links = output_links.replace("[", "");
-		output_links = output_links.replace("]", "");
+
+
+    public Integer count_map(Map<String,Integer> tocount){
+    	Integer total = 0;
+		Iterator<Entry<String, Integer>> it = tocount.entrySet().iterator();
+		// dispatching to threads
+		while (it.hasNext()){	
+			Map.Entry<String, Integer> pairs = (Map.Entry<String, Integer>)it.next();
+			Integer local_count = pairs.getValue();
+			total=total+local_count;
+		}
+    	return total;
+    }
+    
+
+	public Map<String,Integer> parse_skulist_links(String output_links) {
+		output_links = output_links.replace("{", "");
+		output_links = output_links.replace("}", "");
 		String[] url_outs = output_links.split(",");
-		Set<String> outputSet = new HashSet<String>();
+		Map<String,Integer> outputSet = new HashMap<String,Integer>();
 		for (String url_out : url_outs){
 			url_out=url_out.trim();
-			outputSet.add(url_out);
+			String[] skuData = url_out.split("=");
+			outputSet.put(skuData[0],Integer.valueOf(skuData[1]));
 		}
 		return outputSet;
 	}
