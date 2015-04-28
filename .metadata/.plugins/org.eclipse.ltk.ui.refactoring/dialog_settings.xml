@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="RefactoringStatusDialog">
-		<item value="808" key="DIALOG_WIDTH"/>
-		<item value="480" key="DIALOG_HEIGHT"/>
+		<item value="816" key="DIALOG_WIDTH"/>
+		<item value="484" key="DIALOG_HEIGHT"/>
 		<item value="1|Ubuntu|10.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="RefactoringWizard.preview">
