@@ -14,15 +14,13 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.parsing.utility.XPathUtility;
-
 public class BatchSearchComparingURLListThreadPoolLauncher {
 
 	private static String select_expression_to_fetch = "SELECT ID FROM SOLR_VS_EXALEAD_SEARCH_LIST WHERE TO_FETCH = TRUE";
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/url_list_infos.properties";
 
-	private static int fixed_pool_size = 500;
-	private static int size_bucket = 20000;
+	private static int fixed_pool_size = 25;
+	private static int size_bucket = 15000;
 //	private static int fixed_pool_size = 1000;
 //	private static int size_bucket = 10000;
 //	private static int fixed_pool_size = 100;
