@@ -24,14 +24,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-public class CategorizerCorpusCache {
+public class KriterStaticCorpusCache {
 
 	private static Connection con;
-	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/categorizer.properties";
-	private static CategorizerCorpusCache instance;
-
+	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
+	static {
+		new KriterStaticCorpusCache();
+	}
 	private static String select_totalcount_statement="select count(*) from CATALOG";
-	private static String select_word_statement="select word, nb_documents from CATEGORIZER_CORPUS_WORDS";
+	private static String select_word_statement="select word, nb_documents from KRITER_CORPUS_WORDS";
 
 	private static Map<String, Double> corpus_idf = new HashMap<String, Double>();
 	private static int nb_total_documents = 1;
@@ -39,7 +40,7 @@ public class CategorizerCorpusCache {
 	private static int nb_semantic_hits_threshold = 20;
 	private static String semantic_hit_separator = " ";
 
-	private CategorizerCorpusCache(){
+	private KriterStaticCorpusCache(){
 		Properties props = new Properties();
 		FileInputStream in = null;      
 		try {
@@ -67,12 +68,6 @@ public class CategorizerCorpusCache {
 		}
 	}
 
-	public static CategorizerCorpusCache getInstance(){
-		if (instance == null){
-			instance = new CategorizerCorpusCache();
-		}
-		return instance;
-	}
 
 	public static void load(){
 		try{
@@ -266,10 +261,7 @@ public class CategorizerCorpusCache {
 		String[] orderedKeys=getKeys(tfIdfMapSortedMap);
 		return StringUtils.join(orderedKeys,semantic_hit_separator);
 	}
-	//	facetteObject.put("facette_name", info.getFacetteName());
-	//	facetteObject.put("facette_value", info.getFacetteValue());
-	//	facetteObject.put("facette_count", info.getFacetteCount());
-	//	facettesArray.add(facetteObject);
+
 	@SuppressWarnings("unchecked")
 	public static String getOrderedKeysBestHitsJSON(Map<String, Double> tfIdfMapSortedMap){
 		JSONArray tfidfsArray = new JSONArray();

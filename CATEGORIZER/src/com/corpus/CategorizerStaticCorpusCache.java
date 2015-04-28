@@ -16,36 +16,37 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-public class KriterCorpusCache {
+public class CategorizerStaticCorpusCache {
 
 	private static Connection con;
-	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
-	
-	private static KriterCorpusCache instance;
-	
+	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/categorizer.properties";
+	static {
+		new CategorizerStaticCorpusCache();
+	}
 	private static String select_totalcount_statement="select count(*) from CATALOG";
-	private static String select_word_statement="select word, nb_documents from KRITER_CORPUS_WORDS";
+	private static String select_word_statement="select word, nb_documents from CATEGORIZER_CORPUS_WORDS";
 
 	private static Map<String, Double> corpus_idf = new HashMap<String, Double>();
 	private static int nb_total_documents = 1;
-	
+
 	private static int nb_semantic_hits_threshold = 20;
 	private static String semantic_hit_separator = " ";
-	
-	private KriterCorpusCache() {
+
+	private CategorizerStaticCorpusCache(){
 		Properties props = new Properties();
 		FileInputStream in = null;      
 		try {
 			in = new FileInputStream(database_con_path);
 			props.load(in);
+			// the following properties have been identified
 			String url = props.getProperty("db.url");
 			String user = props.getProperty("db.user");
 			String passwd = props.getProperty("db.passwd");
@@ -65,16 +66,8 @@ public class KriterCorpusCache {
 				ex.printStackTrace();
 			}
 		}
-		// the following properties have been identified
+	}
 
-	}
-	
-	public static KriterCorpusCache getInstance(){
-		if (instance == null){
-			instance = new KriterCorpusCache();
-		}
-		return instance;
-	}
 
 	public static void load(){
 		try{
@@ -229,7 +222,7 @@ public class KriterCorpusCache {
 		for (String k : v2.keySet()) norm2 += v2.get(k) * v2.get(k);
 		return sclar / Math.sqrt(norm1 * norm2);
 	}
-	
+
 
 	public static String formatTFIDFMapWithWeights(Map<String, Double> tfIdfMap){
 		Map<String, Double> tfIdfMapSortedMap = sortByValueDescendingly( tfIdfMap );
@@ -268,10 +261,7 @@ public class KriterCorpusCache {
 		String[] orderedKeys=getKeys(tfIdfMapSortedMap);
 		return StringUtils.join(orderedKeys,semantic_hit_separator);
 	}
-	//	facetteObject.put("facette_name", info.getFacetteName());
-	//	facetteObject.put("facette_value", info.getFacetteValue());
-	//	facetteObject.put("facette_count", info.getFacetteCount());
-	//	facettesArray.add(facetteObject);
+
 	@SuppressWarnings("unchecked")
 	public static String getOrderedKeysBestHitsJSON(Map<String, Double> tfIdfMapSortedMap){
 		JSONArray tfidfsArray = new JSONArray();

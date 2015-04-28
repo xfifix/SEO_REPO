@@ -6,8 +6,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.corpus.KriterCorpusCache;
-
+import com.corpus.KriterStaticCorpusCache;
 
 public class StatisticsUtility {
 
@@ -176,11 +175,11 @@ public class StatisticsUtility {
 	}
 
 	public static Double computeTFdistance(String text1,String text2){
-		return KriterCorpusCache.getInstance().computeTFSimilarity(text1, text2);
+		return KriterStaticCorpusCache.computeTFSimilarity(text1, text2);
 	}
 
 	public static Double computeTFIDFdistance(String text1,String text2){
-		return  KriterCorpusCache.getInstance().computeTFSIDFimilarity(text1, text2);
+		return  KriterStaticCorpusCache.computeTFSIDFimilarity(text1, text2);
 	}
 
 	public static Integer computeLevenshteindistance(String text1,String text2){
@@ -188,9 +187,8 @@ public class StatisticsUtility {
 	}
 	
 	public static Double computeAlgoWeightedDistance(String text1,String text2){
-		Double tf_distance = KriterCorpusCache.computeTFSimilarity(text1, text2);
+		Double tf_distance = KriterStaticCorpusCache.computeTFSimilarity(text1, text2);
 		Integer levenshteing_distance = StringUtils.getLevenshteinDistance(text1, text2);
 		return tf_distance+(double)levenshteing_distance;
 	}
-
 }
