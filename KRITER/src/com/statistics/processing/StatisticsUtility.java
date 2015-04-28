@@ -177,14 +177,14 @@ public class StatisticsUtility {
 	public static Double computeTFdistance(String text1,String text2){
 		return KriterStaticCorpusCache.computeTFSimilarity(text1, text2);
 	}
-
-	public static Double computeTFIDFdistance(String text1,String text2){
-		return  KriterStaticCorpusCache.computeTFSIDFimilarity(text1, text2);
-	}
+	
+//  this method is not multithreaded
+//	public static Double computeTFIDFdistance(String text1,String text2){
+//		return  KriterStaticCorpusCache.computeTFSIDFimilarity(text1, text2);
+//	}
 
 	public static Integer computeLevenshteindistance(String text1,String text2){
 		return StringUtils.getLevenshteinDistance(text1, text2);
 	}
 	
-
 }

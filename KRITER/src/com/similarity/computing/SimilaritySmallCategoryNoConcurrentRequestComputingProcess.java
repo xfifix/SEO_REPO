@@ -52,6 +52,7 @@ public class SimilaritySmallCategoryNoConcurrentRequestComputingProcess {
 			KriterParameter.batch_size =Integer.valueOf(properties.getProperty("kriter.batch_size"));
 			KriterParameter.displaying_threshold =Integer.valueOf(properties.getProperty("kriter.displaying_threshold"));
 			KriterParameter.computing_max_list_size =KriterParameter.small_computing_max_list_size;
+			KriterParameter.max_doc_presence_threshold=Integer.valueOf(properties.getProperty("kriter.max_doc_presence_threshold"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

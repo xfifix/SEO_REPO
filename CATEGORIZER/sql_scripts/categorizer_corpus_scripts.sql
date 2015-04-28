@@ -18,7 +18,6 @@ if not found, we insert a row with the word, the url and the number of documents
 # insert statement 
 INSERT INTO CATEGORIZER_CORPUS_WORDS(WORD,NB_DOCUMENTS,DOC_LIST) values(?,?,?)
 
-
 # if found, we check if the document is not already present in our list
 # if the document is already present we do nothing
 # if the document is not present we just update the row by incrementing nb_documents and appending the current URL to the documents

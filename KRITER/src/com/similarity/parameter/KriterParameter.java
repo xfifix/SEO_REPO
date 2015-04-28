@@ -16,4 +16,5 @@ public class KriterParameter {
 	public  static int computing_max_list_size;
 	public static int batch_size;
 	public static int displaying_threshold;
+	public static int max_doc_presence_threshold;
 }

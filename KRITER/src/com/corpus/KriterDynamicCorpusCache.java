@@ -8,6 +8,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -24,6 +25,8 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import com.similarity.parameter.KriterParameter;
 
 public class KriterDynamicCorpusCache {
 
@@ -192,11 +195,40 @@ public class KriterDynamicCorpusCache {
 		return output;
 	}
 
+	public List<String> getLevenshteinWordsAboveThreshold(Map<String, Integer> v1){
+		List<String> output = new ArrayList<String>();
+		Iterator<Entry<String, Integer>> it = v1.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<String, Integer> pairs = it.next();
+			String word=pairs.getKey();
+			Double wordIdf = getIDF(word);
+			if (wordIdf >= ((double)nb_total_documents/(double)KriterParameter.max_doc_presence_threshold)){
+				output.add(word);
+			}
+		}	
+		return output;
+	}
+
+	public String getLevenshteinBestWord(Map<String, Integer> v1){
+		String output="";
+		Double max=0.;
+		Iterator<Entry<String, Integer>> it = v1.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<String, Integer> pairs = it.next();
+			String word=pairs.getKey();
+			Double wordIdf = getIDF(word);
+			if (wordIdf >= max){
+				wordIdf=max;
+				output=word;
+			}
+		}	
+		return output;
+	}
+
 	public Double getIDF(String word){
 		Double idf = corpus_idf.get(word);
 		if (idf == null){
-			System.out.println("Warning Warning Warning the word is not in the corpus for word : "+word);
-			System.out.println("We act as if it were found just once for word : "+word);
+            // if the word is not found we make as if it has been seen just once in the corpus
 			idf = (double)nb_total_documents;
 		}
 		return idf;
@@ -221,7 +253,6 @@ public class KriterDynamicCorpusCache {
 		for (String k : v2.keySet()) norm2 += v2.get(k) * v2.get(k);
 		return sclar / Math.sqrt(norm1 * norm2);
 	}
-
 
 	public String formatTFIDFMapWithWeights(Map<String, Double> tfIdfMap){
 		Map<String, Double> tfIdfMapSortedMap = sortByValueDescendingly( tfIdfMap );
@@ -370,13 +401,33 @@ public class KriterDynamicCorpusCache {
 		}
 		return result;
 	}
-	
-	public  Double computeAlgoWeightedDistance(String text1,String text2){
-		Double tf_distance = computeTFSimilarity(text1, text2);
-		Integer levenshteing_distance = StringUtils.getLevenshteinDistance(text1, text2);
-		return tf_distance+(double)levenshteing_distance;
-	}
 
+	public  Double computeAlgoWeightedDistance(String text1,String text2){
+
+		if (("".equals(text1))&&("".equals(text2))){
+			return (double) 1;
+		}
+		if (("".equals(text1))&&(!"".equals(text2))){
+			return (double) 0;
+		}
+		if ((!"".equals(text1))&&("".equals(text2))){
+			return (double) 0;
+		}
+		Map<String, Integer> vector1 = computeVectorRepresentation(text1);
+		Map<String, Integer> vector2 = computeVectorRepresentation(text2);
+
+		String bestidfword1 = getLevenshteinBestWord(vector1);
+		String bestidfword2 = getLevenshteinBestWord(vector2);
+
+		Map<String, Double> firstMap = addTFIDF(vector1);
+		Map<String, Double> secondMap = addTFIDF(vector2);
+
+		Double tfIdfDistance = cosine_tfidfsimilarity(firstMap,secondMap);
+
+		Integer levenshteing_distance = StringUtils.getLevenshteinDistance(bestidfword1, bestidfword2);
+
+		return tfIdfDistance+(double)levenshteing_distance;
+	}
 }
 
 

@@ -765,7 +765,9 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		if (entryi.getSKU().equals(entryj.getSKU())){
 			distone = Double.POSITIVE_INFINITY;
 		} else {
-			distone =corpus_manager.computeAlgoWeightedDistance(entryi.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
+			String entryivalue = entryi.getLIBELLE_PRODUIT()+" "+entryi.getDESCRIPTION_LONGUEUR80();
+			String entryjvalue = entryj.getLIBELLE_PRODUIT()+" "+entryj.getDESCRIPTION_LONGUEUR80();
+			distone=corpus_manager.computeAlgoWeightedDistance(entryivalue,entryjvalue);
 		}
 		//	Double disttwo =StatisticsUtility.computeAlgoWeightedDistance(entryi.getDESCRIPTION_LONGUEUR80(), entryj.getDESCRIPTION_LONGUEUR80());
 		//    return distone + disttwo;
