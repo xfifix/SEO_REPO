@@ -15,12 +15,14 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
+import com.corpus.KriterDynamicCorpusCache;
 import com.similarity.parameter.KriterParameter;
 import com.statistics.processing.CatalogEntry;
 import com.statistics.processing.StatisticsUtility;
 
 public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 	private Connection con;
+	private KriterDynamicCorpusCache corpus_manager;
 	private Random my_rand = new Random();
 	private Map<String, List<CatalogEntry>> my_categories_to_compute  = new HashMap<String, List<CatalogEntry>>();
 	// beware static shared global cache for unfetched skus
@@ -41,6 +43,7 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 	public SimilarityComputingNoFetchWorkerThread(Connection con, Map<String, List<CatalogEntry>>  to_fetch) throws SQLException{
 		this.con = con;
 		this.my_categories_to_compute = to_fetch;
+		corpus_manager=new KriterDynamicCorpusCache();
 	}
 
 	public void run() {
@@ -762,7 +765,7 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 		if (entryi.getSKU().equals(entryj.getSKU())){
 			distone = Double.POSITIVE_INFINITY;
 		} else {
-			distone =StatisticsUtility.computeAlgoWeightedDistance(entryi.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
+			distone =corpus_manager.computeAlgoWeightedDistance(entryi.getLIBELLE_PRODUIT(), entryj.getLIBELLE_PRODUIT());
 		}
 		//	Double disttwo =StatisticsUtility.computeAlgoWeightedDistance(entryi.getDESCRIPTION_LONGUEUR80(), entryj.getDESCRIPTION_LONGUEUR80());
 		//    return distone + disttwo;

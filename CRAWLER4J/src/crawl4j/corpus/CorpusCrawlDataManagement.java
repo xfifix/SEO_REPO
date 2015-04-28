@@ -70,9 +70,7 @@ public class CorpusCrawlDataManagement {
 	}
 
 	public void updateText(String text, String currentUrl){
-		String semantic_text = CorpusCache.preprocessSemanticText(text);
-		VectorStateSpringRepresentation vector_rep = new VectorStateSpringRepresentation(semantic_text);
-		Map<String, Integer> word_map = vector_rep.getWordFrequencies();
+		Map<String, Integer> word_map= CorpusCache.computePageTFVector(text);
 		Iterator<Map.Entry<String, Integer>> it = word_map.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry<String, Integer> pairs = (Map.Entry<String, Integer>)it.next();
