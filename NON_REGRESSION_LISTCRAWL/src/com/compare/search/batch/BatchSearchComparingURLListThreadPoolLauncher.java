@@ -21,14 +21,10 @@ public class BatchSearchComparingURLListThreadPoolLauncher {
 
 	private static int fixed_pool_size = 25;
 	private static int size_bucket = 15000;
-//	private static int fixed_pool_size = 1000;
-//	private static int size_bucket = 10000;
-//	private static int fixed_pool_size = 100;
-//	private static int size_bucket = 50;
 	
 	// debugging parameters
-	//private static int fixed_pool_size = 10;
-    //private static int size_bucket = 10;	
+//	private static int fixed_pool_size = 1;
+//    private static int size_bucket = 100;	
 	private static List<Integer> tofetch_list = new ArrayList<Integer>();
 
 	public static void main(String[] args) {
