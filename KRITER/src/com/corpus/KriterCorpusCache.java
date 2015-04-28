@@ -1,5 +1,7 @@
 package com.corpus;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -14,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -24,7 +27,10 @@ import org.json.simple.JSONObject;
 public class KriterCorpusCache {
 
 	private static Connection con;
-
+	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
+	
+	private static KriterCorpusCache instance;
+	
 	private static String select_totalcount_statement="select count(*) from CATALOG";
 	private static String select_word_statement="select word, nb_documents from KRITER_CORPUS_WORDS";
 
@@ -34,10 +40,40 @@ public class KriterCorpusCache {
 	private static int nb_semantic_hits_threshold = 20;
 	private static String semantic_hit_separator = " ";
 	
-	public KriterCorpusCache(String url,String user,String passwd) throws SQLException{
-		con = DriverManager.getConnection(url, user, passwd);
-		RemoveStopWordsUtility.loadFrenchStopWords();
-		load();
+	private KriterCorpusCache() {
+		Properties props = new Properties();
+		FileInputStream in = null;      
+		try {
+			in = new FileInputStream(database_con_path);
+			props.load(in);
+			String url = props.getProperty("db.url");
+			String user = props.getProperty("db.user");
+			String passwd = props.getProperty("db.passwd");
+			con = DriverManager.getConnection(url, user, passwd);
+			RemoveStopWordsUtility.loadFrenchStopWords();
+			load();
+		} catch (IOException | SQLException ex) {
+			System.out.println("Trouble fetching database configuration");
+			ex.printStackTrace();
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException ex) {
+				System.out.println("Trouble fetching database configuration");
+				ex.printStackTrace();
+			}
+		}
+		// the following properties have been identified
+
+	}
+	
+	public static KriterCorpusCache getInstance(){
+		if (instance == null){
+			instance = new KriterCorpusCache();
+		}
+		return instance;
 	}
 
 	public static void load(){
