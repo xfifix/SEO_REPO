@@ -18,13 +18,15 @@ import java.util.Map;
 import org.postgresql.largeobject.LargeObject;
 import org.postgresql.largeobject.LargeObjectManager;
 
+import com.corpus.CategorizerDynamicCorpusCache;
 import com.corpus.RemoveStopWordsUtility;
 import com.data.DataEntry;
 
 public class CategoryBagOfWordsManager {
-	private static Connection con;
-	private static String select_corpus_frequency_word_statement="select nb_documents from CATEGORIZER_CORPUS_WORDS where word=?";
-	private static String select_totalcount_statement="select count(*) from DATA";
+	private Connection con;
+	
+	private CategorizerDynamicCorpusCache corpus_cache;
+
 	// BLOB storing requests
 	private static String get_blob_oid = "SELECT BLOBOID FROM CATEGORY_BAG_OF_WORDS WHERE CATEGORY = ?";
 	private static String update_blob="UPDATE CATEGORY_BAG_OF_WORDS SET BLOBOID=?,LAST_UPDATE=? WHERE CATEGORY=?";
@@ -32,6 +34,7 @@ public class CategoryBagOfWordsManager {
 
 	public CategoryBagOfWordsManager(String url,String user,String passwd) throws SQLException{
 		con = DriverManager.getConnection(url, user, passwd);
+		corpus_cache=new CategorizerDynamicCorpusCache(url, user, passwd);
 		RemoveStopWordsUtility.loadFrenchStopWords();
 	}
 
@@ -57,7 +60,7 @@ public class CategoryBagOfWordsManager {
 
 		// we compute the tf/idf vector for the current category 
 		try {
-			Map<String, Double> tf_idf_bag_of_words = convert_to_tfidf(tf_bag_of_words);
+			Map<String, Double> tf_idf_bag_of_words = corpus_cache.convert_to_tfidf(tf_bag_of_words);
 			System.out.println("Updating category : "+category);
 			con.setAutoCommit(false);
 			updateCategoryBlob(category,tf_idf_bag_of_words);
@@ -67,63 +70,6 @@ public class CategoryBagOfWordsManager {
 			e.printStackTrace();
 			System.out.println("Trouble updating the BLOB bag of words for category : "+category);
 		}
-
-	}
-
-	public Map<String, Double> convert_to_tfidf(Map<String, Integer> tf_bag_of_words) throws SQLException{
-		Map<String, Double> normalized_tf_idf_bag_of_words = new HashMap<String,Double>();
-		Map<String, Double> tf_idf_bag_of_words = new HashMap<String,Double>();
-		Integer nb_total =  get_total_documents_number();
-		Iterator<Map.Entry<String, Integer>> it = tf_bag_of_words.entrySet().iterator();
-		Double square_sum = new Double(0);
-		while (it.hasNext()) {
-			Map.Entry<String, Integer> pairs = (Map.Entry<String, Integer>)it.next();
-			String word=pairs.getKey();
-			Integer tf_count=pairs.getValue();
-			Integer corpus_frequency = get_corpus_frequency(word);
-			Double idf = Math.log10((double)nb_total/(double)corpus_frequency);
-			Double numerator = (double)tf_count*idf;
-			square_sum=square_sum+numerator*numerator;
-			tf_idf_bag_of_words.put(word,numerator);
-		}
-		tf_bag_of_words.clear();
-		Iterator<Map.Entry<String, Double>> tfifd_it = tf_idf_bag_of_words.entrySet().iterator();
-		while (tfifd_it.hasNext()) {
-			Map.Entry<String, Double> pairs = (Map.Entry<String, Double>)tfifd_it.next();
-			String word=pairs.getKey();
-			Double tfidf=pairs.getValue();
-			normalized_tf_idf_bag_of_words.put(word, tfidf/Math.sqrt(square_sum));
-		}
-		tf_idf_bag_of_words.clear();
-		return normalized_tf_idf_bag_of_words;
-	}
-
-	public Integer get_total_documents_number() throws SQLException{
-		Integer nb_total_documents=null;
-		PreparedStatement pst_total = con.prepareStatement(select_totalcount_statement);
-		ResultSet rs_total = pst_total.executeQuery();
-
-		if (rs_total.next()) {
-			nb_total_documents = rs_total.getInt(1);	
-			System.out.println("Total number of documents found : "+nb_total_documents);
-		}	
-		pst_total.close();
-		return nb_total_documents;
-	}
-
-	public Integer get_corpus_frequency(String word) throws SQLException{
-		Integer nb_document=1;
-		// getting all words from the corpus table
-		PreparedStatement pst = con.prepareStatement(select_corpus_frequency_word_statement);
-		pst.setString(1, word);
-		ResultSet rs = pst.executeQuery();
-		if (rs.next()) {
-			nb_document = rs.getInt(1);
-
-		}	
-		pst.close();
-		rs.close();
-		return nb_document;
 	}
 
 	public int getBlobOID(String category){
@@ -153,7 +99,6 @@ public class CategoryBagOfWordsManager {
 			oid = lobj.create(LargeObjectManager.READ | LargeObjectManager.WRITE);
 			// Open the large object for writing
 			LargeObject obj = lobj.open(oid, LargeObjectManager.WRITE);
-
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			ObjectOutputStream objOut = new ObjectOutputStream(out);

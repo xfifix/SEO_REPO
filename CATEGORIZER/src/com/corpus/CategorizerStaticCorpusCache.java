@@ -31,7 +31,7 @@ public class CategorizerStaticCorpusCache {
 	static {
 		new CategorizerStaticCorpusCache();
 	}
-	private static String select_totalcount_statement="select count(*) from CATALOG";
+	private static String select_totalcount_statement="select count(*) from DATA";
 	private static String select_word_statement="select word, nb_documents from CATEGORIZER_CORPUS_WORDS";
 
 	private static Map<String, Double> corpus_idf = new HashMap<String, Double>();
@@ -196,8 +196,7 @@ public class CategorizerStaticCorpusCache {
 	public static Double getIDF(String word){
 		Double idf = corpus_idf.get(word);
 		if (idf == null){
-			System.out.println("Warning Warning Warning the word is not in the corpus for word : "+word);
-			System.out.println("We act as if it were found just once for word : "+word);
+            // the word is not in corpus, so we infer its corpus frequency to 1/nb_total_documents
 			idf = (double)nb_total_documents;
 		}
 		return idf;
