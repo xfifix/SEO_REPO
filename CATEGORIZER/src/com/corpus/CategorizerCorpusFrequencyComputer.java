@@ -1,4 +1,4 @@
-package com.predictors;
+package com.corpus;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,7 +14,7 @@ import java.util.Properties;
 import com.data.DataEntry;
 import com.parameters.CategorizerParameters;
 
-public class CorpusFrequencyComputer {
+public class CategorizerCorpusFrequencyComputer {
 
 	public static String categorizer_conf_path = "/home/sduprey/My_Data/My_Categorizer_Conf/categorizer.conf";
 	public static Properties properties;
@@ -91,7 +91,7 @@ public class CorpusFrequencyComputer {
 		PreparedStatement pst = null;
 		ResultSet rs = null;
 		try {  
-			CorpusFrequencyManager manager = new CorpusFrequencyManager(url, user, passwd);
+			CategorizerCorpusFrequencyManager manager = new CategorizerCorpusFrequencyManager(url, user, passwd);
 			con = DriverManager.getConnection(url, user, passwd);
 			System.out.println("Cleaning up and building the category_following table");
 			if (CategorizerParameters.recreate_table){

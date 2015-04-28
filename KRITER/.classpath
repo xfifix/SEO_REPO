@@ -60,6 +60,5 @@
 	<classpathentry kind="lib" path="lib/metadata-extractor-2.4.0-beta-1.jar"/>
 	<classpathentry kind="lib" path="lib/mongo-java-driver-2.12.5.jar"/>
 	<classpathentry kind="lib" path="lib/noggit-0.5.jar"/>
-	<classpathentry kind="src" path="/CRAWLER4J"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

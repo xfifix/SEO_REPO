@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="java.util.Date"/>
-<fullyQualifiedTypeName name="crawl4j.continuous.CrawlDataManagement"/>
 <fullyQualifiedTypeName name="crawl4j.attributesutility.AttributesInfo"/>
 <fullyQualifiedTypeName name="crawl4j.attributesutility.AttributesUtility"/>
 <fullyQualifiedTypeName name="org.json.simple.JSONObject"/>
@@ -20,18 +18,15 @@
 <fullyQualifiedTypeName name="org.apache.commons.lang3.StringUtils"/>
 <fullyQualifiedTypeName name="com.itextpdf.text.List"/>
 <fullyQualifiedTypeName name="java.util.Arrays"/>
-<fullyQualifiedTypeName name="java.util.Map.Entry"/>
 <fullyQualifiedTypeName name="java.util.concurrent.ConcurrentHashMap"/>
 <fullyQualifiedTypeName name="com.data.processing.SimilarSkusCatalalogInserterSAXHandler"/>
 <fullyQualifiedTypeName name="com.similarity.computing.SimilarityComputingWorkerThread"/>
 <fullyQualifiedTypeName name="java.sql.SQLException"/>
 <fullyQualifiedTypeName name="java.util.HashMap"/>
-<fullyQualifiedTypeName name="java.util.Set"/>
 <fullyQualifiedTypeName name="com.similarity.noconcurrentrequest.computing.SimilarityComputingNoFetchWorkerThread"/>
 <fullyQualifiedTypeName name="com.similarity.parameter.KriterParameter"/>
 <fullyQualifiedTypeName name="com.statistics.processing.LightSKU"/>
 <fullyQualifiedTypeName name="org.json.simple.parser.JSONParser"/>
-<fullyQualifiedTypeName name="java.util.Iterator"/>
 <fullyQualifiedTypeName name="org.w3c.dom.Document"/>
 <fullyQualifiedTypeName name="javax.xml.parsers.DocumentBuilder"/>
 <fullyQualifiedTypeName name="org.w3c.dom.Element"/>
@@ -53,11 +48,16 @@
 <fullyQualifiedTypeName name="java.io.FileInputStream"/>
 <fullyQualifiedTypeName name="java.io.InputStreamReader"/>
 <fullyQualifiedTypeName name="com.predictors.RemoveStopWordsUtility"/>
-<fullyQualifiedTypeName name="java.util.Map"/>
 <fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="org.postgresql.largeobject.LargeObjectManager"/>
 <fullyQualifiedTypeName name="org.postgresql.largeobject.LargeObject"/>
 <fullyQualifiedTypeName name="java.io.ByteArrayInputStream"/>
 <fullyQualifiedTypeName name="java.io.InputStream"/>
 <fullyQualifiedTypeName name="java.io.ByteArrayOutputStream"/>
+<fullyQualifiedTypeName name="com.corpus.RemoveStopWordsUtility"/>
+<fullyQualifiedTypeName name="com.statistics.processing.CatalogEntry"/>
+<fullyQualifiedTypeName name="java.util.Map"/>
+<fullyQualifiedTypeName name="java.util.Set"/>
+<fullyQualifiedTypeName name="java.util.Map.Entry"/>
+<fullyQualifiedTypeName name="java.util.Iterator"/>
 </qualifiedTypeNameHistroy>

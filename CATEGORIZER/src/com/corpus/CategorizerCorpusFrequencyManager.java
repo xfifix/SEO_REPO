@@ -1,4 +1,4 @@
-package com.predictors;
+package com.corpus;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 
 import com.data.DataEntry;
 
-public class CorpusFrequencyManager {
+public class CategorizerCorpusFrequencyManager {
 
 	private static Connection con;
 
@@ -20,7 +20,7 @@ public class CorpusFrequencyManager {
 	private static String insert_statement="INSERT INTO CATEGORIZER_CORPUS_WORDS(WORD,NB_DOCUMENTS,DOC_LIST) values(?,?,?)";
 	private static String update_statement="UPDATE CATEGORIZER_CORPUS_WORDS SET NB_DOCUMENTS=?,DOC_LIST=? WHERE WORD=?";
 
-	public CorpusFrequencyManager(String url,String user,String passwd) throws SQLException{
+	public CategorizerCorpusFrequencyManager(String url,String user,String passwd) throws SQLException{
 		con = DriverManager.getConnection(url, user, passwd);
 		RemoveStopWordsUtility.loadFrenchStopWords();
 	}

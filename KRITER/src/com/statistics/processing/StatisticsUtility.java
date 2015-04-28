@@ -6,7 +6,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
-import crawl4j.vsm.CorpusCache;
 
 public class StatisticsUtility {
 

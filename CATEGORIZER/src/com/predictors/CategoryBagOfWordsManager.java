@@ -18,6 +18,7 @@ import java.util.Map;
 import org.postgresql.largeobject.LargeObject;
 import org.postgresql.largeobject.LargeObjectManager;
 
+import com.corpus.RemoveStopWordsUtility;
 import com.data.DataEntry;
 
 public class CategoryBagOfWordsManager {

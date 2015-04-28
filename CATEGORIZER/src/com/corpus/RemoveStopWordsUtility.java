@@ -1,4 +1,4 @@
-package com.predictors;
+package com.corpus;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;

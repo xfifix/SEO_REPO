@@ -1,0 +1,1 @@
+select * from CATEGORIZER_CORPUS_WORDS order by random() limit 1000;
