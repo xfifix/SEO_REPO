@@ -14,7 +14,7 @@ import com.statistics.processing.CatalogEntry;
 
 public class KriterCorpusFrequencyManager {
 
-	private static Connection con;
+	private Connection con;
 
 	private static String find_statement="select DOC_LIST from KRITER_CORPUS_WORDS where WORD=?";
 	private static String insert_statement="INSERT INTO KRITER_CORPUS_WORDS(WORD,NB_DOCUMENTS,DOC_LIST) values(?,?,?)";

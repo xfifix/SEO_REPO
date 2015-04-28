@@ -93,21 +93,17 @@ public class CorpusCache {
 		if (idf == null){
 			System.out.println("Warning Warning Warning the word is not in the corpus for word : "+word);
 			System.out.println("We act as if it were found just once for word : "+word);
-			idf = (new Double(1))/nb_total_documents;
+			idf = (double)nb_total_documents;
 		}
 		return idf;
 	}
 
-	public static Map<String, Integer> computePageTFVector(String pageText){
-		pageText = CorpusCache.preprocessSemanticText(pageText);
-		VectorStateSpringRepresentation vs =new VectorStateSpringRepresentation(pageText);
-		return vs.getWordFrequencies();
+	public static Map<String, Integer> computePageTFVector(String text){
+		return RemoveStopWordsUtility.removeStopWords(text);
 	}
 
 	public static Map<String, Double> computePageTFIDFVector(String pageText){
-		pageText = CorpusCache.preprocessSemanticText(pageText);
-		VectorStateSpringRepresentation vs =new VectorStateSpringRepresentation(pageText);
-		Map<String,Integer> cleanedTfMap = cleanTFMap(vs.getWordFrequencies());
+		Map<String,Integer> cleanedTfMap = cleanTFMap(computePageTFVector(pageText));
 		Map<String, Double> tfidfMap = addTFIDF(cleanedTfMap);
 		return tfidfMap;
 	}
@@ -122,12 +118,8 @@ public class CorpusCache {
 		if ((!"".equals(text1))&&("".equals(text2))){
 			return (double) 0;
 		}
-		text1 = CorpusCache.preprocessSemanticText(text1);
-		text2 = CorpusCache.preprocessSemanticText(text2);
-		VectorStateSpringRepresentation vs1 =new VectorStateSpringRepresentation(text1);
-		VectorStateSpringRepresentation vs2 =new VectorStateSpringRepresentation(text2);
-		Map<String, Double> firstMap = addTFIDF(vs1.getWordFrequencies());
-		Map<String, Double> secondMap = addTFIDF(vs2.getWordFrequencies());
+		Map<String, Double> firstMap = addTFIDF(computePageTFVector(text1));
+		Map<String, Double> secondMap = addTFIDF(computePageTFVector(text2));
 		if ((firstMap.size() == 0) && secondMap.size() ==0){
 			return (double) 1;
 		}
@@ -175,20 +167,19 @@ public class CorpusCache {
 		if ((!"".equals(text1))&&("".equals(text2))){
 			return (double) 0;
 		}
-		text1 = CorpusCache.preprocessSemanticText(text1);
-		text2 = CorpusCache.preprocessSemanticText(text2);
-		VectorStateSpringRepresentation vs1 =new VectorStateSpringRepresentation(text1);
-		VectorStateSpringRepresentation vs2 =new VectorStateSpringRepresentation(text2);
-		if ((vs1.getWordFrequencies().size() == 0) && vs2.getWordFrequencies().size() ==0){
+		Map<String, Integer> map1 = computePageTFVector(text1);
+		Map<String, Integer> map2 = computePageTFVector(text2);
+
+		if ((map1.size() == 0) && map2.size() ==0){
 			return (double) 1;
 		}
-		if ((vs1.getWordFrequencies().size() != 0) && vs2.getWordFrequencies().size() ==0){
+		if ((map1.size() != 0) && map2.size() ==0){
 			return (double) 0;
 		}
-		if ((vs1.getWordFrequencies().size() == 0) && vs2.getWordFrequencies().size() !=0){
+		if ((map1.size() == 0) && map2.size() !=0){
 			return (double) 0;
 		}
-		return cosine_tfsimilarity(vs1.getWordFrequencies() , vs2.getWordFrequencies());
+		return cosine_tfsimilarity(map1 , map2);
 	}
 
 	public static double cosine_tfidfsimilarity(Map<String, Double> v1, Map<String, Double> v2) {
@@ -248,10 +239,7 @@ public class CorpusCache {
 		String[] orderedKeys=getKeys(tfIdfMapSortedMap);
 		return StringUtils.join(orderedKeys,semantic_hit_separator);
 	}
-	//	facetteObject.put("facette_name", info.getFacetteName());
-	//	facetteObject.put("facette_value", info.getFacetteValue());
-	//	facetteObject.put("facette_count", info.getFacetteCount());
-	//	facettesArray.add(facetteObject);
+
 	@SuppressWarnings("unchecked")
 	public static String getOrderedKeysBestHitsJSON(Map<String, Double> tfIdfMapSortedMap){
 		JSONArray tfidfsArray = new JSONArray();
@@ -361,14 +349,4 @@ public class CorpusCache {
 		}
 		return result;
 	}
-
-	public static String preprocessSemanticText(String semanticText){
-		semanticText=semanticText.replace("l'", "");
-		semanticText=semanticText.replace("n'", "");
-		semanticText=semanticText.replace("d'", "");
-		semanticText=semanticText.replace("m'", "");
-		semanticText=semanticText.replace("s'", "");
-		return semanticText;
-	}
-
 }

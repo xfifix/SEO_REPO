@@ -14,7 +14,7 @@ import com.data.DataEntry;
 
 public class CategorizerCorpusFrequencyManager {
 
-	private static Connection con;
+	private Connection con;
 
 	private static String find_statement="select DOC_LIST from CATEGORIZER_CORPUS_WORDS where WORD=?";
 	private static String insert_statement="INSERT INTO CATEGORIZER_CORPUS_WORDS(WORD,NB_DOCUMENTS,DOC_LIST) values(?,?,?)";

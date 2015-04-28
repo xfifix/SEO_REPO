@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="crawl4j.attributesutility.AttributesInfo"/>
-<fullyQualifiedTypeName name="crawl4j.attributesutility.AttributesUtility"/>
 <fullyQualifiedTypeName name="org.json.simple.JSONObject"/>
 <fullyQualifiedTypeName name="org.apache.http.cookie.Cookie"/>
 <fullyQualifiedTypeName name="org.apache.http.config.Registry"/>
@@ -15,7 +13,6 @@
 <fullyQualifiedTypeName name="crawl4j.xpathutility.XPathUtility"/>
 <fullyQualifiedTypeName name="java.lang.reflect.Array"/>
 <fullyQualifiedTypeName name="com.statistics.processing.StatisticsMeasures"/>
-<fullyQualifiedTypeName name="org.apache.commons.lang3.StringUtils"/>
 <fullyQualifiedTypeName name="com.itextpdf.text.List"/>
 <fullyQualifiedTypeName name="java.util.Arrays"/>
 <fullyQualifiedTypeName name="java.util.concurrent.ConcurrentHashMap"/>
@@ -42,22 +39,25 @@
 <fullyQualifiedTypeName name="java.sql.PreparedStatement"/>
 <fullyQualifiedTypeName name="com.xpath.utility.XPathUtility"/>
 <fullyQualifiedTypeName name="crawl4j.vsm.VectorStateSpringRepresentation"/>
-<fullyQualifiedTypeName name="java.sql.Connection"/>
 <fullyQualifiedTypeName name="com.data.DataEntry"/>
 <fullyQualifiedTypeName name="java.io.FileReader"/>
 <fullyQualifiedTypeName name="java.io.FileInputStream"/>
 <fullyQualifiedTypeName name="java.io.InputStreamReader"/>
 <fullyQualifiedTypeName name="com.predictors.RemoveStopWordsUtility"/>
-<fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="org.postgresql.largeobject.LargeObjectManager"/>
 <fullyQualifiedTypeName name="org.postgresql.largeobject.LargeObject"/>
 <fullyQualifiedTypeName name="java.io.ByteArrayInputStream"/>
 <fullyQualifiedTypeName name="java.io.InputStream"/>
 <fullyQualifiedTypeName name="java.io.ByteArrayOutputStream"/>
 <fullyQualifiedTypeName name="com.corpus.RemoveStopWordsUtility"/>
-<fullyQualifiedTypeName name="com.statistics.processing.CatalogEntry"/>
 <fullyQualifiedTypeName name="java.util.Map"/>
 <fullyQualifiedTypeName name="java.util.Set"/>
 <fullyQualifiedTypeName name="java.util.Map.Entry"/>
 <fullyQualifiedTypeName name="java.util.Iterator"/>
+<fullyQualifiedTypeName name="org.apache.commons.lang3.StringUtils"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="com.statistics.processing.CatalogEntry"/>
+<fullyQualifiedTypeName name="com.corpus.KriterCorpusCache"/>
+<fullyQualifiedTypeName name="com.corpus.CategorizerDynamicCorpusCache"/>
+<fullyQualifiedTypeName name="java.sql.Connection"/>
 </qualifiedTypeNameHistroy>
