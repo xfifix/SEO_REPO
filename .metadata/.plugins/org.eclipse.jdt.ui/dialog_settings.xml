@@ -93,10 +93,10 @@
 	<section name="JavaElementSearchActions">
 	</section>
 	<section name="DialogBounds_GetterSetterTreeSelectionDialog">
-		<item value="605" key="DIALOG_WIDTH"/>
+		<item value="613" key="DIALOG_WIDTH"/>
 		<item value="0" key="DIALOG_Y_ORIGIN"/>
 		<item value="412" key="DIALOG_X_ORIGIN"/>
-		<item value="658" key="DIALOG_HEIGHT"/>
+		<item value="662" key="DIALOG_HEIGHT"/>
 		<item value="1|Ubuntu|10.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="RenameInformationPopup">

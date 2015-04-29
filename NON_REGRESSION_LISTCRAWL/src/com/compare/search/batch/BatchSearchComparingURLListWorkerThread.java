@@ -25,8 +25,9 @@ import com.parsing.utility.FacettesParsingOutput;
 import com.parsing.utility.FacettesUtility;
 
 public class BatchSearchComparingURLListWorkerThread implements Runnable {
-	private static int batch_size = 100;
-	private static String updateStatement ="UPDATE SOLR_VS_EXALEAD_SEARCH_LIST SET STATUS_SOLR=?, NB_PRODUCTS_SOLR=?, FACETTES_SOLR=?,NB_PRODUCTS_EXALEAD=?, FACETTES_EXALEAD=?, TO_FETCH=FALSE WHERE ID=?";
+	//private static int batch_size = 100;
+	private static int batch_size = 10;	
+	private static String updateStatement ="UPDATE SOLR_VS_EXALEAD_SEARCH_LIST SET STATUS_SOLR=?, NB_PRODUCTS_SOLR=?, FACETTES_SOLR=?, STATUS_EXALEAD=?, NB_PRODUCTS_EXALEAD=?, FACETTES_EXALEAD=?, TO_FETCH=FALSE WHERE ID=?";
 	private String user_agent;
 	private List<ExpressionId> my_expressions_to_fetch = new ArrayList<ExpressionId>();
 	private Connection con;
@@ -116,12 +117,13 @@ public class BatchSearchComparingURLListWorkerThread implements Runnable {
 				
 				//UPDATE SOLR_VS_EXALEAD_SEARCH_LIST SET STATUS_SOLR=?, NB_PRODUCTS_SOLR=?, FACETTES_SOLR=?,NB_PRODUCTS_EXALEAD=?, FACETTES_EXALEAD=?, TO_FETCH=FALSE WHERE ID=?";
 
-				st.setInt(1, local_info.getStatus());
+				st.setInt(1, local_info.getSolrstatus());
 				st.setString(2, NBPRODUCTS_SOLR);
 				st.setString(3, FACETTES_SOLR);
-				st.setString(4, NBPRODUCTS_EXALEAD);
-				st.setString(5, FACETTES_EXALEAD);
-				st.setInt(6, local_info.getId());
+				st.setInt(4, local_info.getExaleadstatus());
+				st.setString(5, NBPRODUCTS_EXALEAD);
+				st.setString(6, FACETTES_EXALEAD);
+				st.setInt(7, local_info.getId());
 				st.addBatch();		
 			}      
 			//int counts[] = st.executeBatch();
@@ -143,7 +145,7 @@ public class BatchSearchComparingURLListWorkerThread implements Runnable {
 		try {
 			if (!"".equals(facette_param)){
 				url=url+"?";
-				String parameters = "NavigationForm.CurrentSelectedNavigationPath="+facette_param+"&b";
+				String parameters = "?NavigationForm.CurrentSelectedNavigationPath="+facette_param+"&b";
 				url=url+URLEncoder.encode(parameters, "UTF-8");
 
 			} else {
@@ -162,7 +164,7 @@ public class BatchSearchComparingURLListWorkerThread implements Runnable {
 		String url = "http://www.cdiscount.com/search/10/"+expression_string+".html";
 		try{
 			if (!"".equals(facette_param)){
-				String parameters = "NavigationForm.CurrentSelectedNavigationPath="+facette_param+"&a";
+				String parameters = "?NavigationForm.CurrentSelectedNavigationPath="+facette_param+"&a";
 				url=url+URLEncoder.encode(parameters, "UTF-8");
 			} else {
 				url=url+"?a";
@@ -217,7 +219,7 @@ public class BatchSearchComparingURLListWorkerThread implements Runnable {
 
 				FacettesParsingOutput solrOutput = FacettesUtility.parse_page_code_source(page_source_codeSolr);		
 				my_info.setSolrOutput(solrOutput);
-				my_info.setStatus(responseSolr.getStatusLine().getStatusCode());
+				my_info.setSolrstatus(responseSolr.getStatusLine().getStatusCode());
 
 
 				System.out.println(Thread.currentThread().getName()+" fetching URL : "+exaleadurl + " with cookie value to tap Exalead");
@@ -245,6 +247,8 @@ public class BatchSearchComparingURLListWorkerThread implements Runnable {
 				clientExalead.close();
 				FacettesParsingOutput exaleadOutput = FacettesUtility.parse_page_code_source(page_source_codeExalead);
 				my_info.setExaleadOutput(exaleadOutput);
+				my_info.setExaleadstatus(responseExalead.getStatusLine().getStatusCode());
+
 			} catch (Exception e){
 				System.out.println("Trouble fetching expression : "+solrurl);
 				e.printStackTrace();
@@ -280,7 +284,8 @@ public class BatchSearchComparingURLListWorkerThread implements Runnable {
 
 	class FacettesURLComparisonInfo{
 		private int id;
-		private int status=-1;
+		private int solrstatus=-1;
+		private int exaleadstatus=-1;
 		private FacettesParsingOutput solrOutput;
 		private FacettesParsingOutput exaleadOutput;
 		public int getId() {
@@ -289,11 +294,17 @@ public class BatchSearchComparingURLListWorkerThread implements Runnable {
 		public void setId(int id) {
 			this.id = id;
 		}
-		public int getStatus() {
-			return status;
+		public int getSolrstatus() {
+			return solrstatus;
 		}
-		public void setStatus(int status) {
-			this.status = status;
+		public void setSolrstatus(int solrstatus) {
+			this.solrstatus = solrstatus;
+		}
+		public int getExaleadstatus() {
+			return exaleadstatus;
+		}
+		public void setExaleadstatus(int exaleadstatus) {
+			this.exaleadstatus = exaleadstatus;
 		}
 		public FacettesParsingOutput getSolrOutput() {
 			return solrOutput;
