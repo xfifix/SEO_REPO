@@ -31,7 +31,7 @@ public class FacettesUtility {
 			my_info.setFacetteName(facette_name.text());
 			Elements facette_values = facette.select("a");
 			for (Element facette_value : facette_values){		
-				System.out.println(facette_value);
+//				System.out.println(facette_value);
 				// old way
 				String categorie_value = facette_value.text();
 				if ("".equals(categorie_value)){

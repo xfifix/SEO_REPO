@@ -27,7 +27,7 @@ import com.parsing.utility.FacettesUtility;
 public class BatchSearchComparingURLListWorkerThread implements Runnable {
 	//private static int batch_size = 100;
 	private static int batch_size = 10;	
-	private static String updateStatement ="UPDATE SOLR_VS_EXALEAD_SEARCH_LIST SET STATUS_SOLR=?, NB_PRODUCTS_SOLR=?, FACETTES_SOLR=?, STATUS_EXALEAD=?, NB_PRODUCTS_EXALEAD=?, FACETTES_EXALEAD=?, TO_FETCH=FALSE WHERE ID=?";
+	private static String updateStatement ="UPDATE SOLR_VS_EXALEAD_SEARCH_LIST SET STATUS_SOLR=?, NB_PRODUCTS_SOLR=?, FACETTES_SOLR=?, STATUS_EXALEAD=?, NB_PRODUCTS_EXALEAD=?, FACETTES_EXALEAD=?, FACETTE_EQUALITY=?, TO_FETCH=FALSE WHERE ID=?";
 	private String user_agent;
 	private List<ExpressionId> my_expressions_to_fetch = new ArrayList<ExpressionId>();
 	private Connection con;
@@ -115,6 +115,7 @@ public class BatchSearchComparingURLListWorkerThread implements Runnable {
 				String FACETTES_EXALEAD = exaleadOutput.getFacettes();
 				String NBPRODUCTS_EXALEAD = exaleadOutput.getNb_products();
 				
+				boolean facette_equality = FACETTES_EXALEAD.equals(FACETTES_SOLR);
 				//UPDATE SOLR_VS_EXALEAD_SEARCH_LIST SET STATUS_SOLR=?, NB_PRODUCTS_SOLR=?, FACETTES_SOLR=?,NB_PRODUCTS_EXALEAD=?, FACETTES_EXALEAD=?, TO_FETCH=FALSE WHERE ID=?";
 
 				st.setInt(1, local_info.getSolrstatus());
@@ -123,7 +124,8 @@ public class BatchSearchComparingURLListWorkerThread implements Runnable {
 				st.setInt(4, local_info.getExaleadstatus());
 				st.setString(5, NBPRODUCTS_EXALEAD);
 				st.setString(6, FACETTES_EXALEAD);
-				st.setInt(7, local_info.getId());
+				st.setBoolean(7,facette_equality);
+				st.setInt(8, local_info.getId());
 				st.addBatch();		
 			}      
 			//int counts[] = st.executeBatch();
@@ -164,6 +166,7 @@ public class BatchSearchComparingURLListWorkerThread implements Runnable {
 		String url = "http://www.cdiscount.com/search/10/"+expression_string+".html";
 		try{
 			if (!"".equals(facette_param)){
+				url=url+"?";
 				String parameters = "?NavigationForm.CurrentSelectedNavigationPath="+facette_param+"&a";
 				url=url+URLEncoder.encode(parameters, "UTF-8");
 			} else {
