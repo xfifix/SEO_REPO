@@ -14,12 +14,12 @@ import java.util.Properties;
 import com.data.DataEntry;
 import com.parameters.CategorizerParameters;
 
-public class CategorizerCorpusFrequencyComputer {
+public class ResumingCategorizerCorpusFrequencyComputer {
 
 	public static String categorizer_conf_path = "/home/sduprey/My_Data/My_Categorizer_Conf/categorizer.conf";
 	public static Properties properties;
 
-	private static String select_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT, RAYON, TO_FETCH FROM DATA";
+	private static String select_not_added_to_tfidf_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT, RAYON, TO_FETCH FROM DATA WHERE IS_IN_TFIDF_INDEX=false";
 
 	private static String drop_DATA_FOLLOWING_table = "DROP TABLE IF EXISTS DATA_FOLLOWING";
 	private static String create_DATA_FOLLOWING_table = "select distinct categorie_niveau_4, count(*), true as to_fetch into DATA_FOLLOWING from DATA group by categorie_niveau_4";
@@ -102,7 +102,8 @@ public class CategorizerCorpusFrequencyComputer {
 			System.out.println("Requesting all data from categories");
 			System.out.println("We here fetch all data even those with the to_fetch flag to false");
 
-			pst = con.prepareStatement(select_entry_from_category4);
+			// we here just fetch the SKUs which are not already in the tf/idf index
+			pst = con.prepareStatement(select_not_added_to_tfidf_entry_from_category4);
 			rs = pst.executeQuery();
 			int loop_count = 0;
 			while (rs.next()) {
@@ -140,6 +141,7 @@ public class CategorizerCorpusFrequencyComputer {
 				// we here just keep the small categories
 				System.out.println("Processing entry SKU : "+entry.getSKU()+" number : "+loop_count);
 				manager.updateEntry(entry);
+				manager.flagSkuInTFIDF(entry);
 			}		
 			rs.close();
 			pst.close();			

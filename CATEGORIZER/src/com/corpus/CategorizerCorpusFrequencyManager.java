@@ -20,6 +20,8 @@ public class CategorizerCorpusFrequencyManager {
 	private static String insert_statement="INSERT INTO CATEGORIZER_CORPUS_WORDS(WORD,NB_DOCUMENTS,DOC_LIST) values(?,?,?)";
 	private static String update_statement="UPDATE CATEGORIZER_CORPUS_WORDS SET NB_DOCUMENTS=?,DOC_LIST=? WHERE WORD=?";
 
+	private static String update_data_statement="UPDATE DATA SET IS_IN_TFIDF_INDEX=TRUE where SKU=?";
+
 	public CategorizerCorpusFrequencyManager(String url,String user,String passwd) throws SQLException{
 		con = DriverManager.getConnection(url, user, passwd);
 		RemoveStopWordsUtility.loadFrenchStopWords();
@@ -27,6 +29,19 @@ public class CategorizerCorpusFrequencyManager {
 
 	public void updateEntry(DataEntry entry){
 		this.updateText(entry.getLIBELLE_PRODUIT().toLowerCase()+" "+entry.getDESCRIPTION_LONGUEUR80().toLowerCase(),entry.getSKU());
+	}
+
+	public void flagSkuInTFIDF(DataEntry entry){
+		PreparedStatement update_data_st;
+		try {
+			update_data_st = con.prepareStatement(update_data_statement);
+			update_data_st.setString(1,entry.getSKU());
+			update_data_st.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Trouble updating SKU : "+entry.getSKU());
+			e.printStackTrace();
+		}
 	}
 
 	public void updateText(String text, String SKU){
@@ -61,7 +76,7 @@ public class CategorizerCorpusFrequencyManager {
 			if (found){	
 				// we found it
 				Map<String,Integer> skus_map = parse_skulist_links(document_list);
-			    // we update the map with the new SKU
+				// we update the map with the new SKU
 				skus_map.put(SKU,counter);
 				Integer total = count_map(skus_map);
 				PreparedStatement update_st = con.prepareStatement(update_statement);
@@ -91,8 +106,8 @@ public class CategorizerCorpusFrequencyManager {
 	}
 
 
-    public Integer count_map(Map<String,Integer> tocount){
-    	Integer total = 0;
+	public Integer count_map(Map<String,Integer> tocount){
+		Integer total = 0;
 		Iterator<Entry<String, Integer>> it = tocount.entrySet().iterator();
 		// dispatching to threads
 		while (it.hasNext()){	
@@ -100,9 +115,9 @@ public class CategorizerCorpusFrequencyManager {
 			Integer local_count = pairs.getValue();
 			total=total+local_count;
 		}
-    	return total;
-    }
-    
+		return total;
+	}
+
 
 	public Map<String,Integer> parse_skulist_links(String output_links) {
 		output_links = output_links.replace("{", "");
