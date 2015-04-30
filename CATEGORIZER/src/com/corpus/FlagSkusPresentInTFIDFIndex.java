@@ -8,27 +8,27 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
-import com.parameters.CategorizerParameters;
 
 public class FlagSkusPresentInTFIDFIndex {
-	
-	public static String categorizer_conf_path = "/home/sduprey/My_Data/My_Categorizer_Conf/categorizer.conf";
+
+	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/categorizer.properties";
 	public static Properties properties;
 
 	private static String select_all_index= "select doc_list from categorizer_corpus_words";
 
 	public static void main(String[] args) {
-		System.out.println("Reading the configuration files : "+categorizer_conf_path);
+		System.out.println("Reading the configuration files : "+database_con_path);
 
 		// it would be best to use a property file to store MD5 password
 		//		// Getting the database property
 		Properties props = new Properties();
 		FileInputStream in = null;      
 		try {
-			in = new FileInputStream(CategorizerParameters.database_con_path);
+			in = new FileInputStream(database_con_path);
 			props.load(in);
 		} catch (IOException ex) {
 			System.out.println("Trouble fetching database configuration");
@@ -47,13 +47,14 @@ public class FlagSkusPresentInTFIDFIndex {
 		String url = props.getProperty("db.url");
 		String user = props.getProperty("db.user");
 		String passwd = props.getProperty("db.passwd");
-		
+
 		System.out.println("You'll connect to the postgresql CATEGORIZERDB database as "+user);
 		// The database connection
 		Connection con = null;
 		PreparedStatement pst = null;
 		ResultSet rs = null;
 		try {  
+			CategorizerCorpusFrequencyManager manager = new CategorizerCorpusFrequencyManager(url, user, passwd);
 			con = DriverManager.getConnection(url, user, passwd);
 			// getting the number of URLs to fetch
 			System.out.println("Requesting all data from categories");
@@ -69,7 +70,13 @@ public class FlagSkusPresentInTFIDFIndex {
 				String doc_list = rs.getString(1);
 				System.out.println("Processing entry SKU : "+doc_list+" number : "+loop_count);
 				Map<String,Integer> skus_map = parse_skulist_links(doc_list);
-
+				Iterator<Map.Entry<String,Integer>> cat_counter_it = skus_map.entrySet().iterator();
+				while (cat_counter_it.hasNext()) {
+					Map.Entry<String,Integer> pairs = (Map.Entry<String,Integer>)cat_counter_it.next();
+					// we are here just interested by our argument naming
+					String SKU =pairs.getKey();
+					manager.flagSkuInTFIDF(SKU);
+				}
 			}		
 			rs.close();
 			pst.close();			
@@ -97,7 +104,7 @@ public class FlagSkusPresentInTFIDFIndex {
 			}
 		}
 	}
-	
+
 	public static Map<String,Integer> parse_skulist_links(String output_links) {
 		output_links = output_links.replace("{", "");
 		output_links = output_links.replace("}", "");

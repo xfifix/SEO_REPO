@@ -31,15 +31,15 @@ public class CategorizerCorpusFrequencyManager {
 		this.updateText(entry.getLIBELLE_PRODUIT().toLowerCase()+" "+entry.getDESCRIPTION_LONGUEUR80().toLowerCase(),entry.getSKU());
 	}
 
-	public void flagSkuInTFIDF(DataEntry entry){
+	public void flagSkuInTFIDF(String SKU){
 		PreparedStatement update_data_st;
 		try {
 			update_data_st = con.prepareStatement(update_data_statement);
-			update_data_st.setString(1,entry.getSKU());
+			update_data_st.setString(1,SKU);
 			update_data_st.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			System.out.println("Trouble updating SKU : "+entry.getSKU());
+			System.out.println("Trouble updating SKU : "+SKU);
 			e.printStackTrace();
 		}
 	}

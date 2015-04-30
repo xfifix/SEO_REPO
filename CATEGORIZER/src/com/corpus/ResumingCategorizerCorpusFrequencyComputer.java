@@ -141,7 +141,8 @@ public class ResumingCategorizerCorpusFrequencyComputer {
 				// we here just keep the small categories
 				System.out.println("Processing entry SKU : "+entry.getSKU()+" number : "+loop_count);
 				manager.updateEntry(entry);
-				manager.flagSkuInTFIDF(entry);
+				manager.flagSkuInTFIDF(entry.getSKU());
+
 			}		
 			rs.close();
 			pst.close();			
