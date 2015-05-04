@@ -125,7 +125,7 @@ public class SimilaritySmallCategoryNoConcurrentRequestComputingProcess {
 			
 			pst = con.prepareStatement(select_entry_from_category4);
 			rs = pst.executeQuery();
-			Map<String, List<CatalogEntry>> my_entries = new HashMap<String, List<CatalogEntry>>();
+			Map<String, List<CatalogEntry>> all_my_entries = new HashMap<String, List<CatalogEntry>>();
 			while (rs.next()) {
 				// fetching all
 				CatalogEntry entry = new CatalogEntry();
@@ -159,10 +159,10 @@ public class SimilaritySmallCategoryNoConcurrentRequestComputingProcess {
 				entry.setTO_FETCH(to_fetch);
 				// we here just keep the small categories
 				if (! too_big_categories.contains(CATEGORIE_NIVEAU_4)){
-					List<CatalogEntry> toprocess = my_entries.get(CATEGORIE_NIVEAU_4);
+					List<CatalogEntry> toprocess = all_my_entries.get(CATEGORIE_NIVEAU_4);
 					if (toprocess == null){
 						toprocess = new ArrayList<CatalogEntry>();
-						my_entries.put(CATEGORIE_NIVEAU_4, toprocess);
+						all_my_entries.put(CATEGORIE_NIVEAU_4, toprocess);
 					}
 					toprocess.add(entry);
 				} else {
@@ -171,6 +171,25 @@ public class SimilaritySmallCategoryNoConcurrentRequestComputingProcess {
 			}		
 			rs.close();
 			pst.close();
+			
+			// getting only the categories which are not empty
+			Map<String, List<CatalogEntry>> my_entries = new HashMap<String, List<CatalogEntry>>();
+			Iterator<Entry<String, List<CatalogEntry>>> cleaning_it = all_my_entries.entrySet().iterator();
+			while (cleaning_it.hasNext()){	
+				Map.Entry<String, List<CatalogEntry>> pairs = (Map.Entry<String, List<CatalogEntry>>)cleaning_it.next();
+				String current_category=pairs.getKey();
+				List<CatalogEntry> datas_to_check = pairs.getValue();
+				int to_fetch_counter = 0;
+				for (CatalogEntry data_to_check : datas_to_check){
+					if (data_to_check.getTO_FETCH()){
+						to_fetch_counter++;
+					}
+				}
+				if (to_fetch_counter >0){
+					my_entries.put(current_category, datas_to_check);
+				}
+			}
+			
 			
 			// we here don't compute the parameters
 			// computing the thread pool parameters for small categories
