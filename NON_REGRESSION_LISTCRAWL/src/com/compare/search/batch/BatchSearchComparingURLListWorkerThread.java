@@ -27,7 +27,7 @@ import com.parsing.utility.FacettesUtility;
 public class BatchSearchComparingURLListWorkerThread implements Runnable {
 	//private static int batch_size = 100;
 	private static int batch_size = 10;	
-	private static String updateStatement ="UPDATE SOLR_VS_EXALEAD_SEARCH_LIST SET STATUS_SOLR=?, NB_PRODUCTS_SOLR=?, FACETTES_SOLR=?, STATUS_EXALEAD=?, NB_PRODUCTS_EXALEAD=?, FACETTES_EXALEAD=?, FACETTE_EQUALITY=?, TO_FETCH=FALSE WHERE ID=?";
+	private static String updateStatement ="UPDATE SOLR_VS_EXALEAD_SEARCH_LIST SET STATUS_SOLR=?, NB_PRODUCTS_SOLR=?, FACETTES_SOLR=?, LISTSKUS_SOLR=?, STATUS_EXALEAD=?, NB_PRODUCTS_EXALEAD=?, FACETTES_EXALEAD=?, LISTSKUS_EXALEAD=?, FACETTE_EQUALITY=?, LISTSKUS_EQUALITY=?,  TO_FETCH=FALSE WHERE ID=?";
 	private String user_agent;
 	private List<ExpressionId> my_expressions_to_fetch = new ArrayList<ExpressionId>();
 	private Connection con;
@@ -110,22 +110,28 @@ public class BatchSearchComparingURLListWorkerThread implements Runnable {
 
 				String FACETTES_SOLR = solrOutput.getFacettes();
 				String NBPRODUCTS_SOLR = solrOutput.getNb_products();
+				String SKULIST_SOLR = solrOutput.getOrderedSkusList().toString();
 				
 				FacettesParsingOutput exaleadOutput = local_info.getExaleadOutput();		
 				String FACETTES_EXALEAD = exaleadOutput.getFacettes();
 				String NBPRODUCTS_EXALEAD = exaleadOutput.getNb_products();
+				String SKULIST_EXALEAD = exaleadOutput.getOrderedSkusList().toString();
 				
 				boolean facette_equality = FACETTES_EXALEAD.equals(FACETTES_SOLR);
+				boolean skulist_equality = SKULIST_SOLR.equals(SKULIST_EXALEAD);
 				//UPDATE SOLR_VS_EXALEAD_SEARCH_LIST SET STATUS_SOLR=?, NB_PRODUCTS_SOLR=?, FACETTES_SOLR=?,NB_PRODUCTS_EXALEAD=?, FACETTES_EXALEAD=?, TO_FETCH=FALSE WHERE ID=?";
 
 				st.setInt(1, local_info.getSolrstatus());
 				st.setString(2, NBPRODUCTS_SOLR);
 				st.setString(3, FACETTES_SOLR);
-				st.setInt(4, local_info.getExaleadstatus());
-				st.setString(5, NBPRODUCTS_EXALEAD);
-				st.setString(6, FACETTES_EXALEAD);
-				st.setBoolean(7,facette_equality);
-				st.setInt(8, local_info.getId());
+				st.setString(4, SKULIST_SOLR);
+				st.setInt(5, local_info.getExaleadstatus());
+				st.setString(6, NBPRODUCTS_EXALEAD);
+				st.setString(7, FACETTES_EXALEAD);
+				st.setString(8, SKULIST_EXALEAD);
+				st.setBoolean(9,facette_equality);
+				st.setBoolean(10,skulist_equality);
+				st.setInt(11, local_info.getId());
 				st.addBatch();		
 			}      
 			//int counts[] = st.executeBatch();
@@ -221,6 +227,9 @@ public class BatchSearchComparingURLListWorkerThread implements Runnable {
 				clientSolr.close();
 
 				FacettesParsingOutput solrOutput = FacettesUtility.parse_page_code_source(page_source_codeSolr);		
+				List<String> my_solr_ordered_skus = FacettesUtility.parse_page_code_source_for_ordered_skus(page_source_codeSolr);
+				solrOutput.setOrderedSkusList(my_solr_ordered_skus);
+				
 				my_info.setSolrOutput(solrOutput);
 				my_info.setSolrstatus(responseSolr.getStatusLine().getStatusCode());
 
@@ -251,6 +260,8 @@ public class BatchSearchComparingURLListWorkerThread implements Runnable {
 				FacettesParsingOutput exaleadOutput = FacettesUtility.parse_page_code_source(page_source_codeExalead);
 				my_info.setExaleadOutput(exaleadOutput);
 				my_info.setExaleadstatus(responseExalead.getStatusLine().getStatusCode());
+				List<String> my_exalead_ordered_skus = FacettesUtility.parse_page_code_source_for_ordered_skus(page_source_codeExalead);
+				exaleadOutput.setOrderedSkusList(my_exalead_ordered_skus);
 
 			} catch (Exception e){
 				System.out.println("Trouble fetching expression : "+solrurl);

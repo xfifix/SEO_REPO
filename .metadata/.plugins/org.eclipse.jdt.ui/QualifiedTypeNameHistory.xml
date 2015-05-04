@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="org.json.simple.JSONObject"/>
-<fullyQualifiedTypeName name="org.apache.http.cookie.Cookie"/>
 <fullyQualifiedTypeName name="org.apache.http.config.Registry"/>
 <fullyQualifiedTypeName name="org.apache.http.client.CookieStore"/>
 <fullyQualifiedTypeName name="org.apache.http.client.methods.HttpGet"/>
@@ -27,7 +25,6 @@
 <fullyQualifiedTypeName name="org.w3c.dom.Document"/>
 <fullyQualifiedTypeName name="javax.xml.parsers.DocumentBuilder"/>
 <fullyQualifiedTypeName name="org.w3c.dom.Element"/>
-<fullyQualifiedTypeName name="java.io.File"/>
 <fullyQualifiedTypeName name="javax.xml.transform.Transformer"/>
 <fullyQualifiedTypeName name="com.statistics.processing.StatisticsUtility"/>
 <fullyQualifiedTypeName name="com.parsing.utility.FacettesParsingOutput"/>
@@ -39,8 +36,6 @@
 <fullyQualifiedTypeName name="java.sql.PreparedStatement"/>
 <fullyQualifiedTypeName name="com.xpath.utility.XPathUtility"/>
 <fullyQualifiedTypeName name="crawl4j.vsm.VectorStateSpringRepresentation"/>
-<fullyQualifiedTypeName name="com.data.DataEntry"/>
-<fullyQualifiedTypeName name="java.io.FileReader"/>
 <fullyQualifiedTypeName name="java.io.FileInputStream"/>
 <fullyQualifiedTypeName name="java.io.InputStreamReader"/>
 <fullyQualifiedTypeName name="com.predictors.RemoveStopWordsUtility"/>
@@ -50,14 +45,19 @@
 <fullyQualifiedTypeName name="java.io.InputStream"/>
 <fullyQualifiedTypeName name="java.io.ByteArrayOutputStream"/>
 <fullyQualifiedTypeName name="com.corpus.RemoveStopWordsUtility"/>
-<fullyQualifiedTypeName name="java.util.Map"/>
-<fullyQualifiedTypeName name="java.util.Map.Entry"/>
-<fullyQualifiedTypeName name="java.util.Iterator"/>
 <fullyQualifiedTypeName name="com.statistics.processing.CatalogEntry"/>
 <fullyQualifiedTypeName name="com.corpus.KriterCorpusCache"/>
 <fullyQualifiedTypeName name="com.corpus.CategorizerDynamicCorpusCache"/>
 <fullyQualifiedTypeName name="java.sql.Connection"/>
 <fullyQualifiedTypeName name="org.apache.commons.lang3.StringUtils"/>
-<fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="java.util.Set"/>
+<fullyQualifiedTypeName name="java.util.Map.Entry"/>
+<fullyQualifiedTypeName name="java.util.Iterator"/>
+<fullyQualifiedTypeName name="java.io.FileReader"/>
+<fullyQualifiedTypeName name="java.util.Map"/>
+<fullyQualifiedTypeName name="java.io.File"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="java.util.concurrent.ExecutorService"/>
+<fullyQualifiedTypeName name="com.data.DataEntry"/>
 </qualifiedTypeNameHistroy>

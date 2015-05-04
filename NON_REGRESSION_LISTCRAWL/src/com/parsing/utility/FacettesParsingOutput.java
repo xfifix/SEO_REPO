@@ -1,6 +1,9 @@
 package com.parsing.utility;
 
+import java.util.List;
+
 public class FacettesParsingOutput {
+	private List<String> orderedSkusList;
 	private String nb_products;
 	private String Facettes;
 	public String getNb_products() {
@@ -14,5 +17,11 @@ public class FacettesParsingOutput {
 	}
 	public void setFacettes(String facettes) {
 		Facettes = facettes;
+	}
+	public List<String> getOrderedSkusList() {
+		return orderedSkusList;
+	}
+	public void setOrderedSkusList(List<String> orderedSkusList) {
+		this.orderedSkusList = orderedSkusList;
 	}
 }

@@ -15,6 +15,21 @@ import org.jsoup.select.Elements;
 public class FacettesUtility {
 	public static Pattern bracketPattern = Pattern.compile("\\(.*?\\)");
 
+	public static List<String> parse_page_code_source_for_ordered_skus(String page_source_code){
+		List<String> ordered_skus_list = new ArrayList<String>();
+		org.jsoup.nodes.Document doc = Jsoup.parse(page_source_code);
+		Elements nb_products = doc.select("#lpBloc");
+		Elements procucts =nb_products.select("li");
+		for (Element product : procucts){
+			String ifSku = product.attr("data-sku");
+			if (!"".equals(ifSku)){
+			ordered_skus_list.add(ifSku);
+			}
+		}
+		return ordered_skus_list;
+	}
+	
+	
 	public static FacettesParsingOutput parse_page_code_source(String page_source_code){
 		org.jsoup.nodes.Document doc = Jsoup.parse(page_source_code);
 		FacettesParsingOutput output = new FacettesParsingOutput();

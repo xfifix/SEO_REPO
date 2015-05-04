@@ -1,6 +1,7 @@
 package com.test;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -69,6 +70,8 @@ public class FacettesParsingTest {
 			clientSolr.close();
 			// we now extract information from our page source code
 			FacettesParsingOutput solrOutput = FacettesUtility.parse_page_code_source(page_source_codeSolr);
+			List<String> my_solr_ordered_skus = FacettesUtility.parse_page_code_source_for_ordered_skus(page_source_codeSolr);
+			solrOutput.setOrderedSkusList(my_solr_ordered_skus);
 			// inspecting the output
 			System.out.println(solrOutput);
 			
@@ -104,6 +107,8 @@ public class FacettesParsingTest {
 			clientExalead.close();
 			// we now extract information from our page source code
 			FacettesParsingOutput exaleadOutput = FacettesUtility.parse_page_code_source(page_source_codeExalead);
+			List<String> my_exalead_ordered_skus = FacettesUtility.parse_page_code_source_for_ordered_skus(page_source_codeExalead);
+			exaleadOutput.setOrderedSkusList(my_exalead_ordered_skus);
 			// inspecting the output
 			System.out.println(exaleadOutput);
 		} catch (Exception e){
