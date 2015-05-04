@@ -1,4 +1,4 @@
-package com.corpus;
+package com.corpus.parallel;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,17 +9,24 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.data.DataEntry;
 import com.parameters.CategorizerParameters;
 
-public class ResumingCategorizerCorpusFrequencyComputer {
+public class ParallelResumingCategorizerCorpusFrequencyComputingProcess {
 
 	public static String categorizer_conf_path = "/home/sduprey/My_Data/My_Categorizer_Conf/categorizer.conf";
 	public static Properties properties;
 
 	private static String select_not_added_to_tfidf_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT, RAYON, TO_FETCH FROM DATA WHERE IS_IN_TFIDF_INDEX=false";
+
+	private static List<DataEntry> tofetch_list = new ArrayList<DataEntry>();
+
 
 	public static void main(String[] args) {
 		System.out.println("Reading the configuration files : "+categorizer_conf_path);
@@ -39,6 +46,8 @@ public class ResumingCategorizerCorpusFrequencyComputer {
 			CategorizerParameters.batch_size =Integer.valueOf(properties.getProperty("categorizer.batch_size"));
 			CategorizerParameters.displaying_threshold =Integer.valueOf(properties.getProperty("categorizer.displaying_threshold"));
 			CategorizerParameters.computing_max_list_size =CategorizerParameters.small_computing_max_list_size;
+			CategorizerParameters.corpus_frequency_pool_size =Integer.valueOf(properties.getProperty("categorizer.corpus_frequency_pool_size")); 
+			CategorizerParameters.corpus_frequency_size_bucket =Integer.valueOf(properties.getProperty("categorizer.corpus_frequency_size_bucket")); 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -55,7 +64,9 @@ public class ResumingCategorizerCorpusFrequencyComputer {
 		System.out.println("Small computing maximum list size : "+CategorizerParameters.computing_max_list_size);
 		System.out.println("Batch size : "+CategorizerParameters.batch_size);
 		System.out.println("Displaying threshold : "+CategorizerParameters.displaying_threshold);
-
+		System.out.println("Number of threads for list crawler : "+CategorizerParameters.corpus_frequency_pool_size);
+		System.out.println("Bucket size for list crawler : "+CategorizerParameters.corpus_frequency_size_bucket);
+		
 		// it would be best to use a property file to store MD5 password
 		//		// Getting the database property
 		Properties props = new Properties();
@@ -81,15 +92,16 @@ public class ResumingCategorizerCorpusFrequencyComputer {
 		String user = props.getProperty("db.user");
 		String passwd = props.getProperty("db.passwd");
 
-		
+
 		System.out.println("You'll connect to the postgresql CATEGORIZERDB database as "+user);
 		// The database connection
 		Connection con = null;
 		PreparedStatement pst = null;
 		ResultSet rs = null;
+		ExecutorService executor = null;
 		try {  
-			CategorizerCorpusFrequencyManager manager = new CategorizerCorpusFrequencyManager(url, user, passwd);
 			con = DriverManager.getConnection(url, user, passwd);
+
 			// getting the number of URLs to fetch
 			System.out.println("Requesting all data from categories");
 			System.out.println("We here fetch all data even those with the to_fetch flag to false");
@@ -131,13 +143,54 @@ public class ResumingCategorizerCorpusFrequencyComputer {
 				Boolean to_fetch = rs.getBoolean(12);
 				entry.setTO_FETCH(to_fetch);
 				// we here just keep the small categories
-				System.out.println("Processing entry SKU : "+entry.getSKU()+" number : "+loop_count);
-				manager.updateEntry(entry);
-				manager.flagSkuInTFIDF(entry.getSKU());
+				tofetch_list.add(entry);
+				// that is the very task we want to parallelize
+				//				System.out.println("Processing entry SKU : "+entry.getSKU()+" number : "+loop_count);
+				//				manager.updateEntry(entry);
+				//				manager.flagSkuInTFIDF(entry.getSKU());
+			}	
 
-			}		
 			rs.close();
-			pst.close();			
+			pst.close();
+
+			System.out.println("Number of threads for list crawler : "+CategorizerParameters.corpus_frequency_pool_size);
+			System.out.println("Bucket size for list crawler : "+CategorizerParameters.corpus_frequency_size_bucket);
+
+			// Instantiating the pool thread
+			executor = Executors.newFixedThreadPool(CategorizerParameters.corpus_frequency_pool_size);
+			// Instantiating the pool thread
+
+			int size=tofetch_list.size();
+			int size_bucket = CategorizerParameters.corpus_frequency_size_bucket;
+
+			System.out.println("We have : " +size + " URL status to fetch according to the database \n");
+			// we add one for the euclidean remainder
+			int local_count=0;
+			List<DataEntry> thread_list = new ArrayList<DataEntry>();
+			for (int size_counter=0; size_counter<size;size_counter ++){
+				if(local_count<size_bucket ){
+					thread_list.add(tofetch_list.get(size_counter));
+					local_count++;
+				}
+				if (local_count==size_bucket){
+					// one new connection per task
+					System.out.println("Launching another thread with "+local_count+ " SKUs to fetch");
+					Runnable worker = new ResumingCategorizerCorpusFrequencyWorkerThread(thread_list);
+					executor.execute(worker);		
+					// we initialize everything for the next thread
+					local_count=0;
+					thread_list = new ArrayList<DataEntry>();
+				}
+			}
+			// there might be a last task with the euclidean remainder
+			if (thread_list.size()>0){
+				// one new connection per task
+				System.out.println("Launching another thread with "+local_count+ " SKUs to fetch");
+				Runnable worker = new ResumingCategorizerCorpusFrequencyWorkerThread(thread_list);
+				executor.execute(worker);
+			}
+			tofetch_list.clear();
+
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		} finally {
@@ -153,6 +206,10 @@ public class ResumingCategorizerCorpusFrequencyComputer {
 				ex.printStackTrace();
 			}
 		}
+		executor.shutdown();
+		while (!executor.isTerminated()) {
+		}
+		System.out.println("Finished all threads");
 		if (con != null) {
 			try {
 				con.close();
@@ -174,3 +231,4 @@ public class ResumingCategorizerCorpusFrequencyComputer {
 		}
 	}
 }
+

@@ -16,5 +16,9 @@ public class CategorizerParameters {
 	public  static int computing_max_list_size;
 	public static int batch_size;
 	public static int displaying_threshold;
+	
+	public static int corpus_frequency_pool_size; 
+	public static int corpus_frequency_size_bucket; 
+
 }
 
