@@ -13,7 +13,8 @@ import javax.xml.parsers.SAXParserFactory;
 public class PopulatingSimilarCatalogDatabase {
 	private static String database_kriter_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
 
-	private static String input_file_path = "/home/sduprey/My_Data/My_Kriter_Data/similar_full_20150311144001.xml";
+	//private static String input_file_path = "/home/sduprey/My_Data/My_Kriter_Data/similar_full_20150313040437.xml";
+	private static String input_file_path = "/home/sduprey/My_Data/My_Kriter_Data/similar_full_20150418012952.xml";
 	public static void main(String[] args){
 
 		// Reading the property of our database for the continuous crawl
