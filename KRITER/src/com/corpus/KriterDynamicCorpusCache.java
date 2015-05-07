@@ -425,7 +425,7 @@ public class KriterDynamicCorpusCache {
 		Double tfIdfDistance = cosine_tfidfsimilarity(firstMap,secondMap);
 
 		Integer levenshteing_distance = StringUtils.getLevenshteinDistance(bestidfword1, bestidfword2);
-		double levenshtein = (double)levenshteing_distance / (Math.max((double)text1.length(),(double)text2.length()));
+		double levenshtein = ((double)1-(double)levenshteing_distance / (Math.max((double)text1.length(),(double)text2.length())));
 
 		return tfIdfDistance+levenshtein;
 	}
@@ -446,7 +446,7 @@ public class KriterDynamicCorpusCache {
 
 		Double tfIdfDistance = cosine_tfsimilarity(vector1,vector2);
 		Integer levenshteing_distance = StringUtils.getLevenshteinDistance(text1, text2);
-		double levenshtein = (double)levenshteing_distance / (Math.max((double)text1.length(),(double)text2.length()));
+		double levenshtein = ((double)1-(double)levenshteing_distance / (Math.max((double)text1.length(),(double)text2.length())));
 		return tfIdfDistance+levenshtein;
 	}
 }

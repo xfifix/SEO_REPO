@@ -49,7 +49,6 @@
 <fullyQualifiedTypeName name="com.corpus.KriterCorpusCache"/>
 <fullyQualifiedTypeName name="com.corpus.CategorizerDynamicCorpusCache"/>
 <fullyQualifiedTypeName name="java.sql.Connection"/>
-<fullyQualifiedTypeName name="org.apache.commons.lang3.StringUtils"/>
 <fullyQualifiedTypeName name="java.util.Set"/>
 <fullyQualifiedTypeName name="java.util.Map.Entry"/>
 <fullyQualifiedTypeName name="java.util.Iterator"/>
@@ -60,4 +59,5 @@
 <fullyQualifiedTypeName name="java.util.concurrent.ExecutorService"/>
 <fullyQualifiedTypeName name="com.data.DataEntry"/>
 <fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="org.apache.commons.lang3.StringUtils"/>
 </qualifiedTypeNameHistroy>

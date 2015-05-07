@@ -763,7 +763,7 @@ public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 	public Double computeWeightedDistance(CatalogEntry entryi, CatalogEntry entryj){
 		Double distone;
 		if (entryi.getSKU().equals(entryj.getSKU())){
-			distone = Double.POSITIVE_INFINITY;
+			distone = Double.NEGATIVE_INFINITY;
 		} else {
 			String entryivalue = entryi.getLIBELLE_PRODUIT()+" "+entryi.getDESCRIPTION_LONGUEUR80();
 			String entryjvalue = entryj.getLIBELLE_PRODUIT()+" "+entryj.getDESCRIPTION_LONGUEUR80();
