@@ -425,8 +425,9 @@ public class KriterDynamicCorpusCache {
 		Double tfIdfDistance = cosine_tfidfsimilarity(firstMap,secondMap);
 
 		Integer levenshteing_distance = StringUtils.getLevenshteinDistance(bestidfword1, bestidfword2);
+		double levenshtein = (double)levenshteing_distance / (Math.max((double)text1.length(),(double)text2.length()));
 
-		return tfIdfDistance+(double)levenshteing_distance;
+		return tfIdfDistance+levenshtein;
 	}
 	
 	public  Double computeAlgoWeightedDistance(String text1,String text2){
@@ -443,17 +444,10 @@ public class KriterDynamicCorpusCache {
 		Map<String, Integer> vector1 = computeVectorRepresentation(text1);
 		Map<String, Integer> vector2 = computeVectorRepresentation(text2);
 
-		String bestidfword1 = getLevenshteinBestWord(vector1);
-		String bestidfword2 = getLevenshteinBestWord(vector2);
-
-		Map<String, Double> firstMap = addTFIDF(vector1);
-		Map<String, Double> secondMap = addTFIDF(vector2);
-
-		Double tfIdfDistance = cosine_tfidfsimilarity(firstMap,secondMap);
-
-		Integer levenshteing_distance = StringUtils.getLevenshteinDistance(bestidfword1, bestidfword2);
-
-		return tfIdfDistance+(double)levenshteing_distance;
+		Double tfIdfDistance = cosine_tfsimilarity(vector1,vector2);
+		Integer levenshteing_distance = StringUtils.getLevenshteinDistance(text1, text2);
+		double levenshtein = (double)levenshteing_distance / (Math.max((double)text1.length(),(double)text2.length()));
+		return tfIdfDistance+levenshtein;
 	}
 }
 
