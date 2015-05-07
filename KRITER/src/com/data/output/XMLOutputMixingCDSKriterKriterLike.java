@@ -57,13 +57,13 @@ public class XMLOutputMixingCDSKriterKriterLike {
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-	 
+
 			// root elements
 			Document doc = docBuilder.newDocument();
 			// similar element
 			Element rootElement = doc.createElement("similar");
 			doc.appendChild(rootElement);
-			
+
 			// staff elements
 			Element productListElement = doc.createElement("ProductList");
 			rootElement.appendChild(productListElement);
@@ -91,30 +91,43 @@ public class XMLOutputMixingCDSKriterKriterLike {
 				String[] krit_similar_skus = new String[nb_similar_skus];
 				for (int nb_sku=2;nb_sku<(nb_similar_skus+2);nb_sku++){
 					String current_linked_skus = rs.getString(nb_sku);
+					if (current_linked_skus == null){
+						current_linked_skus = "";
+					}
 					cds_similar_skus[nb_sku-2]=current_linked_skus;
 				}
-				
+
 				for (int nb_sku=(nb_similar_skus+2);nb_sku<(2*nb_similar_skus+2);nb_sku++){
 					String current_linked_skus = rs.getString(nb_sku);
+					if (current_linked_skus == null){
+						current_linked_skus = "";
+					}
 					krit_similar_skus[nb_sku-(nb_similar_skus+2)]=current_linked_skus;
 				}
-				
-				// if we have with the new CDS algo already computed the similar skus we take them
-				if (cds_similar_skus[0] != null && !"".equals(cds_similar_skus[0])){
-					for (int loopcounter=0;loopcounter<nb_similar_skus;loopcounter++){
-						Element simSkuElement = doc.createElement("Sku");
-						simSkuElement.appendChild(doc.createTextNode(cds_similar_skus[loopcounter]));
-						similarProductListElement.appendChild(simSkuElement);				
+
+				if (global_count%2 ==0){
+					// if we have with the new CDS algo already computed the similar skus we take them
+					if (cds_similar_skus[0] != null && !"".equals(cds_similar_skus[0])){
+						for (int loopcounter=0;loopcounter<nb_similar_skus;loopcounter++){
+							Element simSkuElement = doc.createElement("Sku");
+							simSkuElement.appendChild(doc.createTextNode(cds_similar_skus[loopcounter]));
+							similarProductListElement.appendChild(simSkuElement);				
+						}
+					}else {
+						// we use the sku computed by Kryter
+						for (int loopcounter=0;loopcounter<nb_similar_skus;loopcounter++){
+							Element simSkuElement = doc.createElement("Sku");
+							simSkuElement.appendChild(doc.createTextNode(krit_similar_skus[loopcounter]));
+							similarProductListElement.appendChild(simSkuElement);				
+						}					
 					}
-				}else {
-					// we use the sku computed by Kryter
+				} else {
 					for (int loopcounter=0;loopcounter<nb_similar_skus;loopcounter++){
 						Element simSkuElement = doc.createElement("Sku");
 						simSkuElement.appendChild(doc.createTextNode(krit_similar_skus[loopcounter]));
 						similarProductListElement.appendChild(simSkuElement);				
-					}					
+					}	
 				}
-				
 				productElement.appendChild(similarProductListElement);
 				productListElement.appendChild(productElement);
 				global_count++;

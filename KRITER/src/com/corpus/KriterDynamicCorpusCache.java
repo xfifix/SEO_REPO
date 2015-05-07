@@ -402,6 +402,33 @@ public class KriterDynamicCorpusCache {
 		return result;
 	}
 
+	public  Double computeHighLevelAlgoWeightedDistance(String text1,String text2){
+
+		if (("".equals(text1))&&("".equals(text2))){
+			return (double) 1;
+		}
+		if (("".equals(text1))&&(!"".equals(text2))){
+			return (double) 0;
+		}
+		if ((!"".equals(text1))&&("".equals(text2))){
+			return (double) 0;
+		}
+		Map<String, Integer> vector1 = computeVectorRepresentation(text1);
+		Map<String, Integer> vector2 = computeVectorRepresentation(text2);
+
+		String bestidfword1 = getLevenshteinBestWord(vector1);
+		String bestidfword2 = getLevenshteinBestWord(vector2);
+
+		Map<String, Double> firstMap = addTFIDF(vector1);
+		Map<String, Double> secondMap = addTFIDF(vector2);
+
+		Double tfIdfDistance = cosine_tfidfsimilarity(firstMap,secondMap);
+
+		Integer levenshteing_distance = StringUtils.getLevenshteinDistance(bestidfword1, bestidfword2);
+
+		return tfIdfDistance+(double)levenshteing_distance;
+	}
+	
 	public  Double computeAlgoWeightedDistance(String text1,String text2){
 
 		if (("".equals(text1))&&("".equals(text2))){

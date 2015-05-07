@@ -15,10 +15,17 @@ CREATE INDEX ON catalog (categorie_niveau_4);
 CREATE INDEX ON catalog (categorie_niveau_3);
 CREATE INDEX ON catalog (categorie_niveau_2);
 CREATE INDEX ON catalog (categorie_niveau_1);
+CREATE INDEX ON catalog (to_fetch);
+
 3) Recreate the new CATEGORY_FOLLOWING table using SQL script
 
+4) Launch the CATEGORIE_NIVEAU_4 updating script
+update CATALOG set CATEGORIE_NIVEAU_4=CATEGORIE_NIVEAU_3 where CATEGORIE_NIVEAU_4=''
+update CATALOG set CATEGORIE_NIVEAU_4=CATEGORIE_NIVEAU_2 where CATEGORIE_NIVEAU_4=''
+update CATALOG set CATEGORIE_NIVEAU_4=CATEGORIE_NIVEAU_1 where CATEGORIE_NIVEAU_4=''
 
-4) Launch the Cdiscount computation
+
+5) Launch the Cdiscount computation
 **** Launch in parallel : SimilarityBigCategoryNoConcurrentRequestComputingProcess 
 # select count(*) from CATEGORY_FOLLOWING where count > 10000 ==> 104
 # 100 threads : list_fixed_pool_size = 104 and list_size_bucket = 1 and fifty categories per thread
