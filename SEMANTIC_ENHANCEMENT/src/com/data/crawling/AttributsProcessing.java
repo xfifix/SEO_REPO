@@ -34,11 +34,7 @@ public class AttributsProcessing {
 		System.out.println("Reading the configuration files : "+semantics_conf_path);
 		try{
 			loadProperties();
-			SemanticsParameter.database_con_path="/home/sduprey/My_Data/My_Postgre_Conf/semantic.properties";
-			SemanticsParameter.list_pool_size=100;
-			SemanticsParameter.list_size_bucket=100000;
-			SemanticsParameter.batch_size=100;
-			SemanticsParameter.displaying_threshold=250;
+            AttributsComputingThread.batch_size = SemanticsParameter.batch_size;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

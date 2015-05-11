@@ -2,6 +2,7 @@ package com.data.processing;
 
 public class FetchableSKU {
 	private String SKU;
+	private String jsonAttributs;
 	private boolean to_fetch;
 	public boolean isTo_fetch() {
 		return to_fetch;
@@ -14,5 +15,11 @@ public class FetchableSKU {
 	}
 	public void setSKU(String sKU) {
 		SKU = sKU;
+	}
+	public String getJsonAttributs() {
+		return jsonAttributs;
+	}
+	public void setJsonAttributs(String jsonAttributs) {
+		this.jsonAttributs = jsonAttributs;
 	}
 }

@@ -26,9 +26,10 @@ public class AttributsUtility {
 	public static String product_name = "Nom du produit";
 	public static String brand_name = "Marque";
 
-	private static String sku_fetching_url = "www.cdiscount.com/dp.aspx?sku=";
+	private static String sku_fetching_url = "http://www.cdiscount.com/dp.aspx?sku=";
 	private static String userAgent = "CdiscountBot-crawler";
 	public static String crawl_sku(String SKU){
+		String attributs_json = "";
 		String constructed_url = sku_fetching_url+SKU;
 		System.out.println(Thread.currentThread().getName()+" fetching SKU : "+constructed_url);
 		HttpURLConnection connection = null;
@@ -36,7 +37,7 @@ public class AttributsUtility {
 			//System.out.println(Thread.currentThread().getName()+" fetching URL : "+line_info.getUrl());
 			URL url = new URL(constructed_url);
 			connection = (HttpURLConnection)url.openConnection();
-			connection.setRequestMethod("HEAD");
+			connection.setRequestMethod("GET");
 			connection.setRequestProperty("User-Agent",userAgent);
 			connection.setInstanceFollowRedirects(true);
 			connection.setConnectTimeout(30000);
@@ -53,14 +54,14 @@ public class AttributsUtility {
 				builder.append(content_line);
 			} while (content_line != null);
 			String html = builder.toString();
-
+			attributs_json = extractAttributsJSON(html);
 
 			System.out.println(Thread.currentThread().getName()+" Status " +status+ " fetching URL : "+constructed_url);
 		} catch (Exception e){
 			System.out.println("Error with : "+SKU+" "+constructed_url);
 			e.printStackTrace();
 		}
-		return constructed_url;
+		return attributs_json;
 	}
 
 
@@ -68,17 +69,17 @@ public class AttributsUtility {
 		Document doc = Jsoup.parse(html);
 		List<AttributesInfo> attributesList = new ArrayList<AttributesInfo>();
 		Elements attributes = doc.select(".fpDescTb tr");
-		int nb_arguments = 0 ;
+		//int nb_arguments = 0 ;
 		for (Element tr_element : attributes){
 			Elements td_elements = tr_element.select("td");
 			if (td_elements.size() == 2){
-				nb_arguments++;
+				//nb_arguments++;
 				AttributesInfo toAdd = new AttributesInfo();
 				String category = td_elements.get(0).text();
 				toAdd.setData_name(category);
 				String description = td_elements.get(1).text();                                    
 				toAdd.setData(description);
-				//				attributesList.add(toAdd);
+				attributesList.add(toAdd);
 				//				if (category_name.equals(category)){
 				//					info.setCategory(description);
 				//				}
@@ -93,7 +94,6 @@ public class AttributsUtility {
 		//info.setAtt_number(nb_arguments);
 		String attribute_json=getAttributesJSONStringToStore(attributesList);
 		//info.setAtt_desc(attribute_json);
-
 		return attribute_json;
 	}
 
