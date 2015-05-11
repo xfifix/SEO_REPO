@@ -27,7 +27,6 @@ public class ParallelResumingCategorizerCorpusFrequencyComputingProcess {
 
 	private static List<DataEntry> tofetch_list = new ArrayList<DataEntry>();
 
-
 	public static void main(String[] args) {
 		System.out.println("Reading the configuration files : "+categorizer_conf_path);
 		try{
