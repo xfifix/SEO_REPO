@@ -5,6 +5,12 @@
 **** launch AddingNewDataToCatalog  /  PopulatingCatalogDatabase
 
 
+1) bis 
+to launch all sql scripts together 
+in /home/sduprey/My_Executable
+sudo -i -u postgres
+psql KRITERDB -f my_catalog_script.sql
+
 2) Populating the new CATALOG database :
 **** update the PopulatingSimilarCatalogDatabase (new xml name)
 **** launch the PopulatingSimilarCatalogDatabase

@@ -35,17 +35,17 @@
 		<item value="3" key="pageIndex"/>
 	</section>
 	<section name="FatJarPackageWizard">
-		<item value="/home/sduprey/My_Executable/my_kriter_similarity_small_category_computing_job.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
-		<item value="SimilaritySmallCategoryNoConcurrentRequestComputingProcess - KRITER" key="FatJarPackageWizardPage.LAUNCH_CONFIGURATION_SELECTION_NAME"/>
+		<item value="/home/sduprey/My_Executable/my_kriter_similarity_big_category_computing_job.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
+		<item value="SimilarityBigCategoryNoConcurrentRequestComputingProcess - KRITER" key="FatJarPackageWizardPage.LAUNCH_CONFIGURATION_SELECTION_NAME"/>
 		<item value="/home/sduprey/My_Code/My_Java_Workspace" key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION"/>
 		<item value="false" key="FatJarPackageWizardPage.ANTSCRIPT_SAVE"/>
 		<item value="2" key="FatJarPackageWizardPage.LIBRARY_HANDLING"/>
 		<list key="FatJarPackageWizardPage.DESTINATION_NAMES_ID">
-			<item value="/home/sduprey/My_Executable/my_kriter_similarity_small_category_computing_job.jar"/>
 			<item value="/home/sduprey/My_Executable/my_kriter_similarity_big_category_computing_job.jar"/>
+			<item value="/home/sduprey/My_Executable/my_kriter_similarity_small_category_computing_job.jar"/>
+			<item value="/home/sduprey/My_Executable/my_kriter_catalog_populating_job.jar"/>
+			<item value="/home/sduprey/My_Executable/my_kriter_resuming_catalog_populating_job.jar"/>
 			<item value="/home/sduprey/My_Executable/my_kriter_xml_output_computing_job.jar"/>
-			<item value="/home/sduprey/My_Executable/my_kriter_similar_catalog_populating_job.jar"/>
-			<item value="/home/sduprey/My_Executable/my_solr_vs_exalead_search_list_batch_crawler.jar"/>
 		</list>
 		<list key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION_HISTORY">
 			<item value="/home/sduprey/My_Code/My_Java_Workspace.xml"/>
