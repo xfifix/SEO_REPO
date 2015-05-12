@@ -1,8 +1,8 @@
 1) Populating the new CATALOG database :
-**** update the PopulatingCatalogDatabase (new csv name, last up to date SQL scripts )
+**** update the AddingNewDataToCatalog  /  PopulatingCatalogDatabase (new csv name, last up to date SQL scripts )
 **** convert it to utf-8
  sudo iconv -t utf-8 Catalogue_KryterFull_17_04_2015_10_37_30.csv -o Catalogue_KryterFull_17_04_2015_10_37_30_utf8.csv
-**** launch PopulatingCatalogDatabase
+**** launch AddingNewDataToCatalog  /  PopulatingCatalogDatabase
 
 
 2) Populating the new CATALOG database :
@@ -24,8 +24,11 @@ update CATALOG set CATEGORIE_NIVEAU_4=CATEGORIE_NIVEAU_3 where CATEGORIE_NIVEAU_
 update CATALOG set CATEGORIE_NIVEAU_4=CATEGORIE_NIVEAU_2 where CATEGORIE_NIVEAU_4=''
 update CATALOG set CATEGORIE_NIVEAU_4=CATEGORIE_NIVEAU_1 where CATEGORIE_NIVEAU_4=''
 
+5) update the boolean to_fetch à true pour toute la base
 
-5) Launch the Cdiscount computation
+6) check the parameters set from /home/sduprey/My_Data/My_Kriter_Conf/kriter.conf
+
+7) Launch the Cdiscount computation
 **** Launch in parallel : SimilarityBigCategoryNoConcurrentRequestComputingProcess 
 # select count(*) from CATEGORY_FOLLOWING where count > 10000 ==> 104
 # 100 threads : list_fixed_pool_size = 104 and list_size_bucket = 1 and fifty categories per thread
@@ -37,12 +40,12 @@ sudo java -Xmx80g -jar my_kriter_similarity_big_category_computing_job.jar
 sudo java -Xmx80g -jar my_kriter_similarity_small_category_computing_job.jar 
 
 
-5) Launch the Statistics computation
+8) Launch the Statistics computation
 **** Launch KriterSkuLinkingComputing
 **** Launch SkuLinkingComputing
 **** Launch KriterStatisticsComputingThreadPool
 **** Launch StatisticsComputingThreadPool
 
-6) Check which SKU is the good one
+9) Check which SKU is the good one
 www.cdiscount.com/dp.aspx?sku=UCALLMIAMINO
 http://ns333827.ip-178-33-123.eu:8001/comparator/HP2009980445021/results
