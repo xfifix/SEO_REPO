@@ -20,7 +20,7 @@ public class AddingNewDataToCatalog {
 	private static String select_skus_in_catalog_statement = "SELECT SKU FROM CATALOG";
 
 	private static String database_categorizer_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/kriter.properties";
-	private static String insert_statement = "INSERT INTO CATALOG(MAGASIN, RAYON, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4, CATEGORIE_NIVEAU_5, SKU, LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR50, DESCRIPTION_LONGUEUR80, URL, LIEN_IMAGE, VENDEUR, ETAT, IS_IN_TFIDF_INDEX, TO_FETCH)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+	private static String insert_statement = "INSERT INTO CATALOG(MAGASIN, RAYON, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4, CATEGORIE_NIVEAU_5, SKU, LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR50, DESCRIPTION_LONGUEUR80, URL, LIEN_IMAGE, VENDEUR, ETAT, IS_IN_TFIDF_INDEX, TO_FETCH)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	private static Connection con;
 	//private static String input_file_path = "/home/sduprey/My_Data/My_Kriter_Data/Catalogue_KryterFull.csv";
 	//private static String input_file_path = "/home/sduprey/My_Data/My_Kriter_Data/Catalogue_KryterFull_17_04_2015_10_37_30_utf8.csv";
@@ -53,6 +53,7 @@ public class AddingNewDataToCatalog {
 		// we will here insert all the entries from the catalog csv file
 		try {
 			con = DriverManager.getConnection(url, user, passwd);
+			System.out.println("Fetching all previously inserted SKUs in the catalog. Waiting ...");
 			fetchSKUsAlreadyInCatalog();
 			update_new_Catalog();
 			System.out.println("New DATA inserted from csv file : "+input_file_path);
