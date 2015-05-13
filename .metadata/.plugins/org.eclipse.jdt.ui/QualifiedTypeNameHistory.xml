@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="org.apache.http.HttpResponse"/>
-<fullyQualifiedTypeName name="org.apache.http.client.methods.CloseableHttpResponse"/>
-<fullyQualifiedTypeName name="org.apache.http.protocol.HttpContext"/>
 <fullyQualifiedTypeName name="crawl4j.continuous.CrawlerUtility"/>
 <fullyQualifiedTypeName name="crawl4j.continuous.ContinuousController"/>
 <fullyQualifiedTypeName name="crawl4j.xpathutility.XPathUtility"/>
@@ -53,11 +50,14 @@
 <fullyQualifiedTypeName name="com.data.DataEntry"/>
 <fullyQualifiedTypeName name="org.apache.commons.lang3.StringUtils"/>
 <fullyQualifiedTypeName name="java.util.Map.Entry"/>
-<fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="com.data.processing.FetchableSKU"/>
 <fullyQualifiedTypeName name="java.io.InputStream"/>
 <fullyQualifiedTypeName name="org.jsoup.Jsoup"/>
 <fullyQualifiedTypeName name="org.w3c.dom.Document"/>
 <fullyQualifiedTypeName name="org.jsoup.nodes.Document"/>
 <fullyQualifiedTypeName name="com.utility.AttributsUtility"/>
+<fullyQualifiedTypeName name="com.utility.CrawlingUtility"/>
+<fullyQualifiedTypeName name="org.apache.http.protocol.HttpContext"/>
+<fullyQualifiedTypeName name="java.net.CookieStore"/>
+<fullyQualifiedTypeName name="java.util.List"/>
 </qualifiedTypeNameHistroy>
