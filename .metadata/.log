@@ -10882,3 +10882,31 @@ Caused by: java.lang.NullPointerException
 	at org.eclipse.swt.widgets.RunnableLock.run(RunnableLock.java:35)
 	at org.eclipse.swt.widgets.Synchronizer.runAsyncMessages(Synchronizer.java:136)
 	... 24 more
+!SESSION 2015-05-13 17:05:45.479 -----------------------------------------------
+eclipse.buildId=4.4.0.I20140606-1215
+java.version=1.7.0_72
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_GB
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.jface 2 0 2015-05-13 17:17:10.489
+!MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
+!SUBENTRY 1 org.eclipse.jface 2 0 2015-05-13 17:17:10.502
+!MESSAGE A conflict occurred for CTRL+D:
+Binding(CTRL+D,
+	ParameterizedCommand(Command(org.eclipse.debug.ui.commands.eof,EOF,
+		Send end of file,
+		Category(org.eclipse.debug.ui.category.run,Run/Debug,Run/Debug command category,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@c602867,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.debug.ui.console,,,system)
+Binding(CTRL+D,
+	ParameterizedCommand(Command(org.eclipse.ui.edit.text.delete.line,Delete Line,
+		Delete a line of text,
+		Category(org.eclipse.ui.category.textEditor,Text Editing,Text Editing Commands,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@7cfc8889,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.textEditorScope,,,system)

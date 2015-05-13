@@ -23,20 +23,43 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class CrawlingUtility {
-	
-	public static List<String> parseStandardDepartmentList(String pageSourceCode){
+
+
+	public static List<String> parsePaginationList(String pageSourceCode){
 		List<String> to_return = new ArrayList<String>();
 		Document doc = Jsoup.parse(pageSourceCode,"UTF-8");
+		// getting all the products for the current pagination page
 		Elements attributes = doc.select(".zg_title");
 		Elements department_links = attributes.select("a");		
 		for(Element link : department_links){
 			System.out.println("Title : "+link.text());
-			System.out.println("URL " +link.attributes());
-			to_return.add(link.attributes().toString());
+			System.out.println("URL " +link.attributes().get("href"));
+			to_return.add(link.attributes().get("href"));
 		}
 		return to_return;
 	}
-	
+
+	public static List<String> parseStandardDepartmentList(String pageSourceCode) throws ClientProtocolException, IOException{
+		List<String> to_return = new ArrayList<String>();
+		// getting products for the current paginated list
+		List<String> products = parsePaginationList(pageSourceCode);
+		to_return.addAll(products);	
+		Document doc = Jsoup.parse(pageSourceCode,"UTF-8");
+		Elements paginations = doc.select(".zg_page ");
+		for(Element pagination : paginations){
+			Elements pagination_anchors = pagination.select("a");
+					//attributes().get("ajaxurl");
+			String pagination_url = pagination_anchors.attr("href");
+			System.out.println("Pagination : "+pagination.text());
+			System.out.println("URL " +pagination_url);
+			String depPSCode = CrawlingUtility.getPSCode(pagination_url);
+			List<String> paginated_products = parsePaginationList(depPSCode);
+			to_return.addAll(paginated_products);
+		}
+
+		return to_return;
+	}
+
 	public static List<String> parseEntryMenu(String pageSourceCode){
 		List<String> to_return = new ArrayList<String>();
 		Document doc = Jsoup.parse(pageSourceCode,"UTF-8");
@@ -49,7 +72,7 @@ public class CrawlingUtility {
 		}
 		return to_return;
 	}
-		
+
 	public static String getPSCode(String url_string) throws ClientProtocolException, IOException{
 		HttpGet getSolr = new HttpGet(url_string);
 		String userAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
@@ -59,25 +82,25 @@ public class CrawlingUtility {
 		HTTP_CONTEXT_SOLR.setAttribute(CoreProtocolPNames.USER_AGENT, userAgent);
 		//getSolr.setHeader("Referer", "http://www.google.com");
 		getSolr.setHeader("User-Agent",userAgent);
-//		// set the cookies
-//		CookieStore cookieStoreSolr = new BasicCookieStore();
-//		BasicClientCookie cookieSolr = new BasicClientCookie("_$hidden", "670.1");
-//		cookieSolr.setDomain("cdiscount.com");
-//		cookieSolr.setPath("/");
-//		cookieStoreSolr.addCookie(cookieSolr);    
-//		clientSolr.setCookieStore(cookieStoreSolr);
+		//		// set the cookies
+		//		CookieStore cookieStoreSolr = new BasicCookieStore();
+		//		BasicClientCookie cookieSolr = new BasicClientCookie("_$hidden", "670.1");
+		//		cookieSolr.setDomain("cdiscount.com");
+		//		cookieSolr.setPath("/");
+		//		cookieStoreSolr.addCookie(cookieSolr);    
+		//		clientSolr.setCookieStore(cookieStoreSolr);
 		// get the cookies
 		HttpResponse responseSolr = clientSolr.execute(getSolr,HTTP_CONTEXT_SOLR);
 
 		System.out.println(responseSolr.getStatusLine());
 		HttpEntity entitySolr = responseSolr.getEntity();
-		
+
 		String page_source_codeSolr = EntityUtils.toString(entitySolr);
 		EntityUtils.consume(entitySolr);
 		clientSolr.close();
 		return page_source_codeSolr;
 	}
-	
+
 	public static String getPageSourceCode(String url_string){
 		System.out.println("Processing URL : "+url_string);
 		System.out.println(Thread.currentThread().getName()+" fetching SKU : "+url_string);
@@ -100,27 +123,27 @@ public class CrawlingUtility {
 			int status=connection.getResponseCode();
 			StringBuilder strB = new StringBuilder();
 			try {
-			    BufferedReader input = new BufferedReader(
-			            new InputStreamReader(connection.getInputStream(), "UTF-8")); 
-			    
-			    String str;
-			    while (null != (str = input.readLine())) {
-			        strB.append(str); 
-			    }
-			    input.close();
+				BufferedReader input = new BufferedReader(
+						new InputStreamReader(connection.getInputStream(), "UTF-8")); 
+
+				String str;
+				while (null != (str = input.readLine())) {
+					strB.append(str); 
+				}
+				input.close();
 			} catch (IOException e) {
-			    e.printStackTrace();
+				e.printStackTrace();
 			}
-//			
-//			// getting the content to parse
-//			BufferedReader buff = new BufferedReader(new InputStreamReader((InputStream) connection.getContent(), "utf-8"));
-//			String content_line;
-//			StringBuilder builder=new StringBuilder();
-//			do {
-//				content_line = buff.readLine();
-//				builder.append(content_line);
-//			} while (content_line != null);
-//			html = builder.toString();
+			//			
+			//			// getting the content to parse
+			//			BufferedReader buff = new BufferedReader(new InputStreamReader((InputStream) connection.getContent(), "utf-8"));
+			//			String content_line;
+			//			StringBuilder builder=new StringBuilder();
+			//			do {
+			//				content_line = buff.readLine();
+			//				builder.append(content_line);
+			//			} while (content_line != null);
+			//			html = builder.toString();
 			html=strB.toString();
 			html = new String(html.getBytes(),"UTF-8");
 			System.out.println(Thread.currentThread().getName()+" Status " +status+ " fetching URL : "+url_string);

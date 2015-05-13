@@ -16,10 +16,8 @@ public class StartingPoint {
 		for (String departmentURL : my_departments){
 			String depPSCode = CrawlingUtility.getPSCode(departmentURL);
 			List<String> products =  CrawlingUtility.parseStandardDepartmentList(depPSCode);
-				
+			System.out.println("Department : "+departmentURL);
+			System.out.println("Number of product found : "+products.size());
 		}
 	}
-	
-	
-
 }
