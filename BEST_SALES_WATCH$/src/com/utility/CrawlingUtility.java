@@ -11,8 +11,11 @@ import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
@@ -22,11 +25,14 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.data.MenuDataItem;
+import com.data.ProductDataItem;
+
 public class CrawlingUtility {
 
 
-	public static List<String> parsePaginationList(String pageSourceCode){
-		List<String> to_return = new ArrayList<String>();
+	public static List<ProductDataItem> getProductURLs(String pageSourceCode){
+		List<ProductDataItem> to_return = new ArrayList<ProductDataItem>();
 		Document doc = Jsoup.parse(pageSourceCode,"UTF-8");
 		// getting all the products for the current pagination page
 		Elements attributes = doc.select(".zg_title");
@@ -34,70 +40,97 @@ public class CrawlingUtility {
 		for(Element link : department_links){
 			System.out.println("Title : "+link.text());
 			System.out.println("URL " +link.attributes().get("href"));
-			to_return.add(link.attributes().get("href"));
+			ProductDataItem toAdd = new ProductDataItem();
+			toAdd.setLabel(link.text().trim());
+			toAdd.setUrl(link.attributes().get("href").trim());
+			to_return.add(toAdd);
 		}
 		return to_return;
 	}
 
-	public static List<String> parseStandardDepartmentList(String pageSourceCode) throws ClientProtocolException, IOException{
-		List<String> to_return = new ArrayList<String>();
+	public static List<ProductDataItem> parseStandardDepartmentProductsFromPaginationList(String pageSourceCode) throws ClientProtocolException, IOException{
+		List<ProductDataItem> to_return = new ArrayList<ProductDataItem>();
 		// getting products for the current paginated list
-		List<String> products = parsePaginationList(pageSourceCode);
-		to_return.addAll(products);	
 		Document doc = Jsoup.parse(pageSourceCode,"UTF-8");
 		Elements paginations = doc.select(".zg_page ");
 		for(Element pagination : paginations){
 			Elements pagination_anchors = pagination.select("a");
-					//attributes().get("ajaxurl");
+			//attributes().get("ajaxurl");
 			String pagination_url = pagination_anchors.attr("href");
 			System.out.println("Pagination : "+pagination.text());
 			System.out.println("URL " +pagination_url);
 			String depPSCode = CrawlingUtility.getPSCode(pagination_url);
-			List<String> paginated_products = parsePaginationList(depPSCode);
+			List<ProductDataItem> paginated_products = getProductURLs(depPSCode);
 			to_return.addAll(paginated_products);
 		}
 
 		return to_return;
 	}
 
-	public static List<String> parseEntryMenu(String pageSourceCode){
-		List<String> to_return = new ArrayList<String>();
+	public static List<MenuDataItem> parseEntryMenu(String pageSourceCode){
+		List<MenuDataItem> to_return = new ArrayList<MenuDataItem>();
 		Document doc = Jsoup.parse(pageSourceCode,"UTF-8");
 		Elements attributes = doc.select("#zg_browseRoot");
 		Elements department_links = attributes.select("a");		
 		for(Element link : department_links){
+			MenuDataItem toAdd = new MenuDataItem();
 			System.out.println("Department : "+link.text());
 			System.out.println("Attributes " +link.attributes().get("href"));
-			to_return.add(link.attributes().get("href"));
+			toAdd.setLabel(link.text().trim());
+			toAdd.setUrl(link.attributes().get("href").trim());
+			to_return.add(toAdd);
 		}
 		return to_return;
 	}
 
+	public static List<MenuDataItem> parseDepthMenu(String pageSourceCode){
+		List<MenuDataItem> to_return = new ArrayList<MenuDataItem>();
+		Document doc = Jsoup.parse(pageSourceCode,"UTF-8");
+		Elements attributes = doc.select(".zg_browseUp");
+		Elements department_links = attributes.select("a");		
+		for(Element link : department_links){
+			MenuDataItem toAdd = new MenuDataItem();
+			System.out.println("Depth menu : "+link.text());
+			System.out.println("Attributes " +link.attributes().get("href"));
+			toAdd.setLabel(link.text().trim());
+			toAdd.setUrl(link.attributes().get("href").trim());
+			to_return.add(toAdd);
+		}
+		return to_return;
+	}
+	
 	public static String getPSCode(String url_string) throws ClientProtocolException, IOException{
 		HttpGet getSolr = new HttpGet(url_string);
+		System.out.println("Pausing thread 1 second");
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		String userAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)";
 		getSolr.setHeader("User-Agent", userAgent);
-		DefaultHttpClient clientSolr = new DefaultHttpClient();		
-		HttpContext HTTP_CONTEXT_SOLR = new BasicHttpContext();
-		HTTP_CONTEXT_SOLR.setAttribute(CoreProtocolPNames.USER_AGENT, userAgent);
+		DefaultHttpClient client = new DefaultHttpClient();		
+		HttpContext HTTP_CONTEXT = new BasicHttpContext();
+		HTTP_CONTEXT.setAttribute(CoreProtocolPNames.USER_AGENT, userAgent);
 		//getSolr.setHeader("Referer", "http://www.google.com");
 		getSolr.setHeader("User-Agent",userAgent);
-		//		// set the cookies
-		//		CookieStore cookieStoreSolr = new BasicCookieStore();
-		//		BasicClientCookie cookieSolr = new BasicClientCookie("_$hidden", "670.1");
-		//		cookieSolr.setDomain("cdiscount.com");
-		//		cookieSolr.setPath("/");
-		//		cookieStoreSolr.addCookie(cookieSolr);    
-		//		clientSolr.setCookieStore(cookieStoreSolr);
+		// set the cookies
+		CookieStore cookieStore = new BasicCookieStore();
+		BasicClientCookie cookie = new BasicClientCookie("_$hidden", "670.1");
+		cookie.setDomain("amazon.fr");
+		cookie.setPath("/");
+		cookieStore.addCookie(cookie);    
+		client.setCookieStore(cookieStore);
 		// get the cookies
-		HttpResponse responseSolr = clientSolr.execute(getSolr,HTTP_CONTEXT_SOLR);
+		HttpResponse responseSolr = client.execute(getSolr,HTTP_CONTEXT);
 
 		System.out.println(responseSolr.getStatusLine());
 		HttpEntity entitySolr = responseSolr.getEntity();
 
 		String page_source_codeSolr = EntityUtils.toString(entitySolr);
 		EntityUtils.consume(entitySolr);
-		clientSolr.close();
+		client.close();
 		return page_source_codeSolr;
 	}
 
