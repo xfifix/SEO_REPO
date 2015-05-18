@@ -104,9 +104,9 @@ public class CrawlingUtility {
 
 	public static String getPSCode(String url_string) throws ClientProtocolException, IOException{
 		HttpGet getSolr = new HttpGet(url_string);
-		System.out.println("Pausing thread 1 second");
+		System.out.println("Pausing thread 10 second");
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -143,7 +143,6 @@ public class CrawlingUtility {
 		HttpURLConnection connection = null;
 		String html="";
 		try{
-			//System.out.println(Thread.currentThread().getName()+" fetching URL : "+line_info.getUrl());
 			URL url = new URL(url_string);
 			connection = (HttpURLConnection)url.openConnection();
 			connection.setRequestProperty("Accept-Charset", "UTF-8");

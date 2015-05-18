@@ -10972,3 +10972,88 @@ Binding(CTRL+D,
 		,,true),null),
 	org.eclipse.ui.defaultAcceleratorConfiguration,
 	org.eclipse.ui.textEditorScope,,,system)
+!SESSION 2015-05-18 14:47:22.803 -----------------------------------------------
+eclipse.buildId=4.4.0.I20140606-1215
+java.version=1.7.0_72
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_GB
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.jface 2 0 2015-05-18 14:55:55.274
+!MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
+!SUBENTRY 1 org.eclipse.jface 2 0 2015-05-18 14:55:55.274
+!MESSAGE A conflict occurred for CTRL+D:
+Binding(CTRL+D,
+	ParameterizedCommand(Command(org.eclipse.debug.ui.commands.eof,EOF,
+		Send end of file,
+		Category(org.eclipse.debug.ui.category.run,Run/Debug,Run/Debug command category,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@62b50c9e,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.debug.ui.console,,,system)
+Binding(CTRL+D,
+	ParameterizedCommand(Command(org.eclipse.ui.edit.text.delete.line,Delete Line,
+		Delete a line of text,
+		Category(org.eclipse.ui.category.textEditor,Text Editing,Text Editing Commands,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@5c4f8bb2,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.textEditorScope,,,system)
+!SESSION 2015-05-18 15:29:34.230 -----------------------------------------------
+eclipse.buildId=4.4.0.I20140606-1215
+java.version=1.7.0_72
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_GB
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.jface 2 0 2015-05-18 16:16:57.189
+!MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
+!SUBENTRY 1 org.eclipse.jface 2 0 2015-05-18 16:16:57.189
+!MESSAGE A conflict occurred for CTRL+D:
+Binding(CTRL+D,
+	ParameterizedCommand(Command(org.eclipse.debug.ui.commands.eof,EOF,
+		Send end of file,
+		Category(org.eclipse.debug.ui.category.run,Run/Debug,Run/Debug command category,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@35e6e45a,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.debug.ui.console,,,system)
+Binding(CTRL+D,
+	ParameterizedCommand(Command(org.eclipse.ui.edit.text.delete.line,Delete Line,
+		Delete a line of text,
+		Category(org.eclipse.ui.category.textEditor,Text Editing,Text Editing Commands,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@4999ec5b,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.textEditorScope,,,system)
+
+!ENTRY org.eclipse.jdt.debug 4 125 2015-05-18 16:26:37.566
+!MESSAGE Internal error logged from JDI Debug: 
+!STACK 1
+org.eclipse.debug.core.DebugException: Breakpoint does not have an associated marker.
+	at org.eclipse.debug.core.model.Breakpoint.ensureMarker(Breakpoint.java:290)
+	at org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint.isConditionEnabled(JavaLineBreakpoint.java:525)
+	at org.eclipse.jdt.internal.debug.core.EventDispatcher.dispatch(EventDispatcher.java:140)
+	at org.eclipse.jdt.internal.debug.core.EventDispatcher.access$0(EventDispatcher.java:100)
+	at org.eclipse.jdt.internal.debug.core.EventDispatcher$1.run(EventDispatcher.java:249)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+!SUBENTRY 1 org.eclipse.debug.core 4 5012 2015-05-18 16:26:37.584
+!MESSAGE Breakpoint does not have an associated marker.
+
+!ENTRY org.eclipse.jdt.debug 4 125 2015-05-18 16:26:37.584
+!MESSAGE Internal error logged from JDI Debug: 
+!STACK 1
+org.eclipse.debug.core.DebugException: Breakpoint does not have an associated marker.
+	at org.eclipse.debug.core.model.Breakpoint.ensureMarker(Breakpoint.java:290)
+	at org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint.getTypeName(JavaBreakpoint.java:886)
+	at org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint.installableReferenceType(JavaBreakpoint.java:411)
+	at org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint.handleClassPrepareEvent(JavaBreakpoint.java:369)
+	at org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint.handleEvent(JavaBreakpoint.java:290)
+	at org.eclipse.jdt.internal.debug.core.EventDispatcher.dispatch(EventDispatcher.java:152)
+	at org.eclipse.jdt.internal.debug.core.EventDispatcher.access$0(EventDispatcher.java:100)
+	at org.eclipse.jdt.internal.debug.core.EventDispatcher$1.run(EventDispatcher.java:249)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+!SUBENTRY 1 org.eclipse.debug.core 4 5012 2015-05-18 16:26:37.585
+!MESSAGE Breakpoint does not have an associated marker.
