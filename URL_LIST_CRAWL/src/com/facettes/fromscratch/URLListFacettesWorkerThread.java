@@ -139,10 +139,16 @@ public class URLListFacettesWorkerThread implements Runnable {
 				String facette_name = info_to_update.getFacetteName();
 				String facette_value = info_to_update.getFacetteValue();
 				int facette_count = info_to_update.getFacetteCount();
+				String products_size = info_to_update.getProducts_size();
+				boolean isopened = info_to_update.isIs_opened();
+				String lfURL = info_to_update.getOpened_facette_url();
 				st.setString(1, url_to_update);
 				st.setString(2, facette_name);
 				st.setString(3, facette_value);
 				st.setInt(4, facette_count);
+				st.setString(5, products_size);
+				st.setBoolean(6, isopened);
+				st.setString(7, lfURL);		
 				st.executeUpdate();		
 			}      
 			//int counts[] = st.executeBatch();
@@ -174,8 +180,9 @@ public class URLListFacettesWorkerThread implements Runnable {
 				my_info.setId(idUrl);
 				my_info.setUrl(url);
 
-				Elements counter_elements = doc.select(".lpStTit strong");			
-				my_info.setProducts_size(counter_elements.text());
+				Elements counter_elements = doc.select(".lpStTit strong");		
+				String product_size_text = counter_elements.text();
+				my_info.setProducts_size(product_size_text);
 				boolean isFacetteOpened = false;
 				
 				Elements facette_elements = doc.select("div.mvFacets.jsFCategory.mvFOpen");			
@@ -185,7 +192,7 @@ public class URLListFacettesWorkerThread implements Runnable {
 					my_info.setFacetteName(facette_name.text());
 					Elements facette_values = facette.select("a");
 					for (Element facette_value : facette_values){		
-						System.out.println(facette_value);
+						//System.out.println(facette_value);
 						// old way
 						String categorie_value = facette_value.text();
 						if ("".equals(categorie_value)){
@@ -211,6 +218,9 @@ public class URLListFacettesWorkerThread implements Runnable {
 						my_info.setIs_opened(isFacetteOpened);
 						my_fetched_infos.add(my_info);
 						my_info = new AdvancedFacettesInfo();
+						my_info.setId(idUrl);
+						my_info.setUrl(url);
+						my_info.setProducts_size(product_size_text);
 						my_info.setFacetteName(facette_name.text());
 					}		
 				}
