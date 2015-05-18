@@ -14,6 +14,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.facettes.data.AdvancedFacettesInfo;
+
 
 public class URLListFacettesWorkerThread implements Runnable {
 
@@ -75,7 +77,7 @@ public class URLListFacettesWorkerThread implements Runnable {
 	}
 
 	public void runBatch(List<ULRId> line_infos){
-		List<FacettesInfo> infos=processCommand(line_infos);
+		List<AdvancedFacettesInfo> infos=processCommand(line_infos);
 		updateStatus(infos);
 		//updateStatusStepByStep(infos);
 		System.out.println(Thread.currentThread().getName()+" End");
@@ -91,13 +93,13 @@ public class URLListFacettesWorkerThread implements Runnable {
 	}
 
 	// batched update
-	private void updateStatus(List<FacettesInfo> infos){
+	private void updateStatus(List<AdvancedFacettesInfo> infos){
 		System.out.println("Adding to batch : " + infos.size() + "ULRs into database");
 		try {
 			//Statement st = con.createStatement();
 			con.setAutoCommit(false); 
 			PreparedStatement st = con.prepareStatement(insertStatement);
-			for (FacettesInfo info_to_update : infos){
+			for (AdvancedFacettesInfo info_to_update : infos){
 				String url_to_update = info_to_update.getUrl();
 				String facette_name = info_to_update.getFacetteName();
 				String facette_value = info_to_update.getFacetteValue();
@@ -121,12 +123,12 @@ public class URLListFacettesWorkerThread implements Runnable {
 	}
 
 	// update step by step
-	private void updateStatusStepByStep(List<FacettesInfo> infos){
+	private void updateStatusStepByStep(List<AdvancedFacettesInfo> infos){
 		System.out.println("Adding to batch : " + infos.size() + "ULRs into database");
 		try {
 			//Statement st = con.createStatement();
 			PreparedStatement st = con.prepareStatement(insertStatement);
-			for (FacettesInfo info_to_update : infos){
+			for (AdvancedFacettesInfo info_to_update : infos){
 				String url_to_update = info_to_update.getUrl();
 				String facette_name = info_to_update.getFacetteName();
 				String facette_value = info_to_update.getFacetteValue();
@@ -147,8 +149,8 @@ public class URLListFacettesWorkerThread implements Runnable {
 		}
 	}
 
-	private List<FacettesInfo> processCommand(List<ULRId> line_infos) {
-		List<FacettesInfo> my_fetched_infos = new ArrayList<FacettesInfo>();
+	private List<AdvancedFacettesInfo> processCommand(List<ULRId> line_infos) {
+		List<AdvancedFacettesInfo> my_fetched_infos = new ArrayList<AdvancedFacettesInfo>();
 		for(ULRId line_info : line_infos){
 			int idUrl = line_info.getId();
 			String url = line_info.getUrl();
@@ -162,7 +164,7 @@ public class URLListFacettesWorkerThread implements Runnable {
 						.ignoreHttpErrors(true)
 						.timeout(0)
 						.get();
-				FacettesInfo my_info = new FacettesInfo();
+				AdvancedFacettesInfo my_info = new AdvancedFacettesInfo();
 				my_info.setId(idUrl);
 				my_info.setUrl(url);
 
@@ -197,7 +199,7 @@ public class URLListFacettesWorkerThread implements Runnable {
 						}
 						my_info.setFacetteValue(categorie_value);
 						my_fetched_infos.add(my_info);
-						my_info = new FacettesInfo();
+						my_info = new AdvancedFacettesInfo();
 						my_info.setFacetteName(facette_name.text());
 					}		
 				}
@@ -226,41 +228,5 @@ public class URLListFacettesWorkerThread implements Runnable {
 		}
 	}
 
-	class FacettesInfo{
-		private int id;
-		private String url;
-		private String facetteName;
-		private String facetteValue;
-		private int facetteCount;
-		public String getUrl() {
-			return url;
-		}
-		public void setUrl(String url) {
-			this.url = url;
-		}
-		public String getFacetteName() {
-			return facetteName;
-		}
-		public void setFacetteName(String facetteName) {
-			this.facetteName = facetteName;
-		}
-		public String getFacetteValue() {
-			return facetteValue;
-		}
-		public void setFacetteValue(String facetteValue) {
-			this.facetteValue = facetteValue;
-		}
-		public int getFacetteCount() {
-			return facetteCount;
-		}
-		public void setFacetteCount(int facetteCount) {
-			this.facetteCount = facetteCount;
-		}
-		public int getId() {
-			return id;
-		}
-		public void setId(int id) {
-			this.id = id;
-		}
-	}
+
 }
