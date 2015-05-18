@@ -23,8 +23,8 @@ public class URLListFacettesWorkerThread implements Runnable {
 	private int batch_size = 100;
 
 	private static String select_statement = "SELECT URL, ID FROM FACETTES_LIST WHERE TO_FETCH = TRUE and ID in ";
-	private static String insertStatement ="INSERT INTO FACETTES_LIST_RESULTS (URL,FACETTE_NAME,FACETTE_VALUE,FACETTE_COUNT) VALUES(?, ?, ?, ?)";
-	
+	private static String insertStatement ="INSERT INTO FACETTES_LIST_RESULTS (URL,FACETTE_NAME,FACETTE_VALUE,FACETTE_COUNT, PRODUCT_COUNT, IS_OPEN, OPENED_FACETTE_URL) VALUES(?, ?, ?, ?, ?, ?, ?)";
+		
 	private String user_agent;
 	private List<ULRId> my_urls_to_fetch = new ArrayList<ULRId>();
 	private Connection con;
@@ -104,10 +104,16 @@ public class URLListFacettesWorkerThread implements Runnable {
 				String facette_name = info_to_update.getFacetteName();
 				String facette_value = info_to_update.getFacetteValue();
 				int facette_count = info_to_update.getFacetteCount();
+				String products_size = info_to_update.getProducts_size();
+				boolean isopened = info_to_update.isIs_opened();
+				String lfURL = info_to_update.getOpened_facette_url();
 				st.setString(1, url_to_update);
 				st.setString(2, facette_name);
 				st.setString(3, facette_value);
 				st.setInt(4, facette_count);
+				st.setString(5, products_size);
+				st.setBoolean(6, isopened);
+				st.setString(7, lfURL);				
 				st.addBatch();		
 			}      
 			//int counts[] = st.executeBatch();
@@ -168,6 +174,10 @@ public class URLListFacettesWorkerThread implements Runnable {
 				my_info.setId(idUrl);
 				my_info.setUrl(url);
 
+				Elements counter_elements = doc.select(".lpStTit strong");			
+				my_info.setProducts_size(counter_elements.text());
+				boolean isFacetteOpened = false;
+				
 				Elements facette_elements = doc.select("div.mvFacets.jsFCategory.mvFOpen");			
 				for (Element facette : facette_elements ){
 					//System.out.println(e.toString());
@@ -198,6 +208,7 @@ public class URLListFacettesWorkerThread implements Runnable {
 							my_info.setFacetteCount(0);
 						}
 						my_info.setFacetteValue(categorie_value);
+						my_info.setIs_opened(isFacetteOpened);
 						my_fetched_infos.add(my_info);
 						my_info = new AdvancedFacettesInfo();
 						my_info.setFacetteName(facette_name.text());

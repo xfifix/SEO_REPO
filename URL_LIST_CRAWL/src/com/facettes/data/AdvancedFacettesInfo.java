@@ -6,15 +6,9 @@ public class AdvancedFacettesInfo {
 	private String facetteName;
 	private String facetteValue;
 	private int facetteCount;
-	private int nb_products;
+	private String products_size;
 	private boolean is_opened;
-	private String opened_facette_url;
-	public int getNb_products() {
-		return nb_products;
-	}
-	public void setNb_products(int nb_products) {
-		this.nb_products = nb_products;
-	}
+	private String opened_facette_url="";
 	public boolean isIs_opened() {
 		return is_opened;
 	}
@@ -56,5 +50,11 @@ public class AdvancedFacettesInfo {
 	}
 	public void setId(int id) {
 		this.id = id;
+	}
+	public String getProducts_size() {
+		return products_size;
+	}
+	public void setProducts_size(String products_size) {
+		this.products_size = products_size;
 	}
 }
