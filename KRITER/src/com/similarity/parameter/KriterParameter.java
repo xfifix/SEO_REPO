@@ -11,8 +11,6 @@ public class KriterParameter {
 	public static boolean compute_optimal_parameters;
 	// thread parameter
 	public static int kriter_threshold;
-	public  static int small_computing_max_list_size;
-	public  static int big_computing_max_list_size;
 	public  static int computing_max_list_size;
 	public static int batch_size;
 	public static int displaying_threshold;

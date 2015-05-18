@@ -51,11 +51,9 @@ public class SimilaritySpecificCategoryNoConcurrentRequestComputingProcessTest {
 			KriterParameter.recreate_table=Boolean.parseBoolean(properties.getProperty("kriter.recreate_table"));
 			KriterParameter.compute_optimal_parameters=Boolean.parseBoolean(properties.getProperty("kriter.compute_optimal_parameters"));
 			KriterParameter.kriter_threshold =Integer.valueOf(properties.getProperty("kriter.kriter_threshold")); 
-			KriterParameter.small_computing_max_list_size =Integer.valueOf(properties.getProperty("kriter.small_computing_max_list_size"));
-			KriterParameter.big_computing_max_list_size =Integer.valueOf(properties.getProperty("kriter.big_computing_max_list_size"));
+			KriterParameter.computing_max_list_size =Integer.valueOf(properties.getProperty("kriter.computing_max_list_size"));
 			KriterParameter.batch_size =Integer.valueOf(properties.getProperty("kriter.batch_size"));
 			KriterParameter.displaying_threshold =Integer.valueOf(properties.getProperty("kriter.displaying_threshold"));
-			KriterParameter.computing_max_list_size =KriterParameter.small_computing_max_list_size;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

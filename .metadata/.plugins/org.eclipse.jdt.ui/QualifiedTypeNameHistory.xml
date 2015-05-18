@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="com.statistics.processing.StatisticsMeasures"/>
 <fullyQualifiedTypeName name="com.itextpdf.text.List"/>
 <fullyQualifiedTypeName name="java.util.Arrays"/>
 <fullyQualifiedTypeName name="java.util.concurrent.ConcurrentHashMap"/>
@@ -50,14 +49,15 @@
 <fullyQualifiedTypeName name="org.w3c.dom.Document"/>
 <fullyQualifiedTypeName name="org.jsoup.nodes.Document"/>
 <fullyQualifiedTypeName name="com.utility.AttributsUtility"/>
-<fullyQualifiedTypeName name="com.utility.CrawlingUtility"/>
 <fullyQualifiedTypeName name="org.apache.http.protocol.HttpContext"/>
 <fullyQualifiedTypeName name="java.net.CookieStore"/>
-<fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="com.data.MenuItem"/>
 <fullyQualifiedTypeName name="org.apache.http.impl.client.BasicCookieStore"/>
 <fullyQualifiedTypeName name="org.apache.http.impl.cookie.BasicClientCookie"/>
 <fullyQualifiedTypeName name="org.apache.http.client.CookieStore"/>
 <fullyQualifiedTypeName name="java.util.HashMap"/>
 <fullyQualifiedTypeName name="java.util.Map"/>
+<fullyQualifiedTypeName name="com.utility.CrawlingUtility"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="java.util.Comparator"/>
 </qualifiedTypeNameHistroy>

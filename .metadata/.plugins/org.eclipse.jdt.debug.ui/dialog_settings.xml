@@ -6,16 +6,16 @@
 		<section name="DialogBoundsSettings">
 			<item value="600" key="DIALOG_WIDTH"/>
 			<item value="-3" key="DIALOG_Y_ORIGIN"/>
-			<item value="500" key="DIALOG_HEIGHT"/>
 			<item value="110" key="DIALOG_X_ORIGIN"/>
+			<item value="500" key="DIALOG_HEIGHT"/>
 			<item value="1|Ubuntu|10.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
 		</section>
 	</section>
 	<section name="org.eclipse.jdt.internal.debug.ui.ExpressionInformationControlCreator$ExpressionInformationControl">
 		<item value="516" key="SashWeightDetails"/>
 		<item value="483" key="SashWeightTree"/>
-		<item value="340" key="HEIGHT"/>
-		<item value="946" key="WIDTH"/>
+		<item value="188" key="HEIGHT"/>
+		<item value="596" key="WIDTH"/>
 	</section>
 	<section name="conditionHistory">
 	</section>

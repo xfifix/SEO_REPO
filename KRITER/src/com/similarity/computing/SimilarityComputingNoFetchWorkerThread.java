@@ -18,7 +18,6 @@ import java.util.Set;
 import com.corpus.KriterDynamicCorpusCache;
 import com.similarity.parameter.KriterParameter;
 import com.statistics.processing.CatalogEntry;
-import com.statistics.processing.StatisticsUtility;
 
 public class SimilarityComputingNoFetchWorkerThread implements Runnable {
 	private Connection con;
