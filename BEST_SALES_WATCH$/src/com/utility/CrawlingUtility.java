@@ -86,7 +86,7 @@ public class CrawlingUtility {
 	public static List<MenuDataItem> parseDepthMenu(String pageSourceCode){
 		List<MenuDataItem> to_return = new ArrayList<MenuDataItem>();
 		Document doc = Jsoup.parse(pageSourceCode,"UTF-8");
-		Elements attributes = doc.select(".zg_browseUp");
+		Elements attributes = doc.select("#zg_browseRoot");
 		Elements department_links = attributes.select("a");		
 		for(Element link : department_links){
 			MenuDataItem toAdd = new MenuDataItem();
@@ -94,11 +94,14 @@ public class CrawlingUtility {
 			System.out.println("Attributes " +link.attributes().get("href"));
 			toAdd.setLabel(link.text().trim());
 			toAdd.setUrl(link.attributes().get("href").trim());
-			to_return.add(toAdd);
+			// we don't go back ...
+			if (!"Tout département".equals(toAdd.getLabel())){
+				to_return.add(toAdd);
+			}
 		}
 		return to_return;
 	}
-	
+
 	public static String getPSCode(String url_string) throws ClientProtocolException, IOException{
 		HttpGet getSolr = new HttpGet(url_string);
 		System.out.println("Pausing thread 1 second");
