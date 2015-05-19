@@ -24,7 +24,9 @@ public class FacettesFiltering {
         
         // Radio Button: Check Monday using XPATH locator.
         
-        WebElement menuArrow = driver.findElement(By.cssSelector("div.mvFTitle.noSel"));
+        //WebElement menuArrow = driver.findElement(By.cssSelector("div.mvFacets.jsFCategory"));
+        WebElement menuArrow = driver.findElement(By.xpath("//*[@id='mvFilter']/form//div[text()='Vendeur']"));
+        System.out.println(menuArrow.getText());
         menuArrow.click();
         
         WebElement checkBoxFacetMarketPlaceFiltering = driver.findElement(By.xpath("//input[@value='f/368/c le marche']"));
