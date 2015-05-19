@@ -1,4 +1,4 @@
-package com.compare.search.batch;
+package com.compare.facette.batch;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;

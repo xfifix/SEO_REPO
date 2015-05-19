@@ -1,4 +1,4 @@
-package com.compare.search.batch;
+package com.compare.facette.batch;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
