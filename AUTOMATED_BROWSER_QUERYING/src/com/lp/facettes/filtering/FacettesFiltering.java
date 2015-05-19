@@ -4,8 +4,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class FacettesFiltering {
 	public static void main(String[] args){
@@ -26,30 +24,16 @@ public class FacettesFiltering {
         
         //WebElement menuArrow = driver.findElement(By.cssSelector("div.mvFacets.jsFCategory"));
         WebElement menuArrow = driver.findElement(By.xpath("//*[@id='mvFilter']/form//div[text()='Vendeur']"));
-        System.out.println(menuArrow.getText());
         menuArrow.click();
         
         WebElement checkBoxFacetMarketPlaceFiltering = driver.findElement(By.xpath("//input[@value='f/368/c le marche']"));
         checkBoxFacetMarketPlaceFiltering.click();
      
-
-
-
+        String htmlPageSourceCode = driver.getPageSource();
 
         // Check the title of the page
-        System.out.println("Page title is: " + driver.getTitle());
-        
-        // Google's search is rendered dynamically with JavaScript.
-        // Wait for the page to load, timeout after 10 seconds
-        (new WebDriverWait(driver, 10)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().toLowerCase().startsWith("cheese!");
-            }
-        });
-
-        // Should see: "cheese! - Google Search"
-        System.out.println("Page title is: " + driver.getTitle());
-        
+        System.out.println("Page source code : " + htmlPageSourceCode);
+     
         //Close the browser
         driver.quit();
     	
