@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="com.itextpdf.text.List"/>
-<fullyQualifiedTypeName name="java.util.Arrays"/>
 <fullyQualifiedTypeName name="java.util.concurrent.ConcurrentHashMap"/>
 <fullyQualifiedTypeName name="com.data.processing.SimilarSkusCatalalogInserterSAXHandler"/>
 <fullyQualifiedTypeName name="com.similarity.computing.SimilarityComputingWorkerThread"/>
@@ -60,4 +58,6 @@
 <fullyQualifiedTypeName name="com.utility.CrawlingUtility"/>
 <fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="java.util.Comparator"/>
+<fullyQualifiedTypeName name="com.facettes.data.URLFacettesData"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.phantomjs.PhantomJSDriver"/>
 </qualifiedTypeNameHistroy>

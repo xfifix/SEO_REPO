@@ -13,16 +13,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -30,6 +23,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import com.compare.facette.batch.URLListFacettesThreadPool;
 import com.facettes.data.AdvancedFacettesInfo;
 import com.facettes.data.URLFacettesData;
+import com.facettes.utility.FacettesUtility;
 
 
 public class BatchFacetteSeleniumURLListBatch {
@@ -40,10 +34,8 @@ public class BatchFacetteSeleniumURLListBatch {
 	private static String database_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/referential_facettes.properties";
 	private static String select_statement = "SELECT ID, URL FROM REFERENTIAL_FACETTES_LIST WHERE TO_FETCH = TRUE";
 
-	private static Pattern bracketPattern = Pattern.compile("\\(.*?\\)");
-
 	private static String path = "/home/sduprey/My_Programs/phantomjs-1.9.8-linux-x86_64/bin/phantomjs";
-	
+
 	public static void main(String[] args) {
 		List<URLFacettesData> tofetch_list = new ArrayList<URLFacettesData>();
 
@@ -145,11 +137,15 @@ public class BatchFacetteSeleniumURLListBatch {
 
 		dcaps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, phantomjs.getAbsolutePath());
 		PhantomJSDriver driver = new PhantomJSDriver(dcaps);
-		
+
 		for (URLFacettesData to_fetch: tofetch_list){
 			try {
+				// to debug we use a known url
 				String url = to_fetch.getUrl();
-                System.out.println("Fetching URL with Selenium API : "+url);
+				System.out.println("Fetching URL with standard Apache library without ajax playing : "+url);
+				List<AdvancedFacettesInfo> standardFacettes = FacettesUtility.extract_facettes_infos(to_fetch);
+				System.out.println("Standard facettes number : "+standardFacettes.size());				
+				System.out.println("Fetching URL with Selenium API : "+url);
 				// And now use this to visit Google
 				driver.get(url);
 				// Alternatively the same thing can be done like this
@@ -160,8 +156,8 @@ public class BatchFacetteSeleniumURLListBatch {
 				checkBoxFacetMarketPlaceFiltering.click();
 
 				String htmlPageSourceCode = driver.getPageSource();
-				 List<AdvancedFacettesInfo> extracted_facettes = extract_facettes(htmlPageSourceCode, to_fetch);
-				 System.out.println("Market place facettes number : "+extracted_facettes.size());
+				List<AdvancedFacettesInfo> marketPlaceFacettes = FacettesUtility.extract_facettes_from_source_code(htmlPageSourceCode, to_fetch);
+				System.out.println("Market place facettes number : "+marketPlaceFacettes.size());
 			} catch (Exception e){
 				e.printStackTrace();
 			}
@@ -170,58 +166,7 @@ public class BatchFacetteSeleniumURLListBatch {
 		driver.quit();
 	}
 
-	private static List<AdvancedFacettesInfo> extract_facettes(String sourceCodePage,URLFacettesData to_fetch){
-		List<AdvancedFacettesInfo> my_fetched_infos = new ArrayList<AdvancedFacettesInfo>();
 
-		org.jsoup.nodes.Document doc =  Jsoup.parse(sourceCodePage);
-		AdvancedFacettesInfo my_info = new AdvancedFacettesInfo();
-		my_info.setId(to_fetch.getId());
-		my_info.setUrl(to_fetch.getUrl());
 
-		Elements counter_elements = doc.select(".lpStTit strong");		
-		String product_size_text = counter_elements.text();
-		my_info.setProducts_size(product_size_text);
-		boolean isFacetteOpened = false;
 
-		Elements facette_elements = doc.select("div.mvFacets.jsFCategory.mvFOpen");			
-		for (Element facette : facette_elements ){
-			//System.out.println(e.toString());
-			Elements facette_name = facette.select("div.mvFTitle.noSel");
-			my_info.setFacetteName(facette_name.text());
-			Elements facette_values = facette.select("a");
-			for (Element facette_value : facette_values){		
-				//System.out.println(facette_value);
-				// old way
-				String categorie_value = facette_value.text();
-				if ("".equals(categorie_value)){
-					categorie_value = facette_value.attr("title");
-				}
-				Matcher matchPattern = bracketPattern.matcher(categorie_value);
-				String categorieCount ="";
-				while (matchPattern.find()) {		
-					categorieCount=matchPattern.group();
-				}
-				categorie_value=categorie_value.replace(categorieCount,"");
-				categorieCount=categorieCount.replace("(", "");
-				categorieCount=categorieCount.replace(")", "");	
-				//System.out.println(categorie_value);
-				try{
-					my_info.setFacetteCount(Integer.valueOf(categorieCount));
-					//System.out.println(Integer.valueOf(categorieCount));	
-				} catch (NumberFormatException e){
-					System.out.println("Trouble while formatting a facette");
-					my_info.setFacetteCount(0);
-				}
-				my_info.setFacetteValue(categorie_value);
-				my_info.setIs_opened(isFacetteOpened);
-				my_fetched_infos.add(my_info);
-				my_info = new AdvancedFacettesInfo();
-				my_info.setId(to_fetch.getId());
-				my_info.setUrl(to_fetch.getUrl());
-				my_info.setProducts_size(product_size_text);
-				my_info.setFacetteName(facette_name.text());
-			}		
-		}
-		return my_fetched_infos;
-	}
 }
