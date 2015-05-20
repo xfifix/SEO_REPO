@@ -8,8 +8,8 @@ public class AdvancedFacettesInfo {
 	private int facetteCount;
 	private int marketPlaceFacetteCount;
 	private int products_size;
-	private boolean is_opened;
-	private boolean is_opened_value;
+	private boolean is_opened=false;
+	private boolean is_opened_value=false;
 	private double market_place_quote_part;
 	public boolean isIs_opened() {
 		return is_opened;

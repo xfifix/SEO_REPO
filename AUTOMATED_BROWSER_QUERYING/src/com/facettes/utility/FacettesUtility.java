@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,19 +20,13 @@ public class FacettesUtility {
 
 	private static Pattern bracketPattern = Pattern.compile("\\(.*?\\)");
 
-	public static List<AdvancedFacettesInfo> extract_facettes_infos(URLFacettesData to_fetch){
-		String my_user_agent= "CdiscountBot-crawler";
+	public static List<AdvancedFacettesInfo> extract_facettes_infos(org.jsoup.nodes.Document doc, URLFacettesData to_fetch){
 		List<AdvancedFacettesInfo> my_fetched_infos = new ArrayList<AdvancedFacettesInfo>();
 		int idUrl = to_fetch.getId();
 		String url = to_fetch.getUrl();
 		// fetching the URL and parsing the results
-		org.jsoup.nodes.Document doc;
-		try {
-			doc =  Jsoup.connect(url)
-					.userAgent(my_user_agent)
-					.ignoreHttpErrors(true)
-					.timeout(0)
-					.get();
+
+		
 			AdvancedFacettesInfo my_info = new AdvancedFacettesInfo();
 			my_info.setId(idUrl);
 			my_info.setUrl(url);
@@ -44,7 +39,7 @@ public class FacettesUtility {
 			try{
 				pd_size = Integer.valueOf(product_size_text);
 			} catch (NumberFormatException e){
-				e.printStackTrace();
+				System.out.println("Trouble while formatting a facette");
 			}
 			my_info.setProducts_size(pd_size);
 			boolean isFacetteOpened = false;
@@ -88,10 +83,7 @@ public class FacettesUtility {
 					my_info.setFacetteName(facette_name.text());
 				}		
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
+
 		return my_fetched_infos;
 	}
 
@@ -111,7 +103,7 @@ public class FacettesUtility {
 		try{
 			pd_size = Integer.valueOf(product_size_text);
 		} catch (NumberFormatException e){
-			e.printStackTrace();
+			System.out.println("Trouble while formatting a facette");
 		}
 		my_info.setProducts_size(pd_size);
 		boolean isFacetteOpened = false;
@@ -165,7 +157,7 @@ public class FacettesUtility {
 			try{
 				facetteValueInt = Integer.valueOf(market_place_info.getFacetteCount());
 			} catch (NumberFormatException e){
-				e.printStackTrace();
+				System.out.println("Trouble while formatting a facette");
 			}
 			String key = market_place_info.getFacetteName()+market_place_info.getFacetteValue();
 			System.out.println(key);
@@ -178,7 +170,7 @@ public class FacettesUtility {
 			try{
 				facetteValueInt = Integer.valueOf(place_info.getFacetteCount());
 			} catch (NumberFormatException e){
-				e.printStackTrace();
+				System.out.println("Trouble while formatting a facette");
 			}
 			String key = place_info.getFacetteName()+place_info.getFacetteValue();
 			all_counter.put(key,facetteValueInt);
@@ -204,7 +196,7 @@ public class FacettesUtility {
 			try{
 				market_place_quote_part = (((double)marketPlaceCounter)/((double)allCounter)*100.0);
 			} catch (Exception e){
-				e.printStackTrace();
+				System.out.println("Trouble while formatting a facette");
 			}
 			to_replicate.setMarket_place_quote_part(market_place_quote_part);	
 			merged_facettes.add(to_replicate);
@@ -212,4 +204,18 @@ public class FacettesUtility {
 
 		return merged_facettes;
 	}
+	
+	public static String[] getFirstLevels(String url){
+		String[] to_return = {"","",""};
+		url = url.replace("http://www.cdiscount.com/","");
+		StringTokenizer tokenize = new StringTokenizer(url,"/");
+		int counter = 0 ;
+		while (tokenize.hasMoreTokens() && counter<3){
+			to_return[counter] = tokenize.nextToken();
+			counter ++;
+		}		
+		return to_return;
+	}
+	
+	
 }
