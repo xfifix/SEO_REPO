@@ -1,6 +1,5 @@
 package com.facettes.utility;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,8 +50,12 @@ public class FacettesUtility {
 				my_info.setFacetteName(facette_name.text());
 				Elements facette_values = facette.select("a");
 				for (Element facette_value : facette_values){		
-					//System.out.println(facette_value);
-					// old way
+					// checking if the facette value is opened
+					String lftiretURL = facette_value.attr("href");
+					if (!"".equals(lftiretURL)){
+						my_info.setIs_opened(true);
+						my_info.setOpenedURL(lftiretURL);
+					}
 					String categorie_value = facette_value.text();
 					if ("".equals(categorie_value)){
 						categorie_value = facette_value.attr("title");
@@ -185,7 +188,7 @@ public class FacettesUtility {
 			to_replicate.setFacetteValue(place_info_to_add.getFacetteValue());
 			to_replicate.setFacetteCount(place_info_to_add.getFacetteCount());
 			to_replicate.setIs_opened(place_info_to_add.isIs_opened());
-			to_replicate.setIs_opened_value(place_info_to_add.isIs_opened_value());
+			to_replicate.setOpenedURL(place_info_to_add.getOpenedURL());
 			to_replicate.setProducts_size(place_info_to_add.getProducts_size());
 			// computing here the market place ration
 			String key = place_info_to_add.getFacetteName()+place_info_to_add.getFacetteValue();

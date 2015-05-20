@@ -26,9 +26,9 @@ import com.facettes.utility.FacettesUtility;
 public class BatchFacetteSeleniumURLListBatch {
 
 	private static String drop_facettes_list_results_table = "DROP TABLE IF EXISTS REFERENTIAL_FACETTES_LIST_RESULTS";
-	private static String create_facettes_list_results_table = "CREATE TABLE IF NOT EXISTS REFERENTIAL_FACETTES_LIST_RESULTS (URL TEXT,MAGASIN VARCHAR(250),LEVEL_TWO VARCHAR(300),LEVEL_THREE VARCHAR(400),FACETTE_NAME VARCHAR(400),FACETTE_VALUE VARCHAR(250), FACETTE_COUNT INT,MARKETPLACE_FACETTE_COUNT INT,MARKETPLACE_QUOTE_PART NUMERIC,PRODUCTLIST_COUNT INT,IS_FACETTE_OPENED BOOLEAN, IS_VALUE_OPENED BOOLEAN) TABLESPACE mydbspace";
+	private static String create_facettes_list_results_table = "CREATE TABLE IF NOT EXISTS REFERENTIAL_FACETTES_LIST_RESULTS (URL TEXT,MAGASIN VARCHAR(250),LEVEL_TWO VARCHAR(300),LEVEL_THREE VARCHAR(400),FACETTE_NAME VARCHAR(400),FACETTE_VALUE VARCHAR(250), FACETTE_COUNT INT,MARKETPLACE_FACETTE_COUNT INT,MARKETPLACE_QUOTE_PART NUMERIC,PRODUCTLIST_COUNT INT,IS_FACETTE_OPENED BOOLEAN, OPENED_URL TEXT) TABLESPACE mydbspace";
 
-	private static String insertStatement ="INSERT INTO REFERENTIAL_FACETTES_LIST_RESULTS (URL, MAGASIN, LEVEL_TWO, LEVEL_THREE, FACETTE_NAME, FACETTE_VALUE, FACETTE_COUNT, MARKETPLACE_FACETTE_COUNT, MARKETPLACE_QUOTE_PART, PRODUCTLIST_COUNT, IS_FACETTE_OPENED, IS_VALUE_OPENED) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	private static String insertStatement ="INSERT INTO REFERENTIAL_FACETTES_LIST_RESULTS (URL, MAGASIN, LEVEL_TWO, LEVEL_THREE, FACETTE_NAME, FACETTE_VALUE, FACETTE_COUNT, MARKETPLACE_FACETTE_COUNT, MARKETPLACE_QUOTE_PART, PRODUCTLIST_COUNT, IS_FACETTE_OPENED, OPENED_URL) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	private static String updateStatement = "UPDATE REFERENTIAL_FACETTES_LIST SET TO_FETCH=false where ID=?";
 
 
@@ -240,7 +240,7 @@ public class BatchFacetteSeleniumURLListBatch {
 				int marketplace_facette_count =info_to_update.getMarketPlaceFacetteCount();
 				int products_size = info_to_update.getProducts_size();
 				boolean isopened = info_to_update.isIs_opened();
-				boolean isopenedvalue = info_to_update.isIs_opened_value();
+				String lfURL = info_to_update.getOpenedURL();
 				double market_place_quote_part = info_to_update.getMarket_place_quote_part();	
 				//URL
 				st.setString(1, url_to_update);
@@ -265,7 +265,7 @@ public class BatchFacetteSeleniumURLListBatch {
 				//IS_FACETTE_OPENED
 				st.setBoolean(11, isopened);
 				//IS_VALUE_OPENED
-				st.setBoolean(12, isopenedvalue);
+				st.setString(12, lfURL);
 				st.executeUpdate();		
 			}      
 			st.close();
@@ -291,7 +291,7 @@ public class BatchFacetteSeleniumURLListBatch {
 				int marketplace_facette_count =info_to_update.getMarketPlaceFacetteCount();
 				int products_size = info_to_update.getProducts_size();
 				boolean isopened = info_to_update.isIs_opened();
-				boolean isopenedvalue = info_to_update.isIs_opened_value();
+				String lfURL = info_to_update.getOpenedURL();
 				double market_place_quote_part = info_to_update.getMarket_place_quote_part();	
 				//URL
 				st.setString(1, url_to_update);
@@ -316,7 +316,7 @@ public class BatchFacetteSeleniumURLListBatch {
 				//IS_FACETTE_OPENED
 				st.setBoolean(11, isopened);
 				//IS_VALUE_OPENED
-				st.setBoolean(12, isopenedvalue);
+				st.setString(12, lfURL);
 				st.addBatch();		
 			}      
 			//int counts[] = st.executeBatch();

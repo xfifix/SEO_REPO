@@ -23,8 +23,8 @@ public class FacettesFiltering {
 	public static void main(String[] args){
 		URLFacettesData to_fetch = new URLFacettesData();
 
-		String urlToSearch = "http://www.cdiscount.com/juniors/figurines/gormiti/l-1206714.html";
-		//String urlToSearch = "http://www.cdiscount.com/maison/lampes/lampes-led/l-1170231.html";
+		//String urlToSearch = "http://www.cdiscount.com/juniors/figurines/gormiti/l-1206714.html";
+		String urlToSearch = "http://www.cdiscount.com/maison/lampes/lampes-led/l-1170231.html";
 		//		String urlToSearch = "http://www.cdiscount.com/maison/linge-maison/linge-de-decoration/plaids-et-couvre-lits/l-117620403.html";
 		to_fetch.setUrl(urlToSearch);
 

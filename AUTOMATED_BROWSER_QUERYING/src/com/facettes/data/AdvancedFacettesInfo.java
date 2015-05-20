@@ -9,7 +9,7 @@ public class AdvancedFacettesInfo {
 	private int marketPlaceFacetteCount;
 	private int products_size;
 	private boolean is_opened=false;
-	private boolean is_opened_value=false;
+	private String openedURL;
 	private double market_place_quote_part;
 	public boolean isIs_opened() {
 		return is_opened;
@@ -53,12 +53,6 @@ public class AdvancedFacettesInfo {
 	public void setProducts_size(int products_size) {
 		this.products_size = products_size;
 	}
-	public boolean isIs_opened_value() {
-		return is_opened_value;
-	}
-	public void setIs_opened_value(boolean is_opened_value) {
-		this.is_opened_value = is_opened_value;
-	}
 	public double getMarket_place_quote_part() {
 		return market_place_quote_part;
 	}
@@ -70,5 +64,11 @@ public class AdvancedFacettesInfo {
 	}
 	public void setMarketPlaceFacetteCount(int marketPlaceFacetteCount) {
 		this.marketPlaceFacetteCount = marketPlaceFacetteCount;
+	}
+	public String getOpenedURL() {
+		return openedURL;
+	}
+	public void setOpenedURL(String openedURL) {
+		this.openedURL = openedURL;
 	}
 }

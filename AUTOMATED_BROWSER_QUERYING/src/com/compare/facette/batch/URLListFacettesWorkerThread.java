@@ -24,7 +24,7 @@ public class URLListFacettesWorkerThread implements Runnable {
 	private int batch_size = 100;
 
 	private static String select_statement = "SELECT URL, ID FROM REFERENTIAL_FACETTES_LIST WHERE TO_FETCH = TRUE and ID in ";
-	private static String insertStatement ="INSERT INTO REFERENTIAL_FACETTES_LIST_RESULTS (URL, MAGASIN, LEVEL_TWO, LEVEL_THREE, FACETTE_NAME, FACETTE_VALUE, FACETTE_COUNT, MARKETPLACE_FACETTE_COUNT, MARKETPLACE_QUOTE_PART, PRODUCTLIST_COUNT, IS_FACETTE_OPENED, IS_VALUE_OPENED) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	private static String insertStatement ="INSERT INTO REFERENTIAL_FACETTES_LIST_RESULTS (URL, MAGASIN, LEVEL_TWO, LEVEL_THREE, FACETTE_NAME, FACETTE_VALUE, FACETTE_COUNT, MARKETPLACE_FACETTE_COUNT, MARKETPLACE_QUOTE_PART, PRODUCTLIST_COUNT, IS_FACETTE_OPENED, OPENED_URL) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		
 	private String user_agent;
 	private List<ULRId> my_urls_to_fetch = new ArrayList<ULRId>();
@@ -109,7 +109,7 @@ public class URLListFacettesWorkerThread implements Runnable {
 				int marketplace_facette_count =info_to_update.getMarketPlaceFacetteCount();
 				int products_size = info_to_update.getProducts_size();
 				boolean isopened = info_to_update.isIs_opened();
-				boolean isopenedvalue = info_to_update.isIs_opened_value();
+				String lfURL = info_to_update.getOpenedURL();
 				double market_place_quote_part = info_to_update.getMarket_place_quote_part();	
 				//URL
 				st.setString(1, url_to_update);
@@ -134,7 +134,7 @@ public class URLListFacettesWorkerThread implements Runnable {
 				//IS_FACETTE_OPENED
 				st.setBoolean(11, isopened);
 				//IS_VALUE_OPENED
-				st.setBoolean(12, isopenedvalue);
+				st.setString(12, lfURL);
 				st.addBatch();		
 			}      
 			//int counts[] = st.executeBatch();
