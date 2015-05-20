@@ -11,8 +11,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -20,11 +18,9 @@ import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import com.compare.facette.batch.URLListFacettesThreadPool;
 import com.facettes.data.AdvancedFacettesInfo;
 import com.facettes.data.URLFacettesData;
 import com.facettes.utility.FacettesUtility;
-
 
 public class BatchFacetteSeleniumURLListBatch {
 
@@ -108,8 +104,7 @@ public class BatchFacetteSeleniumURLListBatch {
 			fetch_and_update_list_urls(tofetch_list);
 			tofetch_list.clear();
 		} catch (SQLException ex) {
-			Logger lgr = Logger.getLogger(URLListFacettesThreadPool.class.getName());
-			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+			ex.printStackTrace();
 		} finally {
 			try {
 				if (rs != null) {
@@ -123,8 +118,7 @@ public class BatchFacetteSeleniumURLListBatch {
 				}
 
 			} catch (SQLException ex) {
-				Logger lgr = Logger.getLogger(URLListFacettesThreadPool.class.getName());
-				lgr.log(Level.WARNING, ex.getMessage(), ex);
+				ex.printStackTrace();
 			}
 		}
 		System.out.println("Finished all threads");

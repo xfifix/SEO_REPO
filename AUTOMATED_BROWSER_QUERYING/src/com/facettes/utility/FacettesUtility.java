@@ -2,7 +2,9 @@ package com.facettes.utility;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,7 +38,15 @@ public class FacettesUtility {
 
 			Elements counter_elements = doc.select(".lpStTit strong");		
 			String product_size_text = counter_elements.text();
-			my_info.setProducts_size(product_size_text);
+			product_size_text=product_size_text.replace("produits", "");
+			product_size_text=product_size_text.trim();
+			int pd_size = 0;
+			try{
+				pd_size = Integer.valueOf(product_size_text);
+			} catch (NumberFormatException e){
+				e.printStackTrace();
+			}
+			my_info.setProducts_size(pd_size);
 			boolean isFacetteOpened = false;
 
 			Elements facette_elements = doc.select("div.mvFacets.jsFCategory.mvFOpen");			
@@ -74,7 +84,7 @@ public class FacettesUtility {
 					my_info = new AdvancedFacettesInfo();
 					my_info.setId(idUrl);
 					my_info.setUrl(url);
-					my_info.setProducts_size(product_size_text);
+					my_info.setProducts_size(pd_size);
 					my_info.setFacetteName(facette_name.text());
 				}		
 			}
@@ -95,7 +105,15 @@ public class FacettesUtility {
 
 		Elements counter_elements = doc.select(".lpStTit strong");		
 		String product_size_text = counter_elements.text();
-		my_info.setProducts_size(product_size_text);
+		product_size_text=product_size_text.replace("produits", "");
+		product_size_text=product_size_text.trim();
+		int pd_size = 0;
+		try{
+			pd_size = Integer.valueOf(product_size_text);
+		} catch (NumberFormatException e){
+			e.printStackTrace();
+		}
+		my_info.setProducts_size(pd_size);
 		boolean isFacetteOpened = false;
 
 		Elements facette_elements = doc.select("div.mvFacets.jsFCategory.mvFOpen");			
@@ -133,10 +151,65 @@ public class FacettesUtility {
 				my_info = new AdvancedFacettesInfo();
 				my_info.setId(to_fetch.getId());
 				my_info.setUrl(to_fetch.getUrl());
-				my_info.setProducts_size(product_size_text);
+				my_info.setProducts_size(pd_size);
 				my_info.setFacetteName(facette_name.text());
 			}		
 		}
 		return my_fetched_infos;
+	}
+
+	public static List<AdvancedFacettesInfo> merge_facettes(List<AdvancedFacettesInfo> market_place_facettes, List<AdvancedFacettesInfo> all_facettes){
+		Map<String, Integer> market_place_counter = new HashMap<String, Integer>();
+		for (AdvancedFacettesInfo market_place_info : market_place_facettes){
+			int facetteValueInt = 0;
+			try{
+				facetteValueInt = Integer.valueOf(market_place_info.getFacetteCount());
+			} catch (NumberFormatException e){
+				e.printStackTrace();
+			}
+			String key = market_place_info.getFacetteName()+market_place_info.getFacetteValue();
+			System.out.println(key);
+			market_place_counter.put(key,facetteValueInt);
+		}
+
+		Map<String, Integer> all_counter = new HashMap<String, Integer>();
+		for (AdvancedFacettesInfo place_info : all_facettes){
+			int facetteValueInt = 0;
+			try{
+				facetteValueInt = Integer.valueOf(place_info.getFacetteCount());
+			} catch (NumberFormatException e){
+				e.printStackTrace();
+			}
+			String key = place_info.getFacetteName()+place_info.getFacetteValue();
+			all_counter.put(key,facetteValueInt);
+		}
+
+		List<AdvancedFacettesInfo> merged_facettes = new ArrayList<AdvancedFacettesInfo>();
+		for (AdvancedFacettesInfo place_info_to_add : all_facettes){			
+			AdvancedFacettesInfo to_replicate = new AdvancedFacettesInfo();
+			to_replicate.setId(place_info_to_add.getId());
+			to_replicate.setUrl(place_info_to_add.getUrl());
+			to_replicate.setFacetteName(place_info_to_add.getFacetteName());
+			to_replicate.setFacetteValue(place_info_to_add.getFacetteValue());
+			to_replicate.setFacetteCount(place_info_to_add.getFacetteCount());
+			to_replicate.setIs_opened(place_info_to_add.isIs_opened());
+			to_replicate.setIs_opened_value(place_info_to_add.isIs_opened_value());
+			to_replicate.setProducts_size(place_info_to_add.getProducts_size());
+			// computing here the market place ration
+			String key = place_info_to_add.getFacetteName()+place_info_to_add.getFacetteValue();
+			Integer allCounter = all_counter.get(key);
+			Integer marketPlaceCounter = market_place_counter.get(key);
+			to_replicate.setMarketPlaceFacetteCount(marketPlaceCounter == null ? 0 : marketPlaceCounter);
+			double market_place_quote_part = 0.;
+			try{
+				market_place_quote_part = (((double)marketPlaceCounter)/((double)allCounter)*100.0);
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+			to_replicate.setMarket_place_quote_part(market_place_quote_part);	
+			merged_facettes.add(to_replicate);
+		}
+
+		return merged_facettes;
 	}
 }

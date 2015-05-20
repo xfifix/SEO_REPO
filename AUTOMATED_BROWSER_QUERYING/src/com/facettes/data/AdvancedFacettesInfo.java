@@ -6,20 +6,16 @@ public class AdvancedFacettesInfo {
 	private String facetteName;
 	private String facetteValue;
 	private int facetteCount;
-	private String products_size;
+	private int marketPlaceFacetteCount;
+	private int products_size;
 	private boolean is_opened;
-	private String opened_facette_url="";
+	private boolean is_opened_value;
+	private double market_place_quote_part;
 	public boolean isIs_opened() {
 		return is_opened;
 	}
 	public void setIs_opened(boolean is_opened) {
 		this.is_opened = is_opened;
-	}
-	public String getOpened_facette_url() {
-		return opened_facette_url;
-	}
-	public void setOpened_facette_url(String opened_facette_url) {
-		this.opened_facette_url = opened_facette_url;
 	}
 	public String getUrl() {
 		return url;
@@ -51,10 +47,28 @@ public class AdvancedFacettesInfo {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public String getProducts_size() {
+	public int getProducts_size() {
 		return products_size;
 	}
-	public void setProducts_size(String products_size) {
+	public void setProducts_size(int products_size) {
 		this.products_size = products_size;
+	}
+	public boolean isIs_opened_value() {
+		return is_opened_value;
+	}
+	public void setIs_opened_value(boolean is_opened_value) {
+		this.is_opened_value = is_opened_value;
+	}
+	public double getMarket_place_quote_part() {
+		return market_place_quote_part;
+	}
+	public void setMarket_place_quote_part(double market_place_quote_part) {
+		this.market_place_quote_part = market_place_quote_part;
+	}
+	public int getMarketPlaceFacetteCount() {
+		return marketPlaceFacetteCount;
+	}
+	public void setMarketPlaceFacetteCount(int marketPlaceFacetteCount) {
+		this.marketPlaceFacetteCount = marketPlaceFacetteCount;
 	}
 }

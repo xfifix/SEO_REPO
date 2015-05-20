@@ -64,6 +64,10 @@ public class FacettesFiltering {
 		String url = to_fetch.getUrl();
 		System.out.println("Fetching URL with standard Apache library without ajax playing : "+url);
 		List<AdvancedFacettesInfo> standardFacettes = FacettesUtility.extract_facettes_infos(to_fetch);
-		System.out.println("Standard facettes number : "+standardFacettes.size());				
+		System.out.println("Standard facettes number : "+standardFacettes.size());		
+		
+		 List<AdvancedFacettesInfo> merged_facettes = FacettesUtility.merge_facettes(marketPlaceFacettes,standardFacettes);
+
+		System.out.println("Merged facettes size : "+merged_facettes.size());
 	}
 }
