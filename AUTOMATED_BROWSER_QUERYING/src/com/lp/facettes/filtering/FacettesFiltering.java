@@ -7,8 +7,9 @@ import java.util.List;
 
 import org.jsoup.Jsoup;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -56,9 +57,9 @@ public class FacettesFiltering {
 
 		dcaps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, phantomjs.getAbsolutePath());
 
-		PhantomJSDriver driver = new PhantomJSDriver(dcaps);
+		//PhantomJSDriver driver = new PhantomJSDriver(dcaps);
 		//WebDriver driver = new PhantomJSDriver();
-		//WebDriver driver = new FirefoxDriver();
+		WebDriver driver = new FirefoxDriver();
 
 		// And now use this to visit Google
 		driver.get(to_fetch.getUrl());
@@ -66,6 +67,14 @@ public class FacettesFiltering {
 		// driver.navigate().to("http://www.google.com");
 
 
+//		List<WebElement> categories = driver.findElements(By.xpath("//*[@id='mvFilter']/form//div[@class='mvFTitle noSel']"));
+//		
+//		for (WebElement category : categories){
+//			if (category.isDisplayed()){
+//				category.click();
+//			}
+//		}
+		
 		// Radio Button: Check Monday using XPATH locator.
 
 		//WebElement menuArrow = driver.findElement(By.cssSelector("div.mvFacets.jsFCategory"));

@@ -161,9 +161,8 @@ public class BatchFacetteSeleniumURLListBatch {
 				System.out.println("Standard facettes number : "+standardFacettes.size());				
 				System.out.println("Fetching URL with Selenium API : "+url);
 				try{
-					driver.get(url);
-					// Alternatively the same thing can be done like this
-					// driver.navigate().to("http://www.google.com");
+					//driver.get(url);
+					driver.navigate().to(url);
 					WebElement menuArrow = driver.findElement(By.xpath("//*[@id='mvFilter']/form//div[text()='Vendeur']"));	     
 					boolean isFacetVisible=false;
 					try{
@@ -188,6 +187,7 @@ public class BatchFacetteSeleniumURLListBatch {
 						}
 					}
 					htmlPageSourceCode = driver.getPageSource();
+					
 				} catch (Exception e){
 					System.out.println("Trouble getting facette C le marché for URL : "+url);
 					e.printStackTrace();
