@@ -24,7 +24,7 @@ import com.parsing.utility.XPathUtility;
 
 public class BatchCassandraComparingURLListWorkerThread implements Runnable {
 	private static int batch_size = 100;
-	private static String updateStatement ="UPDATE SOLR_VS_EXALEAD SET STATUS=?, H1_SOLR=?, TITLE_SOLR=?, XPATH1_SOLR=?, XPATH2_SOLR=?, XPATH3_SOLR=?, XPATH4_SOLR=?, XPATH5_SOLR=?, XPATH6_SOLR=?, XPATH7_SOLR=?, XPATH8_SOLR=?, XPATH9_SOLR=?, XPATH10_SOLR=?, H1_EXALEAD=?, TITLE_EXALEAD=?, XPATH1_EXALEAD=?, XPATH2_EXALEAD=?, XPATH3_EXALEAD=?, XPATH4_EXALEAD=?, XPATH5_EXALEAD=?, XPATH6_EXALEAD=?, XPATH7_EXALEAD=?, XPATH8_EXALEAD=?, XPATH9_EXALEAD=?, XPATH10_EXALEAD=?, H1_COMPARISON=?, TITLE_COMPARISON=?, XPATH1_COMPARISON=?, XPATH2_COMPARISON=?, XPATH3_COMPARISON=?, XPATH4_COMPARISON=?, XPATH5_COMPARISON=?, XPATH6_COMPARISON=?, XPATH7_COMPARISON=?, XPATH8_COMPARISON=?, XPATH9_COMPARISON=?, XPATH10_COMPARISON=?, TO_FETCH=FALSE WHERE ID=?";
+	private static String updateStatement ="UPDATE SOLR_VS_EXALEAD SET STATUS=?, H1_SOLR=?, TITLE_SOLR=?, XPATH1_SOLR=?, XPATH2_SOLR=?, XPATH3_SOLR=?, XPATH4_SOLR=?, XPATH5_SOLR=?, XPATH6_SOLR=?, XPATH7_SOLR=?, XPATH8_SOLR=?, XPATH9_SOLR=?, XPATH10_SOLR=?, TIME_SOLR=?, H1_EXALEAD=?, TITLE_EXALEAD=?, XPATH1_EXALEAD=?, XPATH2_EXALEAD=?, XPATH3_EXALEAD=?, XPATH4_EXALEAD=?, XPATH5_EXALEAD=?, XPATH6_EXALEAD=?, XPATH7_EXALEAD=?, XPATH8_EXALEAD=?, XPATH9_EXALEAD=?, XPATH10_EXALEAD=?, TIME_EXALEAD=?, H1_COMPARISON=?, TITLE_COMPARISON=?, XPATH1_COMPARISON=?, XPATH2_COMPARISON=?, XPATH3_COMPARISON=?, XPATH4_COMPARISON=?, XPATH5_COMPARISON=?, XPATH6_COMPARISON=?, XPATH7_COMPARISON=?, XPATH8_COMPARISON=?, XPATH9_COMPARISON=?, XPATH10_COMPARISON=?, TIME_COMPARISON=?, TO_FETCH=FALSE WHERE ID=?";
 	private String[] xpathExpressions;
 	private String user_agent;
 	private List<ULRId> my_urls_to_fetch = new ArrayList<ULRId>();
@@ -107,12 +107,14 @@ public class BatchCassandraComparingURLListWorkerThread implements Runnable {
 
 				String H1_SOLR = solrOutput.getH1().replace("'", "");
 				String TITLE_SOLR = solrOutput.getTitle().replace("'", "");
+				long time_solr = solrOutput.getSolr_time();
 				String[] XPATHRESULTS_SOLR = solrOutput.getXpathResults();
 
 				ParsingOutput exaleadOutput = local_info.getExaleadOutput();			
 				String H1_EXALEAD = exaleadOutput.getH1().replace("'", "");
 				String TITLE_EXALEAD = exaleadOutput.getTitle().replace("'", "");
 				String[] XPATHRESULTS_EXALEAD = exaleadOutput.getXpathResults();
+				long time_exalead = exaleadOutput.getExalead_time();
 
 				st.setInt(1, local_info.getStatus());
 				st.setString(2,H1_SOLR);
@@ -180,62 +182,62 @@ public class BatchCassandraComparingURLListWorkerThread implements Runnable {
 					st.setString(12, "");
 					st.setString(13, "");
 				}
-				st.setString(14,H1_EXALEAD);
-				st.setString(15, TITLE_EXALEAD);
+				st.setInt(14,(int)time_solr);
+				st.setString(15,H1_EXALEAD);
+				st.setString(16, TITLE_EXALEAD);
 				if (XPATHRESULTS_EXALEAD != null){
 
 					if (XPATHRESULTS_EXALEAD[0] != null){
-						st.setString(16, XPATHRESULTS_EXALEAD[0]);
-					} else {
-						st.setString(16, "");
-					}
-					if (XPATHRESULTS_EXALEAD[1] != null){
-						st.setString(17, XPATHRESULTS_EXALEAD[1]);
+						st.setString(17, XPATHRESULTS_EXALEAD[0]);
 					} else {
 						st.setString(17, "");
 					}
-					if (XPATHRESULTS_EXALEAD[2] != null){
-						st.setString(18, XPATHRESULTS_EXALEAD[2]);
+					if (XPATHRESULTS_EXALEAD[1] != null){
+						st.setString(18, XPATHRESULTS_EXALEAD[1]);
 					} else {
 						st.setString(18, "");
 					}
-					if (XPATHRESULTS_EXALEAD[3] != null){
-						st.setString(19, XPATHRESULTS_EXALEAD[3]);
+					if (XPATHRESULTS_EXALEAD[2] != null){
+						st.setString(19, XPATHRESULTS_EXALEAD[2]);
 					} else {
 						st.setString(19, "");
 					}
-					if (XPATHRESULTS_EXALEAD[4] != null){
-						st.setString(20, XPATHRESULTS_EXALEAD[4]);
+					if (XPATHRESULTS_EXALEAD[3] != null){
+						st.setString(20, XPATHRESULTS_EXALEAD[3]);
 					} else {
 						st.setString(20, "");
 					}
-					if (XPATHRESULTS_EXALEAD[5] != null){
-						st.setString(21, XPATHRESULTS_EXALEAD[5]);
+					if (XPATHRESULTS_EXALEAD[4] != null){
+						st.setString(21, XPATHRESULTS_EXALEAD[4]);
 					} else {
 						st.setString(21, "");
 					}
-					if (XPATHRESULTS_EXALEAD[6] != null){
-						st.setString(22, XPATHRESULTS_EXALEAD[6]);
+					if (XPATHRESULTS_EXALEAD[5] != null){
+						st.setString(22, XPATHRESULTS_EXALEAD[5]);
 					} else {
 						st.setString(22, "");
 					}
-					if (XPATHRESULTS_EXALEAD[7] != null){
-						st.setString(23, XPATHRESULTS_EXALEAD[7]);
+					if (XPATHRESULTS_EXALEAD[6] != null){
+						st.setString(23, XPATHRESULTS_EXALEAD[6]);
 					} else {
 						st.setString(23, "");
 					}
-					if (XPATHRESULTS_EXALEAD[8] != null){
-						st.setString(24, XPATHRESULTS_EXALEAD[8]);
+					if (XPATHRESULTS_EXALEAD[7] != null){
+						st.setString(24, XPATHRESULTS_EXALEAD[7]);
 					} else {
 						st.setString(24, "");
 					}
-					if (XPATHRESULTS_EXALEAD[9] != null){
-						st.setString(25, XPATHRESULTS_EXALEAD[9]);
+					if (XPATHRESULTS_EXALEAD[8] != null){
+						st.setString(25, XPATHRESULTS_EXALEAD[8]);
 					} else {
 						st.setString(25, "");
 					}
+					if (XPATHRESULTS_EXALEAD[9] != null){
+						st.setString(26, XPATHRESULTS_EXALEAD[9]);
+					} else {
+						st.setString(26, "");
+					}
 				}else {
-					st.setString(16, "");
 					st.setString(17, "");
 					st.setString(18, "");
 					st.setString(19, "");
@@ -245,72 +247,76 @@ public class BatchCassandraComparingURLListWorkerThread implements Runnable {
 					st.setString(23, "");
 					st.setString(24, "");
 					st.setString(25, "");
+					st.setString(26, "");
 				}
+				st.setInt(27,(int)time_exalead);
+								
 				if (!H1_SOLR.equals(H1_EXALEAD)){
-					st.setInt(26, 0);
+					st.setInt(28, 0);
 				} else {
-					st.setInt(26, 1);
+					st.setInt(28, 1);
 				}
 				if (!TITLE_SOLR.equals(TITLE_EXALEAD)){
-					st.setInt(27, 0);
+					st.setInt(29, 0);
 				} else {
-					st.setInt(27, 1);
+					st.setInt(29, 1);
 				}
 
 				if ((XPATHRESULTS_EXALEAD != null) && (XPATHRESULTS_SOLR != null)){
 					if (!XPATHRESULTS_SOLR[0].equals(XPATHRESULTS_EXALEAD[0])){
-						st.setInt(28, 0);
-					} else {
-						st.setInt(28, 1);
-					}
-					if (!XPATHRESULTS_SOLR[1].equals(XPATHRESULTS_EXALEAD[1])){
-						st.setInt(29, 0);
-					} else {
-						st.setInt(29, 1);
-					}
-					if (!XPATHRESULTS_SOLR[2].equals(XPATHRESULTS_EXALEAD[2])){
 						st.setInt(30, 0);
 					} else {
 						st.setInt(30, 1);
 					}
-					if (!XPATHRESULTS_SOLR[3].equals(XPATHRESULTS_EXALEAD[3])){
+					if (!XPATHRESULTS_SOLR[1].equals(XPATHRESULTS_EXALEAD[1])){
 						st.setInt(31, 0);
 					} else {
 						st.setInt(31, 1);
 					}
-					if (!XPATHRESULTS_SOLR[4].equals(XPATHRESULTS_EXALEAD[4])){
+					if (!XPATHRESULTS_SOLR[2].equals(XPATHRESULTS_EXALEAD[2])){
 						st.setInt(32, 0);
 					} else {
 						st.setInt(32, 1);
 					}
-					if (!XPATHRESULTS_SOLR[5].equals(XPATHRESULTS_EXALEAD[5])){
+					if (!XPATHRESULTS_SOLR[3].equals(XPATHRESULTS_EXALEAD[3])){
 						st.setInt(33, 0);
 					} else {
 						st.setInt(33, 1);
 					}
-					if (!XPATHRESULTS_SOLR[6].equals(XPATHRESULTS_EXALEAD[6])){
+					if (!XPATHRESULTS_SOLR[4].equals(XPATHRESULTS_EXALEAD[4])){
 						st.setInt(34, 0);
 					} else {
 						st.setInt(34, 1);
 					}
-					if (!XPATHRESULTS_SOLR[7].equals(XPATHRESULTS_EXALEAD[7])){
+					if (!XPATHRESULTS_SOLR[5].equals(XPATHRESULTS_EXALEAD[5])){
 						st.setInt(35, 0);
 					} else {
 						st.setInt(35, 1);
 					}
-					if (!XPATHRESULTS_SOLR[8].equals(XPATHRESULTS_EXALEAD[8])){
+					if (!XPATHRESULTS_SOLR[6].equals(XPATHRESULTS_EXALEAD[6])){
 						st.setInt(36, 0);
 					} else {
 						st.setInt(36, 1);
 					}
-					if (!XPATHRESULTS_SOLR[9].equals(XPATHRESULTS_EXALEAD[9])){
+					if (!XPATHRESULTS_SOLR[7].equals(XPATHRESULTS_EXALEAD[7])){
 						st.setInt(37, 0);
 					} else {
 						st.setInt(37, 1);
 					}
+					if (!XPATHRESULTS_SOLR[8].equals(XPATHRESULTS_EXALEAD[8])){
+						st.setInt(38, 0);
+					} else {
+						st.setInt(38, 1);
+					}
+					if (!XPATHRESULTS_SOLR[9].equals(XPATHRESULTS_EXALEAD[9])){
+						st.setInt(39, 0);
+					} else {
+						st.setInt(39, 1);
+					}
 				}
-
-				st.setInt(38, local_info.getId());
+				
+				st.setInt(40,(int)Math.abs(time_exalead-time_solr));
+				st.setInt(41, local_info.getId());
 				//UPDATE HTTPINFOS_LIST SET STATUS=?, H1=?, TITLE=?, XPATH1=?, XPATH2=?, XPATH3=?, XPATH4=?, XPATH5=?, TO_FETCH=FALSE WHERE ID=?";
 				//	String batch ="UPDATE HTTPINFOS_LIST SET STATUS="+infos.get(i).getStatus()+", H1='"+H1+"', TITLE='"+TITLE+ "',TO_FETCH=FALSE WHERE ID="+infos.get(i).getId();
 				st.addBatch();		
