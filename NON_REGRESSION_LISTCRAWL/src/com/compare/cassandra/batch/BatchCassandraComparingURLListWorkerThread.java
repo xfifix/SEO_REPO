@@ -23,7 +23,7 @@ import com.parsing.utility.ParsingOutput;
 import com.parsing.utility.XPathUtility;
 
 public class BatchCassandraComparingURLListWorkerThread implements Runnable {
-	private static int batch_size = 100;
+	private static int batch_size = 10;
 	private static String updateStatement ="UPDATE SOLR_VS_EXALEAD SET STATUS=?, H1_SOLR=?, TITLE_SOLR=?, XPATH1_SOLR=?, XPATH2_SOLR=?, XPATH3_SOLR=?, XPATH4_SOLR=?, XPATH5_SOLR=?, XPATH6_SOLR=?, XPATH7_SOLR=?, XPATH8_SOLR=?, XPATH9_SOLR=?, XPATH10_SOLR=?, TIME_SOLR=?, H1_EXALEAD=?, TITLE_EXALEAD=?, XPATH1_EXALEAD=?, XPATH2_EXALEAD=?, XPATH3_EXALEAD=?, XPATH4_EXALEAD=?, XPATH5_EXALEAD=?, XPATH6_EXALEAD=?, XPATH7_EXALEAD=?, XPATH8_EXALEAD=?, XPATH9_EXALEAD=?, XPATH10_EXALEAD=?, TIME_EXALEAD=?, H1_COMPARISON=?, TITLE_COMPARISON=?, XPATH1_COMPARISON=?, XPATH2_COMPARISON=?, XPATH3_COMPARISON=?, XPATH4_COMPARISON=?, XPATH5_COMPARISON=?, XPATH6_COMPARISON=?, XPATH7_COMPARISON=?, XPATH8_COMPARISON=?, XPATH9_COMPARISON=?, XPATH10_COMPARISON=?, TIME_COMPARISON=?, TO_FETCH=FALSE WHERE ID=?";
 	private String[] xpathExpressions;
 	private String user_agent;
@@ -571,6 +571,7 @@ public class BatchCassandraComparingURLListWorkerThread implements Runnable {
 			my_info.setId(line_info.getId());
 			// getting the URL
 			String url = line_info.getUrl();
+			url = url.replace("www","bdxwww");
 			try{
 				// fetching the solr version
 				String solrurl = url + "?Gomez=DynaR2";
@@ -702,7 +703,7 @@ public class BatchCassandraComparingURLListWorkerThread implements Runnable {
 				DefaultHttpClient clientExalead = new DefaultHttpClient();
 				// set the cookies
 				CookieStore cookieStoreExalead = new BasicCookieStore();
-				BasicClientCookie cookieExalead = new BasicClientCookie("Cassandra", "1");
+				BasicClientCookie cookieExalead = new BasicClientCookie("Cassandra2", "1");
 				cookieExalead.setDomain("cdiscount.com");
 				cookieExalead.setPath("/");
 				cookieStoreExalead.addCookie(cookieExalead);    
