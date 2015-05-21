@@ -24,7 +24,7 @@ public class CategorizerCorpusFrequencyManager {
 	private static String insert_statement="INSERT INTO CATEGORIZER_CORPUS_WORDS(WORD,NB_DOCUMENTS,DOC_LIST) values(?,?,?)";
 	private static String update_statement="UPDATE CATEGORIZER_CORPUS_WORDS SET NB_DOCUMENTS=?,DOC_LIST=? WHERE WORD=?";
 
-	private static String update_data_statement="UPDATE DATA SET IS_IN_TFIDF_INDEX=TRUE where SKU=?";
+	private static String update_data_statement="UPDATE TRAINING_DATA SET IS_IN_TFIDF_INDEX=TRUE where IDENTIFIANT_PRODUIT=?";
 
 	public CategorizerCorpusFrequencyManager() throws SQLException{
 		Properties props = new Properties();
@@ -59,7 +59,7 @@ public class CategorizerCorpusFrequencyManager {
 	}
 
 	public void updateEntry(DataEntry entry){
-		this.updateText(entry.getLIBELLE_PRODUIT().toLowerCase()+" "+entry.getDESCRIPTION_LONGUEUR80().toLowerCase(),entry.getSKU());
+		this.updateText(entry.getLIBELLE().toLowerCase()+" "+entry.getDESCRIPTION().toLowerCase()+" "+entry.getMARQUE(),entry.getIDENTIFIANT_PRODUIT());
 	}
 
 	public void flagSkuInTFIDF(String SKU){

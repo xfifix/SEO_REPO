@@ -41,8 +41,7 @@ public class CategoryBagOfWordsManager {
 	public void updateCategoryEntry(String category, List<DataEntry> category_data){
 		Map<String, Integer> tf_bag_of_words = new HashMap<String, Integer>();
 		for (DataEntry my_entry : category_data){
-			Map<String,Integer> word_map = RemoveStopWordsUtility.removeStopWords(my_entry.getLIBELLE_PRODUIT().toLowerCase()+" "+my_entry.getDESCRIPTION_LONGUEUR80().toLowerCase());
-
+			Map<String,Integer> word_map = RemoveStopWordsUtility.removeStopWords(my_entry.getLIBELLE().toLowerCase()+" "+my_entry.getDESCRIPTION().toLowerCase()+" "+my_entry.getMARQUE());
 			Iterator<Map.Entry<String, Integer>> it = word_map.entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry<String, Integer> pairs = (Map.Entry<String, Integer>)it.next();

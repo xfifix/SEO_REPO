@@ -25,7 +25,7 @@ public class CategoryBagWordsComputer {
 	public static String categorizer_conf_path = "/home/sduprey/My_Data/My_Categorizer_Conf/categorizer.conf";
 	public static Properties properties;
 
-	private static String select_entry_from_category4 = " select SKU, CATEGORIE_NIVEAU_1, CATEGORIE_NIVEAU_2, CATEGORIE_NIVEAU_3, CATEGORIE_NIVEAU_4,  LIBELLE_PRODUIT, MARQUE, DESCRIPTION_LONGUEUR80, VENDEUR, ETAT, RAYON, TO_FETCH FROM DATA";
+	private static String select_entry_from_category4 = "select IDENTIFIANT_PRODUIT, CATEGORIE_1, CATEGORIE_2, CATEGORIE_3, DESCRIPTION, LIBELLE, MARQUE, PRODUIT_CDISCOUNT, PRIX, IS_IN_TF_IDF_INDEX FROM TRAINING_DATA WHERE IS_IN_TFIDF_INDEX=false";
 
 	private static String drop_CATEGORY_FOLLOWING_table = "DROP TABLE IF EXISTS CATEGORY_FOLLOWING";
 	private static String create_CATEGORY_FOLLOWING_table = "select distinct categorie_niveau_4, count(*), true as to_fetch into CATEGORY_FOLLOWING from CATALOG group by categorie_niveau_4";
@@ -114,39 +114,42 @@ public class CategoryBagWordsComputer {
 			while (rs.next()) {
 				// fetching all
 				DataEntry entry = new DataEntry();
-				String sku = rs.getString(1);
-				entry.setSKU(sku);
-				// category fetching
-				String CATEGORIE_NIVEAU_1 = rs.getString(2);
-				entry.setCATEGORIE_NIVEAU_1(CATEGORIE_NIVEAU_1);
-				String CATEGORIE_NIVEAU_2 = rs.getString(3);
-				entry.setCATEGORIE_NIVEAU_2(CATEGORIE_NIVEAU_2);
-				String CATEGORIE_NIVEAU_3 = rs.getString(4);
-				entry.setCATEGORIE_NIVEAU_3(CATEGORIE_NIVEAU_3);
-				String CATEGORIE_NIVEAU_4 = rs.getString(5);
-				entry.setCATEGORIE_NIVEAU_4(CATEGORIE_NIVEAU_4);
-				// product libelle
-				String  LIBELLE_PRODUIT = rs.getString(6);
-				entry.setLIBELLE_PRODUIT(LIBELLE_PRODUIT);
-				String MARQUE = rs.getString(7);
+				String identifiant = rs.getString(1);
+				//select IDENTIFIANT_PRODUIT,
+				entry.setIDENTIFIANT_PRODUIT(identifiant);
+				//CATEGORIE_1,
+				String CATEGORIE_1 = rs.getString(2);
+				entry.setCATEGORIE_1(CATEGORIE_1);
+				//CATEGORIE_2, 
+				String CATEGORIE_2 = rs.getString(3);
+				entry.setCATEGORIE_2(CATEGORIE_2);
+				//CATEGORIE_3,
+				String CATEGORIE_3 = rs.getString(4);
+				entry.setCATEGORIE_3(CATEGORIE_3);					
+				//DESCRIPTION
+				String  DESCRIPTION = rs.getString(5);
+				entry.setDESCRIPTION(DESCRIPTION);
+				//LIBELLE
+				String  LIBELLE = rs.getString(6);
+				entry.setLIBELLE(LIBELLE);
+				//MARQUE
+				String  MARQUE = rs.getString(7);
 				entry.setMARQUE(MARQUE);
-				// brand description
-				String  DESCRIPTION_LONGUEUR80 = rs.getString(8);
-				entry.setDESCRIPTION_LONGUEUR80(DESCRIPTION_LONGUEUR80);
-				// vendor and state (available or not)
-				String VENDEUR = rs.getString(9);
-				entry.setVENDEUR(VENDEUR);
-				String ETAT = rs.getString(10);
-				entry.setETAT(ETAT);
-				String RAYON = rs.getString(11);
-				entry.setRAYON(RAYON);
-				Boolean to_fetch = rs.getBoolean(12);
-				entry.setTO_FETCH(to_fetch);
+
+				//PRODUIT_CDISCOUNT,
+				boolean is_produit_cdiscount = rs.getBoolean(8);
+				entry.setVENDEUR(is_produit_cdiscount);
+				//PRIX,
+				Double prix = rs.getDouble(9);
+				entry.setPRIX(prix);
+				//IS_IN_TF_IDF_INDEX
+				boolean IS_IN_TF_IDF_INDEX = rs.getBoolean(9);
+				entry.setTO_FETCH(IS_IN_TF_IDF_INDEX);
 				// we here just keep the small categories
-				List<DataEntry> toprocess = my_entries.get(CATEGORIE_NIVEAU_4);
+				List<DataEntry> toprocess = my_entries.get(CATEGORIE_3);
 				if (toprocess == null){
 					toprocess = new ArrayList<DataEntry>();
-					my_entries.put(CATEGORIE_NIVEAU_4, toprocess);
+					my_entries.put(CATEGORIE_3, toprocess);
 				}
 				toprocess.add(entry);
 			}		

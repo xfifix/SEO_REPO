@@ -22,9 +22,9 @@ public class ResumingCategorizerCorpusFrequencyWorkerThread implements Runnable 
 		int total_size = my_skus_to_compute.size();
 		int loop_counter=0;
 		for (DataEntry entry : this.my_skus_to_compute){
-			System.out.println(Thread.currentThread()+" Processing entry SKU : "+entry.getSKU()+" number : "+loop_counter+" over : "+total_size);
+			System.out.println(Thread.currentThread()+" Processing entry SKU : "+entry.getIDENTIFIANT_PRODUIT()+" number : "+loop_counter+" over : "+total_size);
 			manager.updateEntry(entry);
-			manager.flagSkuInTFIDF(entry.getSKU());
+			manager.flagSkuInTFIDF(entry.getIDENTIFIANT_PRODUIT());
 			loop_counter++;
 		}
 	}

@@ -1,82 +1,59 @@
 package com.data;
 
 public class DataEntry {
-	private String MAGASIN="";
-	private String RAYON="";
-	private String CATEGORIE_NIVEAU_1="";
-	private String CATEGORIE_NIVEAU_2="";
-	private String CATEGORIE_NIVEAU_3="";
-	private String CATEGORIE_NIVEAU_4="";
-	private String CATEGORIE_NIVEAU_5="";
-	private String SKU="";
-	private String LIBELLE_PRODUIT="";
+	private String CATEGORIE_1="";
+	private String CATEGORIE_2="";
+	private String CATEGORIE_3="";
+	private String CATEGORIE_4="";
+	private String CATEGORIE_5="";
+	private String IDENTIFIANT_PRODUIT="";
+	private String LIBELLE="";
 	private String MARQUE="";
-	private String DESCRIPTION_LONGUEUR50="";
-	private String DESCRIPTION_LONGUEUR80="";
-	private String URL="";
-	private String LIEN_IMAGE="";
-	private String VENDEUR="";
-	private String ETAT="";
+	private String DESCRIPTION="";
+	private Boolean VENDEUR;
+	private Double PRIX;
 	private Boolean TO_FETCH;
-	public Boolean getTO_FETCH() {
-		return TO_FETCH;
+	public String getCATEGORIE_1() {
+		return CATEGORIE_1;
 	}
-	public void setTO_FETCH(Boolean tO_FETCH) {
-		TO_FETCH = tO_FETCH;
+	public void setCATEGORIE_1(String cATEGORIE_1) {
+		CATEGORIE_1 = cATEGORIE_1;
 	}
-	public String getMAGASIN() {
-		return MAGASIN;
+	public String getCATEGORIE_2() {
+		return CATEGORIE_2;
 	}
-	public void setMAGASIN(String mAGASIN) {
-		MAGASIN = mAGASIN;
+	public void setCATEGORIE_2(String cATEGORIE_2) {
+		CATEGORIE_2 = cATEGORIE_2;
 	}
-	public String getRAYON() {
-		return RAYON;
+	public String getCATEGORIE_3() {
+		return CATEGORIE_3;
 	}
-	public void setRAYON(String rAYON) {
-		RAYON = rAYON;
+	public void setCATEGORIE_3(String cATEGORIE_3) {
+		CATEGORIE_3 = cATEGORIE_3;
 	}
-	public String getCATEGORIE_NIVEAU_1() {
-		return CATEGORIE_NIVEAU_1;
+	public String getCATEGORIE_4() {
+		return CATEGORIE_4;
 	}
-	public void setCATEGORIE_NIVEAU_1(String cATEGORIE_NIVEAU_1) {
-		CATEGORIE_NIVEAU_1 = cATEGORIE_NIVEAU_1;
+	public void setCATEGORIE_4(String cATEGORIE_4) {
+		CATEGORIE_4 = cATEGORIE_4;
 	}
-	public String getCATEGORIE_NIVEAU_2() {
-		return CATEGORIE_NIVEAU_2;
+	public String getCATEGORIE_5() {
+		return CATEGORIE_5;
 	}
-	public void setCATEGORIE_NIVEAU_2(String cATEGORIE_NIVEAU_2) {
-		CATEGORIE_NIVEAU_2 = cATEGORIE_NIVEAU_2;
+	public void setCATEGORIE_5(String cATEGORIE_5) {
+		CATEGORIE_5 = cATEGORIE_5;
 	}
-	public String getCATEGORIE_NIVEAU_3() {
-		return CATEGORIE_NIVEAU_3;
+	public String getIDENTIFIANT_PRODUIT() {
+		return IDENTIFIANT_PRODUIT;
 	}
-	public void setCATEGORIE_NIVEAU_3(String cATEGORIE_NIVEAU_3) {
-		CATEGORIE_NIVEAU_3 = cATEGORIE_NIVEAU_3;
+	public void setIDENTIFIANT_PRODUIT(String iDENTIFIANT_PRODUIT) {
+		IDENTIFIANT_PRODUIT = iDENTIFIANT_PRODUIT;
 	}
-	public String getCATEGORIE_NIVEAU_4() {
-		return CATEGORIE_NIVEAU_4;
+	public String getLIBELLE() {
+		return LIBELLE;
 	}
-	public void setCATEGORIE_NIVEAU_4(String cATEGORIE_NIVEAU_4) {
-		CATEGORIE_NIVEAU_4 = cATEGORIE_NIVEAU_4;
-	}
-	public String getCATEGORIE_NIVEAU_5() {
-		return CATEGORIE_NIVEAU_5;
-	}
-	public void setCATEGORIE_NIVEAU_5(String cATEGORIE_NIVEAU_5) {
-		CATEGORIE_NIVEAU_5 = cATEGORIE_NIVEAU_5;
-	}
-	public String getSKU() {
-		return SKU;
-	}
-	public void setSKU(String sKU) {
-		SKU = sKU;
-	}
-	public String getLIBELLE_PRODUIT() {
-		return LIBELLE_PRODUIT;
-	}
-	public void setLIBELLE_PRODUIT(String lIBELLE_PRODUIT) {
-		LIBELLE_PRODUIT = lIBELLE_PRODUIT;
+	public void setLIBELLE(String lIBELLE) {
+		LIBELLE = lIBELLE;
 	}
 	public String getMARQUE() {
 		return MARQUE;
@@ -84,40 +61,28 @@ public class DataEntry {
 	public void setMARQUE(String mARQUE) {
 		MARQUE = mARQUE;
 	}
-	public String getDESCRIPTION_LONGUEUR50() {
-		return DESCRIPTION_LONGUEUR50;
+	public String getDESCRIPTION() {
+		return DESCRIPTION;
 	}
-	public void setDESCRIPTION_LONGUEUR50(String dESCRIPTION_LONGUEUR50) {
-		DESCRIPTION_LONGUEUR50 = dESCRIPTION_LONGUEUR50;
+	public void setDESCRIPTION(String dESCRIPTION) {
+		DESCRIPTION = dESCRIPTION;
 	}
-	public String getDESCRIPTION_LONGUEUR80() {
-		return DESCRIPTION_LONGUEUR80;
-	}
-	public void setDESCRIPTION_LONGUEUR80(String dESCRIPTION_LONGUEUR80) {
-		DESCRIPTION_LONGUEUR80 = dESCRIPTION_LONGUEUR80;
-	}
-	public String getURL() {
-		return URL;
-	}
-	public void setURL(String uRL) {
-		URL = uRL;
-	}
-	public String getLIEN_IMAGE() {
-		return LIEN_IMAGE;
-	}
-	public void setLIEN_IMAGE(String lIEN_IMAGE) {
-		LIEN_IMAGE = lIEN_IMAGE;
-	}
-	public String getVENDEUR() {
+	public Boolean getVENDEUR() {
 		return VENDEUR;
 	}
-	public void setVENDEUR(String vENDEUR) {
+	public void setVENDEUR(Boolean vENDEUR) {
 		VENDEUR = vENDEUR;
 	}
-	public String getETAT() {
-		return ETAT;
+	public Double getPRIX() {
+		return PRIX;
 	}
-	public void setETAT(String eTAT) {
-		ETAT = eTAT;
+	public void setPRIX(Double pRIX) {
+		PRIX = pRIX;
+	}
+	public Boolean getTO_FETCH() {
+		return TO_FETCH;
+	}
+	public void setTO_FETCH(Boolean tO_FETCH) {
+		TO_FETCH = tO_FETCH;
 	}
 }
