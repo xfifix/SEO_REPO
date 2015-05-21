@@ -555,8 +555,97 @@ public class BatchCassandraComparingURLListWorkerThread implements Runnable {
 		}
 	}
 
-
 	private List<URLComparisonInfo> processComparison(List<ULRId> line_infos) {
+		List<URLComparisonInfo> my_fetched_infos = new ArrayList<URLComparisonInfo>();
+		for(ULRId line_info : line_infos){
+			// we here loop over each URL the thread has to handle
+			URLComparisonInfo my_info = new URLComparisonInfo();
+			// the URLComparisonInfo object will collect all the info
+			// it will contain the id
+			my_info.setId(line_info.getId());
+			// getting the URL
+			String url = line_info.getUrl();
+			try{
+				// fetching the solr version
+				String solrurl = url + "?Gomez=DynaR2";
+				System.out.println(Thread.currentThread().getName()+" fetching URL : "+solrurl + " with no cookie value to avoid Cassandra");
+				HttpGet getSolr = new HttpGet(solrurl);
+				getSolr.setHeader("User-Agent", user_agent);
+				DefaultHttpClient clientSolr = new DefaultHttpClient();		
+				HttpContext HTTP_CONTEXT_SOLR = new BasicHttpContext();
+				HTTP_CONTEXT_SOLR.setAttribute(CoreProtocolPNames.USER_AGENT, user_agent);
+				//getSolr.setHeader("Referer", "http://www.google.com");
+				getSolr.setHeader("User-Agent", "CdiscountBot-crawler");
+				getSolr.setHeader("DynaTrace", "vu");
+				
+				long startTimeSolr = System.currentTimeMillis();
+				// set the cookies
+//				CookieStore cookieStoreSolr = new BasicCookieStore();
+//				//BasicClientCookie cookieSolr = new BasicClientCookie("_$hidden", "230.1");
+//				cookieSolr.setDomain("cdiscount.com");
+//				cookieSolr.setPath("/");
+//				cookieStoreSolr.addCookie(cookieSolr);    
+//				clientSolr.setCookieStore(cookieStoreSolr);
+//				// get the cookies
+				HttpResponse responseSolr = clientSolr.execute(getSolr,HTTP_CONTEXT_SOLR);
+
+				System.out.println(responseSolr.getStatusLine());
+				HttpEntity entitySolr = responseSolr.getEntity();
+				// do something useful with the response body
+				// and ensure it is fully consumed
+				String page_source_codeSolr = EntityUtils.toString(entitySolr);
+				// estimatedTime in milliseconds
+				long estimatedTimeSolr = System.currentTimeMillis() - startTimeSolr;
+
+				EntityUtils.consume(entitySolr);
+				clientSolr.close();
+				ParsingOutput solrOutput = XPathUtility.parse_page_code_source(page_source_codeSolr,xpathExpressions);
+				solrOutput.setSolr_time(estimatedTimeSolr);
+				my_info.setSolrOutput(solrOutput);
+				my_info.setStatus(responseSolr.getStatusLine().getStatusCode());
+				String exaleadurl = url + "?Gomez=DynaR2";
+				System.out.println(Thread.currentThread().getName()+" fetching URL : "+exaleadurl + " with cookie value to tap Cassandra");
+				HttpGet getExalead = new HttpGet(exaleadurl);
+				HttpContext HTTP_CONTEXT_EXALEAD = new BasicHttpContext();
+				HTTP_CONTEXT_EXALEAD.setAttribute(CoreProtocolPNames.USER_AGENT, user_agent);
+				//getSolr.setHeader("Referer", "http://www.google.com");
+				getExalead.setHeader("User-Agent", user_agent);
+				getExalead.setHeader("DynaTrace", "vu");
+
+				DefaultHttpClient clientExalead = new DefaultHttpClient();
+				// set the cookies
+				CookieStore cookieStoreExalead = new BasicCookieStore();
+				BasicClientCookie cookieExalead = new BasicClientCookie("Cassandra", "1");
+				cookieExalead.setDomain("cdiscount.com");
+				cookieExalead.setPath("/");
+				cookieStoreExalead.addCookie(cookieExalead);    
+				clientExalead.setCookieStore(cookieStoreExalead);
+				// get the cookies
+				long startTimeExalead = System.currentTimeMillis();
+				HttpResponse responseExalead = clientExalead.execute(getExalead,HTTP_CONTEXT_EXALEAD);
+				long estimatedTimeExalead = System.currentTimeMillis() - startTimeExalead;
+
+				System.out.println(responseExalead.getStatusLine());
+				HttpEntity entityExalead = responseExalead.getEntity();
+				// do something useful with the response body
+				// and ensure it is fully consumed
+				String page_source_codeExalead = EntityUtils.toString(entityExalead);
+				EntityUtils.consume(entityExalead);
+				clientExalead.close();
+				ParsingOutput exaleadOutput = XPathUtility.parse_page_code_source(page_source_codeExalead,xpathExpressions);
+				exaleadOutput.setExalead_time(estimatedTimeExalead);
+				my_info.setExaleadOutput(exaleadOutput);
+			} catch (Exception e){
+				System.out.println("Trouble fetching URL : "+url);
+				e.printStackTrace();
+			}
+			my_fetched_infos.add(my_info);
+		}
+		return my_fetched_infos;
+	}
+
+
+	private List<URLComparisonInfo> oldProcessComparison(List<ULRId> line_infos) {
 		List<URLComparisonInfo> my_fetched_infos = new ArrayList<URLComparisonInfo>();
 		for(ULRId line_info : line_infos){
 			// we here loop over each URL the thread has to handle

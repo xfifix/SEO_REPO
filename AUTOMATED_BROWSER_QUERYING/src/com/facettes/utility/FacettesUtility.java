@@ -25,67 +25,67 @@ public class FacettesUtility {
 		String url = to_fetch.getUrl();
 		// fetching the URL and parsing the results
 
-		
-			AdvancedFacettesInfo my_info = new AdvancedFacettesInfo();
-			my_info.setId(idUrl);
-			my_info.setUrl(url);
 
-			Elements counter_elements = doc.select(".lpStTit strong");		
-			String product_size_text = counter_elements.text();
-			product_size_text=product_size_text.replace("produits", "");
-			product_size_text=product_size_text.trim();
-			int pd_size = 0;
-			try{
-				pd_size = Integer.valueOf(product_size_text);
-			} catch (NumberFormatException e){
-				System.out.println("Trouble while formatting a facette");
-			}
-			my_info.setProducts_size(pd_size);
-			boolean isFacetteOpened = false;
+		AdvancedFacettesInfo my_info = new AdvancedFacettesInfo();
+		my_info.setId(idUrl);
+		my_info.setUrl(url);
 
-			Elements facette_elements = doc.select("div.mvFacets.jsFCategory.mvFOpen");			
-			for (Element facette : facette_elements ){
-				//System.out.println(e.toString());
-				Elements facette_name = facette.select("div.mvFTitle.noSel");
+		Elements counter_elements = doc.select(".lpStTit strong");		
+		String product_size_text = counter_elements.text();
+		product_size_text=product_size_text.replace("produits", "");
+		product_size_text=product_size_text.trim();
+		int pd_size = 0;
+		try{
+			pd_size = Integer.valueOf(product_size_text);
+		} catch (NumberFormatException e){
+			System.out.println("Trouble while formatting a facette");
+		}
+		my_info.setProducts_size(pd_size);
+		boolean isFacetteOpened = false;
+
+		Elements facette_elements = doc.select("div.mvFacets.jsFCategory.mvFOpen");			
+		for (Element facette : facette_elements ){
+			//System.out.println(e.toString());
+			Elements facette_name = facette.select("div.mvFTitle.noSel");
+			my_info.setFacetteName(facette_name.text());
+			Elements facette_values = facette.select("a");
+			for (Element facette_value : facette_values){		
+				// checking if the facette value is opened
+				String lftiretURL = facette_value.attr("href");
+				if (!"".equals(lftiretURL)){
+					my_info.setIs_opened(true);
+					my_info.setOpenedURL(lftiretURL);
+				}
+				String categorie_value = facette_value.text();
+				if ("".equals(categorie_value)){
+					categorie_value = facette_value.attr("title");
+				}
+				Matcher matchPattern = bracketPattern.matcher(categorie_value);
+				String categorieCount ="";
+				while (matchPattern.find()) {		
+					categorieCount=matchPattern.group();
+				}
+				categorie_value=categorie_value.replace(categorieCount,"");
+				categorieCount=categorieCount.replace("(", "");
+				categorieCount=categorieCount.replace(")", "");	
+				//System.out.println(categorie_value);
+				try{
+					my_info.setFacetteCount(Integer.valueOf(categorieCount));
+					//System.out.println(Integer.valueOf(categorieCount));	
+				} catch (NumberFormatException e){
+					System.out.println("Trouble while formatting a facette");
+					my_info.setFacetteCount(0);
+				}
+				my_info.setFacetteValue(categorie_value);
+				my_info.setIs_opened(isFacetteOpened);
+				my_fetched_infos.add(my_info);
+				my_info = new AdvancedFacettesInfo();
+				my_info.setId(idUrl);
+				my_info.setUrl(url);
+				my_info.setProducts_size(pd_size);
 				my_info.setFacetteName(facette_name.text());
-				Elements facette_values = facette.select("a");
-				for (Element facette_value : facette_values){		
-					// checking if the facette value is opened
-					String lftiretURL = facette_value.attr("href");
-					if (!"".equals(lftiretURL)){
-						my_info.setIs_opened(true);
-						my_info.setOpenedURL(lftiretURL);
-					}
-					String categorie_value = facette_value.text();
-					if ("".equals(categorie_value)){
-						categorie_value = facette_value.attr("title");
-					}
-					Matcher matchPattern = bracketPattern.matcher(categorie_value);
-					String categorieCount ="";
-					while (matchPattern.find()) {		
-						categorieCount=matchPattern.group();
-					}
-					categorie_value=categorie_value.replace(categorieCount,"");
-					categorieCount=categorieCount.replace("(", "");
-					categorieCount=categorieCount.replace(")", "");	
-					//System.out.println(categorie_value);
-					try{
-						my_info.setFacetteCount(Integer.valueOf(categorieCount));
-						//System.out.println(Integer.valueOf(categorieCount));	
-					} catch (NumberFormatException e){
-						System.out.println("Trouble while formatting a facette");
-						my_info.setFacetteCount(0);
-					}
-					my_info.setFacetteValue(categorie_value);
-					my_info.setIs_opened(isFacetteOpened);
-					my_fetched_infos.add(my_info);
-					my_info = new AdvancedFacettesInfo();
-					my_info.setId(idUrl);
-					my_info.setUrl(url);
-					my_info.setProducts_size(pd_size);
-					my_info.setFacetteName(facette_name.text());
-				}		
-			}
+			}		
+		}
 
 		return my_fetched_infos;
 	}
@@ -201,13 +201,19 @@ public class FacettesUtility {
 			} catch (Exception e){
 				System.out.println("Trouble while formatting a facette");
 			}
-			to_replicate.setMarket_place_quote_part(market_place_quote_part);	
+			if (market_place_quote_part>100.0){
+				to_replicate.setFacetteCount(place_info_to_add.getFacetteCount());
+				to_replicate.setMarketPlaceFacetteCount(place_info_to_add.getFacetteCount());
+				to_replicate.setMarket_place_quote_part(100.0);
+			}else {
+				to_replicate.setMarket_place_quote_part(market_place_quote_part);	
+			}
 			merged_facettes.add(to_replicate);
 		}
 
 		return merged_facettes;
 	}
-	
+
 	public static String[] getFirstLevels(String url){
 		String[] to_return = {"","",""};
 		url = url.replace("http://www.cdiscount.com/","");
@@ -219,6 +225,6 @@ public class FacettesUtility {
 		}		
 		return to_return;
 	}
-	
-	
+
+
 }
