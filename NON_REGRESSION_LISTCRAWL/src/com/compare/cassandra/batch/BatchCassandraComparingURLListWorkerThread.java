@@ -622,7 +622,7 @@ public class BatchCassandraComparingURLListWorkerThread implements Runnable {
 				DefaultHttpClient clientExalead = new DefaultHttpClient();
 				// set the cookies
 				CookieStore cookieStoreExalead = new BasicCookieStore();
-				BasicClientCookie cookieExalead = new BasicClientCookie("Cassandra", "1");
+				BasicClientCookie cookieExalead = new BasicClientCookie("Cassandra2", "1");
 				cookieExalead.setDomain("cdiscount.com");
 				cookieExalead.setPath("/");
 				cookieStoreExalead.addCookie(cookieExalead);    

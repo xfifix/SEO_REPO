@@ -23,7 +23,7 @@ public class ParallelResumingCategorizerCorpusFrequencyComputingProcess {
 	public static String categorizer_conf_path = "/home/sduprey/My_Data/My_Categorizer_Conf/categorizer.conf";
 	public static Properties properties;
 
-	private static String select_not_added_to_tfidf_entry_from_category4 = "select IDENTIFIANT_PRODUIT, CATEGORIE_1, CATEGORIE_2, CATEGORIE_3, DESCRIPTION, LIBELLE, MARQUE, PRODUIT_CDISCOUNT, PRIX, IS_IN_TF_IDF_INDEX FROM TRAINING_DATA WHERE IS_IN_TFIDF_INDEX=false";
+	private static String select_not_added_to_tfidf_entry_from_category4 = "select IDENTIFIANT_PRODUIT, CATEGORIE_1, CATEGORIE_2, CATEGORIE_3, DESCRIPTION, LIBELLE, MARQUE, PRODUIT_CDISCOUNT, PRIX, IS_IN_TFIDF_INDEX FROM TRAINING_DATA WHERE IS_IN_TFIDF_INDEX=false";
 
 	private static List<DataEntry> tofetch_list = new ArrayList<DataEntry>();
 

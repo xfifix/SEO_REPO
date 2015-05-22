@@ -12,13 +12,13 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Properties;
 
-public class PopulatingData {
+public class TestingPopulatingData {
 	private static String database_categorizer_con_path = "/home/sduprey/My_Data/My_Postgre_Conf/categorizer.properties";
-	private static String drop_CURRENT_DATA_table = "DROP TABLE IF EXISTS TRAINING_DATA";
-	private static String create_CURRENT_DATA_table = "CREATE TABLE IF NOT EXISTS TRAINING_DATA (IDENTIFIANT_PRODUIT VARCHAR(50), CATEGORIE_1 VARCHAR(50), CATEGORIE_2 VARCHAR(50), CATEGORIE_3 VARCHAR(50), DESCRIPTION TEXT, LIBELLE VARCHAR(200), MARQUE VARCHAR(150), PRODUIT_CDISCOUNT BOOLEAN, PRIX NUMERIC,IS_IN_TFIDF_INDEX BOOLEAN, TO_FETCH BOOLEAN) TABLESPACE mydbspace";
-	private static String insert_statement = "INSERT INTO TRAINING_DATA(IDENTIFIANT_PRODUIT, CATEGORIE_1, CATEGORIE_2, CATEGORIE_3, DESCRIPTION, LIBELLE, MARQUE, PRODUIT_CDISCOUNT, PRIX, IS_IN_TFIDF_INDEX, TO_FETCH)  VALUES(?,?,?,?,?,?,?,?,?,?,?)";
+	private static String drop_CURRENT_DATA_table = "DROP TABLE IF EXISTS TESTING_DATA";
+	private static String create_CURRENT_DATA_table = "CREATE TABLE IF NOT EXISTS TESTING_DATA (IDENTIFIANT_PRODUIT VARCHAR(50), DESCRIPTION TEXT, LIBELLE VARCHAR(200), MARQUE VARCHAR(150), PRIX NUMERIC, TO_FETCH BOOLEAN) TABLESPACE mydbspace";
+	private static String insert_statement = "INSERT INTO TESTING_DATA(IDENTIFIANT_PRODUIT, DESCRIPTION, LIBELLE, MARQUE, PRIX, TO_FETCH)  VALUES(?,?,?,?,?,?)";
 	private static Connection con;
-	private static String input_file_path = "/home/sduprey/My_Data/My_Cdiscount_Challenge/training.csv";
+	private static String input_file_path = "/home/sduprey/My_Data/My_Cdiscount_Challenge/test.csv";
 	private static int counter = 0;
 	private static int batch_size = 10000;
 	public static void main(String[] args){
@@ -83,18 +83,19 @@ public class PopulatingData {
 				if (nb_line >= counter){
 					System.out.println("Inserting line number : "+nb_line);
 					String[] fields= line.split(cvsSplitBy);
-					//System.out.println("Fields to insert : "+Arrays.toString(fields));								
+					//System.out.println("Fields to insert : "+Arrays.toString(fields));
+					//IDENTIFIANT_PRODUIT
 					pst.setString(1,fields[0]);
+					//DESCRIPTION
 					pst.setString(2,fields[1]);
+					//LIBELLE
 					pst.setString(3,fields[2]);
+					//MARQUE
 					pst.setString(4,fields[3]);
-					pst.setString(5,fields[4]);
-					pst.setString(6,fields[5]);
-					pst.setString(7,fields[6]);
-					pst.setBoolean(8,"0".equals(fields[7]) ? false : true);
-					pst.setDouble(9,Double.valueOf(fields[8]));
-					pst.setBoolean(10,false);
-					pst.setBoolean(11,false);
+					//PRIX
+					pst.setDouble(5,Double.valueOf(fields[4]));
+					//TO_FETCH
+					pst.setBoolean(6,false);
 					pst.addBatch();
 					batch_current_size++;
 					if (batch_current_size == batch_size){
